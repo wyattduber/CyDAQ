@@ -1,6 +1,12 @@
+import datetime
 import os
 import argparse
 
+from command_comm import cmd
+from serial_comm import get_port
+
+cmd_obj = cmd()
+comm_port = get_port()
 
 def configure():
     pass
@@ -11,7 +17,18 @@ def flush():
 
 
 def ping():
-    print("running ping: TODO implement lol")  # TODO
+    """
+		Sends a command to the device to determine what the latency of the device communication is
+
+		Returns:
+			True if the message was acknowleged, False if device is not connected.
+        """
+    a = datetime.datetime.now()
+    cmd_obj.ping_zybo(comm_port)
+    b = datetime.datetime.now()
+    c = b - a
+    print("CyDaq latency {} microseconds".format(c.microseconds))
+    return 1
 
 
 def print_config():
@@ -42,6 +59,12 @@ def print_help(cmd):
 def main():
     running = True
     print("CyDAQ Command Line Interface")
+
+    #try to connect to cyDAQ. If unable, print error and exit CLI
+    if(comm_port == "" or comm_port is None):
+        print("Zybo not connected")
+        return 0
+
     while running:
         command = input("> ")
         if command == 'q':
