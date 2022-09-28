@@ -1,0 +1,7 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]U:\master_ee_224\src\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\full_firmware_sw\Debug\full_firmware_sw.elf
+	U:\master_ee_224\src\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\design_1_wrapper_hw_platform_4\design_1_wrapper.bit
+	[udf_bh]U:\master_ee_224\src\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\design_1_wrapper_hw_platform_4\design_1_wrapper.bit
+}

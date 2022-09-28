@@ -1,0 +1,10 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../axi_pwm_1.0/hdl/axi_pwm_v1_0_S00_AXI.vhd" \
+"../../../../axi_pwm_1.0/hdl/axi_pwm_v1_0.vhd" \
+"../../../../axi_pwm_1.0/hdl/gen_pwm_module.vhd" \
+"../../../../axi_pwm_1.0/hdl/gen_pwm.vhd" \
+"../../../../axi_pwm_1.0/hdl/gen_pwm_tb.vhd" \
+
+# Do not sort compile order
+nosort

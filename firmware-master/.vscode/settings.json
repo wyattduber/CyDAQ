@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "xspi.h": "c",
+        "shared_definitions.h": "c"
+    }
+}
