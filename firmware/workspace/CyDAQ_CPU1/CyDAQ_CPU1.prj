@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="CyDAQ_CPU1" location="U:/ETG/CyDAQ_full_proto/workspace/CyDAQ_CPU1" platform="U:/ETG/CyDAQ_full_proto/workspace/design_1_wrapper/export/design_1_wrapper/design_1_wrapper.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" systemProject="CyDAQ_CPU1_system" sysConfig="design_1_wrapper" runtime="C/C++" cpu="domain_ps7_cortexa9_1" cpuInstance="ps7_cortexa9_1" os="standalone" mssSignature="a9126e719f5872d7716ef50681a6924c">
+  <configuration name="Debug" id="xilinx.gnu.armv7.exe.debug.161826544" dirty="true">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <configuration name="Release" id="xilinx.gnu.armv7.exe.release.1947846198" dirty="true">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <template appTemplateName="hello_world"/>
+</sdkproject:SdkProject>
