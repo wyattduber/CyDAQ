@@ -1,6 +1,7 @@
 import datetime
 import os
 import argparse
+from check_params import ParameterConstructor
 
 from command_comm import cmd
 from serial_comm import get_port
@@ -8,8 +9,13 @@ from serial_comm import get_port
 cmd_obj = cmd()
 comm_port = get_port()
 
+# Represents the configuration for the zybo board. Construction can be guided using the configure() function
+# or manually using other commands
+config = {}
+
 def configure():
-    pass
+    global config
+    config = construct()
 
 
 def flush():
@@ -32,12 +38,88 @@ def ping():
 
 
 def print_config():
-    pass
+    print(config)
 
 
 def sampling():
     pass
 
+# TODO this probably needs removed/changed
+def construct():
+	pc = ParameterConstructor()
+	ticket = pc.ticket()
+    
+    # Go through each ticket and let the user input either an integer or pick from a list
+	while(ticket is not None):
+		print(ticket["Node"])
+		if ticket["Type"] == "Integer":
+			print ("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]))
+		else:
+			if len(ticket["Options"]) == 1:
+				pc.input(ticket["Options"][0])
+			print(ticket["Options"])
+		if not handle_ticket(pc):
+			return None
+		ticket = pc.ticket()
+	params = pc.toDict()
+
+    # Dataset dac mode requires a file input
+	if(params["Dac Mode"] == 'Dataset'):
+		valid_data = True
+		while valid_data:
+			print('Filepath for DAC dataset (must be .csv)')
+			dac_dataset_filepath = input(': ')
+			if '.csv' in dac_dataset_filepath:
+				if loadCSV(dac_dataset_filepath) is not None:
+					params['Dataset Filepath'] = dac_dataset_filepath
+					valid_data = False
+			else:
+				print("file must be .csv")
+	print(params)
+	return params
+
+def handle_ticket(pc):
+	response = input(' :')
+	if '/' in response:
+		words = response.split(' ')
+		if words[0] == '/back':
+			pc.back()
+		elif words[0] == '/goto':
+			if len(words) < 2:
+				print('Not enough arguments, second arg should be the Step to navigate back to')
+			pc.goto(' '.join(words[1:]))
+		elif words[0] == '/quit':
+			return 0
+		pass
+	else:
+		pc.input(response)
+	return 1
+
+# TODO this probably needs removedchanged
+def loadCSV(filepath):
+	data = []
+	try:
+		with open(filepath) as f:
+			if os.path.getsize(filepath) > 6000000:
+				print("File too large")
+				return None
+			for line in f:
+				row_data = line.strip("\n").split()
+				for i, item in enumerate(row_data):
+					try:
+						row_data[i] = float(item)
+					except ValueError:
+						pass
+				try:
+					if len(row_data) == 1:
+						data.append(float(row_data[0]))
+					else:
+						data.append(float(row_data))
+				except ValueError:
+					pass
+		return data
+	except:
+		return None
 
 def print_help(cmd):
     usages = {}  # TODO dict for individual command usage messages
@@ -55,6 +137,20 @@ def print_help(cmd):
     q\t\t\t\t Exit The Command-Line
     s [filename]\t Start/Stop Sampling"""
     print(helpMsg)
+
+
+""" 
+Command list (WIP)
+
+//params - CLI stores an object of params that users/UI can configure one at a time or all at once
+construct params (CLI only) - Include from existing tool because it's easy to copy over
+set param (key) (value) - set a single parameter
+set params (json) - set a json list of params 
+clear - removes all params (or sets to a defualt?)
+send - send params to cyDAQ
+
+"""
+
 
 def main():
     running = True
