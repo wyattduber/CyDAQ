@@ -1,17 +1,32 @@
+from copy import deepcopy
 import datetime
 import os
 import argparse
-from check_params import ParameterConstructor
+import json
+from check_params import ParameterConstructor, check_params
 
 from command_comm import cmd
+from master_enum import nameToEnum
 from serial_comm import get_port
 
 cmd_obj = cmd()
 comm_port = get_port()
 
-# Represents the configuration for the zybo board. Construction can be guided using the configure() function
+# Represents the configuration for the cyDAQ. Construction can be guided using the configure() function
 # or manually using other commands
 config = {}
+
+# Default values that are sent to the cyDAQ
+default_config = {
+	"Sample Rate": 44100,
+	"Input": "Analog In",
+	"Filter": "All Pass",
+	"Upper Corner": 2000,
+	"Lower Corner": 100,
+	"Mid Corner": 100,
+	"Dac Reps": 0,
+	"Dac Generation Rate": 0,
+}
 
 def print_help(cmd):
 	usages = {}  # TODO dict for individual command usage messages
@@ -25,8 +40,8 @@ def print_help(cmd):
 	c\t\t\t\t Configure Parameters (Guided)
 	pr\t\t\t\t Print Current Config
 	se\t\t\t\t Send config to cyDAQ
-	sp (key) (value)\t\t Set one config value
-	spl (json list)\t\t\t Set multiple config values as a json list
+	sc (key) (value)\t\t Set one config value
+	scl (json list)\t\t\t Set multiple config values as a json object
 	f\t\t\t\t Flush 
 	s [filename]\t\t\t Start/Stop Sampling
 	g\t\t\t\t Start/Stop DAC Generation
@@ -57,24 +72,67 @@ def print_config():
 def send():
 	"""
 	Send the current configuration to the cyDAQ
+
+	If required configuration values aren't set, they are taken from default_config
+	defined at the top of this file
 	"""
+
+	config_send = deepcopy(default_config)
+	for key in config:
+		config_send[key] = config[key]
+
 	# TODO add config validation before sending?
 
-	return cmd_obj.send
+	def send_config_with_retry(func, *args):
+		"""
+		Calls func with specified args. Func must be a cmd_obj function that sends 
+		config data to the cyDAQ. 
+		"""
+		n = 3
+		i = 0
+		while i < n:
+			print("calling func: ", func, " with args: ", args)
+			func(*args)
+			if cmd_obj.recieve_acknowlege_zybo(comm_port):
+				break
+			i += 1
+
+
+	# must be sent in order? (Not 100% sure on this but the old code did so I'm rolling with it)
+	send_config_with_retry(cmd_obj.send_input, comm_port, nameToEnum(config_send["Input"]))
+	send_config_with_retry(cmd_obj.send_sample_rate, comm_port, config_send["Sample Rate"])
+	send_config_with_retry(cmd_obj.send_filter, comm_port,  nameToEnum(config_send["Filter"]))
+
+	upper = config_send["Upper Corner"]
+	lower = config_send["Lower Corner"]
+	mid = config_send["Mid Corner"]
+	# This logic is probably wrong but it's how it was before... TODO fix?
+	if upper != 0 or lower != 0 or mid != 0:
+		send_config_with_retry(cmd_obj.send_corner_freq, comm_port, upper, lower, mid, config_send["Filter"])
+	
+	#send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented out before
+	send_config_with_retry(cmd_obj.send_dac_reps, comm_port, config_send["Dac Reps"])
+	send_config_with_retry(cmd_obj.send_dac_gen_rate, comm_port, config_send["Dac Generation Rate"])
+		
 	
 
-def update_config(key, value):
+def update_single_config(key, value):
 	"""
 	Updates a single entry in the config
 	"""
+	config[key] = value
 
-def update_config(json):
+def update_multiple_config(json_str):
 	"""
-	Updates multiple entries specified as a JSON list string
+	Updates multiple entries specified as a JSON object
 	"""
-	# verify json list
-	# convert to object
-	# iterate and update
+	try:
+		list = json.loads(json_str)
+	except json.JSONDecodeError:
+		print("ERROR: Improper JSON specified")
+	
+	for key in list:
+		config[key] = list[key]
 
 def flush():
 	pass
@@ -170,27 +228,31 @@ def main():
 
 	while running:
 		command = input("> ")
-		if command == 'h':
+		command = command.split(",")
+		command = [s.strip(" ") for s in command]
+		if command[0] == 'h':
 			print_help(False)
-		elif command == 'pi':
+		elif command[0] == 'pi':
 			ping()
-		elif command == 'c':
+		elif command[0] == 'c':
 			configure()
-		elif command == 'pr':
+		elif command[0] == 'pr':
 			print_config()
-		elif command == 'se':
+		elif command[0] == 'se':
 			send()
-		elif command == 'sp':
-			pass
-		elif command == 'spl':
-			pass
-		elif command == 'f':
+		elif command[0] == 'sc':
+			if len(command) == 3:
+				update_single_config(command[1], command[2])
+		elif command[0] == 'scl':
+			if len(command) == 2:
+				update_multiple_config(command[1])
+		elif command[0] == 'f':
 			flush()
-		elif command == 's':
+		elif command[0] == 's':
 			sampling()	
-		elif command == 'g':
+		elif command[0] == 'g':
 			pass
-		elif command == 'q':
+		elif command[0] == 'q':
 			print("Terminating...\n")
 			running = False	
 		else:

@@ -60,6 +60,7 @@ class cmd:
         else:
             return False
 
+    # NOTE: Probably won't use this anymore TODO delete?
     def send_parameters(self, port_select, data):
         """
         sends all parameters to the Zybo
