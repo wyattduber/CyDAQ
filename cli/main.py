@@ -13,43 +13,81 @@ comm_port = get_port()
 # or manually using other commands
 config = {}
 
-def configure():
-    global config
-    config = construct()
+def print_help(cmd):
+	usages = {}  # TODO dict for individual command usage messages
 
-
-def flush():
-    pass
-
+	if cmd:
+		print("\tUnknown command. Command List:")
+	else:
+		print("\tCommand List & Info")
+	helpMsg = """	h\t\t\t\t Print This Help Menu
+	pi\t\t\t\t Ping the Zybo
+	c\t\t\t\t Configure Parameters (Guided)
+	pr\t\t\t\t Print Current Config
+	se\t\t\t\t Send config to cyDAQ
+	sp (key) (value)\t\t Set one config value
+	spl (json list)\t\t\t Set multiple config values as a json list
+	f\t\t\t\t Flush 
+	s [filename]\t\t\t Start/Stop Sampling
+	g\t\t\t\t Start/Stop DAC Generation
+	q\t\t\t\t Exit The Command-Line"""
+	print(helpMsg)
 
 def ping():
-    """
+	"""
 		Sends a command to the device to determine what the latency of the device communication is
 
 		Returns:
 			True if the message was acknowleged, False if device is not connected.
-        """
-    a = datetime.datetime.now()
-    cmd_obj.ping_zybo(comm_port)
-    b = datetime.datetime.now()
-    c = b - a
-    print("CyDaq latency {} microseconds".format(c.microseconds))
-    return 1
+		"""
+	a = datetime.datetime.now()
+	cmd_obj.ping_zybo(comm_port)
+	b = datetime.datetime.now()
+	c = b - a
+	print("CyDaq latency {} microseconds".format(c.microseconds))
+	return 1
 
+def configure():
+	global config
+	config = construct()
 
 def print_config():
-    print(config)
+	print(config)
 
+def send():
+	"""
+	Send the current configuration to the cyDAQ
+	"""
+	# TODO add config validation before sending?
+
+	return cmd_obj.send
+	
+
+def update_config(key, value):
+	"""
+	Updates a single entry in the config
+	"""
+
+def update_config(json):
+	"""
+	Updates multiple entries specified as a JSON list string
+	"""
+	# verify json list
+	# convert to object
+	# iterate and update
+
+def flush():
+	pass
 
 def sampling():
-    pass
+	pass
 
 # TODO this probably needs removed/changed
 def construct():
 	pc = ParameterConstructor()
 	ticket = pc.ticket()
-    
-    # Go through each ticket and let the user input either an integer or pick from a list
+	
+	# Go through each ticket and let the user input either an integer or pick from a list
 	while(ticket is not None):
 		print(ticket["Node"])
 		if ticket["Type"] == "Integer":
@@ -63,7 +101,7 @@ def construct():
 		ticket = pc.ticket()
 	params = pc.toDict()
 
-    # Dataset dac mode requires a file input
+	# Dataset dac mode requires a file input
 	if(params["Dac Mode"] == 'Dataset'):
 		valid_data = True
 		while valid_data:
@@ -95,7 +133,7 @@ def handle_ticket(pc):
 		pc.input(response)
 	return 1
 
-# TODO this probably needs removedchanged
+# TODO this probably needs removed/changed
 def loadCSV(filepath):
 	data = []
 	try:
@@ -121,68 +159,42 @@ def loadCSV(filepath):
 	except:
 		return None
 
-def print_help(cmd):
-    usages = {}  # TODO dict for individual command usage messages
-
-    if cmd:
-        print("\tUnknown command. Command List:")
-    else:
-        print("\tCommand List & Info")
-    helpMsg = """	c\t\t\t\t Configure Parameters
-	f\t\t\t\t Flush Configuration
-	g\t\t\t\t Start/Stop DAC Generation
-	h\t\t\t\t Print This Help Menu
-	pi\t\t\t\t Ping the Zybo
-	pr\t\t\t\t Print Current Config
-	q\t\t\t\t Exit The Command-Line
-	s [filename]\t\t\t Start/Stop Sampling"""
-    print(helpMsg)
-
-
-""" 
-Command list (WIP)
-
-//params - CLI stores an object of params that users/UI can configure one at a time or all at once
-construct params (CLI only) - Include from existing tool because it's easy to copy over
-set param (key) (value) - set a single parameter
-set params (json) - set a json list of params 
-clear - removes all params (or sets to a defualt?)
-send - send params to cyDAQ
-
-"""
-
-
 def main():
-    running = True
-    print("CyDAQ Command Line Interface")
+	running = True
+	print("CyDAQ Command Line Interface")
 
-    #try to connect to cyDAQ. If unable, print error and exit CLI
-    if(comm_port == "" or comm_port is None):
-        print("Zybo not connected")
-        return 0
+	#try to connect to cyDAQ. If unable, print error and exit CLI
+	if(comm_port == "" or comm_port is None):
+		print("Zybo not connected")
+		return 0
 
-    while running:
-        command = input("> ")
-        if command == 'q':
-            print("Terminating...\n")
-            running = False
-        elif command == 'pi':
-            ping()
-        elif command == 'pr':
-            print_config()
-        elif command == 'h':
-            print_help(False)
-        elif command == 'f':
-            flush()
-        elif command == 's':
-            sampling()
-        elif command == 'c':
-            configure()
-        elif command == 'g':
-            pass  # Start/Stop Generating TODO
-        else:
-            print_help(True)
-
+	while running:
+		command = input("> ")
+		if command == 'h':
+			print_help(False)
+		elif command == 'pi':
+			ping()
+		elif command == 'c':
+			configure()
+		elif command == 'pr':
+			print_config()
+		elif command == 'se':
+			send()
+		elif command == 'sp':
+			pass
+		elif command == 'spl':
+			pass
+		elif command == 'f':
+			flush()
+		elif command == 's':
+			sampling()	
+		elif command == 'g':
+			pass
+		elif command == 'q':
+			print("Terminating...\n")
+			running = False	
+		else:
+			print_help(True)
 
 if __name__ == "__main__":
-    main()
+	main()
