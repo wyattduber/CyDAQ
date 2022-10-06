@@ -128,14 +128,14 @@ def print_help(cmd):
         print("\tUnknown command. Command List:")
     else:
         print("\tCommand List & Info")
-    helpMsg = """\tc\t\t\t\t Configure Parameters
-    f\t\t\t\t Flush Configuration
-    g\t\t\t\t Start/Stop DAC Generation
-    h\t\t\t\t Print This Help Menu
-    pi\t\t\t\t Ping the Zybo
-    pr\t\t\t\t Print Current Config
-    q\t\t\t\t Exit The Command-Line
-    s [filename]\t Start/Stop Sampling"""
+    helpMsg = """	c\t\t\t\t Configure Parameters
+	f\t\t\t\t Flush Configuration
+	g\t\t\t\t Start/Stop DAC Generation
+	h\t\t\t\t Print This Help Menu
+	pi\t\t\t\t Ping the Zybo
+	pr\t\t\t\t Print Current Config
+	q\t\t\t\t Exit The Command-Line
+	s [filename]\t\t\t Start/Stop Sampling"""
     print(helpMsg)
 
 
