@@ -143,9 +143,8 @@ def flush():
 def start_sampling():
 	cmd_obj.send_start_cmd(comm_port)
 
-def stop_sampling():
-	pass
-
+def stop_sampling(sampleRate=44100,outFile=None):
+	read_fetch(outFile,sampleRate)
 # TODO this probably needs removed/changed
 def construct():
 	pc = ParameterConstructor()
@@ -321,9 +320,9 @@ def main():
 			start_sampling()	
 		elif command[0] == "stop":
 			if len(command) == 1:
-				pass
+				stop_sampling()
 			elif len(command) == 2: 
-				pass
+				stop_sampling(outFile=command[1])
 		elif command[0] == 'g':
 			pass
 		elif command[0] == 'q':
