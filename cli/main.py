@@ -14,13 +14,9 @@ from serial_comm import ctrl_comm, get_port
 cmd_obj = cmd()
 comm_port = get_port()
 
-# Represents the configuration for the cyDAQ. Construction can be guided using the configure() function
-# or manually using other commands
-config = {}
-
 # Default values that are sent to the cyDAQ
 default_config = {
-	"Sample Rate": 44100,
+	"Sample Rate": 100,
 	"Input": "Analog In",
 	"Filter": "All Pass",
 	"Upper Corner": 2000,
@@ -29,6 +25,10 @@ default_config = {
 	"Dac Reps": 0,
 	"Dac Generation Rate": 0,
 }
+
+# Represents the configuration for the cyDAQ. Construction can be guided using the configure() function
+# or manually using other commands
+config = default_config
 
 def print_help(cmd):
 	usages = {}  # TODO dict for individual command usage messages
@@ -39,15 +39,16 @@ def print_help(cmd):
 		print("\tCommand List & Info")
 	helpMsg = """	h/help\t\t\t\t Print This Help Menu
 	ping\t\t\t\t Ping the Zybo
-	c\t\t\t\t Configure Parameters (Guided)
+	configure\t\t\t Configure Parameters (Guided)
+	clear\t\t\t\t Clear parameters to default
 	print\t\t\t\t Print Current Config
 	send\t\t\t\t Send config to cyDAQ
-	set (key) (value)\t\t Set one config value
-	setm (json list)\t\t\t Set multiple config values as a json object
+	set, (key), (value)\t\t Set one config value
+	setm, (json list)\t\t Set multiple config values as a json object
 	flush\t\t\t\t Flush 
 	start\t\t\t\t Start sampling
-	stop [filename]\t\t\t Stop Sampling
-	generate\t\t\t\t Start/Stop DAC Generation
+	stop, [filename]\t\t Stop Sampling
+	generate\t\t\t Start/Stop DAC Generation
 	q/quit\t\t\t\t Exit The Command-Line"""
 	print(helpMsg)
 
@@ -116,9 +117,7 @@ def send():
 	#send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented out before
 	send_config_with_retry(cmd_obj.send_dac_reps, comm_port, config_send["Dac Reps"])
 	send_config_with_retry(cmd_obj.send_dac_gen_rate, comm_port, config_send["Dac Generation Rate"])
-		
-	
-
+			
 def update_single_config(key, value):
 	"""
 	Updates a single entry in the config
@@ -143,9 +142,36 @@ def flush():
 def start_sampling():
 	cmd_obj.send_start_cmd(comm_port)
 
-def stop_sampling(sampleRate=44100,outFile=None):
-	read_fetch(outFile,sampleRate)
-# TODO this probably needs removed/changed
+def stop_sampling(outFile=None):
+	sampleRate = config["Sample Rate"]
+	time = 0
+	period = 1 / int(sampleRate)
+	if outFile is None or outFile == "":
+		outFile = generateFilename()
+	writeFunction = writeCSV
+	f = None
+	with open(outFile, "w") as f:
+		print("Fetching samples...")
+		cmd_obj.send_fetch(comm_port)
+
+		# open a new connection to get data
+		comm_obj = ctrl_comm()
+		comm_obj.open(comm_port)
+
+		# read the data one byte at a time and write to file
+		byte = comm_obj.read_byte()
+		if byte != False and byte == sig_serial.START_BYTE.value:
+			byte_value = 0
+			while byte_value != ord(sig_serial.END_BYTE.value):
+				try:
+					byte_value = comm_obj.read_uint16()
+				except:
+					break
+				if byte_value != ord(sig_serial.END_BYTE.value):
+					writeFunction(f, adc_raw_to_volts(byte_value), time_stamp=time * period)
+					time += 1
+		print("Wrote samples to ", outFile)
+
 def construct():
 	pc = ParameterConstructor()
 	ticket = pc.ticket()
@@ -229,7 +255,7 @@ def writeCSV(f, value, time_stamp=None):
 		f.write("{}\n".format(value))
 
 def generateFilename():
-	return time.strftime('%Y%m%d-%H%M%S')
+	return 'sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
 	
 #TODO rewrite
 def adc_raw_to_volts(sample):
@@ -239,51 +265,6 @@ def adc_raw_to_volts(sample):
 	ADC_GAIN = 10 # Gain needed to rescale ADC measured voltage back (CyDAQ uses 5:1 divider)
 	sample_volts = sample / (2**ADC_N_BITS - 1) * ADC_MAX_V
 	return (sample_volts - ADC_DC_OFFSET_V) * ADC_GAIN
-
-#TODO copied over from other repo. NEEDS RE-WRITTEN :D
-def read_fetch(outFile, sampleRate):
-	# Boy there is just so much wrong here. But my job is to make this house of cards not blow up when program files 
-	# are sitting in a write-protected directory, so there are more band-aids than fixes...
-	time = 0
-	period = None
-	if sampleRate is not None:
-		period = 1 / int(sampleRate)
-	if outFile is None:
-		outFile = 'sample_{}.csv'.format(generateFilename())
-	filepath, file_extension = os.path.splitext(outFile)
-	if ('*' in outFile):
-		filepath = 'sample_{}'.format(generateFilename())
-		
-	writeFunction = writeCSV
-	f = None
-	with open('{}.csv'.format(filepath), "w") as f:
-		writeFunction = writeCSV
-
-		comm_port = get_port()
-		if(comm_port == "" or comm_port is None):
-			print("Zybo not connected")
-			return None
-		print("Fetching samples...")
-		# cmd_obj = cmd()
-		cmd_obj.send_fetch(comm_port)
-		
-		comm_obj = ctrl_comm()
-		comm_obj.open(comm_port)
-
-		byte = comm_obj.read_byte()
-		if byte != False and byte == sig_serial.START_BYTE.value:
-			byte_value = 0
-			while byte_value != ord(sig_serial.END_BYTE.value):
-				try:
-					byte_value = comm_obj.read_uint16()
-				except:
-					break
-				if byte_value != ord(sig_serial.END_BYTE.value):
-					if period is not None:
-						writeFunction(f, adc_raw_to_volts(byte_value), time_stamp=time * period)
-						time += 1
-					else:
-						writeFunction(f, adc_raw_to_volts(byte_value))
 
 def main():
 	running = True
@@ -302,8 +283,11 @@ def main():
 			print_help(False)
 		elif command[0] == 'ping':
 			ping()
-		elif command[0] == 'c':
+		elif command[0] == 'configure':
 			configure()
+		elif command[0] == 'clear':
+			global config
+			config = default_config
 		elif command[0] == 'print':
 			print_config()
 		elif command[0] == 'send':
@@ -312,8 +296,7 @@ def main():
 			if len(command) == 3:
 				update_single_config(command[1], command[2])
 		elif command[0] == 'setm':
-			if len(command) == 2:
-				update_multiple_config(command[1])
+			update_multiple_config(''.join(command[1::]))
 		elif command[0] == 'flush':
 			flush()
 		elif command[0] == 'start':
