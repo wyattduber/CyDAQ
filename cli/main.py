@@ -37,18 +37,18 @@ def print_help(cmd):
 		print("\tUnknown command. Command List:")
 	else:
 		print("\tCommand List & Info")
-	helpMsg = """	h\t\t\t\t Print This Help Menu
-	pi\t\t\t\t Ping the Zybo
+	helpMsg = """	h/help\t\t\t\t Print This Help Menu
+	ping\t\t\t\t Ping the Zybo
 	c\t\t\t\t Configure Parameters (Guided)
-	pr\t\t\t\t Print Current Config
-	se\t\t\t\t Send config to cyDAQ
-	sc (key) (value)\t\t Set one config value
-	scl (json list)\t\t\t Set multiple config values as a json object
-	f\t\t\t\t Flush 
+	print\t\t\t\t Print Current Config
+	send\t\t\t\t Send config to cyDAQ
+	set (key) (value)\t\t Set one config value
+	setm (json list)\t\t\t Set multiple config values as a json object
+	flush\t\t\t\t Flush 
 	start\t\t\t\t Start sampling
 	stop [filename]\t\t\t Stop Sampling
-	g\t\t\t\t Start/Stop DAC Generation
-	q\t\t\t\t Exit The Command-Line"""
+	generate\t\t\t\t Start/Stop DAC Generation
+	q/quit\t\t\t\t Exit The Command-Line"""
 	print(helpMsg)
 
 def ping():
@@ -298,23 +298,23 @@ def main():
 		command = input("> ")
 		command = command.split(",")
 		command = [s.strip(" ") for s in command]
-		if command[0] == 'h':
+		if command[0] == 'h' or command[0] == 'help':
 			print_help(False)
-		elif command[0] == 'pi':
+		elif command[0] == 'ping':
 			ping()
 		elif command[0] == 'c':
 			configure()
-		elif command[0] == 'pr':
+		elif command[0] == 'print':
 			print_config()
-		elif command[0] == 'se':
+		elif command[0] == 'send':
 			send()
-		elif command[0] == 'sc':
+		elif command[0] == 'set':
 			if len(command) == 3:
 				update_single_config(command[1], command[2])
-		elif command[0] == 'scl':
+		elif command[0] == 'setm':
 			if len(command) == 2:
 				update_multiple_config(command[1])
-		elif command[0] == 'f':
+		elif command[0] == 'flush':
 			flush()
 		elif command[0] == 'start':
 			start_sampling()	
@@ -323,9 +323,9 @@ def main():
 				stop_sampling()
 			elif len(command) == 2: 
 				stop_sampling(outFile=command[1])
-		elif command[0] == 'g':
+		elif command[0] == 'generate':
 			pass
-		elif command[0] == 'q':
+		elif command[0] == 'q' or command[0] == 'quit':
 			print("Terminating...\n")
 			running = False	
 		else:
