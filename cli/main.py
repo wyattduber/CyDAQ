@@ -3,11 +3,13 @@ import datetime
 import os
 import argparse
 import json
+import time
+from tracemalloc import start
 from check_params import ParameterConstructor, check_params
 
 from command_comm import cmd
-from master_enum import nameToEnum
-from serial_comm import get_port
+from master_enum import nameToEnum, sig_serial
+from serial_comm import ctrl_comm, get_port
 
 cmd_obj = cmd()
 comm_port = get_port()
@@ -43,7 +45,8 @@ def print_help(cmd):
 	sc (key) (value)\t\t Set one config value
 	scl (json list)\t\t\t Set multiple config values as a json object
 	f\t\t\t\t Flush 
-	s [filename]\t\t\t Start/Stop Sampling
+	start\t\t\t\t Start sampling
+	stop [filename]\t\t\t Stop Sampling
 	g\t\t\t\t Start/Stop DAC Generation
 	q\t\t\t\t Exit The Command-Line"""
 	print(helpMsg)
@@ -137,7 +140,10 @@ def update_multiple_config(json_str):
 def flush():
 	pass
 
-def sampling():
+def start_sampling():
+	cmd_obj.send_start_cmd(comm_port)
+
+def stop_sampling():
 	pass
 
 # TODO this probably needs removed/changed
@@ -217,6 +223,69 @@ def loadCSV(filepath):
 	except:
 		return None
 
+def writeCSV(f, value, time_stamp=None):
+	if time_stamp is not None:	
+		f.write("{},{}\n".format(time_stamp, value))
+	else:
+		f.write("{}\n".format(value))
+
+def generateFilename():
+	return time.strftime('%Y%m%d-%H%M%S')
+	
+#TODO rewrite
+def adc_raw_to_volts(sample):
+	ADC_N_BITS = 12 # Number of bits in the ADC
+	ADC_DC_OFFSET_V = 0.5 # DC level shift on ADC
+	ADC_MAX_V = 1 # Max voltage amplitude at ADC (should equal a raw reading of 2^ADC_N_BITS)
+	ADC_GAIN = 10 # Gain needed to rescale ADC measured voltage back (CyDAQ uses 5:1 divider)
+	sample_volts = sample / (2**ADC_N_BITS - 1) * ADC_MAX_V
+	return (sample_volts - ADC_DC_OFFSET_V) * ADC_GAIN
+
+#TODO copied over from other repo. NEEDS RE-WRITTEN :D
+def read_fetch(outFile, sampleRate):
+	# Boy there is just so much wrong here. But my job is to make this house of cards not blow up when program files 
+	# are sitting in a write-protected directory, so there are more band-aids than fixes...
+	time = 0
+	period = None
+	if sampleRate is not None:
+		period = 1 / int(sampleRate)
+	if outFile is None:
+		outFile = 'sample_{}.csv'.format(generateFilename())
+	filepath, file_extension = os.path.splitext(outFile)
+	if ('*' in outFile):
+		filepath = 'sample_{}'.format(generateFilename())
+		
+	writeFunction = writeCSV
+	f = None
+	with open('{}.csv'.format(filepath), "w") as f:
+		writeFunction = writeCSV
+
+		comm_port = get_port()
+		if(comm_port == "" or comm_port is None):
+			print("Zybo not connected")
+			return None
+		print("Fetching samples...")
+		# cmd_obj = cmd()
+		cmd_obj.send_fetch(comm_port)
+		
+		comm_obj = ctrl_comm()
+		comm_obj.open(comm_port)
+
+		byte = comm_obj.read_byte()
+		if byte != False and byte == sig_serial.START_BYTE.value:
+			byte_value = 0
+			while byte_value != ord(sig_serial.END_BYTE.value):
+				try:
+					byte_value = comm_obj.read_uint16()
+				except:
+					break
+				if byte_value != ord(sig_serial.END_BYTE.value):
+					if period is not None:
+						writeFunction(f, adc_raw_to_volts(byte_value), time_stamp=time * period)
+						time += 1
+					else:
+						writeFunction(f, adc_raw_to_volts(byte_value))
+
 def main():
 	running = True
 	print("CyDAQ Command Line Interface")
@@ -248,8 +317,13 @@ def main():
 				update_multiple_config(command[1])
 		elif command[0] == 'f':
 			flush()
-		elif command[0] == 's':
-			sampling()	
+		elif command[0] == 'start':
+			start_sampling()	
+		elif command[0] == "stop":
+			if len(command) == 1:
+				pass
+			elif len(command) == 2: 
+				pass
 		elif command[0] == 'g':
 			pass
 		elif command[0] == 'q':
