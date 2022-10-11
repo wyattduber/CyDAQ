@@ -1,10 +1,10 @@
--- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+-- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
--- Date        : Wed Oct 13 19:07:50 2021
--- Host        : ETGLABTEST-02 running 64-bit major release  (build 9200)
+-- Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+-- Date        : Mon Oct 10 20:32:21 2022
+-- Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               X:/CyDAQ/firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_timer_0_0/design_1_axi_timer_0_0_sim_netlist.vhdl
+--               e:/sdmay23-47-master/CyDAQ-Firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_timer_0_0/design_1_axi_timer_0_0_sim_netlist.vhdl
 -- Design      : design_1_axi_timer_0_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -688,14 +688,23 @@ architecture STRUCTURE of design_1_axi_timer_0_0_counter_f is
   attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[7]_i_1\ : label is "soft_lutpair47";
   attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[8]_i_1\ : label is "soft_lutpair47";
   attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[9]_i_1\ : label is "soft_lutpair46";
+  attribute ADDER_THRESHOLD : integer;
+  attribute ADDER_THRESHOLD of icount_out0_carry : label is 35;
   attribute METHODOLOGY_DRC_VIOS : string;
   attribute METHODOLOGY_DRC_VIOS of icount_out0_carry : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__0\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__0\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__1\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__1\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__2\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__2\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__3\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__3\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__4\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__4\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__5\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__5\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__6\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__6\ : label is "{SYNTH-8 {cell *THIS*}}";
 begin
   \INFERRED_GEN.icount_out_reg[0]_0\ <= \^inferred_gen.icount_out_reg[0]_0\;
@@ -2391,14 +2400,23 @@ architecture STRUCTURE of design_1_axi_timer_0_0_counter_f_3 is
   attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[7]_i_1__0\ : label is "soft_lutpair31";
   attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[8]_i_1__0\ : label is "soft_lutpair31";
   attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[9]_i_1__0\ : label is "soft_lutpair30";
+  attribute ADDER_THRESHOLD : integer;
+  attribute ADDER_THRESHOLD of icount_out0_carry : label is 35;
   attribute METHODOLOGY_DRC_VIOS : string;
   attribute METHODOLOGY_DRC_VIOS of icount_out0_carry : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__0\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__0\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__1\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__1\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__2\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__2\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__3\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__3\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__4\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__4\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__5\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__5\ : label is "{SYNTH-8 {cell *THIS*}}";
+  attribute ADDER_THRESHOLD of \icount_out0_carry__6\ : label is 35;
   attribute METHODOLOGY_DRC_VIOS of \icount_out0_carry__6\ : label is "{SYNTH-8 {cell *THIS*}}";
 begin
   DI(2 downto 0) <= \^di\(2 downto 0);
@@ -4529,7 +4547,7 @@ entity design_1_axi_timer_0_0_address_decoder is
     s_axi_rvalid_i_reg_0 : in STD_LOGIC;
     s_axi_bready : in STD_LOGIC;
     s_axi_bvalid_i_reg : in STD_LOGIC;
-    D_2 : in STD_LOGIC;
+    read_done0 : in STD_LOGIC;
     read_done1 : in STD_LOGIC;
     bus2ip_rnw_i : in STD_LOGIC;
     \GEN_BKEND_CE_REGISTERS[7].ce_out_i_reg[7]_0\ : in STD_LOGIC_VECTOR ( 2 downto 0 )
@@ -4600,35 +4618,35 @@ architecture STRUCTURE of design_1_axi_timer_0_0_address_decoder is
   signal s_axi_wready_INST_0_i_5_n_0 : STD_LOGIC;
   attribute SOFT_HLUTNM : string;
   attribute SOFT_HLUTNM of Bus_RNW_reg_i_1 : label is "soft_lutpair14";
-  attribute SOFT_HLUTNM of \GEN.DATA_WIDTH_GEN[0].NUM_BUSES_GEN[1].MUXCY_GEN.MUXCY_I_i_2\ : label is "soft_lutpair10";
-  attribute SOFT_HLUTNM of \GEN.DATA_WIDTH_GEN[0].NUM_BUSES_GEN[1].MUXCY_GEN.MUXCY_I_i_3\ : label is "soft_lutpair11";
-  attribute SOFT_HLUTNM of \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_i_2\ : label is "soft_lutpair4";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[0].LOAD_REG_I_i_2__0\ : label is "soft_lutpair6";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[10].LOAD_REG_I_i_1\ : label is "soft_lutpair12";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[11].LOAD_REG_I_i_1\ : label is "soft_lutpair3";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[1].LOAD_REG_I_i_1__0\ : label is "soft_lutpair7";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[2].LOAD_REG_I_i_1__0\ : label is "soft_lutpair8";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[3].LOAD_REG_I_i_1\ : label is "soft_lutpair5";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[3].LOAD_REG_I_i_1__0\ : label is "soft_lutpair10";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[4].LOAD_REG_I_i_1\ : label is "soft_lutpair4";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[4].LOAD_REG_I_i_1__0\ : label is "soft_lutpair11";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[5].LOAD_REG_I_i_1__0\ : label is "soft_lutpair13";
-  attribute SOFT_HLUTNM of READ_DONE0_I_i_2 : label is "soft_lutpair5";
-  attribute SOFT_HLUTNM of READ_DONE1_I_i_2 : label is "soft_lutpair8";
-  attribute SOFT_HLUTNM of \TCSR0_GENERATE[20].TCSR0_FF_I_i_1\ : label is "soft_lutpair12";
-  attribute SOFT_HLUTNM of \TCSR0_GENERATE[23].TCSR0_FF_I_i_1\ : label is "soft_lutpair9";
-  attribute SOFT_HLUTNM of \TCSR0_GENERATE[24].TCSR0_FF_I_i_1\ : label is "soft_lutpair0";
-  attribute SOFT_HLUTNM of \TCSR1_GENERATE[22].TCSR1_FF_I_i_1\ : label is "soft_lutpair13";
-  attribute SOFT_HLUTNM of \TCSR1_GENERATE[23].TCSR1_FF_I_i_1\ : label is "soft_lutpair9";
+  attribute SOFT_HLUTNM of \GEN.DATA_WIDTH_GEN[0].NUM_BUSES_GEN[1].MUXCY_GEN.MUXCY_I_i_2\ : label is "soft_lutpair9";
+  attribute SOFT_HLUTNM of \GEN.DATA_WIDTH_GEN[0].NUM_BUSES_GEN[1].MUXCY_GEN.MUXCY_I_i_3\ : label is "soft_lutpair10";
+  attribute SOFT_HLUTNM of \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_i_2\ : label is "soft_lutpair5";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[23].LOAD_REG_I_i_1\ : label is "soft_lutpair12";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[24].LOAD_REG_I_i_1\ : label is "soft_lutpair11";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[25].LOAD_REG_I_i_1\ : label is "soft_lutpair10";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[26].LOAD_REG_I_i_1\ : label is "soft_lutpair9";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[27].LOAD_REG_I_i_1\ : label is "soft_lutpair8";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[28].LOAD_REG_I_i_1\ : label is "soft_lutpair7";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[29].LOAD_REG_I_i_1\ : label is "soft_lutpair6";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[30].LOAD_REG_I_i_1\ : label is "soft_lutpair5";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[31].LOAD_REG_I_i_1\ : label is "soft_lutpair4";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[31].LOAD_REG_I_i_1__0\ : label is "soft_lutpair13";
+  attribute SOFT_HLUTNM of READ_DONE0_I_i_2 : label is "soft_lutpair6";
+  attribute SOFT_HLUTNM of READ_DONE1_I_i_2 : label is "soft_lutpair13";
+  attribute SOFT_HLUTNM of \TCSR0_GENERATE[20].TCSR0_FF_I_i_1\ : label is "soft_lutpair11";
+  attribute SOFT_HLUTNM of \TCSR0_GENERATE[23].TCSR0_FF_I_i_1\ : label is "soft_lutpair3";
+  attribute SOFT_HLUTNM of \TCSR0_GENERATE[24].TCSR0_FF_I_i_1\ : label is "soft_lutpair1";
+  attribute SOFT_HLUTNM of \TCSR1_GENERATE[22].TCSR1_FF_I_i_1\ : label is "soft_lutpair12";
+  attribute SOFT_HLUTNM of \TCSR1_GENERATE[23].TCSR1_FF_I_i_1\ : label is "soft_lutpair3";
   attribute SOFT_HLUTNM of \TCSR1_GENERATE[24].TCSR1_FF_I_i_1\ : label is "soft_lutpair2";
-  attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_1 : label is "soft_lutpair1";
-  attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_2 : label is "soft_lutpair6";
+  attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_1 : label is "soft_lutpair0";
+  attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_2 : label is "soft_lutpair7";
   attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_3 : label is "soft_lutpair2";
-  attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_4 : label is "soft_lutpair0";
+  attribute SOFT_HLUTNM of s_axi_arready_INST_0_i_4 : label is "soft_lutpair1";
   attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_2 : label is "soft_lutpair14";
-  attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_3 : label is "soft_lutpair7";
-  attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_4 : label is "soft_lutpair3";
-  attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_5 : label is "soft_lutpair1";
+  attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_3 : label is "soft_lutpair8";
+  attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_4 : label is "soft_lutpair4";
+  attribute SOFT_HLUTNM of s_axi_wready_INST_0_i_5 : label is "soft_lutpair0";
 begin
   Bus_RNW_reg_reg_0 <= \^bus_rnw_reg_reg_0\;
   Bus_RNW_reg_reg_1 <= \^bus_rnw_reg_reg_1\;
@@ -5780,7 +5798,7 @@ READ_DONE0_I_i_2: unisim.vcomponents.LUT2
     )
         port map (
       I0 => \^gen_bkend_ce_registers[1].ce_out_i_reg[1]_0\,
-      I1 => D_2,
+      I1 => read_done0,
       O => \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_21\
     );
 READ_DONE1_I_i_2: unisim.vcomponents.LUT2
@@ -6045,7 +6063,7 @@ entity design_1_axi_timer_0_0_count_module is
     generateOutPre00 : out STD_LOGIC;
     \INFERRED_GEN.icount_out_reg[31]_0\ : in STD_LOGIC;
     CE : in STD_LOGIC;
-    D_1 : in STD_LOGIC;
+    D_0 : in STD_LOGIC;
     s_axi_aclk : in STD_LOGIC;
     \LOAD_REG_GEN[1].LOAD_REG_I_0\ : in STD_LOGIC;
     \LOAD_REG_GEN[2].LOAD_REG_I_0\ : in STD_LOGIC;
@@ -6161,7 +6179,7 @@ COUNTER_I: entity work.design_1_axi_timer_0_0_counter_f_3
         port map (
       C => s_axi_aclk,
       CE => CE,
-      D => D_1,
+      D => D_0,
       Q => \^load_reg_gen[0].load_reg_i_0\(20),
       R => \INFERRED_GEN.icount_out_reg[31]_0\
     );
@@ -6652,7 +6670,7 @@ entity design_1_axi_timer_0_0_count_module_0 is
     \LOAD_REG_GEN[27].LOAD_REG_I_0\ : out STD_LOGIC;
     \LOAD_REG_GEN[28].LOAD_REG_I_0\ : out STD_LOGIC;
     CE : in STD_LOGIC;
-    D_2 : in STD_LOGIC;
+    D_1 : in STD_LOGIC;
     s_axi_aclk : in STD_LOGIC;
     \LOAD_REG_GEN[1].LOAD_REG_I_0\ : in STD_LOGIC;
     \LOAD_REG_GEN[2].LOAD_REG_I_0\ : in STD_LOGIC;
@@ -6828,7 +6846,7 @@ COUNTER_I: entity work.design_1_axi_timer_0_0_counter_f
         port map (
       C => s_axi_aclk,
       CE => CE,
-      D => D_2,
+      D => D_1,
       Q => loadReg_DBus_0(31),
       R => \^s_axi_aresetn_0\
     );
@@ -7280,7 +7298,7 @@ entity design_1_axi_timer_0_0_timer_control is
     \TCSR0_GENERATE[20].TCSR0_FF_I_0\ : out STD_LOGIC;
     \TCSR0_GENERATE[24].TCSR0_FF_I_0\ : out STD_LOGIC;
     \TCSR1_GENERATE[24].TCSR1_FF_I_0\ : out STD_LOGIC;
-    D_0 : out STD_LOGIC;
+    read_done0 : out STD_LOGIC;
     read_done1 : out STD_LOGIC;
     CE : out STD_LOGIC;
     CE_0 : out STD_LOGIC;
@@ -7312,10 +7330,10 @@ entity design_1_axi_timer_0_0_timer_control is
     pair0_Select : in STD_LOGIC;
     \TCSR0_GENERATE[24].TCSR0_FF_I_1\ : in STD_LOGIC;
     \TCSR1_GENERATE[24].TCSR1_FF_I_2\ : in STD_LOGIC;
-    READ_DONE0_I_0 : in STD_LOGIC;
-    READ_DONE1_I_0 : in STD_LOGIC;
     \TCSR0_GENERATE[23].TCSR0_FF_I_1\ : in STD_LOGIC;
     \TCSR1_GENERATE[23].TCSR1_FF_I_0\ : in STD_LOGIC;
+    READ_DONE0_I_0 : in STD_LOGIC;
+    READ_DONE1_I_0 : in STD_LOGIC;
     Bus_RNW_reg : in STD_LOGIC;
     \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg\ : in STD_LOGIC;
     counter_TC : in STD_LOGIC_VECTOR ( 0 to 1 );
@@ -7336,7 +7354,6 @@ entity design_1_axi_timer_0_0_timer_control is
 end design_1_axi_timer_0_0_timer_control;
 
 architecture STRUCTURE of design_1_axi_timer_0_0_timer_control is
-  signal \^d_0\ : STD_LOGIC;
   signal GenerateOut00 : STD_LOGIC;
   signal GenerateOut10 : STD_LOGIC;
   signal \INFERRED_GEN.icount_out[31]_i_3_n_0\ : STD_LOGIC;
@@ -7353,8 +7370,8 @@ architecture STRUCTURE of design_1_axi_timer_0_0_timer_control is
   signal \LOAD_REG_GEN[0].LOAD_REG_I_i_4_n_0\ : STD_LOGIC;
   signal \LOAD_REG_GEN[0].LOAD_REG_I_i_5_n_0\ : STD_LOGIC;
   signal \^q\ : STD_LOGIC_VECTOR ( 1 downto 0 );
+  signal READ_DONE0_I_i_1_n_0 : STD_LOGIC;
   signal READ_DONE1_I_i_1_n_0 : STD_LOGIC;
-  signal R_0 : STD_LOGIC;
   signal \^tcsr0_generate[20].tcsr0_ff_i_0\ : STD_LOGIC;
   signal \TCSR0_GENERATE[23].TCSR0_FF_I_i_2_n_0\ : STD_LOGIC;
   signal \TCSR0_GENERATE[23].TCSR0_FF_I_i_3_n_0\ : STD_LOGIC;
@@ -7377,15 +7394,16 @@ architecture STRUCTURE of design_1_axi_timer_0_0_timer_control is
   signal \^generateout1\ : STD_LOGIC;
   signal icount_out0_carry_i_7_n_0 : STD_LOGIC;
   signal p_46_in : STD_LOGIC;
+  signal \^read_done0\ : STD_LOGIC;
   signal \^read_done1\ : STD_LOGIC;
   signal tCSR0_Reg : STD_LOGIC_VECTOR ( 21 to 31 );
   signal tCSR1_Reg : STD_LOGIC_VECTOR ( 21 to 31 );
   attribute SOFT_HLUTNM : string;
-  attribute SOFT_HLUTNM of GenerateOut0_i_2 : label is "soft_lutpair52";
-  attribute SOFT_HLUTNM of GenerateOut1_i_1 : label is "soft_lutpair52";
-  attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[31]_i_8__0\ : label is "soft_lutpair54";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[0].LOAD_REG_I_i_3__0\ : label is "soft_lutpair53";
-  attribute SOFT_HLUTNM of \LOAD_REG_GEN[0].LOAD_REG_I_i_4\ : label is "soft_lutpair53";
+  attribute SOFT_HLUTNM of GenerateOut0_i_2 : label is "soft_lutpair54";
+  attribute SOFT_HLUTNM of GenerateOut1_i_1 : label is "soft_lutpair54";
+  attribute SOFT_HLUTNM of \INFERRED_GEN.icount_out[31]_i_8__0\ : label is "soft_lutpair53";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[0].LOAD_REG_I_i_3__0\ : label is "soft_lutpair52";
+  attribute SOFT_HLUTNM of \LOAD_REG_GEN[0].LOAD_REG_I_i_4\ : label is "soft_lutpair52";
   attribute SOFT_HLUTNM of \LOAD_REG_GEN[0].LOAD_REG_I_i_5\ : label is "soft_lutpair55";
   attribute BOX_TYPE : string;
   attribute BOX_TYPE of READ_DONE0_I : label is "PRIMITIVE";
@@ -7466,15 +7484,15 @@ architecture STRUCTURE of design_1_axi_timer_0_0_timer_control is
   attribute IS_CE_INVERTED of \TCSR1_GENERATE[31].TCSR1_FF_I\ : label is "1'b0";
   attribute IS_S_INVERTED of \TCSR1_GENERATE[31].TCSR1_FF_I\ : label is "1'b0";
   attribute SOFT_HLUTNM of captureTrig0_pulse_d1_i_1 : label is "soft_lutpair55";
-  attribute SOFT_HLUTNM of icount_out0_carry_i_7 : label is "soft_lutpair54";
+  attribute SOFT_HLUTNM of icount_out0_carry_i_7 : label is "soft_lutpair53";
 begin
-  D_0 <= \^d_0\;
   Q(1 downto 0) <= \^q\(1 downto 0);
   \TCSR0_GENERATE[20].TCSR0_FF_I_0\ <= \^tcsr0_generate[20].tcsr0_ff_i_0\;
   \TCSR0_GENERATE[24].TCSR0_FF_I_0\ <= \^tcsr0_generate[24].tcsr0_ff_i_0\;
   \TCSR1_GENERATE[24].TCSR1_FF_I_0\ <= \^tcsr1_generate[24].tcsr1_ff_i_0\;
   generateout0 <= \^generateout0\;
   generateout1 <= \^generateout1\;
+  read_done0 <= \^read_done0\;
   read_done1 <= \^read_done1\;
 \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_i_1\: unisim.vcomponents.LUT6
     generic map(
@@ -7832,7 +7850,7 @@ Interrupt_reg: unisim.vcomponents.FDRE
       I2 => \LOAD_REG_GEN[0].LOAD_REG_I_i_3_n_0\,
       I3 => tCSR0_Reg(31),
       I4 => tCSR0_Reg(27),
-      I5 => \^d_0\,
+      I5 => \^read_done0\,
       O => CE
     );
 \LOAD_REG_GEN[0].LOAD_REG_I_i_1__0\: unisim.vcomponents.LUT6
@@ -7937,8 +7955,8 @@ READ_DONE0_I: unisim.vcomponents.FDRE
       C => s_axi_aclk,
       CE => '1',
       D => READ_DONE0_I_0,
-      Q => \^d_0\,
-      R => R_0
+      Q => \^read_done0\,
+      R => READ_DONE0_I_i_1_n_0
     );
 READ_DONE0_I_i_1: unisim.vcomponents.LUT4
     generic map(
@@ -7949,7 +7967,7 @@ READ_DONE0_I_i_1: unisim.vcomponents.LUT4
       I1 => \^tcsr0_generate[20].tcsr0_ff_i_0\,
       I2 => captureTrig0_d2,
       I3 => captureTrig0_d,
-      O => R_0
+      O => READ_DONE0_I_i_1_n_0
     );
 READ_DONE1_I: unisim.vcomponents.FDRE
     generic map(
@@ -8582,7 +8600,7 @@ entity design_1_axi_timer_0_0_slave_attachment is
     s_axi_bready : in STD_LOGIC;
     s_axi_araddr : in STD_LOGIC_VECTOR ( 2 downto 0 );
     s_axi_awaddr : in STD_LOGIC_VECTOR ( 2 downto 0 );
-    D_2 : in STD_LOGIC;
+    read_done0 : in STD_LOGIC;
     read_done1 : in STD_LOGIC;
     D : in STD_LOGIC_VECTOR ( 31 downto 0 )
   );
@@ -8666,7 +8684,7 @@ architecture STRUCTURE of design_1_axi_timer_0_0_slave_attachment is
   attribute SOFT_HLUTNM of \INCLUDE_DPHASE_TIMER.dpto_cnt[2]_i_1\ : label is "soft_lutpair17";
   attribute SOFT_HLUTNM of \INCLUDE_DPHASE_TIMER.dpto_cnt[3]_i_1\ : label is "soft_lutpair15";
   attribute SOFT_HLUTNM of \INCLUDE_DPHASE_TIMER.dpto_cnt[4]_i_1\ : label is "soft_lutpair15";
-  attribute SOFT_HLUTNM of \bus2ip_addr_i[2]_i_1\ : label is "soft_lutpair18";
+  attribute SOFT_HLUTNM of \bus2ip_addr_i[3]_i_1\ : label is "soft_lutpair18";
   attribute SOFT_HLUTNM of \bus2ip_addr_i[4]_i_2\ : label is "soft_lutpair18";
   attribute SOFT_HLUTNM of start2_i_1 : label is "soft_lutpair16";
   attribute SOFT_HLUTNM of \state[1]_i_2\ : label is "soft_lutpair16";
@@ -8905,7 +8923,6 @@ I_DECODER: entity work.design_1_axi_timer_0_0_address_decoder
       D(0) => I_DECODER_n_5,
       D_0 => D_0,
       D_1 => D_1,
-      D_2 => D_2,
       \FSM_onehot_state_reg[2]\(2) => I_DECODER_n_6,
       \FSM_onehot_state_reg[2]\(1) => I_DECODER_n_7,
       \FSM_onehot_state_reg[2]\(0) => I_DECODER_n_8,
@@ -8952,6 +8969,7 @@ I_DECODER: entity work.design_1_axi_timer_0_0_address_decoder
       is_write_reg => is_write_reg_0,
       loadReg_DBus_32(20 downto 0) => loadReg_DBus_32(20 downto 0),
       pair0_Select => pair0_Select,
+      read_done0 => read_done0,
       read_done1 => read_done1,
       s_axi_aclk => s_axi_aclk,
       s_axi_aresetn => s_axi_aresetn,
@@ -9610,7 +9628,7 @@ entity design_1_axi_timer_0_0_tc_core is
     interrupt : out STD_LOGIC;
     \TCSR0_GENERATE[20].TCSR0_FF_I\ : out STD_LOGIC_VECTOR ( 1 downto 0 );
     \TCSR1_GENERATE[24].TCSR1_FF_I\ : out STD_LOGIC_VECTOR ( 0 to 0 );
-    D_0 : out STD_LOGIC;
+    read_done0 : out STD_LOGIC;
     read_done1 : out STD_LOGIC;
     pwm0 : out STD_LOGIC;
     \s_axi_rdata_i_reg[31]\ : in STD_LOGIC;
@@ -9634,7 +9652,7 @@ entity design_1_axi_timer_0_0_tc_core is
     \s_axi_rdata_i_reg[13]\ : in STD_LOGIC;
     \s_axi_rdata_i_reg[12]\ : in STD_LOGIC;
     \s_axi_rdata_i_reg[11]\ : in STD_LOGIC;
-    D_1 : in STD_LOGIC;
+    D_0 : in STD_LOGIC;
     s_axi_aclk : in STD_LOGIC;
     \LOAD_REG_GEN[1].LOAD_REG_I\ : in STD_LOGIC;
     \LOAD_REG_GEN[2].LOAD_REG_I\ : in STD_LOGIC;
@@ -9667,7 +9685,7 @@ entity design_1_axi_timer_0_0_tc_core is
     \LOAD_REG_GEN[29].LOAD_REG_I\ : in STD_LOGIC;
     \LOAD_REG_GEN[30].LOAD_REG_I\ : in STD_LOGIC;
     \LOAD_REG_GEN[31].LOAD_REG_I\ : in STD_LOGIC;
-    D_2 : in STD_LOGIC;
+    D_1 : in STD_LOGIC;
     \LOAD_REG_GEN[1].LOAD_REG_I_0\ : in STD_LOGIC;
     \LOAD_REG_GEN[2].LOAD_REG_I_0\ : in STD_LOGIC;
     \LOAD_REG_GEN[3].LOAD_REG_I_0\ : in STD_LOGIC;
@@ -9704,10 +9722,10 @@ entity design_1_axi_timer_0_0_tc_core is
     pair0_Select : in STD_LOGIC;
     \TCSR0_GENERATE[24].TCSR0_FF_I\ : in STD_LOGIC;
     \TCSR1_GENERATE[24].TCSR1_FF_I_0\ : in STD_LOGIC;
-    READ_DONE0_I : in STD_LOGIC;
-    READ_DONE1_I : in STD_LOGIC;
     \TCSR0_GENERATE[23].TCSR0_FF_I\ : in STD_LOGIC;
     \TCSR1_GENERATE[23].TCSR1_FF_I\ : in STD_LOGIC;
+    READ_DONE0_I : in STD_LOGIC;
+    READ_DONE1_I : in STD_LOGIC;
     s_axi_aresetn : in STD_LOGIC;
     Bus_RNW_reg : in STD_LOGIC;
     \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg\ : in STD_LOGIC;
@@ -9779,7 +9797,6 @@ architecture STRUCTURE of design_1_axi_timer_0_0_tc_core is
   signal TIMER_CONTROL_I_n_26 : STD_LOGIC;
   signal TIMER_CONTROL_I_n_28 : STD_LOGIC;
   signal TIMER_CONTROL_I_n_29 : STD_LOGIC;
-  signal TIMER_CONTROL_I_n_3 : STD_LOGIC;
   signal TIMER_CONTROL_I_n_30 : STD_LOGIC;
   signal TIMER_CONTROL_I_n_4 : STD_LOGIC;
   signal \^bus2ip_reset\ : STD_LOGIC;
@@ -9789,6 +9806,7 @@ architecture STRUCTURE of design_1_axi_timer_0_0_tc_core is
   signal generateOutPre00 : STD_LOGIC;
   signal generateOutPre10 : STD_LOGIC;
   signal loadReg_DBus_32 : STD_LOGIC_VECTOR ( 10 downto 0 );
+  signal p_0_in : STD_LOGIC;
   signal \^pwm0\ : STD_LOGIC;
   attribute BOX_TYPE : string;
   attribute BOX_TYPE of PWM_FF_I : label is "PRIMITIVE";
@@ -9803,7 +9821,7 @@ COUNTER_0_I: entity work.design_1_axi_timer_0_0_count_module
      port map (
       CE => CE_0,
       DI(2 downto 0) => \^counterreg_dbus_32\(30 downto 28),
-      D_1 => D_1,
+      D_0 => D_0,
       \INFERRED_GEN.icount_out_reg[0]\ => \^counterreg_dbus_32\(0),
       \INFERRED_GEN.icount_out_reg[0]_0\ => TIMER_CONTROL_I_n_25,
       \INFERRED_GEN.icount_out_reg[11]\(3 downto 0) => \^counterreg_dbus_32\(11 downto 8),
@@ -9848,7 +9866,7 @@ COUNTER_0_I: entity work.design_1_axi_timer_0_0_count_module
       \LOAD_REG_GEN[7].LOAD_REG_I_0\ => \LOAD_REG_GEN[7].LOAD_REG_I\,
       \LOAD_REG_GEN[8].LOAD_REG_I_0\ => \LOAD_REG_GEN[8].LOAD_REG_I\,
       \LOAD_REG_GEN[9].LOAD_REG_I_0\ => \LOAD_REG_GEN[9].LOAD_REG_I\,
-      Q(0) => TIMER_CONTROL_I_n_3,
+      Q(0) => p_0_in,
       S(0) => TIMER_CONTROL_I_n_30,
       counter_TC(0) => counter_TC(0),
       generateOutPre00 => generateOutPre00,
@@ -9860,7 +9878,7 @@ COUNTER_0_I: entity work.design_1_axi_timer_0_0_count_module
      port map (
       CE => CE,
       DI(2 downto 0) => \^counterreg_dbus_0\(30 downto 28),
-      D_2 => D_2,
+      D_1 => D_1,
       \INFERRED_GEN.icount_out_reg[0]\ => \^counterreg_dbus_0\(0),
       \INFERRED_GEN.icount_out_reg[0]_0\ => \GEN_SECOND_TIMER.COUNTER_1_I_n_35\,
       \INFERRED_GEN.icount_out_reg[0]_1\ => TIMER_CONTROL_I_n_23,
@@ -10034,7 +10052,6 @@ TIMER_CONTROL_I: entity work.design_1_axi_timer_0_0_timer_control
       Bus_RNW_reg => Bus_RNW_reg,
       CE => CE_0,
       CE_0 => CE,
-      D_0 => D_0,
       \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I\ => \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I\,
       \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0\ => \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0\,
       \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1\ => \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1\,
@@ -10042,7 +10059,7 @@ TIMER_CONTROL_I: entity work.design_1_axi_timer_0_0_timer_control
       GenerateOut0_reg_0 => TIMER_CONTROL_I_n_28,
       \INFERRED_GEN.icount_out_reg[1]\(0) => TIMER_CONTROL_I_n_30,
       \LOAD_REG_GEN[7].LOAD_REG_I\ => \LOAD_REG_GEN[7].LOAD_REG_I_1\,
-      Q(1) => TIMER_CONTROL_I_n_3,
+      Q(1) => p_0_in,
       Q(0) => TIMER_CONTROL_I_n_4,
       R => R,
       READ_DONE0_I_0 => READ_DONE0_I,
@@ -10086,6 +10103,7 @@ TIMER_CONTROL_I: entity work.design_1_axi_timer_0_0_timer_control
       loadReg_DBus_32(10 downto 0) => loadReg_DBus_32(10 downto 0),
       pair0_Select => pair0_Select,
       pwm0 => \^pwm0\,
+      read_done0 => read_done0,
       read_done1 => read_done1,
       s_axi_aclk => s_axi_aclk,
       s_axi_wdata(9 downto 0) => s_axi_wdata(9 downto 0)
@@ -10220,7 +10238,7 @@ entity design_1_axi_timer_0_0_axi_lite_ipif is
     s_axi_bready : in STD_LOGIC;
     s_axi_araddr : in STD_LOGIC_VECTOR ( 2 downto 0 );
     s_axi_awaddr : in STD_LOGIC_VECTOR ( 2 downto 0 );
-    D_2 : in STD_LOGIC;
+    read_done0 : in STD_LOGIC;
     read_done1 : in STD_LOGIC;
     D : in STD_LOGIC_VECTOR ( 31 downto 0 )
   );
@@ -10304,7 +10322,6 @@ I_SLAVE_ATTACHMENT: entity work.design_1_axi_timer_0_0_slave_attachment
       D(31 downto 0) => D(31 downto 0),
       D_0 => D_0,
       D_1 => D_1,
-      D_2 => D_2,
       \GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0]\ => \GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0]\,
       \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]\ => \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg\,
       \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_0\ => \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]\,
@@ -10340,6 +10357,7 @@ I_SLAVE_ATTACHMENT: entity work.design_1_axi_timer_0_0_slave_attachment
       is_write_reg_0 => is_write_reg,
       loadReg_DBus_32(20 downto 0) => loadReg_DBus_32(20 downto 0),
       pair0_Select => pair0_Select,
+      read_done0 => read_done0,
       read_done1 => read_done1,
       s_axi_aclk => s_axi_aclk,
       s_axi_araddr(2 downto 0) => s_axi_araddr(2 downto 0),
@@ -10581,8 +10599,8 @@ architecture STRUCTURE of design_1_axi_timer_0_0_axi_timer is
   signal \GEN_SECOND_TIMER.COUNTER_1_I/D\ : STD_LOGIC;
   signal \I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg\ : STD_LOGIC;
   signal \I_SLAVE_ATTACHMENT/I_DECODER/GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg\ : STD_LOGIC;
-  signal \TIMER_CONTROL_I/D\ : STD_LOGIC;
   signal \TIMER_CONTROL_I/pair0_Select\ : STD_LOGIC;
+  signal \TIMER_CONTROL_I/read_done0\ : STD_LOGIC;
   signal \TIMER_CONTROL_I/read_done1\ : STD_LOGIC;
   signal bus2ip_reset : STD_LOGIC;
   signal bus2ip_wrce : STD_LOGIC_VECTOR ( 0 to 4 );
@@ -10643,7 +10661,6 @@ AXI4_LITE_I: entity work.design_1_axi_timer_0_0_axi_lite_ipif
       D(0) => ip2bus_data(31),
       D_0 => \COUNTER_0_I/D\,
       D_1 => \GEN_SECOND_TIMER.COUNTER_1_I/D\,
-      D_2 => \TIMER_CONTROL_I/D\,
       \GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0]\ => AXI4_LITE_I_n_105,
       \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg\ => \I_SLAVE_ATTACHMENT/I_DECODER/GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg\,
       \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]\ => AXI4_LITE_I_n_80,
@@ -10680,6 +10697,7 @@ AXI4_LITE_I: entity work.design_1_axi_timer_0_0_axi_lite_ipif
       is_write_reg => \^s_axi_wready\,
       loadReg_DBus_32(20 downto 0) => loadReg_DBus_32(31 downto 11),
       pair0_Select => \TIMER_CONTROL_I/pair0_Select\,
+      read_done0 => \TIMER_CONTROL_I/read_done0\,
       read_done1 => \TIMER_CONTROL_I/read_done1\,
       s_axi_aclk => s_axi_aclk,
       s_axi_araddr(2 downto 0) => s_axi_araddr(4 downto 2),
@@ -10801,9 +10819,8 @@ TC_CORE_I: entity work.design_1_axi_timer_0_0_tc_core
       D(2) => ip2bus_data(29),
       D(1) => ip2bus_data(30),
       D(0) => ip2bus_data(31),
-      D_0 => \TIMER_CONTROL_I/D\,
-      D_1 => \COUNTER_0_I/D\,
-      D_2 => \GEN_SECOND_TIMER.COUNTER_1_I/D\,
+      D_0 => \COUNTER_0_I/D\,
+      D_1 => \GEN_SECOND_TIMER.COUNTER_1_I/D\,
       \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I\ => AXI4_LITE_I_n_77,
       \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0\ => AXI4_LITE_I_n_101,
       \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1\ => AXI4_LITE_I_n_78,
@@ -10894,6 +10911,7 @@ TC_CORE_I: entity work.design_1_axi_timer_0_0_tc_core
       interrupt => interrupt,
       pair0_Select => \TIMER_CONTROL_I/pair0_Select\,
       pwm0 => pwm0,
+      read_done0 => \TIMER_CONTROL_I/read_done0\,
       read_done1 => \TIMER_CONTROL_I/read_done1\,
       s_axi_aclk => s_axi_aclk,
       s_axi_aresetn => s_axi_aresetn,

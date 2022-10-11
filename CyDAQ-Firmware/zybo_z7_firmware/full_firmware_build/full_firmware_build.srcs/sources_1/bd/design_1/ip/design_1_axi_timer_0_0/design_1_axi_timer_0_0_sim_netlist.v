@@ -1,10 +1,10 @@
-// Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+// Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
-// Date        : Wed Oct 13 19:07:47 2021
-// Host        : ETGLABTEST-02 running 64-bit major release  (build 9200)
+// Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+// Date        : Mon Oct 10 20:32:20 2022
+// Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
-//               X:/CyDAQ/firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_timer_0_0/design_1_axi_timer_0_0_sim_netlist.v
+//               e:/sdmay23-47-master/CyDAQ-Firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_timer_0_0/design_1_axi_timer_0_0_sim_netlist.v
 // Design      : design_1_axi_timer_0_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -267,7 +267,7 @@ module design_1_axi_timer_0_0_address_decoder
     s_axi_rvalid_i_reg_0,
     s_axi_bready,
     s_axi_bvalid_i_reg,
-    D_2,
+    read_done0,
     read_done1,
     bus2ip_rnw_i,
     \GEN_BKEND_CE_REGISTERS[7].ce_out_i_reg[7]_0 );
@@ -402,7 +402,7 @@ module design_1_axi_timer_0_0_address_decoder
   input s_axi_rvalid_i_reg_0;
   input s_axi_bready;
   input s_axi_bvalid_i_reg;
-  input D_2;
+  input read_done0;
   input read_done1;
   input bus2ip_rnw_i;
   input [2:0]\GEN_BKEND_CE_REGISTERS[7].ce_out_i_reg[7]_0 ;
@@ -418,7 +418,6 @@ module design_1_axi_timer_0_0_address_decoder
   wire [1:0]D;
   wire D_0;
   wire D_1;
-  wire D_2;
   wire [2:0]\FSM_onehot_state_reg[2] ;
   wire [3:0]\FSM_onehot_state_reg[3] ;
   wire \GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg ;
@@ -472,6 +471,7 @@ module design_1_axi_timer_0_0_address_decoder
   wire is_write_reg;
   wire [20:0]loadReg_DBus_32;
   wire pair0_Select;
+  wire read_done0;
   wire read_done1;
   wire s_axi_aclk;
   wire s_axi_aresetn;
@@ -642,14 +642,14 @@ module design_1_axi_timer_0_0_address_decoder
         .I1(Bus_RNW_reg_reg_0),
         .I2(loadReg_DBus_32[20]),
         .O(\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_1 ));
-  (* SOFT_HLUTNM = "soft_lutpair10" *) 
+  (* SOFT_HLUTNM = "soft_lutpair9" *) 
   LUT2 #(
     .INIT(4'h7)) 
     \GEN.DATA_WIDTH_GEN[0].NUM_BUSES_GEN[1].MUXCY_GEN.MUXCY_I_i_2 
        (.I0(Bus_RNW_reg_reg_0),
         .I1(\GEN_BKEND_CE_REGISTERS[2].ce_out_i_reg ),
         .O(Bus_RNW_reg_reg_4));
-  (* SOFT_HLUTNM = "soft_lutpair11" *) 
+  (* SOFT_HLUTNM = "soft_lutpair10" *) 
   LUT2 #(
     .INIT(4'h7)) 
     \GEN.DATA_WIDTH_GEN[0].NUM_BUSES_GEN[1].MUXCY_GEN.MUXCY_I_i_3 
@@ -742,7 +742,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I3(\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg ),
         .I4(tCSR0_Reg[1]),
         .O(\LOAD_REG_GEN[20].LOAD_REG_I ));
-  (* SOFT_HLUTNM = "soft_lutpair4" *) 
+  (* SOFT_HLUTNM = "soft_lutpair5" *) 
   LUT2 #(
     .INIT(4'h7)) 
     \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_i_2 
@@ -869,7 +869,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[31]),
         .O(D_0));
-  (* SOFT_HLUTNM = "soft_lutpair6" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[0].LOAD_REG_I_i_2__0 
@@ -878,7 +877,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[31]),
         .O(D_1));
-  (* SOFT_HLUTNM = "soft_lutpair12" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[10].LOAD_REG_I_i_1 
@@ -895,7 +893,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[21]),
         .O(\s_axi_wdata[21]_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair3" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[11].LOAD_REG_I_i_1 
@@ -1048,7 +1045,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[30]),
         .O(s_axi_wdata_30_sn_1));
-  (* SOFT_HLUTNM = "soft_lutpair7" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[1].LOAD_REG_I_i_1__0 
@@ -1105,6 +1101,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[9]),
         .O(\s_axi_wdata[9]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair12" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[23].LOAD_REG_I_i_1 
@@ -1121,6 +1118,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[8]),
         .O(\s_axi_wdata[8]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair11" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[24].LOAD_REG_I_i_1 
@@ -1137,6 +1135,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[7]),
         .O(\s_axi_wdata[7]_2 ));
+  (* SOFT_HLUTNM = "soft_lutpair10" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[25].LOAD_REG_I_i_1 
@@ -1153,6 +1152,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[6]),
         .O(\s_axi_wdata[6]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair9" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[26].LOAD_REG_I_i_1 
@@ -1169,6 +1169,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[5]),
         .O(\s_axi_wdata[5]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair8" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[27].LOAD_REG_I_i_1 
@@ -1185,6 +1186,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[4]),
         .O(\s_axi_wdata[4]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair7" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[28].LOAD_REG_I_i_1 
@@ -1201,6 +1203,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[3]),
         .O(\s_axi_wdata[3]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair6" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[29].LOAD_REG_I_i_1 
@@ -1225,7 +1228,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[29]),
         .O(s_axi_wdata_29_sn_1));
-  (* SOFT_HLUTNM = "soft_lutpair8" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[2].LOAD_REG_I_i_1__0 
@@ -1234,6 +1236,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[29]),
         .O(\s_axi_wdata[29]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair5" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[30].LOAD_REG_I_i_1 
@@ -1250,6 +1253,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[1]),
         .O(\s_axi_wdata[1]_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair4" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[31].LOAD_REG_I_i_1 
@@ -1258,6 +1262,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[0]),
         .O(s_axi_wdata_0_sn_1));
+  (* SOFT_HLUTNM = "soft_lutpair13" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[31].LOAD_REG_I_i_1__0 
@@ -1266,7 +1271,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[0]),
         .O(\s_axi_wdata[0]_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair5" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[3].LOAD_REG_I_i_1 
@@ -1275,7 +1279,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[28]),
         .O(s_axi_wdata_28_sn_1));
-  (* SOFT_HLUTNM = "soft_lutpair10" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[3].LOAD_REG_I_i_1__0 
@@ -1284,7 +1287,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_0[28]),
         .O(\s_axi_wdata[28]_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair4" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[4].LOAD_REG_I_i_1 
@@ -1293,7 +1295,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[27]),
         .O(s_axi_wdata_27_sn_1));
-  (* SOFT_HLUTNM = "soft_lutpair11" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[4].LOAD_REG_I_i_1__0 
@@ -1310,7 +1311,6 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(Bus_RNW_reg_reg_0),
         .I3(counterReg_DBus_32[26]),
         .O(s_axi_wdata_26_sn_1));
-  (* SOFT_HLUTNM = "soft_lutpair13" *) 
   LUT4 #(
     .INIT(16'hFB08)) 
     \LOAD_REG_GEN[5].LOAD_REG_I_i_1__0 
@@ -1401,28 +1401,28 @@ module design_1_axi_timer_0_0_address_decoder
   design_1_axi_timer_0_0_pselect_f__parameterized6 \MEM_DECODE_GEN[0].PER_CE_GEN[7].MULTIPLE_CES_THIS_CS_GEN.CE_I 
        (.\GEN_BKEND_CE_REGISTERS[7].ce_out_i_reg[7] (\GEN_BKEND_CE_REGISTERS[7].ce_out_i_reg[7]_0 ),
         .ce_expnd_i_0(ce_expnd_i_0));
-  (* SOFT_HLUTNM = "soft_lutpair5" *) 
+  (* SOFT_HLUTNM = "soft_lutpair6" *) 
   LUT2 #(
     .INIT(4'hE)) 
     READ_DONE0_I_i_2
        (.I0(\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_0 ),
-        .I1(D_2),
+        .I1(read_done0),
         .O(\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_21 ));
-  (* SOFT_HLUTNM = "soft_lutpair8" *) 
+  (* SOFT_HLUTNM = "soft_lutpair13" *) 
   LUT2 #(
     .INIT(4'hE)) 
     READ_DONE1_I_i_2
        (.I0(\GEN_BKEND_CE_REGISTERS[5].ce_out_i_reg ),
         .I1(read_done1),
         .O(\GEN_BKEND_CE_REGISTERS[5].ce_out_i_reg[5]_1 ));
-  (* SOFT_HLUTNM = "soft_lutpair12" *) 
+  (* SOFT_HLUTNM = "soft_lutpair11" *) 
   LUT2 #(
     .INIT(4'h2)) 
     \TCSR0_GENERATE[20].TCSR0_FF_I_i_1 
        (.I0(\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg ),
         .I1(Bus_RNW_reg_reg_0),
         .O(bus2ip_wrce[1]));
-  (* SOFT_HLUTNM = "soft_lutpair9" *) 
+  (* SOFT_HLUTNM = "soft_lutpair3" *) 
   LUT4 #(
     .INIT(16'h20FF)) 
     \TCSR0_GENERATE[23].TCSR0_FF_I_i_1 
@@ -1431,7 +1431,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I2(s_axi_wdata[8]),
         .I3(s_axi_aresetn),
         .O(\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0]_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair0" *) 
+  (* SOFT_HLUTNM = "soft_lutpair1" *) 
   LUT5 #(
     .INIT(32'hFFFFCACC)) 
     \TCSR0_GENERATE[24].TCSR0_FF_I_i_1 
@@ -1441,14 +1441,14 @@ module design_1_axi_timer_0_0_address_decoder
         .I3(\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg ),
         .I4(s_axi_wdata[10]),
         .O(s_axi_wdata_7_sn_1));
-  (* SOFT_HLUTNM = "soft_lutpair13" *) 
+  (* SOFT_HLUTNM = "soft_lutpair12" *) 
   LUT2 #(
     .INIT(4'h2)) 
     \TCSR1_GENERATE[22].TCSR1_FF_I_i_1 
        (.I0(\GEN_BKEND_CE_REGISTERS[4].ce_out_i_reg ),
         .I1(Bus_RNW_reg_reg_0),
         .O(bus2ip_wrce[0]));
-  (* SOFT_HLUTNM = "soft_lutpair9" *) 
+  (* SOFT_HLUTNM = "soft_lutpair3" *) 
   LUT4 #(
     .INIT(16'h20FF)) 
     \TCSR1_GENERATE[23].TCSR1_FF_I_i_1 
@@ -1477,7 +1477,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I4(Bus_RNW_reg_reg_2),
         .I5(Bus_RNW_reg_reg_3),
         .O(is_read_reg));
-  (* SOFT_HLUTNM = "soft_lutpair1" *) 
+  (* SOFT_HLUTNM = "soft_lutpair0" *) 
   LUT5 #(
     .INIT(32'hF0F0F0E0)) 
     s_axi_arready_INST_0_i_1
@@ -1487,7 +1487,7 @@ module design_1_axi_timer_0_0_address_decoder
         .I3(\GEN_BKEND_CE_REGISTERS[2].ce_out_i_reg ),
         .I4(\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_0 ),
         .O(s_axi_arready_INST_0_i_1_n_0));
-  (* SOFT_HLUTNM = "soft_lutpair6" *) 
+  (* SOFT_HLUTNM = "soft_lutpair7" *) 
   LUT2 #(
     .INIT(4'h7)) 
     s_axi_arready_INST_0_i_2
@@ -1501,7 +1501,7 @@ module design_1_axi_timer_0_0_address_decoder
        (.I0(Bus_RNW_reg_reg_0),
         .I1(\GEN_BKEND_CE_REGISTERS[4].ce_out_i_reg ),
         .O(Bus_RNW_reg_reg_2));
-  (* SOFT_HLUTNM = "soft_lutpair0" *) 
+  (* SOFT_HLUTNM = "soft_lutpair1" *) 
   LUT2 #(
     .INIT(4'h7)) 
     s_axi_arready_INST_0_i_4
@@ -1554,21 +1554,21 @@ module design_1_axi_timer_0_0_address_decoder
         .I1(Bus_RNW_reg_reg_0),
         .I2(\GEN_BKEND_CE_REGISTERS[4].ce_out_i_reg ),
         .O(pair0_Select));
-  (* SOFT_HLUTNM = "soft_lutpair7" *) 
+  (* SOFT_HLUTNM = "soft_lutpair8" *) 
   LUT2 #(
     .INIT(4'h2)) 
     s_axi_wready_INST_0_i_3
        (.I0(\GEN_BKEND_CE_REGISTERS[5].ce_out_i_reg ),
         .I1(Bus_RNW_reg_reg_0),
         .O(\GEN_BKEND_CE_REGISTERS[5].ce_out_i_reg[5]_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair3" *) 
+  (* SOFT_HLUTNM = "soft_lutpair4" *) 
   LUT2 #(
     .INIT(4'h2)) 
     s_axi_wready_INST_0_i_4
        (.I0(\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_0 ),
         .I1(Bus_RNW_reg_reg_0),
         .O(s_axi_wready_INST_0_i_4_n_0));
-  (* SOFT_HLUTNM = "soft_lutpair1" *) 
+  (* SOFT_HLUTNM = "soft_lutpair0" *) 
   LUT4 #(
     .INIT(16'h5554)) 
     s_axi_wready_INST_0_i_5
@@ -1723,7 +1723,7 @@ module design_1_axi_timer_0_0_axi_lite_ipif
     s_axi_bready,
     s_axi_araddr,
     s_axi_awaddr,
-    D_2,
+    read_done0,
     read_done1,
     D);
   output \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ;
@@ -1849,7 +1849,7 @@ module design_1_axi_timer_0_0_axi_lite_ipif
   input s_axi_bready;
   input [2:0]s_axi_araddr;
   input [2:0]s_axi_awaddr;
-  input D_2;
+  input read_done0;
   input read_done1;
   input [31:0]D;
 
@@ -1863,7 +1863,6 @@ module design_1_axi_timer_0_0_axi_lite_ipif
   wire [31:0]D;
   wire D_0;
   wire D_1;
-  wire D_2;
   wire \GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0] ;
   wire \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ;
   wire \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1] ;
@@ -1899,6 +1898,7 @@ module design_1_axi_timer_0_0_axi_lite_ipif
   wire is_write_reg;
   wire [20:0]loadReg_DBus_32;
   wire pair0_Select;
+  wire read_done0;
   wire read_done1;
   wire s_axi_aclk;
   wire [2:0]s_axi_araddr;
@@ -2022,7 +2022,6 @@ module design_1_axi_timer_0_0_axi_lite_ipif
         .D(D),
         .D_0(D_0),
         .D_1(D_1),
-        .D_2(D_2),
         .\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0] (\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0] ),
         .\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1] (\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ),
         .\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1]_0 (\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1] ),
@@ -2058,6 +2057,7 @@ module design_1_axi_timer_0_0_axi_lite_ipif
         .is_write_reg_0(is_write_reg),
         .loadReg_DBus_32(loadReg_DBus_32),
         .pair0_Select(pair0_Select),
+        .read_done0(read_done0),
         .read_done1(read_done1),
         .s_axi_aclk(s_axi_aclk),
         .s_axi_araddr(s_axi_araddr),
@@ -2299,8 +2299,8 @@ module design_1_axi_timer_0_0_axi_timer
   wire \GEN_SECOND_TIMER.COUNTER_1_I/D ;
   wire \I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg ;
   wire \I_SLAVE_ATTACHMENT/I_DECODER/GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ;
-  wire \TIMER_CONTROL_I/D ;
   wire \TIMER_CONTROL_I/pair0_Select ;
+  wire \TIMER_CONTROL_I/read_done0 ;
   wire \TIMER_CONTROL_I/read_done1 ;
   wire bus2ip_reset;
   wire [0:4]bus2ip_wrce;
@@ -2349,7 +2349,6 @@ module design_1_axi_timer_0_0_axi_timer
         .D({ip2bus_data[0],ip2bus_data[1],ip2bus_data[2],ip2bus_data[3],ip2bus_data[4],ip2bus_data[5],ip2bus_data[6],ip2bus_data[7],ip2bus_data[8],ip2bus_data[9],ip2bus_data[10],ip2bus_data[11],ip2bus_data[12],ip2bus_data[13],ip2bus_data[14],ip2bus_data[15],ip2bus_data[16],ip2bus_data[17],ip2bus_data[18],ip2bus_data[19],ip2bus_data[20],ip2bus_data[21],ip2bus_data[22],ip2bus_data[23],ip2bus_data[24],ip2bus_data[25],ip2bus_data[26],ip2bus_data[27],ip2bus_data[28],ip2bus_data[29],ip2bus_data[30],ip2bus_data[31]}),
         .D_0(\COUNTER_0_I/D ),
         .D_1(\GEN_SECOND_TIMER.COUNTER_1_I/D ),
-        .D_2(\TIMER_CONTROL_I/D ),
         .\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0] (AXI4_LITE_I_n_105),
         .\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg (\I_SLAVE_ATTACHMENT/I_DECODER/GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ),
         .\GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1] (AXI4_LITE_I_n_80),
@@ -2385,6 +2384,7 @@ module design_1_axi_timer_0_0_axi_timer
         .is_write_reg(s_axi_wready),
         .loadReg_DBus_32(loadReg_DBus_32),
         .pair0_Select(\TIMER_CONTROL_I/pair0_Select ),
+        .read_done0(\TIMER_CONTROL_I/read_done0 ),
         .read_done1(\TIMER_CONTROL_I/read_done1 ),
         .s_axi_aclk(s_axi_aclk),
         .s_axi_araddr(s_axi_araddr[4:2]),
@@ -2470,9 +2470,8 @@ module design_1_axi_timer_0_0_axi_timer
   design_1_axi_timer_0_0_tc_core TC_CORE_I
        (.Bus_RNW_reg(\I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg ),
         .D({ip2bus_data[0],ip2bus_data[1],ip2bus_data[2],ip2bus_data[3],ip2bus_data[4],ip2bus_data[5],ip2bus_data[6],ip2bus_data[7],ip2bus_data[8],ip2bus_data[9],ip2bus_data[10],ip2bus_data[11],ip2bus_data[12],ip2bus_data[13],ip2bus_data[14],ip2bus_data[15],ip2bus_data[16],ip2bus_data[17],ip2bus_data[18],ip2bus_data[19],ip2bus_data[20],ip2bus_data[21],ip2bus_data[22],ip2bus_data[23],ip2bus_data[24],ip2bus_data[25],ip2bus_data[26],ip2bus_data[27],ip2bus_data[28],ip2bus_data[29],ip2bus_data[30],ip2bus_data[31]}),
-        .D_0(\TIMER_CONTROL_I/D ),
-        .D_1(\COUNTER_0_I/D ),
-        .D_2(\GEN_SECOND_TIMER.COUNTER_1_I/D ),
+        .D_0(\COUNTER_0_I/D ),
+        .D_1(\GEN_SECOND_TIMER.COUNTER_1_I/D ),
         .\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I (AXI4_LITE_I_n_77),
         .\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0 (AXI4_LITE_I_n_101),
         .\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1 (AXI4_LITE_I_n_78),
@@ -2561,6 +2560,7 @@ module design_1_axi_timer_0_0_axi_timer
         .interrupt(interrupt),
         .pair0_Select(\TIMER_CONTROL_I/pair0_Select ),
         .pwm0(pwm0),
+        .read_done0(\TIMER_CONTROL_I/read_done0 ),
         .read_done1(\TIMER_CONTROL_I/read_done1 ),
         .s_axi_aclk(s_axi_aclk),
         .s_axi_aresetn(s_axi_aresetn),
@@ -2958,7 +2958,7 @@ module design_1_axi_timer_0_0_count_module
     generateOutPre00,
     \INFERRED_GEN.icount_out_reg[31]_0 ,
     CE,
-    D_1,
+    D_0,
     s_axi_aclk,
     \LOAD_REG_GEN[1].LOAD_REG_I_0 ,
     \LOAD_REG_GEN[2].LOAD_REG_I_0 ,
@@ -3012,7 +3012,7 @@ module design_1_axi_timer_0_0_count_module
   output generateOutPre00;
   input \INFERRED_GEN.icount_out_reg[31]_0 ;
   input CE;
-  input D_1;
+  input D_0;
   input s_axi_aclk;
   input \LOAD_REG_GEN[1].LOAD_REG_I_0 ;
   input \LOAD_REG_GEN[2].LOAD_REG_I_0 ;
@@ -3053,7 +3053,7 @@ module design_1_axi_timer_0_0_count_module
 
   wire CE;
   wire [2:0]DI;
-  wire D_1;
+  wire D_0;
   wire \INFERRED_GEN.icount_out_reg[0] ;
   wire \INFERRED_GEN.icount_out_reg[0]_0 ;
   wire [3:0]\INFERRED_GEN.icount_out_reg[11] ;
@@ -3137,7 +3137,7 @@ module design_1_axi_timer_0_0_count_module
     \LOAD_REG_GEN[0].LOAD_REG_I 
        (.C(s_axi_aclk),
         .CE(CE),
-        .D(D_1),
+        .D(D_0),
         .Q(\LOAD_REG_GEN[0].LOAD_REG_I_0 [20]),
         .R(\INFERRED_GEN.icount_out_reg[31]_0 ));
   (* BOX_TYPE = "PRIMITIVE" *) 
@@ -3562,7 +3562,7 @@ module design_1_axi_timer_0_0_count_module_0
     \LOAD_REG_GEN[27].LOAD_REG_I_0 ,
     \LOAD_REG_GEN[28].LOAD_REG_I_0 ,
     CE,
-    D_2,
+    D_1,
     s_axi_aclk,
     \LOAD_REG_GEN[1].LOAD_REG_I_0 ,
     \LOAD_REG_GEN[2].LOAD_REG_I_0 ,
@@ -3650,7 +3650,7 @@ module design_1_axi_timer_0_0_count_module_0
   output \LOAD_REG_GEN[27].LOAD_REG_I_0 ;
   output \LOAD_REG_GEN[28].LOAD_REG_I_0 ;
   input CE;
-  input D_2;
+  input D_1;
   input s_axi_aclk;
   input \LOAD_REG_GEN[1].LOAD_REG_I_0 ;
   input \LOAD_REG_GEN[2].LOAD_REG_I_0 ;
@@ -3695,7 +3695,7 @@ module design_1_axi_timer_0_0_count_module_0
 
   wire CE;
   wire [2:0]DI;
-  wire D_2;
+  wire D_1;
   wire \INFERRED_GEN.icount_out_reg[0] ;
   wire \INFERRED_GEN.icount_out_reg[0]_0 ;
   wire \INFERRED_GEN.icount_out_reg[0]_1 ;
@@ -3871,7 +3871,7 @@ module design_1_axi_timer_0_0_count_module_0
     \LOAD_REG_GEN[0].LOAD_REG_I 
        (.C(s_axi_aclk),
         .CE(CE),
-        .D(D_2),
+        .D(D_1),
         .Q(loadReg_DBus_0[31]),
         .R(s_axi_aresetn_0));
   (* BOX_TYPE = "PRIMITIVE" *) 
@@ -5409,6 +5409,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(counter_TC),
         .I1(Q),
         .O(generateOutPre10));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry
        (.CI(1'b0),
@@ -5417,6 +5418,7 @@ module design_1_axi_timer_0_0_counter_f
         .DI({\INFERRED_GEN.icount_out_reg[3]_0 ,\INFERRED_GEN.icount_out_reg[2]_0 ,\INFERRED_GEN.icount_out_reg[1]_0 ,icount_out0_carry_i_1_n_0}),
         .O({icount_out0_carry_n_4,icount_out0_carry_n_5,icount_out0_carry_n_6,icount_out0_carry_n_7}),
         .S({icount_out0_carry_i_2_n_0,icount_out0_carry_i_3_n_0,icount_out0_carry_i_4_n_0,S}));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__0
        (.CI(icount_out0_carry_n_0),
@@ -5449,6 +5451,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(\INFERRED_GEN.icount_out_reg[4]_0 ),
         .I1(\INFERRED_GEN.icount_out_reg[5]_0 ),
         .O(icount_out0_carry__0_i_4_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__1
        (.CI(icount_out0_carry__0_n_0),
@@ -5481,6 +5484,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(\INFERRED_GEN.icount_out_reg[8]_0 ),
         .I1(\INFERRED_GEN.icount_out_reg[9]_0 ),
         .O(icount_out0_carry__1_i_4_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__2
        (.CI(icount_out0_carry__1_n_0),
@@ -5513,6 +5517,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(\INFERRED_GEN.icount_out_reg[12]_0 ),
         .I1(\INFERRED_GEN.icount_out_reg[13]_0 ),
         .O(icount_out0_carry__2_i_4_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__3
        (.CI(icount_out0_carry__2_n_0),
@@ -5545,6 +5550,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(\INFERRED_GEN.icount_out_reg[16]_0 ),
         .I1(\INFERRED_GEN.icount_out_reg[17]_0 ),
         .O(icount_out0_carry__3_i_4_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__4
        (.CI(icount_out0_carry__3_n_0),
@@ -5577,6 +5583,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(\INFERRED_GEN.icount_out_reg[20]_0 ),
         .I1(\INFERRED_GEN.icount_out_reg[21]_0 ),
         .O(icount_out0_carry__4_i_4_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__5
        (.CI(icount_out0_carry__4_n_0),
@@ -5609,6 +5616,7 @@ module design_1_axi_timer_0_0_counter_f
        (.I0(\INFERRED_GEN.icount_out_reg[24]_0 ),
         .I1(\INFERRED_GEN.icount_out_reg[25]_0 ),
         .O(icount_out0_carry__5_i_4_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__6
        (.CI(icount_out0_carry__5_n_0),
@@ -6299,6 +6307,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(counter_TC),
         .I1(Q),
         .O(generateOutPre00));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry
        (.CI(1'b0),
@@ -6307,6 +6316,7 @@ module design_1_axi_timer_0_0_counter_f_3
         .DI({\INFERRED_GEN.icount_out_reg[3]_0 ,icount_out0_carry_i_1__0_n_0}),
         .O({icount_out0_carry_n_4,icount_out0_carry_n_5,icount_out0_carry_n_6,icount_out0_carry_n_7}),
         .S({icount_out0_carry_i_2__0_n_0,icount_out0_carry_i_3__0_n_0,icount_out0_carry_i_4__0_n_0,S}));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__0
        (.CI(icount_out0_carry_n_0),
@@ -6339,6 +6349,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(\INFERRED_GEN.icount_out_reg[7]_0 [0]),
         .I1(\INFERRED_GEN.icount_out_reg[7]_0 [1]),
         .O(icount_out0_carry__0_i_4__0_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__1
        (.CI(icount_out0_carry__0_n_0),
@@ -6371,6 +6382,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(\INFERRED_GEN.icount_out_reg[11]_0 [0]),
         .I1(\INFERRED_GEN.icount_out_reg[11]_0 [1]),
         .O(icount_out0_carry__1_i_4__0_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__2
        (.CI(icount_out0_carry__1_n_0),
@@ -6403,6 +6415,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(\INFERRED_GEN.icount_out_reg[15]_0 [0]),
         .I1(\INFERRED_GEN.icount_out_reg[15]_0 [1]),
         .O(icount_out0_carry__2_i_4__0_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__3
        (.CI(icount_out0_carry__2_n_0),
@@ -6435,6 +6448,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(\INFERRED_GEN.icount_out_reg[19]_0 [0]),
         .I1(\INFERRED_GEN.icount_out_reg[19]_0 [1]),
         .O(icount_out0_carry__3_i_4__0_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__4
        (.CI(icount_out0_carry__3_n_0),
@@ -6467,6 +6481,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(\INFERRED_GEN.icount_out_reg[23]_0 [0]),
         .I1(\INFERRED_GEN.icount_out_reg[23]_0 [1]),
         .O(icount_out0_carry__4_i_4__0_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__5
        (.CI(icount_out0_carry__4_n_0),
@@ -6499,6 +6514,7 @@ module design_1_axi_timer_0_0_counter_f_3
        (.I0(\INFERRED_GEN.icount_out_reg[27]_0 [0]),
         .I1(\INFERRED_GEN.icount_out_reg[27]_0 [1]),
         .O(icount_out0_carry__5_i_4__0_n_0));
+  (* ADDER_THRESHOLD = "35" *) 
   (* METHODOLOGY_DRC_VIOS = "{SYNTH-8 {cell *THIS*}}" *) 
   CARRY4 icount_out0_carry__6
        (.CI(icount_out0_carry__5_n_0),
@@ -7475,7 +7491,7 @@ module design_1_axi_timer_0_0_slave_attachment
     s_axi_bready,
     s_axi_araddr,
     s_axi_awaddr,
-    D_2,
+    read_done0,
     read_done1,
     D);
   output \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg[1] ;
@@ -7601,7 +7617,7 @@ module design_1_axi_timer_0_0_slave_attachment
   input s_axi_bready;
   input [2:0]s_axi_araddr;
   input [2:0]s_axi_awaddr;
-  input D_2;
+  input read_done0;
   input read_done1;
   input [31:0]D;
 
@@ -7615,7 +7631,6 @@ module design_1_axi_timer_0_0_slave_attachment
   wire [31:0]D;
   wire D_0;
   wire D_1;
-  wire D_2;
   wire \FSM_onehot_state[0]_i_1_n_0 ;
   wire \FSM_onehot_state[3]_i_2_n_0 ;
   wire \FSM_onehot_state_reg_n_0_[0] ;
@@ -7676,6 +7691,7 @@ module design_1_axi_timer_0_0_slave_attachment
   wire [20:0]loadReg_DBus_32;
   wire pair0_Select;
   wire [5:0]plusOp;
+  wire read_done0;
   wire read_done1;
   wire rst;
   wire s_axi_aclk;
@@ -7951,7 +7967,6 @@ module design_1_axi_timer_0_0_slave_attachment
         .D({I_DECODER_n_4,I_DECODER_n_5}),
         .D_0(D_0),
         .D_1(D_1),
-        .D_2(D_2),
         .\FSM_onehot_state_reg[2] ({I_DECODER_n_6,I_DECODER_n_7,I_DECODER_n_8}),
         .\FSM_onehot_state_reg[3] ({\FSM_onehot_state_reg_n_0_[3] ,s_axi_bresp_i,s_axi_rresp_i,\FSM_onehot_state_reg_n_0_[0] }),
         .\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0]_0 (\GEN_BKEND_CE_REGISTERS[0].ce_out_i_reg[0] ),
@@ -7991,6 +8006,7 @@ module design_1_axi_timer_0_0_slave_attachment
         .is_write_reg(is_write_reg_0),
         .loadReg_DBus_32(loadReg_DBus_32),
         .pair0_Select(pair0_Select),
+        .read_done0(read_done0),
         .read_done1(read_done1),
         .s_axi_aclk(s_axi_aclk),
         .s_axi_aresetn(s_axi_aresetn),
@@ -8076,7 +8092,6 @@ module design_1_axi_timer_0_0_slave_attachment
         .\state_reg[1] (\state[1]_i_2_n_0 ),
         .tCSR0_Reg(tCSR0_Reg),
         .tCSR1_Reg(tCSR1_Reg));
-  (* SOFT_HLUTNM = "soft_lutpair18" *) 
   LUT3 #(
     .INIT(8'hB8)) 
     \bus2ip_addr_i[2]_i_1 
@@ -8084,6 +8099,7 @@ module design_1_axi_timer_0_0_slave_attachment
         .I1(s_axi_arvalid),
         .I2(s_axi_awaddr[0]),
         .O(\bus2ip_addr_i[2]_i_1_n_0 ));
+  (* SOFT_HLUTNM = "soft_lutpair18" *) 
   LUT3 #(
     .INIT(8'hB8)) 
     \bus2ip_addr_i[3]_i_1 
@@ -8500,7 +8516,7 @@ module design_1_axi_timer_0_0_tc_core
     interrupt,
     \TCSR0_GENERATE[20].TCSR0_FF_I ,
     \TCSR1_GENERATE[24].TCSR1_FF_I ,
-    D_0,
+    read_done0,
     read_done1,
     pwm0,
     \s_axi_rdata_i_reg[31] ,
@@ -8524,7 +8540,7 @@ module design_1_axi_timer_0_0_tc_core
     \s_axi_rdata_i_reg[13] ,
     \s_axi_rdata_i_reg[12] ,
     \s_axi_rdata_i_reg[11] ,
-    D_1,
+    D_0,
     s_axi_aclk,
     \LOAD_REG_GEN[1].LOAD_REG_I ,
     \LOAD_REG_GEN[2].LOAD_REG_I ,
@@ -8557,7 +8573,7 @@ module design_1_axi_timer_0_0_tc_core
     \LOAD_REG_GEN[29].LOAD_REG_I ,
     \LOAD_REG_GEN[30].LOAD_REG_I ,
     \LOAD_REG_GEN[31].LOAD_REG_I ,
-    D_2,
+    D_1,
     \LOAD_REG_GEN[1].LOAD_REG_I_0 ,
     \LOAD_REG_GEN[2].LOAD_REG_I_0 ,
     \LOAD_REG_GEN[3].LOAD_REG_I_0 ,
@@ -8594,10 +8610,10 @@ module design_1_axi_timer_0_0_tc_core
     pair0_Select,
     \TCSR0_GENERATE[24].TCSR0_FF_I ,
     \TCSR1_GENERATE[24].TCSR1_FF_I_0 ,
-    READ_DONE0_I,
-    READ_DONE1_I,
     \TCSR0_GENERATE[23].TCSR0_FF_I ,
     \TCSR1_GENERATE[23].TCSR1_FF_I ,
+    READ_DONE0_I,
+    READ_DONE1_I,
     s_axi_aresetn,
     Bus_RNW_reg,
     \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ,
@@ -8621,7 +8637,7 @@ module design_1_axi_timer_0_0_tc_core
   output interrupt;
   output [1:0]\TCSR0_GENERATE[20].TCSR0_FF_I ;
   output [0:0]\TCSR1_GENERATE[24].TCSR1_FF_I ;
-  output D_0;
+  output read_done0;
   output read_done1;
   output pwm0;
   input \s_axi_rdata_i_reg[31] ;
@@ -8645,7 +8661,7 @@ module design_1_axi_timer_0_0_tc_core
   input \s_axi_rdata_i_reg[13] ;
   input \s_axi_rdata_i_reg[12] ;
   input \s_axi_rdata_i_reg[11] ;
-  input D_1;
+  input D_0;
   input s_axi_aclk;
   input \LOAD_REG_GEN[1].LOAD_REG_I ;
   input \LOAD_REG_GEN[2].LOAD_REG_I ;
@@ -8678,7 +8694,7 @@ module design_1_axi_timer_0_0_tc_core
   input \LOAD_REG_GEN[29].LOAD_REG_I ;
   input \LOAD_REG_GEN[30].LOAD_REG_I ;
   input \LOAD_REG_GEN[31].LOAD_REG_I ;
-  input D_2;
+  input D_1;
   input \LOAD_REG_GEN[1].LOAD_REG_I_0 ;
   input \LOAD_REG_GEN[2].LOAD_REG_I_0 ;
   input \LOAD_REG_GEN[3].LOAD_REG_I_0 ;
@@ -8715,10 +8731,10 @@ module design_1_axi_timer_0_0_tc_core
   input pair0_Select;
   input \TCSR0_GENERATE[24].TCSR0_FF_I ;
   input \TCSR1_GENERATE[24].TCSR1_FF_I_0 ;
-  input READ_DONE0_I;
-  input READ_DONE1_I;
   input \TCSR0_GENERATE[23].TCSR0_FF_I ;
   input \TCSR1_GENERATE[23].TCSR1_FF_I ;
+  input READ_DONE0_I;
+  input READ_DONE1_I;
   input s_axi_aresetn;
   input Bus_RNW_reg;
   input \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ;
@@ -8739,7 +8755,6 @@ module design_1_axi_timer_0_0_tc_core
   wire [31:0]D;
   wire D_0;
   wire D_1;
-  wire D_2;
   wire \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I ;
   wire \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0 ;
   wire \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1 ;
@@ -8866,7 +8881,6 @@ module design_1_axi_timer_0_0_tc_core
   wire TIMER_CONTROL_I_n_26;
   wire TIMER_CONTROL_I_n_28;
   wire TIMER_CONTROL_I_n_29;
-  wire TIMER_CONTROL_I_n_3;
   wire TIMER_CONTROL_I_n_30;
   wire TIMER_CONTROL_I_n_4;
   wire bus2ip_reset;
@@ -8883,8 +8897,10 @@ module design_1_axi_timer_0_0_tc_core
   wire generateout1;
   wire interrupt;
   wire [10:0]loadReg_DBus_32;
+  wire p_0_in;
   wire pair0_Select;
   wire pwm0;
+  wire read_done0;
   wire read_done1;
   wire s_axi_aclk;
   wire s_axi_aresetn;
@@ -8917,7 +8933,7 @@ module design_1_axi_timer_0_0_tc_core
   design_1_axi_timer_0_0_count_module COUNTER_0_I
        (.CE(CE_0),
         .DI(counterReg_DBus_32[30:28]),
-        .D_1(D_1),
+        .D_0(D_0),
         .\INFERRED_GEN.icount_out_reg[0] (counterReg_DBus_32[0]),
         .\INFERRED_GEN.icount_out_reg[0]_0 (TIMER_CONTROL_I_n_25),
         .\INFERRED_GEN.icount_out_reg[11] (counterReg_DBus_32[11:8]),
@@ -8962,7 +8978,7 @@ module design_1_axi_timer_0_0_tc_core
         .\LOAD_REG_GEN[7].LOAD_REG_I_0 (\LOAD_REG_GEN[7].LOAD_REG_I ),
         .\LOAD_REG_GEN[8].LOAD_REG_I_0 (\LOAD_REG_GEN[8].LOAD_REG_I ),
         .\LOAD_REG_GEN[9].LOAD_REG_I_0 (\LOAD_REG_GEN[9].LOAD_REG_I ),
-        .Q(TIMER_CONTROL_I_n_3),
+        .Q(p_0_in),
         .S(TIMER_CONTROL_I_n_30),
         .counter_TC(counter_TC[0]),
         .generateOutPre00(generateOutPre00),
@@ -8972,7 +8988,7 @@ module design_1_axi_timer_0_0_tc_core
   design_1_axi_timer_0_0_count_module_0 \GEN_SECOND_TIMER.COUNTER_1_I 
        (.CE(CE),
         .DI(counterReg_DBus_0[30:28]),
-        .D_2(D_2),
+        .D_1(D_1),
         .\INFERRED_GEN.icount_out_reg[0] (counterReg_DBus_0[0]),
         .\INFERRED_GEN.icount_out_reg[0]_0 (\GEN_SECOND_TIMER.COUNTER_1_I_n_35 ),
         .\INFERRED_GEN.icount_out_reg[0]_1 (TIMER_CONTROL_I_n_23),
@@ -9141,7 +9157,6 @@ module design_1_axi_timer_0_0_tc_core
        (.Bus_RNW_reg(Bus_RNW_reg),
         .CE(CE_0),
         .CE_0(CE),
-        .D_0(D_0),
         .\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I (\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I ),
         .\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0 (\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0 ),
         .\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1 (\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1 ),
@@ -9149,7 +9164,7 @@ module design_1_axi_timer_0_0_tc_core
         .GenerateOut0_reg_0(TIMER_CONTROL_I_n_28),
         .\INFERRED_GEN.icount_out_reg[1] (TIMER_CONTROL_I_n_30),
         .\LOAD_REG_GEN[7].LOAD_REG_I (\LOAD_REG_GEN[7].LOAD_REG_I_1 ),
-        .Q({TIMER_CONTROL_I_n_3,TIMER_CONTROL_I_n_4}),
+        .Q({p_0_in,TIMER_CONTROL_I_n_4}),
         .R(R),
         .READ_DONE0_I_0(READ_DONE0_I),
         .READ_DONE1_I_0(READ_DONE1_I),
@@ -9192,6 +9207,7 @@ module design_1_axi_timer_0_0_tc_core
         .loadReg_DBus_32(loadReg_DBus_32),
         .pair0_Select(pair0_Select),
         .pwm0(pwm0),
+        .read_done0(read_done0),
         .read_done1(read_done1),
         .s_axi_aclk(s_axi_aclk),
         .s_axi_wdata(s_axi_wdata));
@@ -9206,7 +9222,7 @@ module design_1_axi_timer_0_0_timer_control
     \TCSR0_GENERATE[20].TCSR0_FF_I_0 ,
     \TCSR0_GENERATE[24].TCSR0_FF_I_0 ,
     \TCSR1_GENERATE[24].TCSR1_FF_I_0 ,
-    D_0,
+    read_done0,
     read_done1,
     CE,
     CE_0,
@@ -9238,10 +9254,10 @@ module design_1_axi_timer_0_0_timer_control
     pair0_Select,
     \TCSR0_GENERATE[24].TCSR0_FF_I_1 ,
     \TCSR1_GENERATE[24].TCSR1_FF_I_2 ,
-    READ_DONE0_I_0,
-    READ_DONE1_I_0,
     \TCSR0_GENERATE[23].TCSR0_FF_I_1 ,
     \TCSR1_GENERATE[23].TCSR1_FF_I_0 ,
+    READ_DONE0_I_0,
+    READ_DONE1_I_0,
     Bus_RNW_reg,
     \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ,
     counter_TC,
@@ -9263,7 +9279,7 @@ module design_1_axi_timer_0_0_timer_control
   output \TCSR0_GENERATE[20].TCSR0_FF_I_0 ;
   output \TCSR0_GENERATE[24].TCSR0_FF_I_0 ;
   output \TCSR1_GENERATE[24].TCSR1_FF_I_0 ;
-  output D_0;
+  output read_done0;
   output read_done1;
   output CE;
   output CE_0;
@@ -9295,10 +9311,10 @@ module design_1_axi_timer_0_0_timer_control
   input pair0_Select;
   input \TCSR0_GENERATE[24].TCSR0_FF_I_1 ;
   input \TCSR1_GENERATE[24].TCSR1_FF_I_2 ;
-  input READ_DONE0_I_0;
-  input READ_DONE1_I_0;
   input \TCSR0_GENERATE[23].TCSR0_FF_I_1 ;
   input \TCSR1_GENERATE[23].TCSR1_FF_I_0 ;
+  input READ_DONE0_I_0;
+  input READ_DONE1_I_0;
   input Bus_RNW_reg;
   input \GEN_BKEND_CE_REGISTERS[1].ce_out_i_reg ;
   input [0:1]counter_TC;
@@ -9317,7 +9333,6 @@ module design_1_axi_timer_0_0_timer_control
   wire Bus_RNW_reg;
   wire CE;
   wire CE_0;
-  wire D_0;
   wire \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I ;
   wire \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_0 ;
   wire \GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1 ;
@@ -9343,9 +9358,9 @@ module design_1_axi_timer_0_0_timer_control
   wire [1:0]Q;
   wire R;
   wire READ_DONE0_I_0;
+  wire READ_DONE0_I_i_1_n_0;
   wire READ_DONE1_I_0;
   wire READ_DONE1_I_i_1_n_0;
-  wire R_0;
   wire [0:0]S;
   wire [0:0]SR;
   wire \TCSR0_GENERATE[20].TCSR0_FF_I_0 ;
@@ -9402,6 +9417,7 @@ module design_1_axi_timer_0_0_timer_control
   wire p_46_in;
   wire pair0_Select;
   wire pwm0;
+  wire read_done0;
   wire read_done1;
   wire s_axi_aclk;
   wire [9:0]s_axi_wdata;
@@ -9518,7 +9534,7 @@ module design_1_axi_timer_0_0_timer_control
         .I4(tCSR0_Reg[31]),
         .I5(\GEN.DATA_WIDTH_GEN[21].NUM_BUSES_GEN[0].MUXCY_GEN.MUXCY_I_1 ),
         .O(\TCSR1_GENERATE[31].TCSR1_FF_I_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair52" *) 
+  (* SOFT_HLUTNM = "soft_lutpair54" *) 
   LUT4 #(
     .INIT(16'hA808)) 
     GenerateOut0_i_2
@@ -9533,7 +9549,7 @@ module design_1_axi_timer_0_0_timer_control
         .D(GenerateOut00),
         .Q(generateout0),
         .R(SR));
-  (* SOFT_HLUTNM = "soft_lutpair52" *) 
+  (* SOFT_HLUTNM = "soft_lutpair54" *) 
   LUT5 #(
     .INIT(32'h8F808080)) 
     GenerateOut1_i_1
@@ -9617,7 +9633,7 @@ module design_1_axi_timer_0_0_timer_control
         .I4(\TCSR0_GENERATE[20].TCSR0_FF_I_0 ),
         .I5(tCSR1_Reg[26]),
         .O(\TCSR0_GENERATE[31].TCSR0_FF_I_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair54" *) 
+  (* SOFT_HLUTNM = "soft_lutpair53" *) 
   LUT5 #(
     .INIT(32'hEFEFEFFF)) 
     \INFERRED_GEN.icount_out[31]_i_8__0 
@@ -9682,7 +9698,7 @@ module design_1_axi_timer_0_0_timer_control
         .I2(\LOAD_REG_GEN[0].LOAD_REG_I_i_3_n_0 ),
         .I3(tCSR0_Reg[31]),
         .I4(tCSR0_Reg[27]),
-        .I5(D_0),
+        .I5(read_done0),
         .O(CE));
   LUT6 #(
     .INIT(64'hFFFFFFFFFFFFE000)) 
@@ -9704,7 +9720,7 @@ module design_1_axi_timer_0_0_timer_control
         .I4(\LOAD_REG_GEN[0].LOAD_REG_I_i_4_n_0 ),
         .I5(\TCSR0_GENERATE[20].TCSR0_FF_I_0 ),
         .O(\LOAD_REG_GEN[0].LOAD_REG_I_i_3_n_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair53" *) 
+  (* SOFT_HLUTNM = "soft_lutpair52" *) 
   LUT5 #(
     .INIT(32'h8880AAAA)) 
     \LOAD_REG_GEN[0].LOAD_REG_I_i_3__0 
@@ -9714,7 +9730,7 @@ module design_1_axi_timer_0_0_timer_control
         .I3(captureTrig0_pulse_d2),
         .I4(\LOAD_REG_GEN[0].LOAD_REG_I_i_5_n_0 ),
         .O(\LOAD_REG_GEN[0].LOAD_REG_I_i_3__0_n_0 ));
-  (* SOFT_HLUTNM = "soft_lutpair53" *) 
+  (* SOFT_HLUTNM = "soft_lutpair52" *) 
   LUT3 #(
     .INIT(8'hA8)) 
     \LOAD_REG_GEN[0].LOAD_REG_I_i_4 
@@ -9766,8 +9782,8 @@ module design_1_axi_timer_0_0_timer_control
        (.C(s_axi_aclk),
         .CE(1'b1),
         .D(READ_DONE0_I_0),
-        .Q(D_0),
-        .R(R_0));
+        .Q(read_done0),
+        .R(READ_DONE0_I_i_1_n_0));
   LUT4 #(
     .INIT(16'hABAA)) 
     READ_DONE0_I_i_1
@@ -9775,7 +9791,7 @@ module design_1_axi_timer_0_0_timer_control
         .I1(\TCSR0_GENERATE[20].TCSR0_FF_I_0 ),
         .I2(captureTrig0_d2),
         .I3(captureTrig0_d),
-        .O(R_0));
+        .O(READ_DONE0_I_i_1_n_0));
   (* BOX_TYPE = "PRIMITIVE" *) 
   (* IS_CE_INVERTED = "1'b0" *) 
   (* IS_S_INVERTED = "1'b0" *) 
@@ -10227,7 +10243,7 @@ module design_1_axi_timer_0_0_timer_control
         .D(generateOutPre10),
         .Q(generateOutPre1),
         .R(SR));
-  (* SOFT_HLUTNM = "soft_lutpair54" *) 
+  (* SOFT_HLUTNM = "soft_lutpair53" *) 
   LUT4 #(
     .INIT(16'hFFFD)) 
     icount_out0_carry_i_7
@@ -10245,12 +10261,15 @@ module glbl ();
 
     parameter ROC_WIDTH = 100000;
     parameter TOC_WIDTH = 0;
+    parameter GRES_WIDTH = 10000;
+    parameter GRES_START = 10000;
 
 //--------   STARTUP Globals --------------
     wire GSR;
     wire GTS;
     wire GWE;
     wire PRLD;
+    wire GRESTORE;
     tri1 p_up_tmp;
     tri (weak1, strong0) PLL_LOCKG = p_up_tmp;
 
@@ -10263,6 +10282,7 @@ module glbl ();
     reg GSR_int;
     reg GTS_int;
     reg PRLD_int;
+    reg GRESTORE_int;
 
 //--------   JTAG Globals --------------
     wire JTAG_TDO_GLBL;
@@ -10290,6 +10310,7 @@ module glbl ();
     assign (strong1, weak0) GSR = GSR_int;
     assign (strong1, weak0) GTS = GTS_int;
     assign (weak1, weak0) PRLD = PRLD_int;
+    assign (strong1, weak0) GRESTORE = GRESTORE_int;
 
     initial begin
 	GSR_int = 1'b1;
@@ -10303,6 +10324,14 @@ module glbl ();
 	GTS_int = 1'b1;
 	#(TOC_WIDTH)
 	GTS_int = 1'b0;
+    end
+
+    initial begin 
+	GRESTORE_int = 1'b0;
+	#(GRES_START);
+	GRESTORE_int = 1'b1;
+	#(GRES_WIDTH);
+	GRESTORE_int = 1'b0;
     end
 
 endmodule

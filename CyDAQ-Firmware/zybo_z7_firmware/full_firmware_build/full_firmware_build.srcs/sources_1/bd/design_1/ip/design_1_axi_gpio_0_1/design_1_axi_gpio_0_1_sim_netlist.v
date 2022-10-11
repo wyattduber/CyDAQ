@@ -1,10 +1,10 @@
-// Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+// Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
-// Date        : Wed Oct 13 19:07:03 2021
-// Host        : ETGLABTEST-02 running 64-bit major release  (build 9200)
+// Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+// Date        : Mon Oct 10 20:32:17 2022
+// Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
-//               X:/CyDAQ/firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_gpio_0_1/design_1_axi_gpio_0_1_sim_netlist.v
+//               e:/sdmay23-47-master/CyDAQ-Firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_gpio_0_1/design_1_axi_gpio_0_1_sim_netlist.v
 // Design      : design_1_axi_gpio_0_1
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -681,7 +681,7 @@ module design_1_axi_gpio_0_1_address_decoder
         .I2(gpio_xferAck_Reg),
         .I3(\MEM_DECODE_GEN[0].cs_out_i_reg[0]_0 ),
         .O(bus2ip_rnw_i_reg_2));
-  (* SOFT_HLUTNM = "soft_lutpair0" *) 
+  (* SOFT_HLUTNM = "soft_lutpair1" *) 
   LUT5 #(
     .INIT(32'h00100000)) 
     \Dual.gpio2_Data_Out[0]_i_1 
@@ -779,7 +779,7 @@ module design_1_axi_gpio_0_1_address_decoder
         .I2(\Dual.gpio_Data_Out_reg[0] [1]),
         .I3(s_axi_wdata[4]),
         .O(D[4]));
-  (* SOFT_HLUTNM = "soft_lutpair1" *) 
+  (* SOFT_HLUTNM = "soft_lutpair0" *) 
   LUT5 #(
     .INIT(32'h00100000)) 
     \Dual.gpio_OE[0]_i_1 
@@ -1707,10 +1707,7 @@ module design_1_axi_gpio_0_1_slave_attachment
   wire \MEM_DECODE_GEN[0].cs_out_i_reg[0] ;
   wire [2:0]Q;
   wire [0:0]SR;
-  wire \bus2ip_addr_i[2]_i_1_n_0 ;
-  wire \bus2ip_addr_i[3]_i_1_n_0 ;
   wire \bus2ip_addr_i[8]_i_1_n_0 ;
-  wire \bus2ip_addr_i[8]_i_2_n_0 ;
   wire bus2ip_rnw_i_reg_0;
   wire [0:0]bus2ip_rnw_i_reg_1;
   wire [0:0]bus2ip_rnw_i_reg_2;
@@ -1728,6 +1725,7 @@ module design_1_axi_gpio_0_1_slave_attachment
   wire is_write_i_2_n_0;
   wire is_write_reg_n_0;
   wire p_0_in;
+  wire [8:2]p_1_in;
   wire p_5_in;
   wire [3:0]plusOp;
   wire [3:0]reg1;
@@ -1925,21 +1923,21 @@ module design_1_axi_gpio_0_1_slave_attachment
         .s_axi_arready_0(\INCLUDE_DPHASE_TIMER.dpto_cnt_reg ),
         .s_axi_wdata(s_axi_wdata),
         .s_axi_wready(is_write_reg_n_0));
-  (* SOFT_HLUTNM = "soft_lutpair10" *) 
   LUT3 #(
     .INIT(8'hAC)) 
     \bus2ip_addr_i[2]_i_1 
        (.I0(s_axi_araddr[0]),
         .I1(s_axi_awaddr[0]),
         .I2(s_axi_arvalid),
-        .O(\bus2ip_addr_i[2]_i_1_n_0 ));
+        .O(p_1_in[2]));
+  (* SOFT_HLUTNM = "soft_lutpair10" *) 
   LUT3 #(
     .INIT(8'hAC)) 
     \bus2ip_addr_i[3]_i_1 
        (.I0(s_axi_araddr[1]),
         .I1(s_axi_awaddr[1]),
         .I2(s_axi_arvalid),
-        .O(\bus2ip_addr_i[3]_i_1_n_0 ));
+        .O(p_1_in[3]));
   LUT5 #(
     .INIT(32'h000000EA)) 
     \bus2ip_addr_i[8]_i_1 
@@ -1956,23 +1954,23 @@ module design_1_axi_gpio_0_1_slave_attachment
        (.I0(s_axi_araddr[2]),
         .I1(s_axi_awaddr[2]),
         .I2(s_axi_arvalid),
-        .O(\bus2ip_addr_i[8]_i_2_n_0 ));
+        .O(p_1_in[8]));
   FDRE \bus2ip_addr_i_reg[2] 
        (.C(s_axi_aclk),
         .CE(\bus2ip_addr_i[8]_i_1_n_0 ),
-        .D(\bus2ip_addr_i[2]_i_1_n_0 ),
+        .D(p_1_in[2]),
         .Q(Q[0]),
         .R(SR));
   FDRE \bus2ip_addr_i_reg[3] 
        (.C(s_axi_aclk),
         .CE(\bus2ip_addr_i[8]_i_1_n_0 ),
-        .D(\bus2ip_addr_i[3]_i_1_n_0 ),
+        .D(p_1_in[3]),
         .Q(Q[1]),
         .R(SR));
   FDRE \bus2ip_addr_i_reg[8] 
        (.C(s_axi_aclk),
         .CE(\bus2ip_addr_i[8]_i_1_n_0 ),
-        .D(\bus2ip_addr_i[8]_i_2_n_0 ),
+        .D(p_1_in[8]),
         .Q(Q[2]),
         .R(SR));
   FDRE bus2ip_rnw_i_reg
@@ -2202,12 +2200,15 @@ module glbl ();
 
     parameter ROC_WIDTH = 100000;
     parameter TOC_WIDTH = 0;
+    parameter GRES_WIDTH = 10000;
+    parameter GRES_START = 10000;
 
 //--------   STARTUP Globals --------------
     wire GSR;
     wire GTS;
     wire GWE;
     wire PRLD;
+    wire GRESTORE;
     tri1 p_up_tmp;
     tri (weak1, strong0) PLL_LOCKG = p_up_tmp;
 
@@ -2220,6 +2221,7 @@ module glbl ();
     reg GSR_int;
     reg GTS_int;
     reg PRLD_int;
+    reg GRESTORE_int;
 
 //--------   JTAG Globals --------------
     wire JTAG_TDO_GLBL;
@@ -2247,6 +2249,7 @@ module glbl ();
     assign (strong1, weak0) GSR = GSR_int;
     assign (strong1, weak0) GTS = GTS_int;
     assign (weak1, weak0) PRLD = PRLD_int;
+    assign (strong1, weak0) GRESTORE = GRESTORE_int;
 
     initial begin
 	GSR_int = 1'b1;
@@ -2260,6 +2263,14 @@ module glbl ();
 	GTS_int = 1'b1;
 	#(TOC_WIDTH)
 	GTS_int = 1'b0;
+    end
+
+    initial begin 
+	GRESTORE_int = 1'b0;
+	#(GRES_START);
+	GRESTORE_int = 1'b1;
+	#(GRES_WIDTH);
+	GRESTORE_int = 1'b0;
     end
 
 endmodule
