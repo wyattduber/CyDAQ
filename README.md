@@ -7,3 +7,9 @@
 - Wyatt Duberstein
 - Yohan Bopearatchy
 ---
+
+# Install
+python -m pip install -r cli/requirements.txt
+
+# Run 
+python cli/main.py
