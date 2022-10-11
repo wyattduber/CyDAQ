@@ -1,10 +1,5 @@
-import time
-import threading
-import queue
 import serial
 import serial.tools.list_ports
-from tkinter import *
-#import GUI_error_handle
 
 
 def get_port():
@@ -60,7 +55,7 @@ class ctrl_comm:
         self.__s_comm.xonxoff = False
         self.__s_comm.rtscts = False
         self.__s_comm.dsrdtr = False
-        self.__s_comm.parity = serial.PARITY_NONE #PARITY_EVEN
+        self.__s_comm.parity = serial.PARITY_NONE  # PARITY_EVEN
         self.__s_comm.timeout = 4
         self.__order = "little"
 
@@ -168,6 +163,7 @@ class ctrl_comm:
             return int.from_bytes(buffer, byteorder=self.__order, signed=False)
         else:
             return False
+
     def read_uint16(self):
         """
         Read a uint16 from the serial device
@@ -188,6 +184,7 @@ class ctrl_comm:
             return int.from_bytes(buffer, byteorder=self.__order, signed=False)
         else:
             return False
+
     def __throw_exception(self, text):
         """
         Throws an exception for a read timeout
@@ -199,8 +196,3 @@ class ctrl_comm:
 
     def getSerialObj(self):
         return self.__s_comm
-
-
-
-
-

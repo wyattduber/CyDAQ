@@ -9,7 +9,7 @@
 ---
 
 # Install
-python -m pip install -r cli/requirements.txt
+python -m pip install -r cli/requirements.txt --user
 
 # Run 
 python cli/main.py
