@@ -2,3 +2,4 @@
 .idea
 *.pyc
 *.csv
+cli/__pycache__

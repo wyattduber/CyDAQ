@@ -345,6 +345,8 @@ def main():
 		elif command[0] == 'q' or command[0] == 'quit':
 			print("Terminating...\n")
 			running = False
+		elif command[0] == "" or command[0] == "\n":
+			pass
 		else:
 			print_help(True)
 
