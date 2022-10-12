@@ -22,6 +22,7 @@ default_config = {
     "Mid Corner": 100,
     "Dac Reps": 0,
     "Dac Generation Rate": 0,
+    "Dac Mode": "Disabled",
 }
 
 # Represents the configuration for the cyDAQ. Construction can be guided using the configure() function
@@ -274,7 +275,6 @@ def generateFilename():
     return 'sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
 
 
-# TODO rewrite
 def adc_raw_to_volts(sample):
     ADC_N_BITS = 12  # Number of bits in the ADC
     ADC_DC_OFFSET_V = 0.5  # DC level shift on ADC
@@ -286,6 +286,7 @@ def adc_raw_to_volts(sample):
 
 def main():
     running = True
+    generating = False
     print("CyDAQ Command Line Interface")
 
     # try to connect to cyDAQ. If unable, print error and exit CLI
@@ -325,7 +326,14 @@ def main():
             elif len(command) == 2:
                 stop_sampling(outFile=command[1])
         elif command[0] == 'generate':
-            pass  # TODO
+            if not generating:
+                cmd_obj.send_start_gen(comm_port)
+                generating = True
+                print("Generating Started")
+            else:
+                cmd_obj.send_stop_gen(comm_port)
+                generating = not generating
+                print("Generating Stopped")
         elif command[0] == 'q' or command[0] == 'quit':
             print("Terminating...\n")
             running = False
