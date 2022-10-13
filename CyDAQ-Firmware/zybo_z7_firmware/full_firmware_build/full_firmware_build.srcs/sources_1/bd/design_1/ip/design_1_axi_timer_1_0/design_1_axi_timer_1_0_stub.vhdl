@@ -1,8 +1,8 @@
--- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+-- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
--- Date        : Wed Oct 13 19:07:19 2021
--- Host        : ETGLABTEST-02 running 64-bit major release  (build 9200)
+-- Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+-- Date        : Mon Oct 10 20:32:20 2022
+-- Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub -rename_top design_1_axi_timer_1_0 -prefix
 --               design_1_axi_timer_1_0_ design_1_axi_timer_0_0_stub.vhdl
 -- Design      : design_1_axi_timer_0_0

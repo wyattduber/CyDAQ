@@ -180,6 +180,28 @@ int main(void) {
 //					continue;
 //				}
 
+
+//mode select -Longz
+//				if(cmd == DAC_MODE_SELECT){
+//					int mode;//debug
+//					switch (mode){
+//						case 0:
+//							//Config Mode
+//						case 1:
+//							//Basic Operation Mode
+//						case 2:
+//							//Balance Beam Mode
+//						case 3:
+//							//External ADC Mode
+//						case 4:
+//							//DAQ mode
+//						default:
+//							return -1;
+//
+//					}
+//				}
+//end of mode select -Longz
+
 				if(cmd == START_SAMPLING){
 					*flagPtr |= 0x10;
 					*bufStart = *bufEnd;

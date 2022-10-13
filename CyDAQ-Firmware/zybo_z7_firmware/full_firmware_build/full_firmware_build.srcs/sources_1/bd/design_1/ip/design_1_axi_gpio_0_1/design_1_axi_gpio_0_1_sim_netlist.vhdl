@@ -1,10 +1,10 @@
--- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+-- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2019.1 (win64) Build 2552052 Fri May 24 14:49:42 MDT 2019
--- Date        : Wed Oct 13 19:07:04 2021
--- Host        : ETGLABTEST-02 running 64-bit major release  (build 9200)
+-- Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+-- Date        : Mon Oct 10 20:32:17 2022
+-- Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               X:/CyDAQ/firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_gpio_0_1/design_1_axi_gpio_0_1_sim_netlist.vhdl
+--               e:/sdmay23-47-master/CyDAQ-Firmware/zybo_z7_firmware/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/ip/design_1_axi_gpio_0_1/design_1_axi_gpio_0_1_sim_netlist.vhdl
 -- Design      : design_1_axi_gpio_0_1
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -916,7 +916,7 @@ architecture STRUCTURE of design_1_axi_gpio_0_1_address_decoder is
   signal \^ip2bus_rdack_i_d1_reg\ : STD_LOGIC;
   signal \^ip2bus_wrack_i_d1_reg\ : STD_LOGIC;
   attribute SOFT_HLUTNM : string;
-  attribute SOFT_HLUTNM of \Dual.gpio2_Data_Out[0]_i_1\ : label is "soft_lutpair0";
+  attribute SOFT_HLUTNM of \Dual.gpio2_Data_Out[0]_i_1\ : label is "soft_lutpair1";
   attribute SOFT_HLUTNM of \Dual.gpio2_Data_Out[4]_i_1\ : label is "soft_lutpair6";
   attribute SOFT_HLUTNM of \Dual.gpio2_Data_Out[5]_i_1\ : label is "soft_lutpair5";
   attribute SOFT_HLUTNM of \Dual.gpio2_Data_Out[6]_i_1\ : label is "soft_lutpair4";
@@ -927,7 +927,7 @@ architecture STRUCTURE of design_1_axi_gpio_0_1_address_decoder is
   attribute SOFT_HLUTNM of \Dual.gpio_Data_Out[1]_i_1\ : label is "soft_lutpair5";
   attribute SOFT_HLUTNM of \Dual.gpio_Data_Out[2]_i_1\ : label is "soft_lutpair4";
   attribute SOFT_HLUTNM of \Dual.gpio_Data_Out[3]_i_1\ : label is "soft_lutpair3";
-  attribute SOFT_HLUTNM of \Dual.gpio_OE[0]_i_1\ : label is "soft_lutpair1";
+  attribute SOFT_HLUTNM of \Dual.gpio_OE[0]_i_1\ : label is "soft_lutpair0";
   attribute SOFT_HLUTNM of \GEN_BKEND_CE_REGISTERS[1].ce_out_i[1]_i_1\ : label is "soft_lutpair7";
   attribute SOFT_HLUTNM of \GEN_BKEND_CE_REGISTERS[3].ce_out_i[3]_i_2\ : label is "soft_lutpair7";
   attribute SOFT_HLUTNM of \ip2bus_data_i_D1[0]_i_1\ : label is "soft_lutpair2";
@@ -1405,10 +1405,7 @@ architecture STRUCTURE of design_1_axi_gpio_0_1_slave_attachment is
   signal \INCLUDE_DPHASE_TIMER.dpto_cnt_reg\ : STD_LOGIC_VECTOR ( 3 downto 0 );
   signal \^q\ : STD_LOGIC_VECTOR ( 2 downto 0 );
   signal \^sr\ : STD_LOGIC_VECTOR ( 0 to 0 );
-  signal \bus2ip_addr_i[2]_i_1_n_0\ : STD_LOGIC;
-  signal \bus2ip_addr_i[3]_i_1_n_0\ : STD_LOGIC;
   signal \bus2ip_addr_i[8]_i_1_n_0\ : STD_LOGIC;
-  signal \bus2ip_addr_i[8]_i_2_n_0\ : STD_LOGIC;
   signal \^bus2ip_rnw_i_reg_0\ : STD_LOGIC;
   signal clear : STD_LOGIC;
   signal \^ip2bus_rdack_i_d1_reg\ : STD_LOGIC;
@@ -1419,6 +1416,7 @@ architecture STRUCTURE of design_1_axi_gpio_0_1_slave_attachment is
   signal is_write_i_2_n_0 : STD_LOGIC;
   signal is_write_reg_n_0 : STD_LOGIC;
   signal p_0_in : STD_LOGIC;
+  signal p_1_in : STD_LOGIC_VECTOR ( 8 downto 2 );
   signal p_5_in : STD_LOGIC;
   signal plusOp : STD_LOGIC_VECTOR ( 3 downto 0 );
   signal s_axi_bresp_i : STD_LOGIC;
@@ -1443,7 +1441,7 @@ architecture STRUCTURE of design_1_axi_gpio_0_1_slave_attachment is
   attribute SOFT_HLUTNM of \INCLUDE_DPHASE_TIMER.dpto_cnt[1]_i_1\ : label is "soft_lutpair11";
   attribute SOFT_HLUTNM of \INCLUDE_DPHASE_TIMER.dpto_cnt[2]_i_1\ : label is "soft_lutpair9";
   attribute SOFT_HLUTNM of \INCLUDE_DPHASE_TIMER.dpto_cnt[3]_i_2\ : label is "soft_lutpair9";
-  attribute SOFT_HLUTNM of \bus2ip_addr_i[2]_i_1\ : label is "soft_lutpair10";
+  attribute SOFT_HLUTNM of \bus2ip_addr_i[3]_i_1\ : label is "soft_lutpair10";
   attribute SOFT_HLUTNM of \bus2ip_addr_i[8]_i_2\ : label is "soft_lutpair10";
   attribute SOFT_HLUTNM of start2_i_1 : label is "soft_lutpair8";
   attribute SOFT_HLUTNM of \state[1]_i_2\ : label is "soft_lutpair8";
@@ -1675,7 +1673,7 @@ I_DECODER: entity work.design_1_axi_gpio_0_1_address_decoder
       I0 => s_axi_araddr(0),
       I1 => s_axi_awaddr(0),
       I2 => s_axi_arvalid,
-      O => \bus2ip_addr_i[2]_i_1_n_0\
+      O => p_1_in(2)
     );
 \bus2ip_addr_i[3]_i_1\: unisim.vcomponents.LUT3
     generic map(
@@ -1685,7 +1683,7 @@ I_DECODER: entity work.design_1_axi_gpio_0_1_address_decoder
       I0 => s_axi_araddr(1),
       I1 => s_axi_awaddr(1),
       I2 => s_axi_arvalid,
-      O => \bus2ip_addr_i[3]_i_1_n_0\
+      O => p_1_in(3)
     );
 \bus2ip_addr_i[8]_i_1\: unisim.vcomponents.LUT5
     generic map(
@@ -1707,13 +1705,13 @@ I_DECODER: entity work.design_1_axi_gpio_0_1_address_decoder
       I0 => s_axi_araddr(2),
       I1 => s_axi_awaddr(2),
       I2 => s_axi_arvalid,
-      O => \bus2ip_addr_i[8]_i_2_n_0\
+      O => p_1_in(8)
     );
 \bus2ip_addr_i_reg[2]\: unisim.vcomponents.FDRE
      port map (
       C => s_axi_aclk,
       CE => \bus2ip_addr_i[8]_i_1_n_0\,
-      D => \bus2ip_addr_i[2]_i_1_n_0\,
+      D => p_1_in(2),
       Q => \^q\(0),
       R => \^sr\(0)
     );
@@ -1721,7 +1719,7 @@ I_DECODER: entity work.design_1_axi_gpio_0_1_address_decoder
      port map (
       C => s_axi_aclk,
       CE => \bus2ip_addr_i[8]_i_1_n_0\,
-      D => \bus2ip_addr_i[3]_i_1_n_0\,
+      D => p_1_in(3),
       Q => \^q\(1),
       R => \^sr\(0)
     );
@@ -1729,7 +1727,7 @@ I_DECODER: entity work.design_1_axi_gpio_0_1_address_decoder
      port map (
       C => s_axi_aclk,
       CE => \bus2ip_addr_i[8]_i_1_n_0\,
-      D => \bus2ip_addr_i[8]_i_2_n_0\,
+      D => p_1_in(8),
       Q => \^q\(2),
       R => \^sr\(0)
     );

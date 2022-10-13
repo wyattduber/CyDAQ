@@ -285,6 +285,28 @@
 
 /******************************************************************/
 
+/* Definitions for driver IICPS */
+#define XPAR_XIICPS_NUM_INSTANCES 1
+
+/* Definitions for peripheral PS7_I2C_0 */
+#define XPAR_PS7_I2C_0_DEVICE_ID 0
+#define XPAR_PS7_I2C_0_BASEADDR 0xE0004000
+#define XPAR_PS7_I2C_0_HIGHADDR 0xE0004FFF
+#define XPAR_PS7_I2C_0_I2C_CLK_FREQ_HZ 111111115
+
+
+/******************************************************************/
+
+/* Canonical definitions for peripheral PS7_I2C_0 */
+#define XPAR_XIICPS_0_DEVICE_ID XPAR_PS7_I2C_0_DEVICE_ID
+#define XPAR_XIICPS_0_BASEADDR 0xE0004000
+#define XPAR_XIICPS_0_HIGHADDR 0xE0004FFF
+#define XPAR_XIICPS_0_I2C_CLK_FREQ_HZ 111111115
+
+
+/******************************************************************/
+
+/* Definition for input Clock */
 /* Definitions for driver QSPIPS */
 #define XPAR_XQSPIPS_NUM_INSTANCES 1
 
@@ -422,7 +444,7 @@
 #define XPAR_AXI_QUAD_SPI_0_FIFO_DEPTH 16U
 #define XPAR_AXI_QUAD_SPI_0_FIFO_EXIST 1U
 #define XPAR_AXI_QUAD_SPI_0_SPI_SLAVE_ONLY 0U
-#define XPAR_AXI_QUAD_SPI_0_NUM_SS_BITS 1U
+#define XPAR_AXI_QUAD_SPI_0_NUM_SS_BITS 2U
 #define XPAR_AXI_QUAD_SPI_0_NUM_TRANSFER_BITS 8U
 #define XPAR_AXI_QUAD_SPI_0_SPI_MODE 0U
 #define XPAR_AXI_QUAD_SPI_0_TYPE_OF_AXI4_INTERFACE 0U
@@ -437,14 +459,14 @@
 #define XPAR_SPI_0_FIFO_DEPTH 16U
 #define XPAR_SPI_0_FIFO_EXIST 1U
 #define XPAR_SPI_0_SPI_SLAVE_ONLY 0U
-#define XPAR_SPI_0_NUM_SS_BITS 1U
+#define XPAR_SPI_0_NUM_SS_BITS 2U
 #define XPAR_SPI_0_NUM_TRANSFER_BITS 8U
 #define XPAR_SPI_0_SPI_MODE 0U
 #define XPAR_SPI_0_TYPE_OF_AXI4_INTERFACE 0U
 #define XPAR_SPI_0_AXI4_BASEADDR 0U
 #define XPAR_SPI_0_AXI4_HIGHADDR 0U
 #define XPAR_SPI_0_XIP_MODE 0U
-#define XPAR_SPI_0_USE_STARTUP 1U
+#define XPAR_SPI_0_USE_STARTUP 0U
 
 
 
@@ -505,8 +527,47 @@
 
 /******************************************************************/
 
+/* Definitions for driver TTCPS */
+#define XPAR_XTTCPS_NUM_INSTANCES 3U
+
+/* Definitions for peripheral PS7_TTC_0 */
+#define XPAR_PS7_TTC_0_DEVICE_ID 0U
+#define XPAR_PS7_TTC_0_BASEADDR 0XF8001000U
+#define XPAR_PS7_TTC_0_TTC_CLK_FREQ_HZ 111111115U
+#define XPAR_PS7_TTC_0_TTC_CLK_CLKSRC 0U
+#define XPAR_PS7_TTC_1_DEVICE_ID 1U
+#define XPAR_PS7_TTC_1_BASEADDR 0XF8001004U
+#define XPAR_PS7_TTC_1_TTC_CLK_FREQ_HZ 111111115U
+#define XPAR_PS7_TTC_1_TTC_CLK_CLKSRC 0U
+#define XPAR_PS7_TTC_2_DEVICE_ID 2U
+#define XPAR_PS7_TTC_2_BASEADDR 0XF8001008U
+#define XPAR_PS7_TTC_2_TTC_CLK_FREQ_HZ 111111115U
+#define XPAR_PS7_TTC_2_TTC_CLK_CLKSRC 0U
+
+
+/******************************************************************/
+
+/* Canonical definitions for peripheral PS7_TTC_0 */
+#define XPAR_XTTCPS_0_DEVICE_ID XPAR_PS7_TTC_0_DEVICE_ID
+#define XPAR_XTTCPS_0_BASEADDR 0xF8001000U
+#define XPAR_XTTCPS_0_TTC_CLK_FREQ_HZ 111111115U
+#define XPAR_XTTCPS_0_TTC_CLK_CLKSRC 0U
+
+#define XPAR_XTTCPS_1_DEVICE_ID XPAR_PS7_TTC_1_DEVICE_ID
+#define XPAR_XTTCPS_1_BASEADDR 0xF8001004U
+#define XPAR_XTTCPS_1_TTC_CLK_FREQ_HZ 111111115U
+#define XPAR_XTTCPS_1_TTC_CLK_CLKSRC 0U
+
+#define XPAR_XTTCPS_2_DEVICE_ID XPAR_PS7_TTC_2_DEVICE_ID
+#define XPAR_XTTCPS_2_BASEADDR 0xF8001008U
+#define XPAR_XTTCPS_2_TTC_CLK_FREQ_HZ 111111115U
+#define XPAR_XTTCPS_2_TTC_CLK_CLKSRC 0U
+
+
+/******************************************************************/
+
 /* Definitions for driver UARTPS */
-#define XPAR_XUARTPS_NUM_INSTANCES 1
+#define XPAR_XUARTPS_NUM_INSTANCES 2
 
 /* Definitions for peripheral PS7_UART_1 */
 #define XPAR_PS7_UART_1_DEVICE_ID 0
@@ -514,6 +575,14 @@
 #define XPAR_PS7_UART_1_HIGHADDR 0xE0001FFF
 #define XPAR_PS7_UART_1_UART_CLK_FREQ_HZ 100000000
 #define XPAR_PS7_UART_1_HAS_MODEM 0
+
+
+/* Definitions for peripheral PS7_UART_0 */
+#define XPAR_PS7_UART_0_DEVICE_ID 1
+#define XPAR_PS7_UART_0_BASEADDR 0xE0000000
+#define XPAR_PS7_UART_0_HIGHADDR 0xE0000FFF
+#define XPAR_PS7_UART_0_UART_CLK_FREQ_HZ 100000000
+#define XPAR_PS7_UART_0_HAS_MODEM 0
 
 
 /******************************************************************/
@@ -525,9 +594,17 @@
 #define XPAR_XUARTPS_0_UART_CLK_FREQ_HZ 100000000
 #define XPAR_XUARTPS_0_HAS_MODEM 0
 
+/* Canonical definitions for peripheral PS7_UART_0 */
+#define XPAR_XUARTPS_1_DEVICE_ID XPAR_PS7_UART_0_DEVICE_ID
+#define XPAR_XUARTPS_1_BASEADDR 0xE0000000
+#define XPAR_XUARTPS_1_HIGHADDR 0xE0000FFF
+#define XPAR_XUARTPS_1_UART_CLK_FREQ_HZ 100000000
+#define XPAR_XUARTPS_1_HAS_MODEM 0
+
 
 /******************************************************************/
 
+/* Definition for input Clock */
 /* Definition for input Clock */
 /* Definitions for driver USBPS */
 #define XPAR_XUSBPS_NUM_INSTANCES 1
