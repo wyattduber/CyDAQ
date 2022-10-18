@@ -296,7 +296,10 @@ def main():
 		return 0
 
 	while running:
-		command = input("> ")
+		try:
+			command = input("> ")
+		except EOFError as e:
+			break
 		command = command.split(",")
 		command = [s.strip(" ") for s in command]
 
