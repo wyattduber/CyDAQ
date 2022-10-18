@@ -139,12 +139,16 @@ int main(void) {
 
 	//*********************************
 
-
+	int Comm_testing = 1;
 	while(1) {
+
+		if(DEBUG && Comm_testing){
+			print("ARM0: listening for input\n\r");
+			Comm_testing--;
+		}
 		//Receive bytes
 		bytes = xusb_cdc_rx_bytes_available();// > 5 ? 5 : xusb_cdc_rx_bytes_available();
-
-		if (bytes > 2) {
+		if (bytes > 1) {
 			bytes = usb_commRecv(recvBuf, bytes);
 			print("ARM0: Message received\n\r");
 			//Check message format

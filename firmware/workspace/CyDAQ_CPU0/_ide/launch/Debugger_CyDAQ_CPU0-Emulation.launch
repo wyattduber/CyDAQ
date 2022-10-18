@@ -10,7 +10,7 @@
     <booleanAttribute key="com.xilinx.sdk.tcf.debug.ui.skip.fpga.revision.check" value="false"/>
     <stringAttribute key="com.xilinx.sdk.tcf.debug.uiapplication.path" value="Debug/CyDAQ_CPU0.elf"/>
     <stringAttribute key="com.xilinx.sdk.tcf.debug.uicrosstrigger.bpcontainer" value="{&quot;arch&quot;:&quot;zynq&quot;,&quot;isSelected&quot;:false,&quot;breakPoints&quot;:[]}"/>
-    <stringAttribute key="com.xilinx.sdk.tcf.debug.uidebug.type" value="STANDALONE_QEMU_DEBUG"/>
+    <stringAttribute key="com.xilinx.sdk.tcf.debug.uidebug.type" value="STANDALONE_DEBUG"/>
     <booleanAttribute key="com.xilinx.sdk.tcf.debug.uienable.crosstrigger" value="false"/>
     <stringAttribute key="com.xilinx.sdk.tcf.debug.uifpga.device" value="Auto Detect"/>
     <stringAttribute key="com.xilinx.sdk.tcf.debug.uihw.bit.file" value="_ide/bitstream/design_1_wrapper.bit"/>
@@ -27,7 +27,7 @@
     <booleanAttribute key="com.xilinx.sdk.tcf.debug.uireset.lock.step" value="false"/>
     <booleanAttribute key="com.xilinx.sdk.tcf.debug.uireset.rpu" value="false"/>
     <booleanAttribute key="com.xilinx.sdk.tcf.debug.uireset.system" value="true"/>
-    <stringAttribute key="com.xilinx.sdk.tcf.debug.uitarget.peer" value="QEMU"/>
+    <stringAttribute key="com.xilinx.sdk.tcf.debug.uitarget.peer" value="Local"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.active.build.config" value="Debug"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.application.type" value=""/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.build.disabled" value="false"/>
@@ -35,19 +35,25 @@
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.data.files" value=""/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.debug.target" value=""/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.eclipse.portable.path" value="false"/>
-    <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.emulation" value="true"/>
+    <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.emulation" value="false"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.estimate" value="false"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.hw_spec.path" value="${sdxTcfLaunchFile:project=CyDAQ_CPU0;fileType=hw;}"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.ingore.peer.conflict" value="false"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.launch.work.dir" value=""/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.performance.analysis" value="false"/>
-    <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.performance.analysis.linux.hw.target" value=""/>
+    <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.performance.analysis.linux.hw.target" value="Local"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.sdsoc.project" value="CyDAQ_CPU0"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.trace" value="false"/>
     <stringAttribute key="com.xilinx.sdx.sdsoc.debug.ui.versal.system.emulation" value="false"/>
     <stringAttribute key="ide.launch.pdi.path" value=""/>
     <stringAttribute key="ide.launch.program.device" value="false"/>
     <stringAttribute key="launch.version" value="2020.1"/>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+        <listEntry value="/CyDAQ_CPU0"/>
+    </listAttribute>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+        <listEntry value="4"/>
+    </listAttribute>
     <booleanAttribute key="org.eclipse.tcf.debug.AttachChildren" value="true"/>
     <booleanAttribute key="org.eclipse.tcf.debug.DisconnectOnCtxExit" value="false"/>
     <booleanAttribute key="org.eclipse.tcf.debug.StopAtEntry" value="false"/>

@@ -55,7 +55,11 @@ int main()
     init_platform();
 
     print("Hello World\n\r");
-    print("Successfully ran Hello World application");
+    print("Successfully ran Hello World application\n");
+    while(1){
+    	print("Hello World from ARM1");
+    	usleep(300000);
+    }
     cleanup_platform();
     return 0;
 }

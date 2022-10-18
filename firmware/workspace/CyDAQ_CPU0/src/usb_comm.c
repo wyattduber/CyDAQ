@@ -85,6 +85,11 @@ int usbComm_init(){
 		xil_printf("ERROR: Unable to set up USB controller: %d\n", status);
 		exit(1);
 	}
+
+	if(DEBUG){
+			print("USB init finished\n\r");
+		}
+
 	return status;
 }
 
