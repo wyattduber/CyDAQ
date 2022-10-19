@@ -156,6 +156,12 @@ int main(void) {
 				sprintf(txBuf,"%cERR%c",COMM_START_CHAR,COMM_STOP_CHAR);
 				usb_commSend(txBuf, 5);
 				if(DEBUG){
+					int i;
+					for(i = 0; i < bytes - 1; i++){
+						xil_printf(recvBuf[i]);
+					}
+					xil_printf("\n\r");//check what the input message has become
+
 					xil_printf("Error: Incorrect Format\n\r");
 				}
 			}
