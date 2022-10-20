@@ -76,3 +76,5 @@ p.stdin.flush()
 one_line_output = p.stdout.readline()
 
 p.communicate(b"q\n")
+
+# https://stackoverflow.com/questions/6892633/how-can-i-feed-a-subprocesss-standard-input-from-a-python-iterator/34572974#34572974
