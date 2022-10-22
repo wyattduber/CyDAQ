@@ -1,0 +1,8 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]E:\sdmay23-47-master\firmware-dual-core\workspace\cydaq_proto_1\export\cydaq_proto_1\sw\cydaq_proto_1\boot\fsbl.elf
+	E:\sdmay23-47-master\firmware-dual-core\workspace\cydaq_comm\_ide\bitstream\design_1_wrapper.bit
+	E:\sdmay23-47-master\firmware-dual-core\workspace\cydaq_comm\Debug\cydaq_comm.elf
+	E:\sdmay23-47-master\firmware-dual-core\workspace\cydaq_sampling\Debug\cydaq_sampling.elf
+}

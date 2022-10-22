@@ -1,7 +1,7 @@
 //arch = zynq; split = false; format = BIN
 the_ROM_image:
 {
-	[bootloader]E:\sdmay23-47-master\firmware\workspace\CyDAQ_CPU0\_ide\bootimage\BOOT.bin
+	[bootloader]E:\sdmay23-47-master\firmware\workspace\design_1_wrapper\export\design_1_wrapper\sw\design_1_wrapper\boot\fsbl.elf
 	E:\sdmay23-47-master\firmware\workspace\CyDAQ_CPU0\_ide\bitstream\design_1_wrapper.bit
 	E:\sdmay23-47-master\firmware\workspace\CyDAQ_CPU0\Debug\CyDAQ_CPU0.elf
 	E:\sdmay23-47-master\firmware\workspace\CyDAQ_CPU1\Debug\CyDAQ_CPU1.elf

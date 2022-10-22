@@ -1,0 +1,8 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]U:/ETG/CyDAQ_Proto/workspace2/CYDAQ_proto/export/CYDAQ_proto/sw/CYDAQ_proto/boot/fsbl.elf
+	U:/ETG/CyDAQ_Proto/workspace2/cydaq_comm/_ide/bitstream/design_1_wrapper.bit
+	U:/ETG/CyDAQ_Proto/workspace2/cydaq_comm/Debug/cydaq_comm.elf
+	U:\ETG\CyDAQ_Proto\workspace2\cydaq_sampling\Debug\cydaq_sampling.elf
+}

@@ -1,0 +1,8 @@
+/*cydaq_proto_1*/
+the_ROM_image:
+{
+  [bootloader]<cydaq_proto_1/boot/fsbl.elf>
+   <bitstream> 
+  <elf,ps7_cortexa9_0>
+  <elf,ps7_cortexa9_1>
+}
