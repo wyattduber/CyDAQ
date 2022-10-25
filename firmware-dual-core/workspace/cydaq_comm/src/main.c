@@ -114,7 +114,8 @@ u32 streamData(){
 int main(void) {
 	u8 recvBuf[TEST_BUFFER_SIZE];
 	u8 txBuf[TEST_BUFFER_SIZE];
-	u8 cmd, bytes, payloadLength;
+	u8 bytes, payloadLength;
+	int cmd;
 
 	*bufStart = malloc(SAMPLE_BUFFER_SIZE*sizeof(u16));
 	baseAddr = *bufStart;
@@ -159,7 +160,33 @@ int main(void) {
 			}
 			else{
 				//If valid
-				cmd = recvBuf[COMM_NUM_START_CHARS + COMM_MODE_SIZE];
+				//cmd = recvBuf[COMM_NUM_START_CHARS + COMM_MODE_SIZE];
+				int cmd2 = 0;
+				cmd2 += (recvBuf[1] - 48) * 10000000;
+				cmd2 += (recvBuf[2] - 48) * 1000000;
+				cmd2 += (recvBuf[3] - 48)* 100000;
+				cmd2 += (recvBuf[4] - 48) * 10000;
+				cmd2 += (recvBuf[5] - 48) * 1000;
+				cmd2 += (recvBuf[6] - 48) * 100;
+				cmd2 += (recvBuf[7] - 48) * 10;
+				cmd2 += recvBuf[8] - 48;
+
+			    int dec_value = 0;
+			    // Initializing base value to 1, i.e 2^0
+			    int base = 1;
+
+			    int temp = cmd2;
+			    while (temp) {
+			        int last_digit = temp % 10;
+			        temp = temp / 10;
+
+			        dec_value += last_digit * base;
+
+			        base = base * 2;
+			    }
+
+			    cmd = dec_value - 48;
+
 
 				payloadLength = bytes - COMM_CMD_SIZE - COMM_NUM_START_CHARS
 						- COMM_MODE_SIZE - COMM_NUM_STOP_CHARS;
@@ -172,15 +199,17 @@ int main(void) {
 //					}
 //					continue;
 //				}
+				xil_printf("ARM0: Cmd is %d\n\r",cmd);
 //
-//				if(cmd >= NUM_COMMANDS){
-//					sprintf(txBuf,"%cERR%c",COMM_START_CHAR,COMM_STOP_CHAR);
-//					usb_commSend(txBuf, 5);
-//					if(DEBUG){
-//						xil_printf("Error: Invalid Command\n\r");
-//					}
-//					continue;
-//				}
+				if(cmd >= NUM_COMMANDS){
+					sprintf(txBuf,"%cERR%c",COMM_START_CHAR,COMM_STOP_CHAR);
+					usb_commSend(txBuf, 5);
+					if(DEBUG){
+
+						xil_printf("Error: Invalid Command\n\r");
+					}
+					continue;
+				}
 
 				if(cmd == START_SAMPLING){
 					for(i=0;i<SAMPLE_BUFFER_SIZE*sizeof(u16)-1;i+=2){
@@ -192,12 +221,12 @@ int main(void) {
 
 //					*flagPtr |= 0x10;
 //					*bufStart = *bufEnd;
-					print("ARM0: Start Sampling\n\r");
+					xil_printf("ARM0: Start Sampling\n\r");
 				}
 
 				if(cmd == STOP_SAMPLING){
 					*flagPtr &= ~0x10;
-					print("ARM0: Stop Sampling\n\r");
+					xil_printf("ARM0: Stop Sampling\n\r");
 				}
 
 				//Share values with CPU1
