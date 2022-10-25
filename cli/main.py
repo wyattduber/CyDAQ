@@ -40,7 +40,7 @@ def print_help(cmnd):
 	helpMsg = """	h/help\t\t\t\t Print This Help Menu
 	ping\t\t\t\t Ping the Zybo
 	configure\t\t\t Configure Parameters (Guided)
-	clear\t\t\t\t Clear parameters to default
+	clear\t\t\t\t Clear config to default
 	print\t\t\t\t Print Current Config
 	send\t\t\t\t Send config to cyDAQ
 	set (key) (value)\t\t Set one config value
@@ -99,7 +99,7 @@ def send():
 		n = 3
 		i = 0
 		while i < n:
-			print("calling func: ", func, " with args: ", args)
+			# print("calling func: ", func, " with args: ", args)
 			func(*args)
 			if cmd_obj.recieve_acknowlege_zybo(comm_port):
 				break
@@ -249,14 +249,14 @@ def loadCSV(filepath):
 				row_data = line.strip("\n").split()
 				for i, item in enumerate(row_data):
 					try:
-						row_data[i] = float(item)
+						row_data[i] = float(item)  # type: ignore
 					except ValueError:
 						pass
 				try:
 					if len(row_data) == 1:
 						data.append(float(row_data[0]))
 					else:
-						data.append(float(row_data))
+						data.append(float(row_data))  # type: ignore
 				except ValueError:
 					pass
 		return data
@@ -286,7 +286,6 @@ def adc_raw_to_volts(sample):
 
 def main():
 	global comm_port
-	running = True
 	generating = False
 	print("CyDAQ Command Line Interface")
 
@@ -295,7 +294,7 @@ def main():
 		print("Zybo not connected")
 		return 0
 
-	while running:
+	while True:
 		try:
 			command = input("> ")
 		except EOFError as e:
@@ -303,11 +302,15 @@ def main():
 		command = command.split(",")
 		command = [s.strip(" ") for s in command]
 
+		if command[0] == 'q' or command[0] == 'quit':
+			print("Terminating...\n")
+			break
+
 		# make sure zybo is still connected
 		comm_port = get_port()
 		if comm_port == "" or comm_port is None:
 			print("Zybo not connected")
-			return 0
+			continue
 
 		if command[0] == 'h' or command[0] == 'help':
 			print_help(False)
@@ -318,6 +321,7 @@ def main():
 		elif command[0] == 'clear':
 			global config
 			config = default_config
+			print("success")
 		elif command[0] == 'print':
 			print_config()
 		elif command[0] == 'send':
@@ -345,9 +349,6 @@ def main():
 				cmd_obj.send_stop_gen(comm_port)
 				generating = not generating
 				print("Generating Stopped")
-		elif command[0] == 'q' or command[0] == 'quit':
-			print("Terminating...\n")
-			running = False
 		elif command[0] == "" or command[0] == "\n":
 			pass
 		else:
