@@ -3,19 +3,22 @@ import json
 
 import pexpect
 
+
 class CLI:
     """
-    A class that handles communication with the cyDAQ. Uses the library pexpect to initialize and communicate with the CLI tool
+    A class that handles communication with the cyDAQ. Uses the library pexpect to initialize and communicate with
+    the CLI tool
 
     example usage: 
     cli = CLI("../cli/main.py")
     print(cli.ping())
     """
+
     def __init__(self, cli_main_path):
         self.END_CHAR = ">"
         self.NOT_CONNECTED = "Zybo not connected"
         self.p = popen_spawn.PopenSpawn("python " + cli_main_path)
-        
+
         # wait for cli to start up
         self.p.expect("CyDAQ Command Line Interface")
 
@@ -57,7 +60,7 @@ class CLI:
         response = self._send_command("clear")
         if response != " success\r\n":
             raise CLIException("Unexpected output from clear: |" + repr(response) + "|")
-    
+
     def get_config(self):
         """
         Get the current config stored in the CLI. This doesn't necessarily 
@@ -65,11 +68,11 @@ class CLI:
         """
         response = self._send_command("print")
         try:
-            return json.loads(response.replace("\'","\""))
+            return json.loads(response.replace("\'", "\""))
         except json.JSONDecodeError:
             raise CLIException("Error parsing json from printed configuration")
 
-    def send_config_to_cydaq(self):  
+    def send_config_to_cydaq(self):
         """
         Send the current configuration to the cyDAQ
         """
@@ -81,21 +84,31 @@ class CLI:
         Note: This only updates the stored config in the CLI tool. To update the cyDAQ device, 
         you must use send_config_to_cydaq()
         """
-        pass
+        self._send_command("set " + str(key) + " " + str(value))
 
-
-    def set_values(self, json):
+    def set_values(self, json_input):
         """
         Set multiple config values. Takes a json string
         Note: This only updates the stored config in the CLI tool. To update the cyDAQ device, 
         you must use send_config_to_cydaq()
         """
-        pass
+        try:
+            jsonList = json.loads(json_input)
+        except json.JSONDecodeError:
+            raise CLIException("Invalid JSON Specified!")
+
+        self._send_command("setm " + str(jsonList))
 
     def start_sampling(self):
-        pass
+        """
+        Starts sampling
+        """
+        self._send_command("start")
 
-    def stop_sampling(self):
+    def stop_sampling(self, fileName=None):
+        """
+        Stops sampling, can have a custom filename or generate a timestamped default
+        """
         pass
 
 
@@ -108,8 +121,10 @@ class CLIException(Exception):
         self.message = message
         super().__init__(self.message)
 
+
 class CLINoResponseException(Exception):
     pass
+
 
 class cyDAQNotConnectedException(Exception):
     pass
