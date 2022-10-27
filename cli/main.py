@@ -27,7 +27,7 @@ default_config = {
 
 # Represents the configuration for the cyDAQ. Construction can be guided using the configure() function
 # or manually using other commands
-config = default_config
+config = default_config.copy()
 
 
 def print_help(cmnd):
@@ -74,6 +74,7 @@ def configure():
 
 
 def print_config():
+	global config
 	print(config)
 
 
@@ -138,6 +139,7 @@ def update_multiple_config(json_str):
 	jsonList = {}
 
 	try:
+		print(json_str)
 		jsonList = json.loads(json_str)
 	except json.JSONDecodeError:
 		print("ERROR: Improper JSON specified")
@@ -320,7 +322,7 @@ def main():
 			configure()
 		elif command[0] == 'clear':
 			global config
-			config = default_config
+			config = default_config.copy()
 			print("success")
 		elif command[0] == 'print':
 			print_config()

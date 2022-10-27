@@ -1,5 +1,6 @@
 from pexpect import popen_spawn
 import json
+import time
 
 import pexpect
 
@@ -84,7 +85,7 @@ class CLI:
         Note: This only updates the stored config in the CLI tool. To update the cyDAQ device, 
         you must use send_config_to_cydaq()
         """
-        self._send_command("set " + str(key) + " " + str(value))
+        self._send_command("set, " + key + ", " + value)
 
     def set_values(self, json_input):
         """
@@ -97,7 +98,7 @@ class CLI:
         except json.JSONDecodeError:
             raise CLIException("Invalid JSON Specified!")
 
-        self._send_command("setm " + str(jsonList))
+        self._send_command("setm, " + str(jsonList))
 
     def start_sampling(self):
         """
@@ -105,11 +106,23 @@ class CLI:
         """
         self._send_command("start")
 
-    def stop_sampling(self, fileName=None):
+    def stop_sampling(self, fileName):
         """
         Stops sampling, can have a custom filename or generate a timestamped default
         """
-        pass
+        self._send_command("stop, " + fileName)
+
+    def flush(self):
+        """
+        Flushes the current values in the cydaq
+        """
+        self._send_command("flush")
+
+    def generate(self):
+        """
+        Start/Stop DAC Generation
+        """
+        self._send_command("generate")
 
 
 class CLIException(Exception):
