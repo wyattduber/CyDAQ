@@ -229,6 +229,10 @@ int main(void) {
 					xil_printf("ARM0: Stop Sampling\n\r");
 				}
 
+				if(cmd == PING) {
+					xil_printf("ARM0: NEVER GONNA GIVE YOU UP");
+				}
+
 				//Share values with CPU1
 				for(i = 0; i < payloadLength; i++){
 					pyldPtr[i] = recvBuf[COMM_NUM_START_CHARS + COMM_CMD_SIZE
