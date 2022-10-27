@@ -8,7 +8,7 @@ before_script:
 
 run:
   script:
-    - python -m pip install -r cli/requirements.txt --user
+    - python -m pip install -r cli/requirements.txt
     - python cli/main.py
   artifacts:
     paths:
