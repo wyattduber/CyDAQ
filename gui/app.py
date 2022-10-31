@@ -22,3 +22,20 @@ app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
 window.show()
 app.exec()
+
+# import sys
+# from PyQt5 import QtWidgets, uic
+
+# from BasicOperation import Ui_basic_operation
+
+
+# class MainWindow(QtWidgets.QMainWindow, Ui_basic_operation):
+#     def __init__(self):
+#         super(MainWindow, self).__init__()
+#         self.setupUi(self)
+
+# app = QtWidgets.QApplication(sys.argv)
+
+# window = MainWindow()
+# window.show()
+# app.exec()
