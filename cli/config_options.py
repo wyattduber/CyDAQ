@@ -7,6 +7,5 @@ options = {
     "Filter": "",
 
     "Corner Frequency": "",
-    
 
 }

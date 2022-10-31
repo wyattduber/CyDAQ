@@ -1,64 +1,64 @@
 from serial_comm import ctrl_comm
-from master_enum import enum_dac_mode, enum_filter, enum_commands, enum_input, enum_output,sig_serial
+from master_enum import enum_filter, enum_commands, sig_serial
 import struct
-import json
-import numpy
 import time as t
 
 ctrl_comm_obj = ctrl_comm()
 
 
-class cmd:
-    def recieve_acknowlege_zybo(self, port_select):
-        """
-               receives ACK! from the ZYBO
+def recieve_acknowlege_zybo(port_select):
+    """
+           receives ACK! from the ZYBO
 
-               Args:
-                   port_select: Zybo comm port
+           Args:
+               port_select: Zybo comm port
 
-               Returns:
-                   None
-               """
+           Returns:
+               None
+           """
 
-        if ctrl_comm_obj.isOpen() is True:
-            while True:
-                cnt = 0
-                if ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
-                    buffer = ""
-                    byte_value = ""
-                    if len(buffer) < 6:
-                        while byte_value != sig_serial.END_BYTE.value:
-                            byte_value = ctrl_comm_obj.read_byte()
-                            if byte_value != sig_serial.END_BYTE.value:
-                                buffer += byte_value
+    if ctrl_comm_obj.isOpen() is True:
+        while True:
+            cnt = 0
+            if ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
+                buffer = ""
+                byte_value = ""
+                if len(buffer) < 6:
+                    while byte_value != sig_serial.END_BYTE.value:
+                        byte_value = ctrl_comm_obj.read_byte()
+                        if byte_value != sig_serial.END_BYTE.value:
+                            buffer += byte_value
 
-                    if len(buffer) != 3:
-                        # self.__throw_exception('SerialReadTimeout')
-                        print("read cycle count: " + str(cnt))
-                        return False
-                    # buffer = buffer.decode('ascii')
-                    if buffer == "ACK":
-                        return True
-                    elif buffer == 'ERR':
-                        print('CyDAQ encountered error during configuration, contact ETG')
-                        return False
-                    else:
-                        # self.__throw_exception('ack was not received')
-                        print("'ack' was not received")
-                        return False
-                else:
-                    """
-                    buffer = ""
-                    byte_value = ""
-                    if len(buffer) < 6:
-                        while byte_value != sig_serial.END_BYTE.value:
-                            byte_value = ctrl_comm_obj.read_byte()
-                            if byte_value != False and byte_value != sig_serial.END_BYTE.value:
-                                buffer += byte_value
-                    """
+                if len(buffer) != 3:
+                    # self.__throw_exception('SerialReadTimeout')
+                    print("read cycle count: " + str(cnt))
                     return False
-        else:
-            return False
+                # buffer = buffer.decode('ascii')
+                if buffer == "ACK":
+                    return True
+                elif buffer == 'ERR':
+                    print('CyDAQ encountered error during configuration, contact ETG')
+                    return False
+                else:
+                    # self.__throw_exception('ack was not received')
+                    print("'ack' was not received")
+                    return False
+            else:
+                """
+                buffer = ""
+                byte_value = ""
+                if len(buffer) < 6:
+                    while byte_value != sig_serial.END_BYTE.value:
+                        byte_value = ctrl_comm_obj.read_byte()
+                        if byte_value != False and byte_value != sig_serial.END_BYTE.value:
+                            buffer += byte_value
+                """
+                return False
+    else:
+        return False
+
+
+class cmd:
 
     # NOTE: Probably won't use this anymore TODO delete?
     def send_parameters(self, port_select, data):
@@ -110,7 +110,7 @@ class cmd:
             dac_gen_rate = 0
         else:
             dac_gen_rate = data["Dac Generation Rate"]
-        
+
         try:
             ctrl_comm_obj.open(port_select)
         except ValueError as e:
@@ -139,7 +139,7 @@ class cmd:
                 # Once the command is implemented on the firmware side, use this code
                 # self.send_dac_mode(port_select, dac_mode_select)
                 # wait = 1
-                
+
                 wait = 0
                 cursor += 1
             elif cursor == 5 and wait == 0:
@@ -149,7 +149,7 @@ class cmd:
                 self.send_dac_gen_rate(port_select, dac_gen_rate)
                 wait = 1
             if wait == 1:
-                if self.recieve_acknowlege_zybo(port_select):
+                if recieve_acknowlege_zybo(port_select):
                     print("Ack received")
                     cursor += 1
                     cnt = 0
@@ -166,7 +166,7 @@ class cmd:
             return 0
         ctrl_comm_obj.close()
         return 1
-    
+
     def send_dataset(self, port_select, dataset):
         """
         sends dataset to the Zybo
@@ -194,7 +194,7 @@ class cmd:
                 self.send_data(port_select, dataset)
                 wait = 1
             if wait == 1:
-                if self.recieve_acknowlege_zybo(port_select):
+                if recieve_acknowlege_zybo(port_select):
                     print("Ack received")
                     cursor += 1
                     cnt = 0
@@ -268,7 +268,7 @@ class cmd:
             if cursor == 0:
                 self.send_start_gen(port_select)
                 wait = 1
-            if wait == 1 and self.recieve_acknowlege_zybo(port_select):
+            if wait == 1 and recieve_acknowlege_zybo(port_select):
                 print("Generation start ACK received")
                 cursor += 1
                 wait = 0
@@ -276,7 +276,6 @@ class cmd:
                 pass
         ctrl_comm_obj.close()
         return True
-
 
     def send_stop_gen_cmd(self, port_select):
         cursor = 0
@@ -286,7 +285,7 @@ class cmd:
             if cursor == 0:
                 self.send_stop_gen(port_select)
                 wait = 1
-            if wait == 1 and self.recieve_acknowlege_zybo(port_select):
+            if wait == 1 and recieve_acknowlege_zybo(port_select):
                 print("Generation stop ACK received")
                 cursor += 1
                 wait = 0
@@ -303,7 +302,7 @@ class cmd:
             if cursor == 0:
                 self.send_start(port_select)
                 wait = 1
-            if wait == 1 and self.recieve_acknowlege_zybo(port_select):
+            if wait == 1 and recieve_acknowlege_zybo(port_select):
                 print("Sampling start ACK received")
                 cursor += 1
                 wait = 0
@@ -324,7 +323,7 @@ class cmd:
             if cursor == 0:
                 self.send_stop(port_select)
                 wait = 1
-            if wait == 1 and self.recieve_acknowlege_zybo(port_select):
+            if wait == 1 and recieve_acknowlege_zybo(port_select):
                 print("Sampling stop ACK received")
                 cursor += 1
                 wait = 0
@@ -430,7 +429,8 @@ class cmd:
 
         if ctrl_comm_obj.isOpen() is True:
             if filter == enum_filter.BP2.value or filter == enum_filter.BP6.value:
-                val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq), int(u_corner_freq))
+                val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
+                                           int(u_corner_freq))
                 print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
             elif filter == enum_filter.LP1.value or filter == enum_filter.LP6.value:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
@@ -439,7 +439,8 @@ class cmd:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
                 print("Corner Frequency = " + str(corner_freq) + " / " + str(0))
             else:
-                val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq), int(u_corner_freq))
+                val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
+                                           int(u_corner_freq))
                 print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
 
             ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -621,7 +622,7 @@ class cmd:
                 """
         try:
             ctrl_comm_obj.open(port_select)
-        except ValueError as e:
+        except ValueError:
             return False
         if ctrl_comm_obj.isOpen() is True:
             ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
@@ -629,7 +630,7 @@ class cmd:
             ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('ascii'))
             cnt = 0
             while True:
-                if self.recieve_acknowlege_zybo(port_select):
+                if recieve_acknowlege_zybo(port_select):
                     return True
                 elif cnt > 10:
                     return False
@@ -658,7 +659,7 @@ class cmd:
         else:
             return False
 
-    #not needed since struct library takes care of byte convertions for us
+    # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):
     #     bin_num = bin(int(number))
     #     return bin_num

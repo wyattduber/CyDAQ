@@ -5,7 +5,7 @@ import json
 import time
 from check_params import ParameterConstructor
 
-from command_comm import cmd
+from command_comm import cmd, recieve_acknowlege_zybo
 from master_enum import nameToEnum, sig_serial
 from serial_comm import ctrl_comm, get_port
 
@@ -102,7 +102,7 @@ def send():
 		while i < n:
 			# print("calling func: ", func, " with args: ", args)
 			func(*args)
-			if cmd_obj.recieve_acknowlege_zybo(comm_port):
+			if recieve_acknowlege_zybo(comm_port):
 				break
 			i += 1
 
@@ -128,6 +128,7 @@ def update_single_config(key, value):
 	"""
 	Updates a single entry in the config
 	"""
+	# TODO some form of config validation here
 	config[key] = value
 
 
@@ -135,6 +136,8 @@ def update_multiple_config(json_str):
 	"""
 	Updates multiple entries specified as a JSON object
 	"""
+
+	# TODO some form of config validation here
 
 	jsonList = {}
 
