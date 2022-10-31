@@ -69,7 +69,7 @@ class CLI:
         """
         response = self._send_command("print")
         try:
-            return json.loads(response.replace("\'", "\""))
+            return json.dumps(json.loads(response))
         except json.JSONDecodeError:
             raise CLIException("Error parsing json from printed configuration")
 
@@ -98,7 +98,7 @@ class CLI:
         except json.JSONDecodeError:
             raise CLIException("Invalid JSON Specified!")
 
-        self._send_command("setm, " + str(jsonList))
+        self._send_command("setm, " + json.dumps(jsonList))
 
     def start_sampling(self):
         """

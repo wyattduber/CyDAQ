@@ -75,7 +75,7 @@ def configure():
 
 def print_config():
 	global config
-	print(config)
+	print(json.dumps(config))
 
 
 def send():
@@ -298,10 +298,10 @@ def main():
 
 	while True:
 		try:
-			command = input("> ")
+			raw_command = input("> ")
 		except EOFError as e:
 			break
-		command = command.split(",")
+		command = raw_command.split(",")
 		command = [s.strip(" ") for s in command]
 
 		if command[0] == 'q' or command[0] == 'quit':
@@ -332,7 +332,9 @@ def main():
 			if len(command) == 3:
 				update_single_config(command[1], command[2])
 		elif command[0] == 'setm':
-			update_multiple_config(''.join(command[1::]))
+			json = raw_command.split(',',1)[1]
+			print("setm json: ", json)
+			update_multiple_config(json)
 		elif command[0] == 'flush':
 			flush()
 		elif command[0] == 'start':
