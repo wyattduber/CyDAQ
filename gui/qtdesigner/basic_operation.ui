@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>basic_operation</class>
  <widget class="QMainWindow" name="basic_operation">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,236 +27,304 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>CyDAQ</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <widget class="QLabel" name="dac_gen_rate_label">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>380</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DAC Generation Rate</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>410</y>
+      <width>371</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="gen_rate_min_limit_btn">
+       <property name="text">
+        <string>100</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>&lt;=</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="gen_rate_input"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>&lt;=</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="gen_rate_max_limit_btn">
+       <property name="text">
+        <string>200,000</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>600</y>
+      <width>201</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="previous_btn">
+       <property name="text">
+        <string>Previous</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="next_btn">
+       <property name="text">
+        <string>Next</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>921</width>
+      <height>37</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="btn_layout">
+     <item>
+      <widget class="QPushButton" name="dac_btn">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>DAC</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="sampling_rate_btn">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Sampling Rate</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="input_btn">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Input</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="filter_btn">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Filter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="corners_btn">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Corners</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>280</y>
+      <width>377</width>
+      <height>37</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QPushButton" name="repetitions_min_limit_btn">
+       <property name="text">
+        <string>Infinity</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>&lt;=</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="repetitions_input"/>
+     </item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>&lt;=</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QPushButton" name="repetitions_max_limit_btn">
+       <property name="text">
+        <string>2,147,483,647</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="dac_mode_label">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>150</y>
+      <width>75</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DAC Mode</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="dac_mode_dropdown">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>180</y>
+      <width>125</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>125</width>
+      <height>25</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>125</width>
+      <height>25</height>
+     </size>
+    </property>
     <item>
-     <layout class="QHBoxLayout" name="btn_layout">
-      <item>
-       <widget class="QPushButton" name="dac_btn">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>DAC</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="sampling_rate_btn">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Sampling Rate</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="input_btn">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Input</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="filter_btn">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Filter</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="corners_btn">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Corners</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="text">
+      <string>Disabled</string>
+     </property>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Expanding</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
+     <property name="text">
+      <string>Dataset</string>
+     </property>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>DAC Mode</string>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-       <widget class="QComboBox" name="comboBox">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>25</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>25</height>
-         </size>
-        </property>
-        <item>
-         <property name="text">
-          <string>Disabled</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Dataset</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Passthrough</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>DAC Repetitions</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>Infinity</string>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>&lt;=</string>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QTextEdit" name="textEdit">
-          <property name="minimumSize">
-           <size>
-            <width>125</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>125</width>
-            <height>35</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>&lt;=</string>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>2,147,483,647</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+     <property name="text">
+      <string>Passthrough</string>
+     </property>
     </item>
-   </layout>
+   </widget>
+   <widget class="QLabel" name="dac_repetitions_label">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>250</y>
+      <width>113</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DAC Repetitions</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
