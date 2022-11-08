@@ -2,6 +2,7 @@ import sys
 from PyQt5 import QtWidgets, uic
 
 from MainWindow import Ui_MainWindow
+from BasicOperation import Ui_basic_operation
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -15,13 +16,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def was_clicked(self):
         print('you clicked basic operation mode!')
+        self.w = BasicOperationWindow()
+        self.w.show()
+        self.close()
+
+class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
+    def __init__(self):
+        super(BasicOperationWindow, self).__init__()
+        self.setupUi(self)
+
 
 
 app = QtWidgets.QApplication(sys.argv)
 
 window = MainWindow()
 window.show()
-app.exec()
+sys.exit(app.exec())
 
 # import sys
 # from PyQt5 import QtWidgets, uic
