@@ -29,14 +29,46 @@
   <property name="windowTitle">
    <string>CyDAQ</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #d9d9d9;</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget {
+	font-family: &quot;Segoe UI&quot;;
+	font-size: 16px;
+	color: #033f63;
+}
+
+QPushButton {
+	background-color: #033f63;
+	color: #d9d9d9;
+	border-radius: 4px;
+	padding: 8px 21px;
+}
+
+#dac_gen_rate_label, #dac_mode_label, #dac_repetitions_label {
+	font-size: 25px;
+}
+
+#dac_btn, #sampling_rate_btn, #input_btn, #filter_btn, #corners_btn {
+	margin: 0 4px;
+}
+
+#sampling_rate_btn, #input_btn, #filter_btn, #corners_btn {
+	background-color: none;
+	border: 2px solid #033f63;
+	color: #033f63;
+}
+</string>
+   </property>
    <widget class="QLabel" name="dac_gen_rate_label">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>380</y>
-      <width>161</width>
-      <height>16</height>
+      <x>340</x>
+      <y>360</y>
+      <width>241</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -48,7 +80,7 @@
      <rect>
       <x>260</x>
       <y>410</y>
-      <width>371</width>
+      <width>422</width>
       <height>41</height>
      </rect>
     </property>
@@ -89,9 +121,9 @@
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>650</x>
       <y>600</y>
-      <width>201</width>
+      <width>292</width>
       <height>51</height>
      </rect>
     </property>
@@ -112,29 +144,35 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>921</width>
-      <height>37</height>
+      <x>10</x>
+      <y>10</y>
+      <width>931</width>
+      <height>51</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="btn_layout">
+    <layout class="QHBoxLayout" name="nav_layout">
      <item>
       <widget class="QPushButton" name="dac_btn">
        <property name="minimumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>-1</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>DAC</string>
@@ -145,14 +183,14 @@
       <widget class="QPushButton" name="sampling_rate_btn">
        <property name="minimumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">
@@ -164,14 +202,14 @@
       <widget class="QPushButton" name="input_btn">
        <property name="minimumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">
@@ -183,14 +221,14 @@
       <widget class="QPushButton" name="filter_btn">
        <property name="minimumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">
@@ -202,14 +240,14 @@
       <widget class="QPushButton" name="corners_btn">
        <property name="minimumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>125</width>
-         <height>35</height>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">
@@ -219,13 +257,13 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>270</x>
       <y>280</y>
-      <width>377</width>
-      <height>37</height>
+      <width>422</width>
+      <height>39</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -265,9 +303,9 @@
    <widget class="QLabel" name="dac_mode_label">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>370</x>
       <y>150</y>
-      <width>75</width>
+      <width>121</width>
       <height>21</height>
      </rect>
     </property>
@@ -315,10 +353,10 @@
    <widget class="QLabel" name="dac_repetitions_label">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>250</y>
-      <width>113</width>
-      <height>21</height>
+      <x>360</x>
+      <y>240</y>
+      <width>181</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
