@@ -1,1 +1,0 @@
-CMakeLists.txt not found in E:\sdmay23-47-master\firmware\workspace\CyDAQ_CPU0 Select CMakeLists.txt

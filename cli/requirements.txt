@@ -1,5 +1,0 @@
-nltk
-numpy
-pylint
-pyserial
-scipy
