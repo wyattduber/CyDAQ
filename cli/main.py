@@ -5,7 +5,7 @@ import json
 import time
 from check_params import ParameterConstructor
 
-from command_comm import cmd
+from command_comm import cmd, recieve_acknowlege_zybo
 from master_enum import nameToEnum, sig_serial
 from serial_comm import ctrl_comm, get_port
 
@@ -27,7 +27,7 @@ default_config = {
 
 # Represents the configuration for the cyDAQ. Construction can be guided using the configure() function
 # or manually using other commands
-config = default_config
+config = default_config.copy()
 
 
 def print_help(cmnd):
@@ -40,7 +40,7 @@ def print_help(cmnd):
 	helpMsg = """	h/help\t\t\t\t Print This Help Menu
 	ping\t\t\t\t Ping the Zybo
 	configure\t\t\t Configure Parameters (Guided)
-	clear\t\t\t\t Clear parameters to default
+	clear\t\t\t\t Clear config to default
 	print\t\t\t\t Print Current Config
 	send\t\t\t\t Send config to cyDAQ
 	set (key) (value)\t\t Set one config value
@@ -74,7 +74,8 @@ def configure():
 
 
 def print_config():
-	print(config)
+	global config
+	print(json.dumps(config))
 
 
 def send():
@@ -99,9 +100,9 @@ def send():
 		n = 3
 		i = 0
 		while i < n:
-			print("calling func: ", func, " with args: ", args)
+			# print("calling func: ", func, " with args: ", args)
 			func(*args)
-			if cmd_obj.recieve_acknowlege_zybo(comm_port):
+			if recieve_acknowlege_zybo(comm_port):
 				break
 			i += 1
 
@@ -127,6 +128,7 @@ def update_single_config(key, value):
 	"""
 	Updates a single entry in the config
 	"""
+	# TODO some form of config validation here
 	config[key] = value
 
 
@@ -135,9 +137,12 @@ def update_multiple_config(json_str):
 	Updates multiple entries specified as a JSON object
 	"""
 
+	# TODO some form of config validation here
+
 	jsonList = {}
 
 	try:
+		print(json_str)
 		jsonList = json.loads(json_str)
 	except json.JSONDecodeError:
 		print("ERROR: Improper JSON specified")
@@ -249,14 +254,14 @@ def loadCSV(filepath):
 				row_data = line.strip("\n").split()
 				for i, item in enumerate(row_data):
 					try:
-						row_data[i] = float(item)
+						row_data[i] = float(item)  # type: ignore
 					except ValueError:
 						pass
 				try:
 					if len(row_data) == 1:
 						data.append(float(row_data[0]))
 					else:
-						data.append(float(row_data))
+						data.append(float(row_data))  # type: ignore
 				except ValueError:
 					pass
 		return data
@@ -286,7 +291,6 @@ def adc_raw_to_volts(sample):
 
 def main():
 	global comm_port
-	running = True
 	generating = False
 	print("CyDAQ Command Line Interface")
 
@@ -295,16 +299,23 @@ def main():
 		print("Zybo not connected")
 		return 0
 
-	while running:
-		command = input("> ")
-		command = command.split(",")
+	while True:
+		try:
+			raw_command = input("> ")
+		except EOFError as e:
+			break
+		command = raw_command.split(",")
 		command = [s.strip(" ") for s in command]
+
+		if command[0] == 'q' or command[0] == 'quit':
+			print("Terminating...\n")
+			break
 
 		# make sure zybo is still connected
 		comm_port = get_port()
 		if comm_port == "" or comm_port is None:
 			print("Zybo not connected")
-			return 0
+			continue
 
 		if command[0] == 'h' or command[0] == 'help':
 			print_help(False)
@@ -314,7 +325,8 @@ def main():
 			configure()
 		elif command[0] == 'clear':
 			global config
-			config = default_config
+			config = default_config.copy()
+			print("success")
 		elif command[0] == 'print':
 			print_config()
 		elif command[0] == 'send':
@@ -323,7 +335,9 @@ def main():
 			if len(command) == 3:
 				update_single_config(command[1], command[2])
 		elif command[0] == 'setm':
-			update_multiple_config(''.join(command[1::]))
+			json = raw_command.split(',',1)[1]
+			print("setm json: ", json)
+			update_multiple_config(json)
 		elif command[0] == 'flush':
 			flush()
 		elif command[0] == 'start':
@@ -342,9 +356,6 @@ def main():
 				cmd_obj.send_stop_gen(comm_port)
 				generating = not generating
 				print("Generating Stopped")
-		elif command[0] == 'q' or command[0] == 'quit':
-			print("Terminating...\n")
-			running = False
 		elif command[0] == "" or command[0] == "\n":
 			pass
 		else:

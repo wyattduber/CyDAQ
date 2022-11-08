@@ -1,33 +1,51 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel
-from PyQt5.QtCore import Qt
+from PyQt5 import QtWidgets, uic
+
+from MainWindow import Ui_MainWindow
+from BasicOperation import Ui_basic_operation
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
-        super().__init__()
+        super(MainWindow, self).__init__()
+        self.setupUi(self)
 
-        self.setWindowTitle("My App")
-
-        button = QPushButton("Press Me!")
+        button = self.basic_operation_btn
         button.setCheckable(True)
-        button.clicked.connect(self.the_button_was_clicked)
+        button.clicked.connect(self.was_clicked)
 
-        # Set the central widget of the Window.
-        self.setCentralWidget(button)
+    def was_clicked(self):
+        print('you clicked basic operation mode!')
+        self.w = BasicOperationWindow()
+        self.w.show()
+        self.close()
 
-    def the_button_was_clicked(self):
-        widget = QLabel("Hello World")
-        font = widget.font()
-        font.setPointSize(30)
-        widget.setFont(font)
-        widget.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.setCentralWidget(widget)
+class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
+    def __init__(self):
+        super(BasicOperationWindow, self).__init__()
+        self.setupUi(self)
 
 
-app = QApplication(sys.argv)
+
+app = QtWidgets.QApplication(sys.argv)
 
 window = MainWindow()
 window.show()
+sys.exit(app.exec())
 
-app.exec()
+# import sys
+# from PyQt5 import QtWidgets, uic
+
+# from BasicOperation import Ui_basic_operation
+
+
+# class MainWindow(QtWidgets.QMainWindow, Ui_basic_operation):
+#     def __init__(self):
+#         super(MainWindow, self).__init__()
+#         self.setupUi(self)
+
+# app = QtWidgets.QApplication(sys.argv)
+
+# window = MainWindow()
+# window.show()
+# app.exec()

@@ -1,0 +1,15 @@
+image: python:latest
+
+before_script:
+  - python --version  # For debugging
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+
+run:
+  script:
+    - python -m pip install -r cli/requirements.txt
+    - python cli/main.py
+  artifacts:
+    paths:
+      - dist/*.whl
