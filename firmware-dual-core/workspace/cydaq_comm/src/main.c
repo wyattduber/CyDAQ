@@ -212,7 +212,7 @@ int main(void) {
 				}
 
 				if(cmd == START_SAMPLING){
-					for(i=0;i<SAMPLE_BUFFER_SIZE*sizeof(u16)-1;i+=2){
+					for(i=0;i<SAMPLE_BUFFER_SIZE*sizeof(u16)-1*sizeof(u16);i+=2){
 						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
 						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
 //						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
