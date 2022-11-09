@@ -6,9 +6,12 @@ from BasicOperation import Ui_basic_operation
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, widget, windows):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+
+        self.widget = widget
+        self.windows = windows
 
         button = self.basic_operation_btn
         button.setCheckable(True)
@@ -16,21 +19,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def was_clicked(self):
         print('you clicked basic operation mode!')
-        self.w = BasicOperationWindow()
-        self.w.show()
-        self.close()
+        widget.setCurrentWidget(self.windows[1])
+        # self.w = BasicOperationWindow()
+        # self.w.show()
+        # self.close()
 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
-    def __init__(self):
+    def __init__(self, widget, windows):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
 
+        self.widget = widget
+        self.windows = windows
 
 
 app = QtWidgets.QApplication(sys.argv)
+widget = QtWidgets.QStackedWidget()
 
-window = MainWindow()
-window.show()
+windows = [] 
+windows += [
+    MainWindow(widget, windows),
+    BasicOperationWindow(widget, windows)
+]
+
+for window in windows:
+    widget.addWidget(window)
+
+# set current widget to MainWindow
+widget.setCurrentWidget(windows[0]) 
+widget.show()
+
 sys.exit(app.exec())
 
 # import sys
