@@ -47,6 +47,18 @@ QPushButton {
 	padding: 8px 21px;
 }
 
+QComboBox {
+	border-radius: 4px;
+	border: 2px solid #033f63;
+	padding: 4px 8px;
+}
+
+QLineEdit {
+	border-radius: 4px;
+	border: 2px solid #033f63;
+	padding: 4px 8px;
+}
+
 #dac_gen_rate_label, #dac_mode_label, #dac_repetitions_label {
 	font-size: 25px;
 }
@@ -55,18 +67,23 @@ QPushButton {
 	margin: 0 4px;
 }
 
-#sampling_rate_btn, #input_btn, #filter_btn, #corners_btn {
+#dac_btn {
+	border: 2px solid #033f63;
+}
+
+#sampling_rate_btn, #input_btn, #filter_btn, #corners_btn, #previous_btn {
 	background-color: none;
 	border: 2px solid #033f63;
 	color: #033f63;
 }
+
 </string>
    </property>
    <widget class="QLabel" name="dac_gen_rate_label">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>360</y>
+      <x>370</x>
+      <y>400</y>
       <width>241</width>
       <height>31</height>
      </rect>
@@ -78,8 +95,8 @@ QPushButton {
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>410</y>
+      <x>290</x>
+      <y>450</y>
       <width>422</width>
       <height>41</height>
      </rect>
@@ -121,9 +138,9 @@ QPushButton {
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>720</x>
       <y>600</y>
-      <width>292</width>
+      <width>221</width>
       <height>51</height>
      </rect>
     </property>
@@ -260,8 +277,8 @@ QPushButton {
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>280</y>
+      <x>290</x>
+      <y>330</y>
       <width>422</width>
       <height>39</height>
      </rect>
@@ -303,8 +320,8 @@ QPushButton {
    <widget class="QLabel" name="dac_mode_label">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>150</y>
+      <x>410</x>
+      <y>160</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -316,22 +333,22 @@ QPushButton {
    <widget class="QComboBox" name="dac_mode_dropdown">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>180</y>
-      <width>125</width>
-      <height>25</height>
+      <x>360</x>
+      <y>210</y>
+      <width>241</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>125</width>
-      <height>25</height>
+      <width>0</width>
+      <height>0</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>125</width>
-      <height>25</height>
+      <width>16777215</width>
+      <height>16777215</height>
      </size>
     </property>
     <item>
@@ -353,8 +370,8 @@ QPushButton {
    <widget class="QLabel" name="dac_repetitions_label">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>240</y>
+      <x>390</x>
+      <y>270</y>
       <width>181</width>
       <height>31</height>
      </rect>
