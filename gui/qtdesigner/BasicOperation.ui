@@ -79,62 +79,6 @@ QLineEdit {
 
 </string>
    </property>
-   <widget class="QLabel" name="dac_gen_rate_label">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>400</y>
-      <width>241</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>DAC Generation Rate</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>450</y>
-      <width>422</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="gen_rate_min_limit_btn">
-       <property name="text">
-        <string>100</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>&lt;=</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="gen_rate_input"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>&lt;=</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="gen_rate_max_limit_btn">
-       <property name="text">
-        <string>200,000</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
@@ -274,111 +218,16 @@ QLineEdit {
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>330</y>
-      <width>422</width>
-      <height>39</height>
+      <x>20</x>
+      <y>80</y>
+      <width>881</width>
+      <height>501</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="repetitions_min_limit_btn">
-       <property name="text">
-        <string>Infinity</string>
-       </property>
-      </widget>
-     </item>
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>&lt;=</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="repetitions_input"/>
-     </item>
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>&lt;=</string>
-       </property>
-      </widget>
-     </item>
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="repetitions_max_limit_btn">
-       <property name="text">
-        <string>2,147,483,647</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QLabel" name="dac_mode_label">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>160</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>DAC Mode</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="dac_mode_dropdown">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>210</y>
-      <width>241</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777215</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <item>
-     <property name="text">
-      <string>Disabled</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Dataset</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Passthrough</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QLabel" name="dac_repetitions_label">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>270</y>
-      <width>181</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>DAC Repetitions</string>
-    </property>
+    <layout class="QGridLayout" name="testLayout"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

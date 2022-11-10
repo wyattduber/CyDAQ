@@ -48,6 +48,11 @@ First make sure you have pyqt5-tools installed
 pip install pyqt5-tools
 ```
 
+> Note: You might need to do the following (in git bash) to get the command to work. Just replace "crkems" with your netid:
+```bash
+export PATH=$PATH://my.files.iastate.edu/Profiles/crkems/AppData/Roaming/Python/Python38/Scripts
+```
+
 Now, the following two commands can be used to update the .ui and .qrc files you made changes to. The naming of the files should follow the same structure. For example, basic_operation.ui outputs to BasicOperation.py or main_window.qrc outputs to main_window_rc.py. 
 ```bash
 pyuic5 -x yourform.ui -o file.py
@@ -55,5 +60,6 @@ pyuic5 -x yourform.ui -o file.py
 ```bash
 pyrcc5 resource.qrc -o resource_rc.py
 ```
+
 
 

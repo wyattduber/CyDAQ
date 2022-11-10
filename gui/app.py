@@ -3,6 +3,8 @@ from PyQt5 import QtWidgets, uic
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
+from DacModeWidget import Ui_DAC_mode_widget
+from SamplingRateWidget import Ui_sampling_rate_widget
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -13,15 +15,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.widget = widget
         self.windows = windows
 
-        # self.inputPages = QtWidgets.QStackedWidget()
-        # self.inputPages.addWidget()
-
         button = self.basic_operation_btn
         button.setCheckable(True)
         button.clicked.connect(self.was_clicked)
 
     def was_clicked(self):
-        print('you clicked basic operation mode!')
         widget.setCurrentWidget(self.windows[1])
         # self.w = BasicOperationWindow()
         # self.w.show()
@@ -32,8 +30,35 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
 
+
+        self.inputPages = QtWidgets.QStackedWidget()
+        self.testLayout.addWidget(self.inputPages)
+        
+        self.dacModeWidget = DACModeWidget()
+        self.samplingRateWidget = SamplingRateWidget()
+
+        self.inputPages.addWidget(self.samplingRateWidget)
+        self.inputPages.addWidget(self.dacModeWidget)
+
+        self.inputPages.setCurrentWidget(self.dacModeWidget)
+
+        def onClicTest():
+            self.inputPages.setCurrentWidget(self.samplingRateWidget)
+
+        self.next_btn.clicked.connect(onClicTest)
+
         self.widget = widget
         self.windows = windows
+
+class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
+    def __init__(self):
+        super(DACModeWidget, self).__init__()
+        self.setupUi(self)
+
+class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
+    def __init__(self):
+        super(SamplingRateWidget, self).__init__()
+        self.setupUi(self)
 
 
 app = QtWidgets.QApplication(sys.argv)
