@@ -13,6 +13,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.widget = widget
         self.windows = windows
 
+        # self.inputPages = QtWidgets.QStackedWidget()
+        # self.inputPages.addWidget()
+
         button = self.basic_operation_btn
         button.setCheckable(True)
         button.clicked.connect(self.was_clicked)
