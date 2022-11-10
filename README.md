@@ -37,3 +37,23 @@ cli.send_config_to_cydaq()
 
 # GUI
 The GUI is a PyQt5 application that uses the CLIWrapper to communicate with the cyDAQ. It's purpose is to allow for students to configure the cyDAQ quickly and easily. 
+
+QTDesigner was used to create most of the layout/styling. The documentation can be found [here](https://doc.qt.io/qt-5/qtdesigner-manual.html). 
+
+## Making Changes
+> Note: Any changes to the *.ui or *.qrc files in gui/qtdesigner requires re-building the python files. 
+
+First make sure you have pyqt5-tools installed
+```bash
+pip install pyqt5-tools
+```
+
+Now, the following two commands can be used to update the .ui and .qrc files you made changes to. The naming of the files should follow the same structure. For example, basic_operation.ui outputs to BasicOperation.py or main_window.qrc outputs to main_window_rc.py. 
+```bash
+pyuic5 -x yourform.ui -o file.py
+```
+```bash
+pyrcc5 resource.qrc -o resource_rc.py
+```
+
+
