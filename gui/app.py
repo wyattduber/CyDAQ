@@ -30,22 +30,29 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
 
-
-        self.inputPages = QtWidgets.QStackedWidget()
-        self.testLayout.addWidget(self.inputPages)
+        self.inputPagesWidget = QtWidgets.QStackedWidget()
+        self.testLayout.addWidget(self.inputPagesWidget)
         
-        self.dacModeWidget = DACModeWidget()
-        self.samplingRateWidget = SamplingRateWidget()
+        self.inputPages = [
+            DACModeWidget(),
+            SamplingRateWidget()
+        ]
 
-        self.inputPages.addWidget(self.samplingRateWidget)
-        self.inputPages.addWidget(self.dacModeWidget)
+        for page in self.inputPages:
+            self.inputPagesWidget.addWidget(page)
 
-        self.inputPages.setCurrentWidget(self.dacModeWidget)
+        # start on DAC mode widget
+        self.inputPagesWidget.setCurrentWidget(self.inputPages[0])
 
-        def onClicTest():
-            self.inputPages.setCurrentWidget(self.samplingRateWidget)
+        def onNextClicked():
+            # self.inputPagesWidget.setCurrentWidget(self.inputPages[1])
+            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()+1)
 
-        self.next_btn.clicked.connect(onClicTest)
+        def onPreviousClicked():
+            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()-1)
+
+        self.next_btn.clicked.connect(onNextClicked)
+        self.previous_btn.clicked.connect(onPreviousClicked)
 
         self.widget = widget
         self.windows = windows
