@@ -68,8 +68,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.filter_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(3))
         self.corners_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(4))
 
-        
-
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
@@ -95,38 +93,21 @@ class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
         super(CornersWidget, self).__init__()
         self.setupUi(self)
 
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    widget = QtWidgets.QStackedWidget()
 
-app = QtWidgets.QApplication(sys.argv)
-widget = QtWidgets.QStackedWidget()
+    windows = [] 
+    windows += [
+        MainWindow(widget, windows),
+        BasicOperationWindow(widget, windows)
+    ]
 
-windows = [] 
-windows += [
-    MainWindow(widget, windows),
-    BasicOperationWindow(widget, windows)
-]
+    for window in windows:
+        widget.addWidget(window)
 
-for window in windows:
-    widget.addWidget(window)
+    # set current widget to MainWindow
+    widget.setCurrentWidget(windows[0]) 
+    widget.show()
 
-# set current widget to MainWindow
-widget.setCurrentWidget(windows[0]) 
-widget.show()
-
-sys.exit(app.exec())
-
-# import sys
-# from PyQt5 import QtWidgets, uic
-
-# from BasicOperation import Ui_basic_operation
-
-
-# class MainWindow(QtWidgets.QMainWindow, Ui_basic_operation):
-#     def __init__(self):
-#         super(MainWindow, self).__init__()
-#         self.setupUi(self)
-
-# app = QtWidgets.QApplication(sys.argv)
-
-# window = MainWindow()
-# window.show()
-# app.exec()
+    sys.exit(app.exec())
