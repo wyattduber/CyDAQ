@@ -5,6 +5,9 @@ from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
 from DacModeWidget import Ui_DAC_mode_widget
 from SamplingRateWidget import Ui_sampling_rate_widget
+from InputWidget import Ui_input_widget
+from FilterWidget import Ui_filter_widget
+from CornersWidget import Ui_corners_widget
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -30,12 +33,18 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
 
+        self.widget = widget
+        self.windows = windows
+
         self.inputPagesWidget = QtWidgets.QStackedWidget()
         self.testLayout.addWidget(self.inputPagesWidget)
         
         self.inputPages = [
             DACModeWidget(),
-            SamplingRateWidget()
+            SamplingRateWidget(),
+            InputWidget(),
+            FilterWidget(),
+            CornersWidget()
         ]
 
         for page in self.inputPages:
@@ -45,7 +54,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.inputPagesWidget.setCurrentWidget(self.inputPages[0])
 
         def onNextClicked():
-            # self.inputPagesWidget.setCurrentWidget(self.inputPages[1])
             self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()+1)
 
         def onPreviousClicked():
@@ -54,8 +62,13 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.next_btn.clicked.connect(onNextClicked)
         self.previous_btn.clicked.connect(onPreviousClicked)
 
-        self.widget = widget
-        self.windows = windows
+        self.dac_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(0))
+        self.sampling_rate_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(1))
+        self.input_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(2))
+        self.filter_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(3))
+        self.corners_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(4))
+
+        
 
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
@@ -65,6 +78,21 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
 class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def __init__(self):
         super(SamplingRateWidget, self).__init__()
+        self.setupUi(self)
+
+class InputWidget(QtWidgets.QWidget, Ui_input_widget):
+    def __init__(self):
+        super(InputWidget, self).__init__()
+        self.setupUi(self)
+
+class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
+    def __init__(self):
+        super(FilterWidget, self).__init__()
+        self.setupUi(self)
+
+class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
+    def __init__(self):
+        super(CornersWidget, self).__init__()
         self.setupUi(self)
 
 

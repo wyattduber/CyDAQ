@@ -117,6 +117,9 @@ QLineEdit {
     <layout class="QHBoxLayout" name="nav_layout">
      <item>
       <widget class="QPushButton" name="dac_btn">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -135,8 +138,26 @@ QLineEdit {
          <pointsize>-1</pointsize>
         </font>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
        <property name="text">
         <string>DAC</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoRepeat">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -214,6 +235,12 @@ QLineEdit {
        <property name="text">
         <string>Corners</string>
        </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -246,7 +273,7 @@ QLineEdit {
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="actionRestart"/>
     <addaction name="actionQuit"/>
@@ -263,17 +290,17 @@ QLineEdit {
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionRestart">
    <property name="text">
-    <string>Restart</string>
+    <string>&amp;Restart</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionPing_CyDAQ">
    <property name="text">
-    <string>Ping CyDAQ</string>
+    <string>&amp;Ping CyDAQ</string>
    </property>
   </action>
  </widget>
