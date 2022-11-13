@@ -80,6 +80,19 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
 
+        def onDropdownChanged():
+            if self.dac_mode_dropdown.currentText() == "Disabled":
+                self.repetitions_input.setEnabled(False)
+                self.gen_rate_input.setEnabled(False)
+                #TODO grey out the buttons as well
+            else: 
+                self.repetitions_input.setEnabled(True)
+                self.gen_rate_input.setEnabled(True)
+                pass
+
+        self.dac_mode_dropdown.currentTextChanged.connect(onDropdownChanged)
+        onDropdownChanged()
+
     def getData(self):
         # TODO change these to match the exact values in the CLI config
         return {
