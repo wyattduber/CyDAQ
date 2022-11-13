@@ -55,6 +55,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         def onNextClicked():
             self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()+1)
+            print(self.getData())
 
         def onPreviousClicked():
             self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()-1)
@@ -68,30 +69,50 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.filter_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(3))
         self.corners_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(4))
 
+    def getData(self):
+        r = {}
+        for page in self.inputPages:
+            r.update(page.getData())
+        return r
+
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
 
+    def getData(self):
+        # TODO change these to match the exact values in the CLI config
+        return {
+            "mode": self.dac_mode_dropdown.currentText(),
+            "repetitions": self.repetitions_input.text(),
+            "genRate": self.gen_rate_input.text()
+        }
+
 class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def __init__(self):
         super(SamplingRateWidget, self).__init__()
         self.setupUi(self)
+    def getData(self):
+        pass
 
 class InputWidget(QtWidgets.QWidget, Ui_input_widget):
     def __init__(self):
         super(InputWidget, self).__init__()
         self.setupUi(self)
-
+    def getData(self):
+            pass
 class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
     def __init__(self):
         super(FilterWidget, self).__init__()
         self.setupUi(self)
-
+    def getData(self):
+            pass
 class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
     def __init__(self):
         super(CornersWidget, self).__init__()
         self.setupUi(self)
+    def getData(self):
+        pass
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

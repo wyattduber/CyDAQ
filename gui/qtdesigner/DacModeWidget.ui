@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="inputMethodHints">
+   <set>Qt::ImhNone</set>
+  </property>
   <widget class="QComboBox" name="dac_mode_dropdown">
    <property name="geometry">
     <rect>
@@ -114,7 +117,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="repetitions_input_2"/>
+     <widget class="QLineEdit" name="repetitions_input">
+      <property name="inputMethodHints">
+       <set>Qt::ImhNone</set>
+      </property>
+     </widget>
     </item>
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QLabel" name="label_6">
