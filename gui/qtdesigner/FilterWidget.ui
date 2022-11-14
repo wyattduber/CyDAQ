@@ -6,25 +6,75 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>544</width>
-    <height>336</height>
+    <width>622</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="filterLabel">
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>90</y>
+     <y>40</y>
      <width>181</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Filter Page</string>
+    <string>Analog Filters</string>
    </property>
+  </widget>
+  <widget class="QListWidget" name="filterList">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>110</y>
+     <width>131</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>All Pass</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>60Hz Notch</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>1st Order High Pass</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>1st Order Low Pass</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>6th Order High Pass</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>6th Order Low Pass</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>2nd Order Band Pass</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>6th Order Band Pass</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

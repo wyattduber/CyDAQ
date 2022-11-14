@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
-    <height>542</height>
+    <width>619</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,8 +23,58 @@
     </rect>
    </property>
    <property name="text">
-    <string>Input Page</string>
+    <string>Inputs</string>
    </property>
+  </widget>
+  <widget class="QListWidget" name="inputList">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>90</y>
+     <width>101</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>5 Volt</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>3.3 Volt</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>1.8 Volt</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Analog In</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Audio In</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Digital I2C Bus</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Digital SPI Bus</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Digital UART</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>
