@@ -13,6 +13,18 @@
     <height>692</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>947</width>
+    <height>692</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>947</width>
@@ -248,10 +260,10 @@ QLineEdit {
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>80</y>
-      <width>881</width>
-      <height>501</height>
+      <width>931</width>
+      <height>511</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="testLayout"/>

@@ -6,12 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
-    <height>543</height>
+    <width>919</width>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+	font-family: &quot;Segoe UI&quot;;
+	font-size: 16px;
+	color: #033f63;
+}
+
+QPushButton {
+	background-color: #033f63;
+	color: #d9d9d9;
+	border-radius: 4px;
+	padding: 8px 21px;
+	text-align: center;
+}
+
+QComboBox {
+	border-radius: 4px;
+	border: 2px solid #033f63;
+	padding: 4px 8px;
+}
+
+QLineEdit {
+	border-radius: 4px;
+	border: 2px solid #033f63;
+	padding: 4px 8px;
+}
+
+#dac_gen_rate_label, #dac_mode_label, #dac_repetitions_label {
+	font-size: 25px;
+}
+
+#gen_rate_max_limit_btn, #gen_rate_min_limit_btn, #repetitions_max_limit_btn, #repetitions_min_limit_btn {
+	width: 55px;
+	height: 25px; 
+}
+
+
+
+</string>
   </property>
   <property name="inputMethodHints">
    <set>Qt::ImhNone</set>
@@ -19,8 +59,8 @@
   <widget class="QComboBox" name="dac_mode_dropdown">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>50</y>
+     <x>339</x>
+     <y>100</y>
      <width>241</width>
      <height>31</height>
     </rect>
@@ -56,8 +96,8 @@
   <widget class="QLabel" name="dac_mode_label">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>0</y>
+     <x>399</x>
+     <y>60</y>
      <width>121</width>
      <height>21</height>
     </rect>
@@ -69,8 +109,8 @@
   <widget class="QLabel" name="dac_gen_rate_label">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>240</y>
+     <x>339</x>
+     <y>270</y>
      <width>241</width>
      <height>31</height>
     </rect>
@@ -82,8 +122,8 @@
   <widget class="QLabel" name="dac_repetitions_label">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>110</y>
+     <x>369</x>
+     <y>150</y>
      <width>181</width>
      <height>31</height>
     </rect>
@@ -95,24 +135,24 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>170</y>
+     <x>250</x>
+     <y>200</y>
      <width>422</width>
-     <height>39</height>
+     <height>55</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-     <widget class="QPushButton" name="repetitions_min_limit_btn_2">
+     <widget class="QPushButton" name="repetitions_min_limit_btn">
       <property name="text">
-       <string>Infinity</string>
+       <string>0</string>
       </property>
      </widget>
     </item>
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>&lt;=</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;≤&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -126,14 +166,14 @@
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>&lt;=</string>
+       <string>&lt;</string>
       </property>
      </widget>
     </item>
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-     <widget class="QPushButton" name="repetitions_max_limit_btn_2">
+     <widget class="QPushButton" name="repetitions_max_limit_btn">
       <property name="text">
-       <string>2,147,483,647</string>
+       <string>2^(31)</string>
       </property>
      </widget>
     </item>
@@ -142,10 +182,10 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>290</y>
+     <x>250</x>
+     <y>320</y>
      <width>422</width>
-     <height>41</height>
+     <height>55</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -159,7 +199,7 @@
     <item>
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>&lt;=</string>
+       <string>≤</string>
       </property>
      </widget>
     </item>
@@ -169,7 +209,7 @@
     <item>
      <widget class="QLabel" name="label_8">
       <property name="text">
-       <string>&lt;=</string>
+       <string>≤</string>
       </property>
      </widget>
     </item>
