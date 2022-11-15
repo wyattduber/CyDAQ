@@ -14,40 +14,43 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_sampling_rate_widget(object):
     def setupUi(self, sampling_rate_widget):
         sampling_rate_widget.setObjectName("sampling_rate_widget")
-        sampling_rate_widget.resize(619, 600)
-        self.sampleRateLabel = QtWidgets.QLabel(sampling_rate_widget)
-        self.sampleRateLabel.setGeometry(QtCore.QRect(20, 30, 261, 21))
-        self.sampleRateLabel.setObjectName("sampleRateLabel")
-        self.sampleRateFrame = QtWidgets.QFrame(sampling_rate_widget)
-        self.sampleRateFrame.setGeometry(QtCore.QRect(10, 20, 371, 291))
-        self.sampleRateFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.sampleRateFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.sampleRateFrame.setObjectName("sampleRateFrame")
-        self.lessThan1Sample = QtWidgets.QLabel(self.sampleRateFrame)
-        self.lessThan1Sample.setGeometry(QtCore.QRect(120, 40, 16, 16))
-        self.lessThan1Sample.setObjectName("lessThan1Sample")
-        self.lessThan2Sample = QtWidgets.QLabel(self.sampleRateFrame)
-        self.lessThan2Sample.setGeometry(QtCore.QRect(220, 40, 16, 16))
-        self.lessThan2Sample.setObjectName("lessThan2Sample")
-        self.min_sample_rate_box = QtWidgets.QLineEdit(self.sampleRateFrame)
-        self.min_sample_rate_box.setGeometry(QtCore.QRect(60, 40, 41, 20))
-        self.min_sample_rate_box.setAlignment(QtCore.Qt.AlignCenter)
-        self.min_sample_rate_box.setReadOnly(True)
-        self.min_sample_rate_box.setObjectName("min_sample_rate_box")
-        self.input_sample_rate_box = QtWidgets.QLineEdit(self.sampleRateFrame)
-        self.input_sample_rate_box.setGeometry(QtCore.QRect(150, 40, 51, 20))
-        self.input_sample_rate_box.setAlignment(QtCore.Qt.AlignCenter)
-        self.input_sample_rate_box.setObjectName("input_sample_rate_box")
-        self.max_sample_rate_box = QtWidgets.QLineEdit(self.sampleRateFrame)
-        self.max_sample_rate_box.setGeometry(QtCore.QRect(250, 40, 51, 20))
-        self.max_sample_rate_box.setAlignment(QtCore.Qt.AlignCenter)
-        self.max_sample_rate_box.setReadOnly(True)
-        self.max_sample_rate_box.setObjectName("max_sample_rate_box")
-        self.label_2 = QtWidgets.QLabel(self.sampleRateFrame)
-        self.label_2.setGeometry(QtCore.QRect(60, 70, 221, 16))
-        self.label_2.setObjectName("label_2")
-        self.sample_rate_presets = QtWidgets.QListWidget(self.sampleRateFrame)
-        self.sample_rate_presets.setGeometry(QtCore.QRect(50, 90, 256, 192))
+        sampling_rate_widget.resize(919, 476)
+        sampling_rate_widget.setMinimumSize(QtCore.QSize(919, 476))
+        sampling_rate_widget.setMaximumSize(QtCore.QSize(919, 476))
+        sampling_rate_widget.setStyleSheet("QWidget {\n"
+"    font-family: \"Segoe UI\";\n"
+"    font-size: 16px;\n"
+"    color: #033f63;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: #033f63;\n"
+"    color: #d9d9d9;\n"
+"    border-radius: 4px;\n"
+"    padding: 8px 21px;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QLineEdit {\n"
+"    border-radius: 4px;\n"
+"    border: 2px solid #033f63;\n"
+"    padding: 4px 8px;\n"
+"    height: 25px;\n"
+"}\n"
+"\n"
+"#presets_label {\n"
+"    font-size: 25px;\n"
+"}\n"
+"\n"
+"#sample_rate_min_btn, #sample_rate_max_btn {\n"
+"    width: 55px;\n"
+"    height: 25px; \n"
+"}")
+        self.presets_label = QtWidgets.QLabel(sampling_rate_widget)
+        self.presets_label.setGeometry(QtCore.QRect(419, 190, 81, 31))
+        self.presets_label.setObjectName("presets_label")
+        self.sample_rate_presets = QtWidgets.QListWidget(sampling_rate_widget)
+        self.sample_rate_presets.setGeometry(QtCore.QRect(394, 240, 131, 192))
         self.sample_rate_presets.setObjectName("sample_rate_presets")
         item = QtWidgets.QListWidgetItem()
         self.sample_rate_presets.addItem(item)
@@ -61,6 +64,29 @@ class Ui_sampling_rate_widget(object):
         self.sample_rate_presets.addItem(item)
         item = QtWidgets.QListWidgetItem()
         self.sample_rate_presets.addItem(item)
+        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(sampling_rate_widget)
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(250, 110, 421, 51))
+        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.sample_rate_min_btn = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
+        self.sample_rate_min_btn.setObjectName("sample_rate_min_btn")
+        self.horizontalLayout.addWidget(self.sample_rate_min_btn)
+        self.lessThan1Sample = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
+        self.lessThan1Sample.setObjectName("lessThan1Sample")
+        self.horizontalLayout.addWidget(self.lessThan1Sample)
+        self.sample_rate_input = QtWidgets.QLineEdit(self.horizontalLayoutWidget_2)
+        self.sample_rate_input.setText("")
+        self.sample_rate_input.setAlignment(QtCore.Qt.AlignCenter)
+        self.sample_rate_input.setObjectName("sample_rate_input")
+        self.horizontalLayout.addWidget(self.sample_rate_input)
+        self.lessThan2Sample = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
+        self.lessThan2Sample.setObjectName("lessThan2Sample")
+        self.horizontalLayout.addWidget(self.lessThan2Sample)
+        self.sample_rate_max_btn = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
+        self.sample_rate_max_btn.setObjectName("sample_rate_max_btn")
+        self.horizontalLayout.addWidget(self.sample_rate_max_btn)
 
         self.retranslateUi(sampling_rate_widget)
         QtCore.QMetaObject.connectSlotsByName(sampling_rate_widget)
@@ -68,13 +94,7 @@ class Ui_sampling_rate_widget(object):
     def retranslateUi(self, sampling_rate_widget):
         _translate = QtCore.QCoreApplication.translate
         sampling_rate_widget.setWindowTitle(_translate("sampling_rate_widget", "Form"))
-        self.sampleRateLabel.setText(_translate("sampling_rate_widget", "Sample Rate"))
-        self.lessThan1Sample.setText(_translate("sampling_rate_widget", "≤"))
-        self.lessThan2Sample.setText(_translate("sampling_rate_widget", "≤"))
-        self.min_sample_rate_box.setText(_translate("sampling_rate_widget", "100"))
-        self.input_sample_rate_box.setText(_translate("sampling_rate_widget", "48,000"))
-        self.max_sample_rate_box.setText(_translate("sampling_rate_widget", "50,000"))
-        self.label_2.setText(_translate("sampling_rate_widget", "Presets"))
+        self.presets_label.setText(_translate("sampling_rate_widget", "Presets"))
         __sortingEnabled = self.sample_rate_presets.isSortingEnabled()
         self.sample_rate_presets.setSortingEnabled(False)
         item = self.sample_rate_presets.item(0)
@@ -90,3 +110,7 @@ class Ui_sampling_rate_widget(object):
         item = self.sample_rate_presets.item(5)
         item.setText(_translate("sampling_rate_widget", "4000"))
         self.sample_rate_presets.setSortingEnabled(__sortingEnabled)
+        self.sample_rate_min_btn.setText(_translate("sampling_rate_widget", "100"))
+        self.lessThan1Sample.setText(_translate("sampling_rate_widget", "≤"))
+        self.lessThan2Sample.setText(_translate("sampling_rate_widget", "≤"))
+        self.sample_rate_max_btn.setText(_translate("sampling_rate_widget", "50,000"))
