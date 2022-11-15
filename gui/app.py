@@ -138,7 +138,7 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
 
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 50000)
-        self.inputSampleRateBox.setValidator(onlyInt)
+        self.sample_rate_input.setValidator(onlyInt)
 
     def getData(self):
         pass
