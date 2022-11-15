@@ -51,6 +51,7 @@ class Ui_sampling_rate_widget(object):
         self.presets_label.setObjectName("presets_label")
         self.sample_rate_presets = QtWidgets.QListWidget(sampling_rate_widget)
         self.sample_rate_presets.setGeometry(QtCore.QRect(394, 240, 131, 192))
+        self.sample_rate_presets.setTabKeyNavigation(True)
         self.sample_rate_presets.setObjectName("sample_rate_presets")
         item = QtWidgets.QListWidgetItem()
         self.sample_rate_presets.addItem(item)
@@ -89,6 +90,7 @@ class Ui_sampling_rate_widget(object):
         self.horizontalLayout.addWidget(self.sample_rate_max_btn)
 
         self.retranslateUi(sampling_rate_widget)
+        self.sample_rate_presets.setCurrentRow(0)
         QtCore.QMetaObject.connectSlotsByName(sampling_rate_widget)
 
     def retranslateUi(self, sampling_rate_widget):
