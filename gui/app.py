@@ -98,9 +98,9 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def getData(self):
         # TODO change these to match the exact values in the CLI config
         return {
-            "mode": self.dac_mode_dropdown.currentText(),
-            "repetitions": self.repetitions_input.text(),
-            "genRate": self.gen_rate_input.text()
+            "Dac Mode": self.dac_mode_dropdown.currentText(),
+            "Dac Reps": self.repetitions_input.text(),
+            "Dac Generation Rate": self.gen_rate_input.text()
         }
 
 class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
@@ -111,7 +111,9 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
         self.sample_rate_presets.currentItemChanged.connect(lambda: self.input_sample_rate_box.setText(self.sample_rate_presets.currentItem().text()))
 
     def getData(self):
-        pass
+        return {
+            "Sample Rate": self.input_sample_rate_box.text()
+        }
 
 class InputWidget(QtWidgets.QWidget, Ui_input_widget):
     def __init__(self):
