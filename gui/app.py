@@ -1,5 +1,6 @@
 import sys
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
+from PyQt5.QtWidgets import QInputDialog, QFileDialog
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -93,15 +94,23 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                 pass
 
         self.dac_mode_dropdown.currentTextChanged.connect(onDropdownChanged)
+        onDropdownChanged()
 
         def onFileOpenBtnClicked():
             options = QFileDialog.Options()
-            options |= QFileDialog.DontUseNativeDialog
-            fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+            # options |= QFileDialog.DontUseNativeDialog
+            fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","CSV Files (*.csv);;", options=options)
             if fileName:
+                self.input_file_name.setText(fileName)
+
+                #TODO do something with file path
                 print(fileName)
-            self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
-        onDropdownChanged()
+        
+        self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
+        self.repetitions_min_limit_btn.clicked.connect(lambda: self.repetitions_input.setText(self.repetitions_min_limit_btn.text()))
+        self.repetitions_max_limit_btn.clicked.connect(lambda: self.repetitions_input.setText(str(2**31-1)))
+        self.gen_rate_min_limit_btn.clicked.connect(lambda: self.gen_rate_input.setText(self.gen_rate_min_limit_btn.text()))
+        self.gen_rate_max_limit_btn.clicked.connect(lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
 
     def getData(self):
         # TODO change these to match the exact values in the CLI config
@@ -119,7 +128,6 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
         self.sample_rate_presets.currentItemChanged.connect(lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
         self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
         self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
-
 
     def getData(self):
         return {
