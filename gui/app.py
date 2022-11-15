@@ -91,15 +91,32 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         self.gen_rate_input.setValidator(onlyInt)
 
         def onDropdownChanged():
-            if self.dac_mode_dropdown.currentText() == "Disabled":
-                self.repetitions_input.setEnabled(False)
-                self.gen_rate_input.setEnabled(False)
-                #TODO grey out the buttons as well
-            else: 
-                self.repetitions_input.setEnabled(True)
-                self.gen_rate_input.setEnabled(True)
-                pass
 
+            toHideOrShow = [
+                self.dac_repetitions_label,
+                self.repetitions_min_limit_btn,
+                self.label_5,
+                self.repetitions_input,
+                self.label_6, 
+                self.repetitions_max_limit_btn,
+                self.dac_gen_rate_label,
+                self.gen_rate_min_limit_btn,
+                self.label_7,
+                self.gen_rate_input,
+                self.label_8,
+                self.gen_rate_max_limit_btn,
+                self.input_file_name,
+                self.file_upload_btn,   
+            ]
+
+            if self.dac_mode_dropdown.currentText() == "Disabled":
+                for hide in toHideOrShow:
+                    hide.hide()
+                
+            else: 
+                for show in toHideOrShow: 
+                    show.show()
+                
         self.dac_mode_dropdown.currentTextChanged.connect(onDropdownChanged)
         onDropdownChanged()
 
