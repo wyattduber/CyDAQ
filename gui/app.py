@@ -93,6 +93,14 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                 pass
 
         self.dac_mode_dropdown.currentTextChanged.connect(onDropdownChanged)
+
+        def onFileOpenBtnClicked():
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+            if fileName:
+                print(fileName)
+            self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
         onDropdownChanged()
 
     def getData(self):
