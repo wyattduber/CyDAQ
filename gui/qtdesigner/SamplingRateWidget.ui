@@ -67,7 +67,7 @@
      <string>≤</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="minSampleRateBox">
+   <widget class="QLineEdit" name="min_sample_rate_box">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -86,7 +86,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="inputSampleRateBox">
+   <widget class="QLineEdit" name="input_sample_rate_box">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -102,7 +102,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="maxSampleRateBox">
+   <widget class="QLineEdit" name="max_sample_rate_box">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -134,7 +134,7 @@
      <string>Presets</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="sampleRatePresets">
+   <widget class="QListWidget" name="sample_rate_presets">
     <property name="geometry">
      <rect>
       <x>50</x>

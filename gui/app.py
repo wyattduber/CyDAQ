@@ -107,6 +107,9 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def __init__(self):
         super(SamplingRateWidget, self).__init__()
         self.setupUi(self)
+
+        self.sample_rate_presets.currentItemChanged.connect(lambda: self.input_sample_rate_box.setText(self.sample_rate_presets.currentItem().text()))
+
     def getData(self):
         pass
 

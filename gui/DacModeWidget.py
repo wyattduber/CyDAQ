@@ -15,6 +15,8 @@ class Ui_DAC_mode_widget(object):
     def setupUi(self, DAC_mode_widget):
         DAC_mode_widget.setObjectName("DAC_mode_widget")
         DAC_mode_widget.resize(919, 476)
+        DAC_mode_widget.setMinimumSize(QtCore.QSize(919, 476))
+        DAC_mode_widget.setMaximumSize(QtCore.QSize(919, 476))
         DAC_mode_widget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
