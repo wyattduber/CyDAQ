@@ -14,12 +14,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_input_widget(object):
     def setupUi(self, input_widget):
         input_widget.setObjectName("input_widget")
-        input_widget.resize(619, 443)
-        self.label = QtWidgets.QLabel(input_widget)
-        self.label.setGeometry(QtCore.QRect(70, 20, 181, 16))
-        self.label.setObjectName("label")
+        input_widget.resize(919, 476)
+        input_widget.setMinimumSize(QtCore.QSize(919, 476))
+        input_widget.setMaximumSize(QtCore.QSize(919, 476))
+        input_widget.setStyleSheet("QWidget {\n"
+"    font-family: \"Segoe UI\";\n"
+"    font-size: 16px;\n"
+"    color: #033f63;\n"
+"}\n"
+"")
         self.inputList = QtWidgets.QListWidget(input_widget)
-        self.inputList.setGeometry(QtCore.QRect(200, 90, 101, 151))
+        self.inputList.setGeometry(QtCore.QRect(374, 138, 171, 201))
+        self.inputList.setTabKeyNavigation(True)
+        self.inputList.setModelColumn(0)
+        self.inputList.setUniformItemSizes(False)
         self.inputList.setObjectName("inputList")
         item = QtWidgets.QListWidgetItem()
         self.inputList.addItem(item)
@@ -39,12 +47,12 @@ class Ui_input_widget(object):
         self.inputList.addItem(item)
 
         self.retranslateUi(input_widget)
+        self.inputList.setCurrentRow(3)
         QtCore.QMetaObject.connectSlotsByName(input_widget)
 
     def retranslateUi(self, input_widget):
         _translate = QtCore.QCoreApplication.translate
         input_widget.setWindowTitle(_translate("input_widget", "Form"))
-        self.label.setText(_translate("input_widget", "Inputs"))
         __sortingEnabled = self.inputList.isSortingEnabled()
         self.inputList.setSortingEnabled(False)
         item = self.inputList.item(0)
