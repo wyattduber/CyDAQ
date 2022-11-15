@@ -1,6 +1,7 @@
 import sys
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtWidgets import QInputDialog, QFileDialog
+from PyQt5.QtGui import QIntValidator
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -82,6 +83,12 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(0, 2147483647)
+        self.repetitions_input.setValidator(onlyInt)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 200000)
+        self.gen_rate_input.setValidator(onlyInt)
 
         def onDropdownChanged():
             if self.dac_mode_dropdown.currentText() == "Disabled":
@@ -115,9 +122,9 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def getData(self):
         # TODO change these to match the exact values in the CLI config
         return {
-            "Dac Mode": self.dac_mode_dropdown.currentText(),
-            "Dac Reps": self.repetitions_input.text(),
-            "Dac Generation Rate": self.gen_rate_input.text()
+            "mode": self.dac_mode_dropdown.currentText(),
+            "repetitions": self.repetitions_input.text(),
+            "genRate": self.gen_rate_input.text()
         }
 
 class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
@@ -129,10 +136,12 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
         self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
         self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
 
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 50000)
+        self.inputSampleRateBox.setValidator(onlyInt)
+
     def getData(self):
-        return {
-            "Sample Rate": self.sample_rate_input.text()
-        }
+        pass
 
 class InputWidget(QtWidgets.QWidget, Ui_input_widget):
     def __init__(self):
@@ -150,8 +159,13 @@ class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
     def __init__(self):
         super(CornersWidget, self).__init__()
         self.setupUi(self)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 40000)
+        self.inputCornerBox.setValidator(onlyInt)
     def getData(self):
         pass
+
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
