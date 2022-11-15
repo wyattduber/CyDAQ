@@ -72,7 +72,9 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
     def getData(self):
         r = {}
         for page in self.inputPages:
-            r.update(page.getData())
+            data = page.getData()
+            if data is not None:
+                r.update(page.getData())
         return r
 
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
