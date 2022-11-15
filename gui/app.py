@@ -1,5 +1,6 @@
 import sys
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
+from PyQt5.QtGui import QIntValidator
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -81,6 +82,12 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(0, 2147483647)
+        self.repetitions_input.setValidator(onlyInt)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 200000)
+        self.gen_rate_input.setValidator(onlyInt)
 
         def onDropdownChanged():
             if self.dac_mode_dropdown.currentText() == "Disabled":
@@ -107,6 +114,9 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def __init__(self):
         super(SamplingRateWidget, self).__init__()
         self.setupUi(self)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 50000)
+        self.inputSampleRateBox.setValidator(onlyInt)
     def getData(self):
         pass
 
@@ -126,8 +136,13 @@ class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
     def __init__(self):
         super(CornersWidget, self).__init__()
         self.setupUi(self)
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 40000)
+        self.inputCornerBox.setValidator(onlyInt)
     def getData(self):
         pass
+
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
