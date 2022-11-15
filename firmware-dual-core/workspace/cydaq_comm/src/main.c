@@ -115,7 +115,7 @@ int main(void) {
 	u8 recvBuf[TEST_BUFFER_SIZE];
 	u8 txBuf[TEST_BUFFER_SIZE];
 	u8 bytes, payloadLength;
-	int cmd;
+	u8 cmd;
 
 	*bufStart = malloc(SAMPLE_BUFFER_SIZE*sizeof(u16));
 	baseAddr = *bufStart;
@@ -160,32 +160,33 @@ int main(void) {
 			}
 			else{
 				//If valid
-				cmd = recvBuf[COMM_NUM_START_CHARS + COMM_MODE_SIZE];
-//				int cmd2 = 0;
-//				cmd2 += (recvBuf[1] - 48) * 10000000;
-//				cmd2 += (recvBuf[2] - 48) * 1000000;
-//				cmd2 += (recvBuf[3] - 48)* 100000;
-//				cmd2 += (recvBuf[4] - 48) * 10000;
-//				cmd2 += (recvBuf[5] - 48) * 1000;
-//				cmd2 += (recvBuf[6] - 48) * 100;
-//				cmd2 += (recvBuf[7] - 48) * 10;
-//				cmd2 += recvBuf[8] - 48;
-//
-//			    int dec_value = 0;
-//			    // Initializing base value to 1, i.e 2^0
-//			    int base = 1;
-//
-//			    int temp = cmd2;
-//			    while (temp) {
-//			        int last_digit = temp % 10;
-//			        temp = temp / 10;
-//
-//			        dec_value += last_digit * base;
-//
-//			        base = base * 2;
-//			    }
-//
-//			    cmd = dec_value - 48;
+				//cmd = recvBuf[COMM_NUM_START_CHARS + COMM_MODE_SIZE];
+				int cmd2 = 0;
+				cmd2 += (recvBuf[1] - 48) * 10000000;
+				cmd2 += (recvBuf[2] - 48) * 1000000;
+				cmd2 += (recvBuf[3] - 48)* 100000;
+				cmd2 += (recvBuf[4] - 48) * 10000;
+				cmd2 += (recvBuf[5] - 48) * 1000;
+				cmd2 += (recvBuf[6] - 48) * 100;
+				cmd2 += (recvBuf[7] - 48) * 10;
+				cmd2 += recvBuf[8] - 48;
+
+			    int dec_value = 0;
+			    // Initializing base value to 1, i.e 2^0
+			    int base = 1;
+
+			    int temp = cmd2;
+			    while (temp) {
+			        int last_digit = temp % 10;
+			        temp = temp / 10;
+
+			        dec_value += last_digit * base;
+
+			        base = base * 2;
+			    }
+
+			    cmd = dec_value - 48;
+			    cmd = (unit8_t*)cmd;
 
 
 				payloadLength = bytes - COMM_CMD_SIZE - COMM_NUM_START_CHARS
@@ -209,10 +210,119 @@ int main(void) {
 						xil_printf("Error: Invalid Command\n\r");
 					}
 					continue;
-				}
+				}else if(cmd == INPUT_SELECT) {//0
+					if(DEBUG)
+						xil_printf("ARM0: INPUT_SELECT\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+					if(payloadLength == 0) {
+						if(DEBUG)
+							xil_printf("Error, payload length too small\n");
+						continue;
 
-				if(cmd == START_SAMPLING){
-					for(i=0;i<SAMPLE_BUFFER_SIZE*sizeof(u16)-1*sizeof(u16);i+=2){
+					} else {
+						//inputs_e inputSelect = buffer[2];
+
+						//if(inputSelect >= NUM_INPUTS) {
+							if(DEBUG)
+								//xil_printf("input requested %d not in valid range\n", inputSelect);
+							continue;
+
+						//} else {
+							//mutexSamplingConfig_SetInputSrc(buffer[2]);//TODO move to sampling core
+						//}
+					}
+
+				/*  ---Select Active Filter---  */
+				}else if(cmd == SAMPLE_RATE_SET) {//1
+					if(DEBUG)
+						xil_printf("ARM0: SAMPLE_RATE_SET\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+					if(payloadLength < COMM_SAMPLE_RATE_SIZE) {
+						if(DEBUG)
+							xil_printf("Error, not enough bytes to represent sample rate\n");
+							continue;
+
+					} else {
+						//u32 rate = buffer[2] << 24 | buffer[3] << 16 | buffer[4] << 8 | buffer[5];
+
+						//if(rate > XADC_MAX_SAMPLE_RATE) {
+							if(DEBUG)
+								xil_printf("Invalid sample rate given");
+							continue;
+
+						//} else {
+							//mutexSamplingConfig_SetSampleRate(rate);//TODO move to sampling core
+						//}
+					}
+				}else if(cmd == FILTER_SELECT){//2
+					if(DEBUG)
+						xil_printf("ARM0: FILTER_SELECT\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+					if(payloadLength < 1) {
+						if(DEBUG)
+							xil_printf("No filter param given to set\n");
+						continue;
+
+					} else {
+						//filters_e filterSelect = ((u8) buffer[COMM_CMD_SIZE+1]);
+
+						//if(filterSelect >= NUM_FILTERS) {
+							if(DEBUG)
+								//xil_printf("Error, %d is not a valid filter enum #\n", filterSelect);
+							continue;
+
+						//} else {
+							//mutexSamplingConfig_SetFilterType(filterSelect);//TODO move to sampling core
+						//}
+					}
+
+				/*  ---Set Filter Corner Frequencies---  */
+				}else if(cmd == CORNER_FREQ_SET){//3
+					if(DEBUG)
+						xil_printf("ARM0: CORNER_FREQ_SET\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+					//u8 filter = ((buffer[COMM_CMD_SIZE+1] << 8) & 0xFF00 ) + buffer[COMM_CMD_SIZE+2];
+					if(payloadLength < 4){
+						if(DEBUG)
+							xil_printf("err in filter tune function\n");
+						continue;
+					}else{
+						//each frequency should be sent as two bytes each
+						//FILTER_FREQ_TYPE lower = ((buffer[COMM_CMD_SIZE+1] << 8) & 0xFF00 ) + buffer[COMM_CMD_SIZE+2];//TODO move to sampling core
+						//FILTER_FREQ_TYPE upper = ((buffer[COMM_CMD_SIZE+3] << 8) & 0xFF00 ) + buffer[COMM_CMD_SIZE+4];//TODO move to sampling core
+						//tune filter
+						//err = tuneFilter(50, lower, upper);
+						//mutexSamplingConfig_SetCornerFreqLower(lower);//TODO move to sampling core
+						//mutexSamplingConfig_SetCornerFreqUpper(upper);//TODO move to sampling core
+					}
+
+				/*  ---Respond to Ping---  */
+				}else if(cmd == FETCH_SAMPLES) {//4
+					if(DEBUG)
+						xil_printf("ARM0: FETCH_SAMPLES\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+					xil_printf("%cACK%c", COMM_START_CHAR, COMM_STOP_CHAR);
+					//xadcDisableSampling();//TODO finish me and move to sampling core
+					//xadcProcessSamples();//TODO move to sampling core
+
+				/*  ---Start Sampling---  */
+				}else if(cmd == ADC_SELECT) {//5
+					if(DEBUG)
+						xil_printf("ARM0: ADC_SELECT\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+					//TODO
+				}else if(cmd == PING) {//7
+					xil_printf("ARM0: NEVER GONNA GIVE YOU UP!\n\r");
+					continue;
+
+				}else if(cmd == START_SAMPLING){//8
+					for(i=0;i<SAMPLE_BUFFER_SIZE*sizeof(u16)-1;i+=2){
 						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
 						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
 //						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
@@ -222,16 +332,49 @@ int main(void) {
 //					*flagPtr |= 0x10;
 //					*bufStart = *bufEnd;
 					xil_printf("ARM0: Start Sampling\n\r");
-				}
-
-				if(cmd == STOP_SAMPLING){
+				}else if(cmd == STOP_SAMPLING){//9
 					*flagPtr &= ~0x10;
 					xil_printf("ARM0: Stop Sampling\n\r");
+				}else if(cmd == DAC_MODE_SELECT){//10
+					if(DEBUG)
+						xil_printf("ARM0: DAC_MODE_SELECT\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+				}else if(cmd == DAC_NUM_REPS_SET){//11
+					if(DEBUG)
+						xil_printf("ARM0: DAC_NUM_REPS_SET\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+				}else if(cmd == DAC_GEN_RATE_SET){//12
+					if(DEBUG)
+						xil_printf("ARM0: DAC_GEN_RATE_SET\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+				}else if(cmd == DAC_SEND_DATASET){//13
+					if(DEBUG)
+						xil_printf("ARM0: DAC_SEND_DATASET\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+				}else if(cmd == START_GENERATION){//14
+					if(DEBUG)
+						xil_printf("ARM0: START_GENERATION\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+				}else if(cmd == STOP_GENERATION){//15
+					if(DEBUG)
+						xil_printf("ARM0: STOP_GENERATION\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
+				}else if(cmd == START_CONTROLLER){//16
+					if(DEBUG)
+						xil_printf("ARM0: START_CONTROLLER\n\r");
+					xil_printf("ARM0: not implemented yet\n\r");
+					//TODO
 				}
 
-				if(cmd == PING) {
-					xil_printf("ARM0: NEVER GONNA GIVE YOU UP");
-				}
+
+
+
 
 				//Share values with CPU1
 				for(i = 0; i < payloadLength; i++){
