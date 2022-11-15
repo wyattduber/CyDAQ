@@ -108,11 +108,14 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
         super(SamplingRateWidget, self).__init__()
         self.setupUi(self)
 
-        self.sample_rate_presets.currentItemChanged.connect(lambda: self.input_sample_rate_box.setText(self.sample_rate_presets.currentItem().text()))
+        self.sample_rate_presets.currentItemChanged.connect(lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
+        self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
+        self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
+
 
     def getData(self):
         return {
-            "Sample Rate": self.input_sample_rate_box.text()
+            "Sample Rate": self.sample_rate_input.text()
         }
 
 class InputWidget(QtWidgets.QWidget, Ui_input_widget):
