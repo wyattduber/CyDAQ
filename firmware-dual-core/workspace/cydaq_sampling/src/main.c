@@ -68,6 +68,8 @@
 #define startPtr (*(volatile u8 **)(0xFFFF0007))
 #define endPtr (*(volatile u8 **)(0xFFFF000B))
 #define flagShare (*(volatile u8 *)(0xFFFF000F))
+#define cmdShare (*(volatile u8 **)(0xFFF0000))
+
 
 int main()
 {
