@@ -386,7 +386,7 @@ int main(void) {
 				*(u8*)cmdPtr = cmd;
 
 				//Set command ready flag
-				*flagPtr |= 0x01;
+				//*flagPtr |= 0x01;
 
 				//Wait for flag to be cleared by CPU1
 				while((*(u8*)flagPtr & 0x01) == 0x01){
