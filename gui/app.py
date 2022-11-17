@@ -41,39 +41,21 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.inputPagesWidget = QtWidgets.QStackedWidget()
         self.testLayout.addWidget(self.inputPagesWidget)
         
-        self.inputPages = [
-            DACModeWidget(),
+        self.inputWidgets = [
             SamplingRateWidget(),
             InputWidget(),
             FilterWidget(),
             CornersWidget()
         ]
 
-        for page in self.inputPages:
-            self.inputPagesWidget.addWidget(page)
-
-        # start on DAC mode widget
-        self.inputPagesWidget.setCurrentWidget(self.inputPages[0])
-
-        def onNextClicked():
-            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()+1)
-            print(self.getData())
-
-        def onPreviousClicked():
-            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()-1)
-
-        self.next_btn.clicked.connect(onNextClicked)
-        self.previous_btn.clicked.connect(onPreviousClicked)
-
-        self.dac_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(0))
-        self.sampling_rate_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(1))
-        self.input_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(2))
-        self.filter_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(3))
-        self.corners_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(4))
+        self.testLayout.addWidget(self.inputWidgets[0])
+        self.testLayout_2.addWidget(self.inputWidgets[1])
+        self.testLayout_3.addWidget(self.inputWidgets[2])
+        self.testLayout_3.addWidget(self.inputWidgets[3])
 
     def getData(self):
         r = {}
-        for page in self.inputPages:
+        for page in self.inputWidgets:
             data = page.getData()
             if data is not None:
                 r.update(page.getData())
