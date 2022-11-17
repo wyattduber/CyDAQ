@@ -185,8 +185,8 @@ int main(void) {
 			        base = base * 2;
 			    }
 
-			    cmd = dec_value - 48;
-			    cmd = (unit8_t*)cmd;
+			    cmd2 = dec_value - 48;
+			    cmd = (u8)cmd2;
 
 
 				payloadLength = bytes - COMM_CMD_SIZE - COMM_NUM_START_CHARS
