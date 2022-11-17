@@ -115,7 +115,7 @@ class InputWidget(QtWidgets.QWidget, Ui_input_widget):
         super(InputWidget, self).__init__()
         self.setupUi(self)
     def getData(self):
-            pass
+            return {"Input": self.input_list.currentItem().text()}
 class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
     def __init__(self):
         super(FilterWidget, self).__init__()

@@ -33,7 +33,7 @@
 }
 </string>
   </property>
-  <widget class="QListWidget" name="inputList">
+  <widget class="QListWidget" name="input_list">
    <property name="geometry">
     <rect>
      <x>374</x>
