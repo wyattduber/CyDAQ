@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>452</height>
+    <width>1059</width>
+    <height>796</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,59 +21,190 @@
 }
 </string>
   </property>
-  <widget class="QListWidget" name="filter_list">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>110</y>
-     <width>181</width>
-     <height>221</height>
-    </rect>
-   </property>
-   <property name="currentRow">
-    <number>0</number>
-   </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <property name="text">
-     <string>All Pass</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>FILTER</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="filter_list">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>230</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>All Pass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>60Hz Notch</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1st Order High Pass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1st Order Low Pass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>6th Order High Pass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>6th Order Low Pass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2nd Order Band Pass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>6th Order Band Pass</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <property name="text">
-     <string>60Hz Notch</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Mid Corner</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="minCornerBox">
+         <property name="text">
+          <string>100</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lessThan1">
+         <property name="text">
+          <string>≤</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="corner_input">
+         <property name="text">
+          <string>2,000</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lessThan2">
+         <property name="text">
+          <string>≤</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="maxCornerBox">
+         <property name="text">
+          <string>40,000</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="label_2">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Presets</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QListWidget" name="corner_presets">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>400</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>100</string>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1000</string>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>10000</string>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item>
-    <property name="text">
-     <string>1st Order High Pass</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>1st Order Low Pass</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>6th Order High Pass</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>6th Order Low Pass</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>2nd Order Band Pass</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>6th Order Band Pass</string>
-    </property>
-   </item>
-  </widget>
+  </layout>
  </widget>
  <resources/>
  <connections/>

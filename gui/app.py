@@ -86,20 +86,20 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.widget = inwidget
         self.windows = inwindows
 
-        self.inputPagesWidget = QtWidgets.QStackedWidget()
-        self.testLayout.addWidget(self.inputPagesWidget)
+        # self.inputPagesWidget = QtWidgets.QStackedWidget()
+        # self.testLayout.addWidget(self.inputPagesWidget)
         
         self.inputWidgets = [
             SamplingRateWidget(),
             InputWidget(),
             FilterWidget(),
-            CornersWidget()
+            # CornersWidget()
         ]
 
         self.testLayout.addWidget(self.inputWidgets[0])
         self.testLayout_2.addWidget(self.inputWidgets[1])
         self.testLayout_3.addWidget(self.inputWidgets[2])
-        self.testLayout_3.addWidget(self.inputWidgets[3])
+        # self.testLayout_3.addWidget(self.inputWidgets[3])
 
     def getData(self):
         r = {}
