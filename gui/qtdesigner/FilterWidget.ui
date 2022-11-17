@@ -13,26 +13,21 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="filterLabel">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>40</y>
-     <width>181</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Analog Filters</string>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="filterList">
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+	font-family: &quot;Segoe UI&quot;;
+	font-size: 16px;
+	color: #033f63;
+}
+</string>
+  </property>
+  <widget class="QListWidget" name="filter_list">
    <property name="geometry">
     <rect>
      <x>190</x>
      <y>110</y>
-     <width>131</width>
-     <height>151</height>
+     <width>181</width>
+     <height>221</height>
     </rect>
    </property>
    <item>

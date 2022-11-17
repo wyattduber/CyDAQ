@@ -178,7 +178,7 @@ class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
         self.setupUi(self)
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 40000)
-        self.inputCornerBox.setValidator(onlyInt)
+        self.corner_input.setValidator(onlyInt)
     def getData(self):
         pass
 
