@@ -36,7 +36,7 @@ class Ui_corners_widget(object):
 "    height: 25px;\n"
 "}")
         self.label = QtWidgets.QLabel(corners_widget)
-        self.label.setGeometry(QtCore.QRect(80, 30, 221, 16))
+        self.label.setGeometry(QtCore.QRect(20, 10, 221, 16))
         self.label.setObjectName("label")
         self.corner_presets = QtWidgets.QListWidget(corners_widget)
         self.corner_presets.setGeometry(QtCore.QRect(180, 190, 256, 192))
