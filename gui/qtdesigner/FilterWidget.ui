@@ -24,14 +24,20 @@
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
       <widget class="QLabel" name="label">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>50</height>
+        </size>
+       </property>
        <property name="text">
         <string>FILTER</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
       <widget class="QListWidget" name="filter_list">
        <property name="maximumSize">
         <size>
@@ -85,8 +91,14 @@
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
+     <item alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="label_3">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>50</height>
+        </size>
+       </property>
        <property name="text">
         <string>Mid Corner</string>
        </property>
@@ -94,8 +106,14 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QLineEdit" name="minCornerBox">
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>100</string>
          </property>
@@ -107,15 +125,27 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QLabel" name="lessThan1">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>50</height>
+          </size>
+         </property>
          <property name="text">
           <string>≤</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QLineEdit" name="corner_input">
+         <property name="maximumSize">
+          <size>
+           <width>180</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>2,000</string>
          </property>
@@ -124,15 +154,27 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QLabel" name="lessThan2">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>50</height>
+          </size>
+         </property>
          <property name="text">
           <string>≤</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
         <widget class="QLineEdit" name="maxCornerBox">
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>40,000</string>
          </property>
