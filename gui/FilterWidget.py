@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_filter_widget(object):
     def setupUi(self, filter_widget):
         filter_widget.setObjectName("filter_widget")
-        filter_widget.resize(1059, 796)
+        filter_widget.resize(731, 378)
         filter_widget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -86,7 +86,6 @@ class Ui_filter_widget(object):
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2, 0, QtCore.Qt.AlignHCenter)
         self.corner_presets = QtWidgets.QListWidget(filter_widget)
-        self.corner_presets.setMaximumSize(QtCore.QSize(200, 400))
         self.corner_presets.setObjectName("corner_presets")
         item = QtWidgets.QListWidgetItem()
         font = QtGui.QFont()

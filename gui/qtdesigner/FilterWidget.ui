@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1059</width>
-    <height>796</height>
+    <width>731</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -203,12 +203,6 @@
      </item>
      <item alignment="Qt::AlignHCenter">
       <widget class="QListWidget" name="corner_presets">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>400</height>
-        </size>
-       </property>
        <item>
         <property name="text">
          <string>100</string>
