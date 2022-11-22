@@ -19,12 +19,6 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>947</width>
-    <height>692</height>
-   </size>
-  </property>
   <property name="font">
    <font>
     <family>Segoe UI</family>
@@ -83,19 +77,6 @@ QPushButton {
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="Placeholder1">
-      <property name="maximumSize">
-       <size>
-        <width>1000</width>
-        <height>300</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Console</string>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="0">
      <layout class="QGridLayout" name="InputLayout">
       <property name="sizeConstraint">
@@ -116,6 +97,41 @@ QPushButton {
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="3" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="Placeholder1">
+        <property name="maximumSize">
+         <size>
+          <width>1000</width>
+          <height>300</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Console</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Sampling Time: 00:00:00</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>Start/Stop</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
