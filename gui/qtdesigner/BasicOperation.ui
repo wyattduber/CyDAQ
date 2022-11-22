@@ -381,21 +381,9 @@ QPushButton {
         <item>
          <layout class="QHBoxLayout" name="corner_bar_layout">
           <item>
-           <widget class="QLineEdit" name="min_corner_box">
-            <property name="maximumSize">
-             <size>
-              <width>150</width>
-              <height>16777215</height>
-             </size>
-            </property>
+           <widget class="QPushButton" name="corner_min_btn">
             <property name="text">
              <string>100</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -442,21 +430,9 @@ QPushButton {
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="max_corner_box">
-            <property name="maximumSize">
-             <size>
-              <width>150</width>
-              <height>16777215</height>
-             </size>
-            </property>
+           <widget class="QPushButton" name="corner_max_btn">
             <property name="text">
              <string>40,000</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -560,7 +536,7 @@ QPushButton {
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="start_stop_sampling_btn">
           <property name="text">
            <string>Start/Stop</string>
           </property>

@@ -77,7 +77,6 @@ def validateInput(data, index):
                 str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
         return
 
-
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
     def __init__(self, inwidget, inwindows):
         super(BasicOperationWindow, self).__init__()
@@ -87,10 +86,12 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.windows = inwindows
 
         # Sample Rate
-        self.sample_rate_presets.currentItemChanged.connect(lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
-        self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
-        self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
-
+        self.sample_rate_presets.currentItemChanged.connect(
+            lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
+        self.sample_rate_max_btn.clicked.connect(
+            lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text().replace(',', '')))
+        self.sample_rate_min_btn.clicked.connect(
+            lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 50000)
         self.sample_rate_input.setValidator(onlyInt)
@@ -100,17 +101,29 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         # Filter
 
         # Corners
+        self.corner_presets.currentItemChanged.connect(
+            lambda: self.corner_input.setText(self.corner_presets.currentItem().text()))
+        self.corner_max_btn.clicked.connect(
+            lambda: self.corner_input.setText(self.corner_max_btn.text().replace(',', '')))
+        self.corner_min_btn.clicked.connect(
+            lambda: self.corner_input.setText(self.corner_min_btn.text()))
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 40000)
         self.corner_input.setValidator(onlyInt)
 
-
+        # Sampling
+        self.start_stop_sampling_btn.clicked.connect(lambda: print(self.getData())) # TODO used for debug, remove!
 
     def getData(self):
-        r = {
-            "Input": self.input_list.currentItem().text()
+        return {
+            "Sample Rate": self.sample_rate_input.text(),
+            "Input": self.input_list.currentItem().text(),
+            "Filter": self.filter_list.currentItem().text(),
+            "Upper Corner": 40000,
+            "Mid Corner": self.corner_input.text(),
+            "Lower Corner": 100,
+
         }
-        return r
 
 # TODO this will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
@@ -184,64 +197,8 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         })
         return allData
 
-
-# class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
-    # def __init__(self):
-    #     super(SamplingRateWidget, self).__init__()
-    #     self.setupUi(self)
-
-    #     self.sample_rate_presets.currentItemChanged.connect(
-    #         lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
-    #     self.sample_rate_max_btn.clicked.connect(
-    #         lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text().replace(',', '')))
-    #     self.sample_rate_min_btn.clicked.connect(
-    #         lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
-
-    #     onlyInt = QIntValidator()
-    #     onlyInt.setRange(100, 50000)
-    #     self.sample_rate_input.setValidator(onlyInt)
-
-    # def getData(self):
-    #     allData.update({"Sample Rate": self.sample_rate_input.text()})
-
-
-# class InputWidget(QtWidgets.QWidget, Ui_input_widget):
-#     def __init__(self):
-#         super(InputWidget, self).__init__()
-#         self.setupUi(self)
-#     def getData(self):
-#             return {"Input": self.input_list.currentItem().text()}
-# class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
-#     def __init__(self):
-#         super(FilterWidget, self).__init__()
-#         self.setupUi(self)
-#     def getData(self):
-#             pass
-# class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
-    # def __init__(self):
-    #     super(CornersWidget, self).__init__()
-    #     self.setupUi(self)
-
-    #     self.corner_presets.currentItemChanged.connect(
-    #         lambda: self.corner_input.setText(self.corner_presets.currentItem().text()))
-    #     self.corner_max_btn.clicked.connect(
-    #         lambda: self.corner_input.setText(self.corner_max_btn.text().replace(',', '')))
-    #     self.corner_min_btn.clicked.connect(
-    #         lambda: self.corner_input.setText(self.corner_min_btn.text()))
-
-    #     onlyInt = QIntValidator()
-    #     onlyInt.setRange(100, 40000)
-    #     self.corner_input.setValidator(onlyInt)
-
-    # def getData(self):
-    #     allData.update({"Upper Corner": 40000,
-    #                     "Mid Corner": self.corner_input.text(),
-    #                     "Lower Corner": 100})
-
-
 class InvalidInputException(IOError):
     pass
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
