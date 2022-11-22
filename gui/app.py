@@ -1,6 +1,6 @@
 import sys
-from PyQt5 import QtWidgets, uic, QtCore, QtGui
-from PyQt5.QtWidgets import QInputDialog, QFileDialog
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
 
 from MainWindow import Ui_MainWindow
@@ -10,6 +10,12 @@ from SamplingRateWidget import Ui_sampling_rate_widget
 from InputWidget import Ui_input_widget
 from FilterWidget import Ui_filter_widget
 from CornersWidget import Ui_corners_widget
+
+page_dict = {1: "DAC Mode",
+             2: "Sampling Rate",
+             3: "Input",
+             4: "Filter",
+             5: "Corners"}
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -30,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.w.show()
         # self.close()
 
+
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
     def __init__(self, widget, windows):
         super(BasicOperationWindow, self).__init__()
@@ -40,7 +47,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         self.inputPagesWidget = QtWidgets.QStackedWidget()
         self.testLayout.addWidget(self.inputPagesWidget)
-        
+
         self.inputPages = [
             DACModeWidget(),
             SamplingRateWidget(),
@@ -56,11 +63,14 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.inputPagesWidget.setCurrentWidget(self.inputPages[0])
 
         def onNextClicked():
-            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()+1)
-            print(self.getData())
+            if self.validateInput(self.getData(), self.inputPagesWidget.currentIndex()):
+                self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex() + 1)
+                print(self.getData())
+            else:
+                print("Invalid Input Somewhere!")
 
         def onPreviousClicked():
-            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex()-1)
+            self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex() - 1)
 
         self.next_btn.clicked.connect(onNextClicked)
         self.previous_btn.clicked.connect(onPreviousClicked)
@@ -78,6 +88,27 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             if data is not None:
                 r.update(page.getData())
         return r
+
+#page_dict = {1: "DAC Mode",2: "Sampling Rate",3: "Input",4: "Filter",5: "Corners"}
+
+    def validateInput(self, data, index):
+        page = page_dict.get(index)
+
+        if page == "DAC Mode" and not data.get('mode') == "Disabled":
+            rep = int(data.get('repetitions'))
+            if rep > 2147483647 or rep < 1:
+                return False
+            gen = int(data.get('genRate'))
+            if gen > 200000 or gen < 100:
+                return False
+            return True
+        elif page == "Sampling Rate":
+            # TODO doesn't output values for Sampling Rate yet
+            pass
+        elif page == "Corners":
+            # TODO doesn't output values for Corners yet
+            pass
+
 
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
@@ -97,7 +128,7 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                 self.repetitions_min_limit_btn,
                 self.label_5,
                 self.repetitions_input,
-                self.label_6, 
+                self.label_6,
                 self.repetitions_max_limit_btn,
                 self.dac_gen_rate_label,
                 self.gen_rate_min_limit_btn,
@@ -106,35 +137,39 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                 self.label_8,
                 self.gen_rate_max_limit_btn,
                 self.input_file_name,
-                self.file_upload_btn,   
+                self.file_upload_btn,
             ]
 
             if self.dac_mode_dropdown.currentText() == "Disabled":
                 for hide in toHideOrShow:
                     hide.hide()
-                
-            else: 
-                for show in toHideOrShow: 
+
+            else:
+                for show in toHideOrShow:
                     show.show()
-                
+
         self.dac_mode_dropdown.currentTextChanged.connect(onDropdownChanged)
         onDropdownChanged()
 
         def onFileOpenBtnClicked():
             options = QFileDialog.Options()
             # options |= QFileDialog.DontUseNativeDialog
-            fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","CSV Files (*.csv);;", options=options)
+            fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "CSV Files (*.csv);;",
+                                                      options=options)
             if fileName:
                 self.input_file_name.setText(fileName)
 
-                #TODO do something with file path
+                # TODO do something with file path
                 print(fileName)
-        
+
         self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
-        self.repetitions_min_limit_btn.clicked.connect(lambda: self.repetitions_input.setText(self.repetitions_min_limit_btn.text()))
-        self.repetitions_max_limit_btn.clicked.connect(lambda: self.repetitions_input.setText(str(2**31-1)))
-        self.gen_rate_min_limit_btn.clicked.connect(lambda: self.gen_rate_input.setText(self.gen_rate_min_limit_btn.text()))
-        self.gen_rate_max_limit_btn.clicked.connect(lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
+        self.repetitions_min_limit_btn.clicked.connect(
+            lambda: self.repetitions_input.setText(self.repetitions_min_limit_btn.text()))
+        self.repetitions_max_limit_btn.clicked.connect(lambda: self.repetitions_input.setText(str(2 ** 31 - 1)))
+        self.gen_rate_min_limit_btn.clicked.connect(
+            lambda: self.gen_rate_input.setText(self.gen_rate_min_limit_btn.text()))
+        self.gen_rate_max_limit_btn.clicked.connect(
+            lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
 
     def getData(self):
         # TODO change these to match the exact values in the CLI config
@@ -144,14 +179,18 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
             "genRate": self.gen_rate_input.text()
         }
 
+
 class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def __init__(self):
         super(SamplingRateWidget, self).__init__()
         self.setupUi(self)
 
-        self.sample_rate_presets.currentItemChanged.connect(lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
-        self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
-        self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
+        self.sample_rate_presets.currentItemChanged.connect(
+            lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
+        self.sample_rate_max_btn.clicked.connect(
+            lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
+        self.sample_rate_min_btn.clicked.connect(
+            lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
 
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 50000)
@@ -160,18 +199,25 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def getData(self):
         pass
 
+
 class InputWidget(QtWidgets.QWidget, Ui_input_widget):
     def __init__(self):
         super(InputWidget, self).__init__()
         self.setupUi(self)
+
     def getData(self):
-            return {"Input": self.input_list.currentItem().text()}
+        return {"Input": self.input_list.currentItem().text()}
+
+
 class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
     def __init__(self):
         super(FilterWidget, self).__init__()
         self.setupUi(self)
+
     def getData(self):
-            pass
+        pass
+
+
 class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
     def __init__(self):
         super(CornersWidget, self).__init__()
@@ -179,16 +225,16 @@ class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 40000)
         self.corner_input.setValidator(onlyInt)
+
     def getData(self):
         pass
-
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QStackedWidget()
 
-    windows = [] 
+    windows = []
     windows += [
         MainWindow(widget, windows),
         BasicOperationWindow(widget, windows)
@@ -198,7 +244,7 @@ if __name__ == "__main__":
         widget.addWidget(window)
 
     # set current widget to MainWindow
-    widget.setCurrentWidget(windows[0]) 
+    widget.setCurrentWidget(windows[0])
     widget.show()
 
     sys.exit(app.exec())
