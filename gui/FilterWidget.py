@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_filter_widget(object):
     def setupUi(self, filter_widget):
         filter_widget.setObjectName("filter_widget")
-        filter_widget.resize(731, 378)
+        filter_widget.resize(734, 383)
         filter_widget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"

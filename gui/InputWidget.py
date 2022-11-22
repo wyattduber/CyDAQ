@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_input_widget(object):
     def setupUi(self, input_widget):
         input_widget.setObjectName("input_widget")
-        input_widget.resize(919, 476)
+        input_widget.resize(247, 178)
         input_widget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -21,6 +21,7 @@ class Ui_input_widget(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(input_widget)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.input_list = QtWidgets.QListWidget(input_widget)
+        self.input_list.setMaximumSize(QtCore.QSize(16777215, 300))
         self.input_list.setTabKeyNavigation(True)
         self.input_list.setModelColumn(0)
         self.input_list.setUniformItemSizes(False)

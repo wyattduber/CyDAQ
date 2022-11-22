@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_sampling_rate_widget(object):
     def setupUi(self, sampling_rate_widget):
         sampling_rate_widget.setObjectName("sampling_rate_widget")
-        sampling_rate_widget.resize(943, 570)
+        sampling_rate_widget.resize(571, 400)
         sampling_rate_widget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
