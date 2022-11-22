@@ -6,10 +6,10 @@ from PyQt5.QtGui import QIntValidator
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
 from DacModeWidget import Ui_DAC_mode_widget
-from SamplingRateWidget import Ui_sampling_rate_widget
-from InputWidget import Ui_input_widget
-from FilterWidget import Ui_filter_widget
-from CornersWidget import Ui_corners_widget
+# from SamplingRateWidget import Ui_sampling_rate_widget
+# from InputWidget import Ui_input_widget
+# from FilterWidget import Ui_filter_widget
+# from CornersWidget import Ui_corners_widget
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -41,12 +41,12 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         # self.inputPagesWidget = QtWidgets.QStackedWidget()
         # self.testLayout.addWidget(self.inputPagesWidget)
         
-        self.inputWidgets = [
-            SamplingRateWidget(),
-            InputWidget(),
-            FilterWidget(),
+        # self.inputWidgets = [
+        #     SamplingRateWidget(),
+        #     InputWidget(),
+        #     FilterWidget(),
             # CornersWidget()
-        ]
+        # ]
 
         # self.testLayout.addWidget(self.inputWidgets[0])
         # self.testLayout_2.addWidget(self.inputWidgets[1])
@@ -127,7 +127,7 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
             "genRate": self.gen_rate_input.text()
         }
 
-class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
+# class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def __init__(self):
         super(SamplingRateWidget, self).__init__()
         self.setupUi(self)
@@ -143,19 +143,19 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
     def getData(self):
         pass
 
-class InputWidget(QtWidgets.QWidget, Ui_input_widget):
-    def __init__(self):
-        super(InputWidget, self).__init__()
-        self.setupUi(self)
-    def getData(self):
-            return {"Input": self.input_list.currentItem().text()}
-class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
-    def __init__(self):
-        super(FilterWidget, self).__init__()
-        self.setupUi(self)
-    def getData(self):
-            pass
-class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
+# class InputWidget(QtWidgets.QWidget, Ui_input_widget):
+#     def __init__(self):
+#         super(InputWidget, self).__init__()
+#         self.setupUi(self)
+#     def getData(self):
+#             return {"Input": self.input_list.currentItem().text()}
+# class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
+#     def __init__(self):
+#         super(FilterWidget, self).__init__()
+#         self.setupUi(self)
+#     def getData(self):
+#             pass
+# class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
     def __init__(self):
         super(CornersWidget, self).__init__()
         self.setupUi(self)
