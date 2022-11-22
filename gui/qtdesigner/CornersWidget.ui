@@ -57,6 +57,9 @@ QLineEdit {
      <height>192</height>
     </rect>
    </property>
+   <property name="currentRow">
+    <number>0</number>
+   </property>
    <item>
     <property name="text">
      <string>100</string>
@@ -115,15 +118,9 @@ QLineEdit {
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QLineEdit" name="minCornerBox">
+     <widget class="QPushButton" name="corner_min_btn">
       <property name="text">
        <string>100</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -152,15 +149,9 @@ QLineEdit {
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="maxCornerBox">
+     <widget class="QPushButton" name="corner_max_btn">
       <property name="text">
        <string>40,000</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
       </property>
      </widget>
     </item>

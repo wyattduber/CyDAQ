@@ -11,12 +11,13 @@ from InputWidget import Ui_input_widget
 from FilterWidget import Ui_filter_widget
 from CornersWidget import Ui_corners_widget
 
-page_dict = {1: "DAC Mode",
-             2: "Sampling Rate",
-             3: "Input",
-             4: "Filter",
-             5: "Corners"}
+page_dict = {0: "DAC Mode",
+             1: "Sampling Rate",
+             2: "Input",
+             3: "Filter",
+             4: "Corners"}
 
+allData = {}
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, widget, windows):
@@ -35,6 +36,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.w = BasicOperationWindow()
         # self.w.show()
         # self.close()
+
+
+def validateInput(data, index):
+    page = page_dict.get(index)
+
+    if page == "DAC Mode" and data.get('Dac Mode') != "Disabled":
+        rep = int(data.get('Dac Reps'))
+        if rep > 2147483647 or rep < 1:
+            raise InvalidInputException(str(rep) + " is an invalid input for the Repetitions! Must be 1 ≤ x ≤ 2147483647.")
+        gen = int(data.get('genRate'))
+        if gen > 200000 or gen < 100:
+            raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 ≤ x ≤ 200000.")
+        return
+    elif page == "Sampling Rate":
+        sample = int(data.get('Sample Rate'))
+        if sample > 50000 or sample < 100:
+            raise InvalidInputException(str(sample) + "is an invalid input for the Sample Rate! Must be 100 ≤ x ≤ 50000.")
+        return
+    elif page == "Corners":
+        midCorner = int(data.get('Mid Corner'))
+        if midCorner > 40000 or midCorner < 100:
+            raise InvalidInputException(str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
+        return
 
 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
@@ -63,11 +87,11 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.inputPagesWidget.setCurrentWidget(self.inputPages[0])
 
         def onNextClicked():
-            if self.validateInput(self.getData(), self.inputPagesWidget.currentIndex()):
-                self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex() + 1)
-                print(self.getData())
-            else:
-                print("Invalid Input Somewhere!")
+            data = self.getData()
+            index = self.inputPagesWidget.currentIndex()
+            validateInput(data, index)
+            self.inputPagesWidget.setCurrentIndex(index + 1)
+            print(data)
 
         def onPreviousClicked():
             self.inputPagesWidget.setCurrentIndex(self.inputPagesWidget.currentIndex() - 1)
@@ -82,32 +106,11 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.corners_btn.clicked.connect(lambda: self.inputPagesWidget.setCurrentIndex(4))
 
     def getData(self):
-        r = {}
         for page in self.inputPages:
             data = page.getData()
             if data is not None:
-                r.update(page.getData())
-        return r
-
-#page_dict = {1: "DAC Mode",2: "Sampling Rate",3: "Input",4: "Filter",5: "Corners"}
-
-    def validateInput(self, data, index):
-        page = page_dict.get(index)
-
-        if page == "DAC Mode" and not data.get('mode') == "Disabled":
-            rep = int(data.get('repetitions'))
-            if rep > 2147483647 or rep < 1:
-                return False
-            gen = int(data.get('genRate'))
-            if gen > 200000 or gen < 100:
-                return False
-            return True
-        elif page == "Sampling Rate":
-            # TODO doesn't output values for Sampling Rate yet
-            pass
-        elif page == "Corners":
-            # TODO doesn't output values for Corners yet
-            pass
+                allData.update(page.getData())
+        return allData
 
 
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
@@ -172,12 +175,12 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
             lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
 
     def getData(self):
-        # TODO change these to match the exact values in the CLI config
-        return {
-            "mode": self.dac_mode_dropdown.currentText(),
-            "repetitions": self.repetitions_input.text(),
-            "genRate": self.gen_rate_input.text()
-        }
+        allData.update({
+            "Dac Mode": self.dac_mode_dropdown.currentText(),
+            "Dac Reps": self.repetitions_input.text(),
+            "genRate": self.gen_rate_input.text()  # TODO Not seeing this value in the config
+        })
+        return allData
 
 
 class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
@@ -188,7 +191,7 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
         self.sample_rate_presets.currentItemChanged.connect(
             lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
         self.sample_rate_max_btn.clicked.connect(
-            lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
+            lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text().replace(',', '')))
         self.sample_rate_min_btn.clicked.connect(
             lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
 
@@ -197,7 +200,7 @@ class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
         self.sample_rate_input.setValidator(onlyInt)
 
     def getData(self):
-        pass
+        allData.update({"Sample Rate": self.sample_rate_input.text()})
 
 
 class InputWidget(QtWidgets.QWidget, Ui_input_widget):
@@ -206,7 +209,7 @@ class InputWidget(QtWidgets.QWidget, Ui_input_widget):
         self.setupUi(self)
 
     def getData(self):
-        return {"Input": self.input_list.currentItem().text()}
+        return allData.update({"Input": self.input_list.currentItem().text()})
 
 
 class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
@@ -215,19 +218,33 @@ class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
         self.setupUi(self)
 
     def getData(self):
-        pass
+        allData.update({"Filter": self.filter_list.currentItem().text()})
 
 
 class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
     def __init__(self):
         super(CornersWidget, self).__init__()
         self.setupUi(self)
+
+        self.corner_presets.currentItemChanged.connect(
+            lambda: self.corner_input.setText(self.corner_input.currentItem().text()))
+        self.corner_max_btn.clicked.connect(
+            lambda: self.corner_input.setText(self.corner_max_btn.text().replace(',', '')))
+        self.corner_min_btn.clicked.connect(
+            lambda: self.corner_input.setText(self.corner_min_btn.text()))
+
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 40000)
         self.corner_input.setValidator(onlyInt)
 
     def getData(self):
-        pass
+        allData.update({"Upper Corner": 40000,
+                        "Mid Corner": self.corner_input.text(),
+                        "Lower Corner": 100})
+
+
+class InvalidInputException(IOError):
+    pass
 
 
 if __name__ == "__main__":

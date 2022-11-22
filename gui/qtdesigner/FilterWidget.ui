@@ -30,6 +30,9 @@
      <height>221</height>
     </rect>
    </property>
+   <property name="currentRow">
+    <number>0</number>
+   </property>
    <item>
     <property name="text">
      <string>All Pass</string>
