@@ -71,7 +71,7 @@ QPushButton {
      <enum>QLayout::SetNoConstraint</enum>
     </property>
     <item>
-     <widget class="QLabel" name="BasicOperationLabel">
+     <widget class="QLabel" name="basic_operation_label">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -159,6 +159,15 @@ QPushButton {
        <layout class="QGridLayout" name="input_layout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>10</number>
         </property>
         <property name="bottomMargin">
          <number>25</number>
@@ -248,6 +257,12 @@ QPushButton {
       </item>
       <item row="0" column="0">
        <layout class="QGridLayout" name="sample_rate_layout">
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
         <property name="bottomMargin">
          <number>25</number>
         </property>
