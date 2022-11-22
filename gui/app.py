@@ -11,6 +11,8 @@ from InputWidget import Ui_input_widget
 from FilterWidget import Ui_filter_widget
 from CornersWidget import Ui_corners_widget
 
+#  from cli import CLIWrapper
+
 page_dict = {0: "DAC Mode",
              1: "Sampling Rate",
              2: "Input",
@@ -18,14 +20,18 @@ page_dict = {0: "DAC Mode",
              4: "Corners"}
 
 allData = {}
+#  TODO Figure out connection to CLIWrapper
+#  cli = CLIWrapper.CLI("main.py")
+generationFilename = ""
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, widget, windows):
+    def __init__(self, inwidget, inwindows):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
-        self.widget = widget
-        self.windows = windows
+        self.widget = inwidget
+        self.windows = inwindows
 
         button = self.basic_operation_btn
         button.setCheckable(True)
@@ -42,32 +48,43 @@ def validateInput(data, index):
     page = page_dict.get(index)
 
     if page == "DAC Mode" and data.get('Dac Mode') != "Disabled":
-        rep = int(data.get('Dac Reps'))
+        if data.get('Dac Reps') is None or data.get('Dac Reps') == "":
+            raise InvalidInputException("DAC Repetetor Field is Empty!")
+        rep = int(data.get('Dac Reps').replace(',', ''))
         if rep > 2147483647 or rep < 1:
-            raise InvalidInputException(str(rep) + " is an invalid input for the Repetitions! Must be 1 ≤ x ≤ 2147483647.")
-        gen = int(data.get('genRate'))
+            raise InvalidInputException(
+                str(rep) + " is an invalid input for the Repetitions! Must be 1 ≤ x ≤ 2147483647.")
+        if data.get('Dac Generation Rate') is None or data.get('Dac Generation Rate') == "":
+            raise InvalidInputException("DAC Generation Rate is Empty!")
+        gen = int(data.get('Dac Generation Rate').replace(',', ''))
         if gen > 200000 or gen < 100:
             raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 ≤ x ≤ 200000.")
         return
     elif page == "Sampling Rate":
-        sample = int(data.get('Sample Rate'))
+        if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
+            raise InvalidInputException("Sample Rate is Empty!")
+        sample = int(data.get('Sample Rate').replace(',', ''))
         if sample > 50000 or sample < 100:
-            raise InvalidInputException(str(sample) + "is an invalid input for the Sample Rate! Must be 100 ≤ x ≤ 50000.")
+            raise InvalidInputException(
+                str(sample) + "is an invalid input for the Sample Rate! Must be 100 ≤ x ≤ 50000.")
         return
     elif page == "Corners":
-        midCorner = int(data.get('Mid Corner'))
+        if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
+            raise InvalidInputException("Mid Corner value is Empty!")
+        midCorner = int(data.get('Mid Corner').replace(',', ''))
         if midCorner > 40000 or midCorner < 100:
-            raise InvalidInputException(str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
+            raise InvalidInputException(
+                str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
         return
 
 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
-    def __init__(self, widget, windows):
+    def __init__(self, inwidget, inwindows):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
 
-        self.widget = widget
-        self.windows = windows
+        self.widget = inwidget
+        self.windows = inwindows
 
         self.inputPagesWidget = QtWidgets.QStackedWidget()
         self.testLayout.addWidget(self.inputPagesWidget)
@@ -161,9 +178,8 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                                                       options=options)
             if fileName:
                 self.input_file_name.setText(fileName)
-
-                # TODO do something with file path
-                print(fileName)
+                global generationFilename
+                generationFilename = fileName
 
         self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
         self.repetitions_min_limit_btn.clicked.connect(
@@ -175,10 +191,13 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
             lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
 
     def getData(self):
+        global generationFilename
+        if generationFilename is None or generationFilename == "":
+            generationFilename = self.input_file_name.text()
         allData.update({
             "Dac Mode": self.dac_mode_dropdown.currentText(),
             "Dac Reps": self.repetitions_input.text(),
-            "genRate": self.gen_rate_input.text()  # TODO Not seeing this value in the config
+            "Dac Generation Rate": self.gen_rate_input.text()
         })
         return allData
 
@@ -227,7 +246,7 @@ class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
         self.setupUi(self)
 
         self.corner_presets.currentItemChanged.connect(
-            lambda: self.corner_input.setText(self.corner_input.currentItem().text()))
+            lambda: self.corner_input.setText(self.corner_presets.currentItem().text()))
         self.corner_max_btn.clicked.connect(
             lambda: self.corner_input.setText(self.corner_max_btn.text().replace(',', '')))
         self.corner_min_btn.clicked.connect(

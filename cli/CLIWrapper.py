@@ -1,6 +1,5 @@
 from pexpect import popen_spawn
 import json
-import time
 
 import pexpect
 

@@ -105,6 +105,6 @@ class Ui_corners_widget(object):
         self.label_2.setText(_translate("corners_widget", "Presets"))
         self.corner_min_btn.setText(_translate("corners_widget", "100"))
         self.lessThan1.setText(_translate("corners_widget", "≤"))
-        self.corner_input.setText(_translate("corners_widget", "2,000"))
+        self.corner_input.setText(_translate("corners_widget", "100"))
         self.lessThan2.setText(_translate("corners_widget", "≤"))
         self.corner_max_btn.setText(_translate("corners_widget", "40,000"))

@@ -142,7 +142,7 @@ QLineEdit {
     <item>
      <widget class="QLineEdit" name="sample_rate_input">
       <property name="text">
-       <string/>
+       <string>48000</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

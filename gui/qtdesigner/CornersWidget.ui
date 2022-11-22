@@ -134,7 +134,7 @@ QLineEdit {
     <item>
      <widget class="QLineEdit" name="corner_input">
       <property name="text">
-       <string>2,000</string>
+       <string>100</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
