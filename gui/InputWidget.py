@@ -12,16 +12,15 @@ class Ui_input_widget(object):
     def setupUi(self, input_widget):
         input_widget.setObjectName("input_widget")
         input_widget.resize(919, 476)
-        input_widget.setMinimumSize(QtCore.QSize(919, 476))
-        input_widget.setMaximumSize(QtCore.QSize(919, 476))
         input_widget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
 "    color: #033f63;\n"
 "}\n"
 "")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(input_widget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.input_list = QtWidgets.QListWidget(input_widget)
-        self.input_list.setGeometry(QtCore.QRect(374, 138, 171, 201))
         self.input_list.setTabKeyNavigation(True)
         self.input_list.setModelColumn(0)
         self.input_list.setUniformItemSizes(False)
@@ -42,6 +41,7 @@ class Ui_input_widget(object):
         self.input_list.addItem(item)
         item = QtWidgets.QListWidgetItem()
         self.input_list.addItem(item)
+        self.horizontalLayout.addWidget(self.input_list)
 
         self.retranslateUi(input_widget)
         self.input_list.setCurrentRow(3)
