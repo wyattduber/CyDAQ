@@ -38,30 +38,33 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.widget = widget
         self.windows = windows
 
-        # self.inputPagesWidget = QtWidgets.QStackedWidget()
-        # self.testLayout.addWidget(self.inputPagesWidget)
-        
-        # self.inputWidgets = [
-        #     SamplingRateWidget(),
-        #     InputWidget(),
-        #     FilterWidget(),
-            # CornersWidget()
-        # ]
+        # Sample Rate
+        self.sample_rate_presets.currentItemChanged.connect(lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
+        self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
+        self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
 
-        # self.testLayout.addWidget(self.inputWidgets[0])
-        # self.testLayout_2.addWidget(self.inputWidgets[1])
-        # self.testLayout_3.addWidget(self.inputWidgets[2])
-        
-        # self.testLayout_3.addWidget(self.inputWidgets[3])
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 50000)
+        self.sample_rate_input.setValidator(onlyInt)
+
+        # Input
+
+        # Filter
+
+        # Corners
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 40000)
+        self.corner_input.setValidator(onlyInt)
+
+
 
     def getData(self):
-        r = {}
-        for page in self.inputWidgets:
-            data = page.getData()
-            if data is not None:
-                r.update(page.getData())
+        r = {
+            "Input": self.input_list.currentItem().text()
+        }
         return r
 
+# TODO this will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
@@ -126,46 +129,6 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
             "repetitions": self.repetitions_input.text(),
             "genRate": self.gen_rate_input.text()
         }
-
-# class SamplingRateWidget(QtWidgets.QWidget, Ui_sampling_rate_widget):
-    def __init__(self):
-        super(SamplingRateWidget, self).__init__()
-        self.setupUi(self)
-
-        self.sample_rate_presets.currentItemChanged.connect(lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
-        self.sample_rate_max_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text()))
-        self.sample_rate_min_btn.clicked.connect(lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
-
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 50000)
-        self.sample_rate_input.setValidator(onlyInt)
-
-    def getData(self):
-        pass
-
-# class InputWidget(QtWidgets.QWidget, Ui_input_widget):
-#     def __init__(self):
-#         super(InputWidget, self).__init__()
-#         self.setupUi(self)
-#     def getData(self):
-#             return {"Input": self.input_list.currentItem().text()}
-# class FilterWidget(QtWidgets.QWidget, Ui_filter_widget):
-#     def __init__(self):
-#         super(FilterWidget, self).__init__()
-#         self.setupUi(self)
-#     def getData(self):
-#             pass
-# class CornersWidget(QtWidgets.QWidget, Ui_corners_widget):
-    def __init__(self):
-        super(CornersWidget, self).__init__()
-        self.setupUi(self)
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 40000)
-        self.corner_input.setValidator(onlyInt)
-    def getData(self):
-        pass
-
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
