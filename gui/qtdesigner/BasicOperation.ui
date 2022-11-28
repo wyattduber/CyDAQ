@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>877</width>
-    <height>709</height>
+    <width>548</width>
+    <height>779</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,12 +66,123 @@ QPushButton {
 
 </string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetNoConstraint</enum>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="sampling_rate_label">
+      <property name="text">
+       <string>Sampling Rate</string>
+      </property>
+     </widget>
+    </item>
     <item>
-     <widget class="QLabel" name="basic_operation_label">
+     <layout class="QHBoxLayout" name="sample_rate_bar_layout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item alignment="Qt::AlignLeft">
+       <widget class="QPushButton" name="sample_rate_min_btn">
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lessThan1Sample">
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="sample_rate_input_box">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string>48000</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>44100</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>22050</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>16000</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8000</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4000</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lessThan2Sample">
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignRight">
+       <widget class="QPushButton" name="sample_rate_max_btn">
+        <property name="text">
+         <string>50,000</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="input_label">
+      <property name="minimumSize">
+       <size>
+        <width>50</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -79,472 +190,383 @@ QPushButton {
        </size>
       </property>
       <property name="text">
-       <string>Basic Operation</string>
+       <string>Input</string>
       </property>
      </widget>
     </item>
-    <item>
-     <layout class="QGridLayout" name="config_layout">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QComboBox" name="input_input_box">
+      <property name="currentIndex">
+       <number>3</number>
       </property>
-      <item row="1" column="0">
-       <layout class="QVBoxLayout" name="filter_layout">
-        <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
-         <widget class="QLabel" name="filter_label">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Filter</string>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-         <widget class="QListWidget" name="filter_list">
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>200</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string>All Pass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>60Hz Notch</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1st Order High Pass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1st Order Low Pass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>6th Order High Pass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>6th Order Low Pass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2nd Order Band Pass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>6th Order Band Pass</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="1">
-       <layout class="QGridLayout" name="input_layout">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>10</number>
-        </property>
-        <property name="rightMargin">
-         <number>10</number>
-        </property>
-        <property name="bottomMargin">
-         <number>25</number>
-        </property>
-        <item row="1" column="0" alignment="Qt::AlignHCenter|Qt::AlignTop">
-         <widget class="QListWidget" name="input_list">
-          <property name="maximumSize">
-           <size>
-            <width>150</width>
-            <height>200</height>
-           </size>
-          </property>
-          <property name="tabKeyNavigation">
-           <bool>true</bool>
-          </property>
-          <property name="modelColumn">
-           <number>0</number>
-          </property>
-          <property name="uniformItemSizes">
-           <bool>false</bool>
-          </property>
-          <property name="currentRow">
-           <number>3</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>5 Volt</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>3.3 Volt</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1.8 Volt</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Analog In</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Audio In</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Digital I2C Bus</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Digital SPI Bus</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Digital UART</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignBottom">
-         <widget class="QLabel" name="input_label">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Input Type</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="sample_rate_layout">
-        <property name="leftMargin">
-         <number>10</number>
-        </property>
-        <property name="topMargin">
-         <number>10</number>
-        </property>
-        <property name="bottomMargin">
-         <number>25</number>
-        </property>
-        <item row="3" column="0" alignment="Qt::AlignHCenter|Qt::AlignTop">
-         <widget class="QListWidget" name="sample_rate_presets">
-          <property name="maximumSize">
-           <size>
-            <width>150</width>
-            <height>150</height>
-           </size>
-          </property>
-          <property name="tabKeyNavigation">
-           <bool>true</bool>
-          </property>
-          <property name="currentRow">
-           <number>0</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>48000</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>44100</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>22050</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>16000</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>8000</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>4000</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="1" column="0" alignment="Qt::AlignHCenter|Qt::AlignBottom">
-         <widget class="QLabel" name="sample_rate_presets_label">
-          <property name="text">
-           <string>Presets</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="sample_rate_bar_layout">
-          <item alignment="Qt::AlignLeft">
-           <widget class="QPushButton" name="sample_rate_min_btn">
-            <property name="text">
-             <string>100</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lessThan1Sample">
-            <property name="text">
-             <string>≤</string>
-            </property>
-           </widget>
-          </item>
-          <item alignment="Qt::AlignHCenter">
-           <widget class="QLineEdit" name="sample_rate_input">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lessThan2Sample">
-            <property name="text">
-             <string>≤</string>
-            </property>
-           </widget>
-          </item>
-          <item alignment="Qt::AlignRight">
-           <widget class="QPushButton" name="sample_rate_max_btn">
-            <property name="text">
-             <string>50,000</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1">
-       <layout class="QVBoxLayout" name="corner_layout">
-        <item alignment="Qt::AlignHCenter">
-         <widget class="QLabel" name="mid_corner_label">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Mid Corner</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="corner_bar_layout">
-          <item>
-           <widget class="QPushButton" name="corner_min_btn">
-            <property name="text">
-             <string>100</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lessThan1">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>≤</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="corner_input">
-            <property name="maximumSize">
-             <size>
-              <width>180</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>2,000</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lessThan2">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>≤</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="corner_max_btn">
-            <property name="text">
-             <string>40,000</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
-         <widget class="QLabel" name="corner_presets_label">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Presets</string>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-         <widget class="QListWidget" name="corner_presets">
-          <property name="maximumSize">
-           <size>
-            <width>150</width>
-            <height>100</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string>100</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1000</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>10000</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="Line" name="line_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="bottom_row_layout">
       <item>
-       <widget class="QLabel" name="Placeholder1">
-        <property name="minimumSize">
+       <property name="text">
+        <string>5 Volt</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3.3 Volt</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1.8 Volt</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Analog In</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Audio In</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Digital I2C Bus</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Digital SPI Bus</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Digital UART</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="filter_label">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Filter</string>
+      </property>
+     </widget>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QComboBox" name="filter_input_box">
+      <item>
+       <property name="text">
+        <string>All Pass</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>60Hz Notch</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1st Order High Pass</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1st Order Low Pass</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>6th Order High Pass</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>6th Order Low Pass</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2nd Order Band Pass</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>6th Order Band Pass</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="mid_corner_label">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Mid Corner</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="mid_corner_bar_layout">
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
          <size>
-          <width>1000</width>
-          <height>200</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>1000</width>
-          <height>200</height>
-         </size>
-        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="mid_corner_min_btn">
         <property name="text">
-         <string>Console</string>
+         <string>100</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <widget class="QLabel" name="lessThan1">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="mid_corner_input_box">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Sampling Time: 00:00:00</string>
-          </property>
-         </widget>
+         <property name="text">
+          <string>100</string>
+         </property>
         </item>
         <item>
-         <widget class="QPushButton" name="start_stop_sampling_btn">
-          <property name="text">
-           <string>Start/Stop</string>
-          </property>
-         </widget>
+         <property name="text">
+          <string>1000</string>
+         </property>
         </item>
-       </layout>
+        <item>
+         <property name="text">
+          <string>10000</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lessThan2">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="mid_corner_max_btn">
+        <property name="text">
+         <string>40,000</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="low_corner_label">
+      <property name="text">
+       <string>Low Corner</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="low_corner_bar_layout">
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="low_corner_min_btn">
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="low_corner_input"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="low_corner_max_btn">
+        <property name="text">
+         <string>20,000</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="high_corner_label">
+      <property name="text">
+       <string>High Corner</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="high_corner_bar_layout">
+      <item>
+       <spacer name="horizontalSpacer_7">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="low_corner_min_btn_2">
+        <property name="text">
+         <string>2,000</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="high_corner_bar_input"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="low_corner_max_btn_2">
+        <property name="text">
+         <string>40,000</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Minimum</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QPushButton" name="start_stop_sampling_btn">
+      <property name="text">
+       <string>Start/Stop</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -553,7 +575,7 @@ QPushButton {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>877</width>
+     <width>548</width>
      <height>19</height>
     </rect>
    </property>
