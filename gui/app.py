@@ -111,9 +111,18 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             lambda: self.high_corner_input.setText(self.high_corner_min_btn.text().replace(',', '')))
         self.high_corner_max_btn.clicked.connect(
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
-        # onlyInt = QIntValidator()
-        # onlyInt.setRange(100, 40000)
-        # self.corner_input.setValidator(onlyInt)
+        
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 20000)
+        self.low_corner_input.setValidator(onlyInt)
+
+        onlyInt = QIntValidator()
+        onlyInt.setRange(100, 40000)
+        self.mid_corner_input_box.setValidator(onlyInt)
+
+        onlyInt = QIntValidator()
+        onlyInt.setRange(2000, 40000)
+        self.high_corner_input.setValidator(onlyInt)
 
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(lambda: print(self.getData())) # TODO used for debug, remove!
