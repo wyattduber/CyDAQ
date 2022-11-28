@@ -99,10 +99,18 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         # Filter
 
         # Corners
+        self.low_corner_min_btn.clicked.connect(
+            lambda: self.low_corner_input.setText(self.low_corner_min_btn.text().replace(',', '')))
+        self.low_corner_max_btn.clicked.connect(
+            lambda: self.low_corner_input.setText(self.low_corner_max_btn.text().replace(',', '')))
         self.mid_corner_min_btn.clicked.connect(
             lambda: self.mid_corner_input_box.setEditText(self.mid_corner_min_btn.text().replace(',', '')))
         self.mid_corner_max_btn.clicked.connect(
             lambda: self.mid_corner_input_box.setEditText(self.mid_corner_max_btn.text().replace(',', '')))
+        self.high_corner_min_btn.clicked.connect(
+            lambda: self.high_corner_input.setText(self.high_corner_min_btn.text().replace(',', '')))
+        self.high_corner_max_btn.clicked.connect(
+            lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
         # onlyInt = QIntValidator()
         # onlyInt.setRange(100, 40000)
         # self.corner_input.setValidator(onlyInt)
@@ -115,7 +123,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             "Sample Rate": self.sample_rate_input_box.currentText(),
             "Input": self.input_input_box.currentText(),
             "Filter": self.filter_input_box.currentText(),
-            "Upper Corner": self.high_corner_bar_input.text(),
+            "Upper Corner": self.high_corner_input.text(),
             "Mid Corner": self.mid_corner_input_box.currentText(),
             "Lower Corner": self.low_corner_input.text(),
 
