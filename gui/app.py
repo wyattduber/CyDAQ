@@ -53,12 +53,12 @@ def validateInput(data, index):
         rep = int(data.get('Dac Reps').replace(',', ''))
         if rep > 2147483647 or rep < 1:
             raise InvalidInputException(
-                str(rep) + " is an invalid input for the Repetitions! Must be 1 ≤ x ≤ 2147483647.")
+                str(rep) + " is an invalid input for the Repetitions! Must be 1 <= x <= 2147483647.")
         if data.get('Dac Generation Rate') is None or data.get('Dac Generation Rate') == "":
             raise InvalidInputException("DAC Generation Rate is Empty!")
         gen = int(data.get('Dac Generation Rate').replace(',', ''))
         if gen > 200000 or gen < 100:
-            raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 ≤ x ≤ 200000.")
+            raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 <= x <= 200000.")
         return
     elif page == "Sampling Rate":
         if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
@@ -66,7 +66,7 @@ def validateInput(data, index):
         sample = int(data.get('Sample Rate').replace(',', ''))
         if sample > 50000 or sample < 100:
             raise InvalidInputException(
-                str(sample) + "is an invalid input for the Sample Rate! Must be 100 ≤ x ≤ 50000.")
+                str(sample) + "is an invalid input for the Sample Rate! Must be 100 <= x <= 50000.")
         return
     elif page == "Corners":
         if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
@@ -74,7 +74,7 @@ def validateInput(data, index):
         midCorner = int(data.get('Mid Corner').replace(',', ''))
         if midCorner > 40000 or midCorner < 100:
             raise InvalidInputException(
-                str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
+                str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 <= x <= 40000.")
         return
 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
