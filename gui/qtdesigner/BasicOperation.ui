@@ -118,7 +118,7 @@ QPushButton {
         </property>
         <property name="minimumSize">
          <size>
-          <width>175</width>
+          <width>190</width>
           <height>30</height>
          </size>
         </property>
@@ -234,7 +234,7 @@ QPushButton {
      <widget class="QComboBox" name="input_input_box">
       <property name="minimumSize">
        <size>
-        <width>175</width>
+        <width>190</width>
         <height>30</height>
        </size>
       </property>
@@ -316,7 +316,7 @@ QPushButton {
      <widget class="QComboBox" name="filter_input_box">
       <property name="minimumSize">
        <size>
-        <width>175</width>
+        <width>190</width>
         <height>30</height>
        </size>
       </property>
@@ -445,7 +445,7 @@ QPushButton {
         </property>
         <property name="minimumSize">
          <size>
-          <width>175</width>
+          <width>190</width>
           <height>30</height>
          </size>
         </property>
@@ -568,7 +568,7 @@ QPushButton {
        <widget class="QLineEdit" name="low_corner_input">
         <property name="minimumSize">
          <size>
-          <width>175</width>
+          <width>190</width>
           <height>30</height>
          </size>
         </property>
@@ -661,7 +661,7 @@ QPushButton {
        <widget class="QLineEdit" name="high_corner_bar_input">
         <property name="minimumSize">
          <size>
-          <width>175</width>
+          <width>190</width>
           <height>30</height>
          </size>
         </property>
@@ -725,7 +725,7 @@ QPushButton {
      <widget class="QPushButton" name="start_stop_sampling_btn">
       <property name="minimumSize">
        <size>
-        <width>175</width>
+        <width>190</width>
         <height>0</height>
        </size>
       </property>
