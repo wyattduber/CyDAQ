@@ -58,7 +58,7 @@ def validateInput(data, index):
             raise InvalidInputException("DAC Generation Rate is Empty!")
         gen = int(data.get('Dac Generation Rate').replace(',', ''))
         if gen > 200000 or gen < 100:
-            raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 <= x <= 200000.")
+            raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 ≤ x ≤ 200000.")
         return
     elif page == "Sampling Rate":
         if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
@@ -66,7 +66,7 @@ def validateInput(data, index):
         sample = int(data.get('Sample Rate').replace(',', ''))
         if sample > 50000 or sample < 100:
             raise InvalidInputException(
-                str(sample) + "is an invalid input for the Sample Rate! Must be 100 <= x <= 50000.")
+                str(sample) + "is an invalid input for the Sample Rate! Must be 100 ≤ x ≤ 50000.")
         return
     elif page == "Corners":
         if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
@@ -74,7 +74,7 @@ def validateInput(data, index):
         midCorner = int(data.get('Mid Corner').replace(',', ''))
         if midCorner > 40000 or midCorner < 100:
             raise InvalidInputException(
-                str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 <= x <= 40000.")
+                str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
         return
 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
@@ -86,42 +86,38 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.windows = inwindows
 
         # Sample Rate
-        self.sample_rate_presets.currentItemChanged.connect(
-            lambda: self.sample_rate_input.setText(self.sample_rate_presets.currentItem().text()))
         self.sample_rate_max_btn.clicked.connect(
-            lambda: self.sample_rate_input.setText(self.sample_rate_max_btn.text().replace(',', '')))
+            lambda: self.sample_rate_input_box.setEditText(self.sample_rate_max_btn.text().replace(',', '')))
         self.sample_rate_min_btn.clicked.connect(
-            lambda: self.sample_rate_input.setText(self.sample_rate_min_btn.text()))
+            lambda: self.sample_rate_input_box.setEditText(self.sample_rate_min_btn.text()))
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 50000)
-        self.sample_rate_input.setValidator(onlyInt)
+        self.sample_rate_input_box.setValidator(onlyInt)
 
         # Input
 
         # Filter
 
         # Corners
-        self.corner_presets.currentItemChanged.connect(
-            lambda: self.corner_input.setText(self.corner_presets.currentItem().text()))
-        self.corner_max_btn.clicked.connect(
-            lambda: self.corner_input.setText(self.corner_max_btn.text().replace(',', '')))
-        self.corner_min_btn.clicked.connect(
-            lambda: self.corner_input.setText(self.corner_min_btn.text()))
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 40000)
-        self.corner_input.setValidator(onlyInt)
+        self.mid_corner_min_btn.clicked.connect(
+            lambda: self.mid_corner_input_box.setEditText(self.mid_corner_min_btn.text().replace(',', '')))
+        self.mid_corner_max_btn.clicked.connect(
+            lambda: self.mid_corner_input_box.setEditText(self.mid_corner_max_btn.text().replace(',', '')))
+        # onlyInt = QIntValidator()
+        # onlyInt.setRange(100, 40000)
+        # self.corner_input.setValidator(onlyInt)
 
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(lambda: print(self.getData())) # TODO used for debug, remove!
 
     def getData(self):
         return {
-            "Sample Rate": self.sample_rate_input.text(),
-            "Input": self.input_list.currentItem().text(),
-            "Filter": self.filter_list.currentItem().text(),
-            "Upper Corner": 40000,
-            "Mid Corner": self.corner_input.text(),
-            "Lower Corner": 100,
+            "Sample Rate": self.sample_rate_input_box.currentText(),
+            "Input": self.input_input_box.currentText(),
+            "Filter": self.filter_input_box.currentText(),
+            "Upper Corner": self.high_corner_bar_input.text(),
+            "Mid Corner": self.mid_corner_input_box.currentText(),
+            "Lower Corner": self.low_corner_input.text(),
 
         }
 

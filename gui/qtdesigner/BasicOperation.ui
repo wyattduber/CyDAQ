@@ -638,7 +638,7 @@ QPushButton {
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="low_corner_min_btn_2">
+       <widget class="QPushButton" name="high_corner_min_btn">
         <property name="minimumSize">
          <size>
           <width>80</width>
@@ -675,7 +675,7 @@ QPushButton {
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="low_corner_max_btn_2">
+       <widget class="QPushButton" name="high_corner_max_btn">
         <property name="minimumSize">
          <size>
           <width>80</width>
