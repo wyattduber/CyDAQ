@@ -1,4 +1,4 @@
-import sys
+import sys, sched, time, threading
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
@@ -11,7 +11,10 @@ from DacModeWidget import Ui_DAC_mode_widget
 # from FilterWidget import Ui_filter_widget
 # from CornersWidget import Ui_corners_widget
 
-#  from cli import CLIWrapper
+# This path must be appended because the CLI and GUI aren't in packages. 
+# If both were in python packages, this issue wouldn't be here.
+sys.path.append("../cli") 
+import CLIWrapper
 
 page_dict = {0: "DAC Mode",
              1: "Sampling Rate",
@@ -85,6 +88,19 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.widget = inwidget
         self.windows = inwindows
 
+        # CLI wrapper
+        try:
+            self.wrapper = CLIWrapper.CLI("../cli/main.py")
+            ping = self.wrapper.ping()
+            if ping <= 0:
+                self.cyDaqDisconnected()
+            else: 
+                self.cyDaqConnected()
+        except CLIWrapper.cyDAQNotConnectedException:
+            self.cyDaqDisconnected()
+
+
+
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_max_btn.text().replace(',', '')))
@@ -126,6 +142,19 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(lambda: print(self.getData())) # TODO used for debug, remove!
+
+    def cyDaqConnected(self):
+        """
+        What happens to the UI when the cyDaq changes to connected
+        """
+        self.connection_status_label.setText("Connected!")
+
+    def cyDaqDisconnected(self):
+        """
+        What happens to the UI when the cyDaq changes to disconnected
+        """
+        self.connection_status_label.setText("Not Connected!")
+
 
     def getData(self):
         return {
