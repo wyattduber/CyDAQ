@@ -1,7 +1,9 @@
 import sys, sched, time, threading
+from threading import Event, Thread, Timer
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
+from PyQt5.QtCore import QObject
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -23,10 +25,10 @@ page_dict = {0: "DAC Mode",
              4: "Corners"}
 
 allData = {}
-#  TODO Figure out connection to CLIWrapper
-#  cli = CLIWrapper.CLI("main.py")
 generationFilename = ""
+cyDaqConnected = False
 
+PING_TIMER_DELAY_SECONDS = 5
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, inwidget, inwindows):
@@ -46,6 +48,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.w.show()
         # self.close()
 
+    def cyDaqConnected(self):
+        """
+        What happens to the UI when the cyDaq changes to connected
+        """
+        pass
+
+    def cyDaqDisconnected(self):
+        """
+        What happens to the UI when the cyDaq changes to disconnected
+        """
+        pass
 
 def validateInput(data, index):
     page = page_dict.get(index)
@@ -80,26 +93,24 @@ def validateInput(data, index):
                 str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
         return
 
+def bind(objectName, propertyName):
+    def getter(self):
+        return self.findChild(QObject, objectName).property(propertyName)
+
+    def setter(self, value):
+        self.findChild(QObject, objectName).setProperty(propertyName, value)
+
+    return property(getter, setter)
+
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
+    test = bind("connection_status_label", "cyDaqConnected")
+
     def __init__(self, inwidget, inwindows):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
 
         self.widget = inwidget
         self.windows = inwindows
-
-        # CLI wrapper
-        try:
-            self.wrapper = CLIWrapper.CLI("../cli/main.py")
-            ping = self.wrapper.ping()
-            if ping <= 0:
-                self.cyDaqDisconnected()
-            else: 
-                self.cyDaqConnected()
-        except CLIWrapper.cyDAQNotConnectedException:
-            self.cyDaqDisconnected()
-
-
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -228,6 +239,18 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         self.gen_rate_max_limit_btn.clicked.connect(
             lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
 
+    def cyDaqConnected(self):
+        """
+        What happens to the UI when the cyDaq changes to connected
+        """
+        pass
+
+    def cyDaqDisconnected(self):
+        """
+        What happens to the UI when the cyDaq changes to disconnected
+        """
+        pass
+
     def getData(self):
         global generationFilename
         if generationFilename is None or generationFilename == "":
@@ -242,21 +265,79 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
 class InvalidInputException(IOError):
     pass
 
+class RepeatedTimer(object):
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer     = None
+        self.interval   = interval
+        self.function   = function
+        self.args       = args
+        self.kwargs     = kwargs
+        self.is_running = False
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self._timer = Timer(self.interval, self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        if self._timer is not None:
+            self._timer.cancel()
+        self.is_running = False
+
+def updateWindowsConnected(windows, connectedBool):
+    for window in windows:
+        if connectedBool:
+            window.cyDaqConnected()
+        else:  
+            window.cyDaqDisconnected()
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QStackedWidget()
 
-    windows = []
-    windows += [
-        MainWindow(widget, windows),
-        BasicOperationWindow(widget, windows)
-    ]
+    rt = None
+    try:
+        windows = []
+        windows += [
+            MainWindow(widget, windows),
+            BasicOperationWindow(widget, windows)
+        ]
 
-    for window in windows:
-        widget.addWidget(window)
+         # CLI wrapper
+        try:
+            wrapper = CLIWrapper.CLI("../cli/main.py")
+            ping = wrapper.ping()
+            cyDaqConnected = (ping >= 0)
+            updateWindowsConnected(windows, cyDaqConnected)
+        except CLIWrapper.cyDAQNotConnectedException:
+            cyDaqConnected = False
 
-    # set current widget to MainWindow
-    widget.setCurrentWidget(windows[0])
-    widget.show()
+        def timerHandler():
+            global cyDaqConnected
+            ping = wrapper.ping()
+            before = cyDaqConnected
+            cyDaqConnected = (ping >= 0)
+            if before != cyDaqConnected:
+                updateWindowsConnected(windows, cyDaqConnected)
+            print(cyDaqConnected, ": ", ping)
+        rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
 
-    sys.exit(app.exec())
+        for window in windows:
+            widget.addWidget(window)
+
+        # set current widget to MainWindow
+        widget.setCurrentWidget(windows[0])
+        widget.show()
+
+        app.exec()
+    finally:
+        if rt is not None:
+            rt.stop()
+        sys.exit()

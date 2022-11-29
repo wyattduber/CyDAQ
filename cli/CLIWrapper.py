@@ -50,7 +50,7 @@ class CLI:
         Ping cyDAQ, returns the response time in microseconds or -1 if error
         """
         response = self._send_command("ping")
-        print("response: ", response)
+        # print("response: ", response)
         return int(''.join(filter(str.isdigit, response)))
 
     def clear_config(self):
