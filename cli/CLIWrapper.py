@@ -1,3 +1,4 @@
+import signal
 from pexpect import popen_spawn
 import json
 
@@ -18,6 +19,7 @@ class CLI:
         self.END_CHAR = ">"
         self.NOT_CONNECTED = "Zybo not connected"
         self.p = popen_spawn.PopenSpawn("python " + cli_main_path)
+        self.connectionEnabled = True
 
         # wait for cli to start up
         self.p.expect("CyDAQ Command Line Interface")
@@ -31,17 +33,23 @@ class CLI:
         # wait for command input
         self.p.expect(self.END_CHAR, timeout=5)
 
+    def closeConnection(self):
+        self.connectionEnabled = False
+        self.p.kill(signal.SIGTERM)
+
     def _send_command(self, command):
         """
         Send a command to the cyDAQ and returns the result
         """
+        if not self.connectionEnabled:
+            return
         self.p.sendline(command)
         self.p.expect(self.END_CHAR)
         response = self.p.before
         if response is None:
             raise CLINoResponseException
         response = response.decode()
-        if response == self.NOT_CONNECTED:
+        if response.strip() == self.NOT_CONNECTED:
             raise cyDAQNotConnectedException
         return response
 
@@ -50,7 +58,7 @@ class CLI:
         Ping cyDAQ, returns the response time in microseconds or -1 if error
         """
         response = self._send_command("ping")
-        # print("response: ", response)
+        print("response|", response,"|")
         return int(''.join(filter(str.isdigit, response)))
 
     def clear_config(self):
