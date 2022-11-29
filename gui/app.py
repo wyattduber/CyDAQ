@@ -1,3 +1,5 @@
+import datetime
+import json
 import sys, sched, time, threading
 from threading import Event, Thread, Timer
 from PyQt5 import QtWidgets
@@ -28,7 +30,7 @@ page_dict = {0: "DAC Mode",
 allData = {}
 generationFilename = ""
 cyDaqConnected = False
-wrapper = None
+wrapper: CLIWrapper.CLI or None
 
 PING_TIMER_DELAY_SECONDS = 1
 
@@ -123,7 +125,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         self.widget = inwidget
         self.windows = inwindows
-        sampling = False
+        self.sampling = False
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -165,7 +167,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.high_corner_input.setValidator(onlyInt)
 
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling, sampling)  # TODO used for debug, remove!
+        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling)  # TODO used for debug, remove!
 
     def cyDaqConnected(self):
         """
@@ -190,14 +192,29 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         }
 
-    def start_stop_sampling(self, sampling):
-        if not sampling:
+    def start_stop_sampling(self):
+        if not self.sampling:
+            # start sampling
             wrong = validateInput(self.getData())
             if len(wrong) > 0:
-                pass  # TODO Do something with the error messages for invalid inputs
+                print("HANDLE ERRORS")
+                print(wrong)
+                return  # TODO Do something with the error messages for invalid inputs
             else:
-                sampling = True
-        return 0
+                wrapper.set_values(json.dumps(self.getData()))
+                wrapper.send_config_to_cydaq()
+                wrapper.start_sampling()
+                self.sampling = True
+                self.start_stop_sampling_btn.setText("Stop")
+                print("started sampling!")
+    
+        else:
+            # stop sampling
+            wrapper.stop_sampling()
+            self.sampling = False
+            self.start_stop_sampling_btn.setText("Start")
+            print("stopped sampling!")
+
 
 
 # TODO this will get used later
@@ -350,14 +367,14 @@ if __name__ == "__main__":
         ]
 
         # global
-        wrapper = createNewWrapper(windows)
+        wrapper = createNewWrapper(windows)  # type: ignore
 
         def timerHandler():
             global cyDaqConnected
             global wrapper
             print("wrapper: ", wrapper)
             if wrapper is None:
-                wrapper = createNewWrapper(windows)
+                wrapper = createNewWrapper(windows)  # type: ignore
                 return
             try:
                 ping = wrapper.ping()
@@ -366,7 +383,7 @@ if __name__ == "__main__":
                 cyDaqConnected = False
                 updateWindowsConnected(windows, cyDaqConnected)
                 wrapper.closeConnection()
-                wrapper = None
+                wrapper = None  # type: ignore
                 return
             before = cyDaqConnected
             cyDaqConnected = (ping >= 0)

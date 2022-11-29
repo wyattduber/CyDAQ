@@ -113,11 +113,16 @@ class CLI:
         """
         self._send_command("start")
 
-    def stop_sampling(self, fileName):
+    def stop_sampling(self, fileName=None):
         """
         Stops sampling, can have a custom filename or generate a timestamped default
         """
-        self._send_command("stop, " + fileName)
+        if fileName is None:
+            self._send_command("stop")
+        else:
+            self._send_command("stop, " + fileName)
+
+            
 
     def flush(self):
         """
