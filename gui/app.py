@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIntValidator
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
 from DacModeWidget import Ui_DAC_mode_widget
+
 # from SamplingRateWidget import Ui_sampling_rate_widget
 # from InputWidget import Ui_input_widget
 # from FilterWidget import Ui_filter_widget
@@ -13,7 +14,7 @@ from DacModeWidget import Ui_DAC_mode_widget
 
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
-sys.path.append("../cli") 
+sys.path.append("../cli")
 import CLIWrapper
 
 page_dict = {0: "DAC Mode",
@@ -47,38 +48,48 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.close()
 
 
-def validateInput(data, index):
-    page = page_dict.get(index)
+def validateInput(data):
+    wrong = {}
 
-    if page == "DAC Mode" and data.get('Dac Mode') != "Disabled":
-        if data.get('Dac Reps') is None or data.get('Dac Reps') == "":
-            raise InvalidInputException("DAC Repetetor Field is Empty!")
-        rep = int(data.get('Dac Reps').replace(',', ''))
-        if rep > 2147483647 or rep < 1:
-            raise InvalidInputException(
-                str(rep) + " is an invalid input for the Repetitions! Must be 1 <= x <= 2147483647.")
-        if data.get('Dac Generation Rate') is None or data.get('Dac Generation Rate') == "":
-            raise InvalidInputException("DAC Generation Rate is Empty!")
-        gen = int(data.get('Dac Generation Rate').replace(',', ''))
-        if gen > 200000 or gen < 100:
-            raise InvalidInputException(str(gen) + " is an invalid input for the Generation! Must be 100 ≤ x ≤ 200000.")
-        return
-    elif page == "Sampling Rate":
-        if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
-            raise InvalidInputException("Sample Rate is Empty!")
+    # Sample Rate
+    if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
+        wrong.update({"Sample Rate": "Field cannot be empty."})
+    else:
         sample = int(data.get('Sample Rate').replace(',', ''))
         if sample > 50000 or sample < 100:
-            raise InvalidInputException(
-                str(sample) + "is an invalid input for the Sample Rate! Must be 100 ≤ x ≤ 50000.")
-        return
-    elif page == "Corners":
-        if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
-            raise InvalidInputException("Mid Corner value is Empty!")
+            wrong.update({"Sample Rate": f"{str(sample)} + is an invalid input for the Sample Rate! Must be 100 ≤ "
+                                         f"x ≤ 50000."})
+
+    # Mid Corner
+    if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
+        wrong.update({"Mid Corner": "Field cannot be empty."})
+    else:
         midCorner = int(data.get('Mid Corner').replace(',', ''))
         if midCorner > 40000 or midCorner < 100:
-            raise InvalidInputException(
-                str(midCorner) + "is an invalid input for the Mid Corner! Must be 100 ≤ x ≤ 40000.")
-        return
+            wrong.update({"Mid Corner": f"{str(midCorner)} + is an invalid input for the Mid Corner! Must be 100 "
+                                        f"≤ x ≤ 40000."})
+
+    # Low Corner
+    if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
+        wrong.update({"Lower Corner": "Field cannot be empty."})
+    else:
+        lowCorner = int(data.get('Lower Corner').replace(',', ''))
+        if lowCorner > 20000 or lowCorner < 100:
+            wrong.update({"Lower Corner": f"{str(lowCorner)} + is an invalid input for the Low Corner! Must be 100 "
+                                          f"≤ x ≤ 20000."})
+
+    # High Corner
+    if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
+        wrong.update({"Upper Corner": "Field cannot be empty."})
+    else:
+        midCorner = int(data.get('Upper Corner').replace(',', ''))
+        if midCorner > 40000 or midCorner < 2000:
+            wrong.update(
+                {"Upper Corner": f"{str(midCorner)} + is an invalid input for the Mid Corner! Must be 2000 "
+                                 f"≤ x ≤ 40000."})
+
+    return wrong
+
 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
     def __init__(self, inwidget, inwindows):
@@ -87,6 +98,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         self.widget = inwidget
         self.windows = inwindows
+        sampling = False
 
         # CLI wrapper
         try:
@@ -94,12 +106,10 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             ping = self.wrapper.ping()
             if ping <= 0:
                 self.cyDaqDisconnected()
-            else: 
+            else:
                 self.cyDaqConnected()
         except CLIWrapper.cyDAQNotConnectedException:
             self.cyDaqDisconnected()
-
-
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -127,7 +137,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             lambda: self.high_corner_input.setText(self.high_corner_min_btn.text().replace(',', '')))
         self.high_corner_max_btn.clicked.connect(
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
-        
+
         onlyInt = QIntValidator()
         onlyInt.setRange(100, 20000)
         self.low_corner_input.setValidator(onlyInt)
@@ -141,7 +151,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.high_corner_input.setValidator(onlyInt)
 
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(lambda: print(self.getData())) # TODO used for debug, remove!
+        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling(sampling))  # TODO used for debug, remove!
 
     def cyDaqConnected(self):
         """
@@ -155,7 +165,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         """
         self.connection_status_label.setText("Not Connected!")
 
-
     def getData(self):
         return {
             "Sample Rate": self.sample_rate_input_box.currentText(),
@@ -166,6 +175,15 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             "Lower Corner": self.low_corner_input.text(),
 
         }
+
+    def start_stop_sampling(self, sampling):
+        if not sampling:
+            wrong = validateInput(self.getData())
+            if len(wrong) > 0:
+                pass  # TODO Do something with the error messages for invalid inputs
+            else:
+                sampling = True
+
 
 # TODO this will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
@@ -239,8 +257,10 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         })
         return allData
 
+
 class InvalidInputException(IOError):
     pass
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
