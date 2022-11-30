@@ -4,9 +4,8 @@ import sys, sched, time, threading
 from threading import Event, Thread, Timer
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QIntValidator, QIcon
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import QObject
-from PyQt5 import QtTest
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -34,7 +33,7 @@ cyDaqConnected = False
 wrapper: CLIWrapper.CLI or None
 
 PING_TIMER_DELAY_SECONDS = 1
-DEFAULT_SAVE_LOCATION = "U:\\"
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, inwidget, inwindows):
@@ -66,19 +65,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         pass
 
+
 def validateInput(data):
-    wrong = {}
+    wrong = {"Sample Rate": "",
+             "Upper Corner": "",
+             "Mid Corner": "",
+             "Lower Corner": ""}
 
     # Sample Rate
     if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
         wrong.update({"Sample Rate": "Field cannot be empty."})
+    elif int(data.get('Sample Rate').replace(',', '')) > 50000 or int(data.get('Sample Rate').replace(',', '')) < 100:
+        wrong.update({
+                         "Sample Rate": f"{str(int(data.get('Sample Rate').replace(',', '')))} + is an invalid input for the Sample Rate! Must be 100 ≤ "
+                                        f"x ≤ 50000."})
     else:
-        sample = int(data.get('Sample Rate').replace(',', ''))
-        if sample > 50000 or sample < 100:
-            wrong.update({"Sample Rate": f"{str(sample)} + is an invalid input for the Sample Rate! Must be 100 ≤ "
-                                         f"x ≤ 50000."})
+        wrong.update({"Sample Rate": ""})
 
-    filter = data.get("Filter")
+    filter_val = data.get("Filter")
     filters = [
         "All Pass",
         "60 hz Notch",
@@ -90,39 +94,55 @@ def validateInput(data):
         "6th Order Band Pass"
     ]
     # Mid Corner
-    if filter in filters[2 : 6]: # 1st and 6th Order High/Low Pass
+    if filter_val in filters[2: 6]:  # 1st and 6th Order High/Low Pass
         if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
             wrong.update({"Mid Corner": "Field cannot be empty."})
+        elif int(data.get('Mid Corner').replace(',', '')) > 40000 or int(data.get('Mid Corner').replace(',', '')) < 100:
+            wrong.update({
+                             "Mid Corner": f"{str(int(data.get('Mid Corner').replace(',', '')))} is an invalid input for the Mid Corner! Must be 100 "
+                                           f"≤ x ≤ 40000."})
         else:
-            midCorner = int(data.get('Mid Corner').replace(',', ''))
-            if midCorner > 40000 or midCorner < 100:
-                wrong.update({"Mid Corner": f"{str(midCorner)} is an invalid input for the Mid Corner! Must be 100 "
-                                            f"≤ x ≤ 40000."})
+            wrong.update({"Mid Corner": ""})
 
     # Low Corner
-    if filter in filters[6:8]: # 2nd and 6th Order Band Pass
+    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
         if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
             wrong.update({"Lower Corner": "Field cannot be empty."})
+        elif int(data.get('Lower Corner').replace(',', '')) > 20000 or int(
+                data.get('Lower Corner').replace(',', '')) < 100:
+            wrong.update({
+                             "Lower Corner": f"{str(int(data.get('Lower Corner').replace(',', '')))} is an invalid input for the Low Corner! Must be 100 "
+                                             f"≤ x ≤ 20000."})
         else:
-            lowCorner = int(data.get('Lower Corner').replace(',', ''))
-            if lowCorner > 20000 or lowCorner < 100:
-                wrong.update({"Lower Corner": f"{str(lowCorner)} is an invalid input for the Low Corner! Must be 100 "
-                                            f"≤ x ≤ 20000."})
+            wrong.update({"Lower Corner": ""})
 
     # High Corner
-    if filter in filters[6:8]: # 2nd and 6th Order Band Pass
+    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
         if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
             wrong.update({"Upper Corner": "Field cannot be empty."})
+        elif int(data.get('Upper Corner').replace(',', '')) > 40000 or int(
+                data.get('Upper Corner').replace(',', '')) < 2000:
+            wrong.update({
+                             "Upper Corner": f"{str(int(data.get('Upper Corner').replace(',', '')))} is an invalid input for the Mid Corner! Must be 2000 "
+                                             f"≤ x ≤ 40000."})
         else:
-            midCorner = int(data.get('Upper Corner').replace(',', ''))
-            if midCorner > 40000 or midCorner < 2000:
-                wrong.update(
-                    {"Upper Corner": f"{str(midCorner)} is an invalid input for the Mid Corner! Must be 2000 "
-                                    f"≤ x ≤ 40000."})
+            wrong.update({"Upper Corner": ""})
 
     return wrong
 
+
+def bind(objectName, propertyName):
+    def getter(self):
+        return self.findChild(QObject, objectName).property(propertyName)
+
+    def setter(self, value):
+        self.findChild(QObject, objectName).setProperty(propertyName, value)
+
+    return property(getter, setter)
+
+
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
+    test = bind("connection_status_label", "cyDaqConnected")
 
     def __init__(self, inwidget, inwindows):
         super(BasicOperationWindow, self).__init__()
@@ -131,11 +151,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.widget = inwidget
         self.windows = inwindows
         self.sampling = False
-        self.writing = False
-        self.filename = None
-
-        # Home Button
-        self.home_btn.clicked.connect(lambda: self.widget.setCurrentWidget(self.windows[0]))
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -210,7 +225,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                     hide.hide()
                 for hide in lowHighCorner:
                     hide.hide()
-            
+
             elif self.filter_input_box.currentIndex() == 6 or self.filter_input_box.currentIndex() == 7:
                 for hide in midCorner:
                     hide.hide()
@@ -225,6 +240,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
         self.filter_input_box.currentIndexChanged.connect(onFilterChange)
         onFilterChange()
+
     def cyDaqConnected(self):
         """
         What happens to the UI when the cyDaq changes to connected
@@ -237,18 +253,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         """
         self.connection_status_label.setText("Not Connected!")
 
-    def writingData(self):
-        """
-        What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file.
-        """
-        self.start_stop_sampling_btn.setText("Writing...")
-    
-    def writingDataFinished(self):
-        """
-        What happens to the UI when the cyDAQ is finished writing data.
-        """
-        self.start_stop_sampling_btn.setText("Start")
-
     def getData(self):
         return {
             "Sample Rate": self.sample_rate_input_box.currentText(),
@@ -257,47 +261,54 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             "Upper Corner": self.high_corner_input.text() or 0,
             "Mid Corner": self.mid_corner_input_box.currentText() or 0,
             "Lower Corner": self.low_corner_input.text() or 0,
+
         }
 
     def start_stop_sampling(self):
         if not self.sampling:
             # start sampling
             wrong = validateInput(self.getData())
-            if len(wrong) > 0:
-                print("HANDLE ERRORS")
-                print(wrong)
-                return  # TODO Do something with the error messages for invalid inputs
-            else:
-                if self.filename is None:
-                    # get file save location
-                    options = QFileDialog.Options()
-                    self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!", DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;", options = options)
-
-                print(self.getData())
-                wrapper.set_values(json.dumps(self.getData()))
-                wrapper.send_config_to_cydaq()
-                wrapper.start_sampling()
-                self.sampling = True
-                self.start_stop_sampling_btn.setText("Stop")
-                print("started sampling!")
-    
+            self.update_wrongs(wrong)
+            for i in wrong.values():
+                if i != "":
+                    print("HANDLE ERRORS")
+                    print(wrong)
+                    return  # TODO Do something with the error messages for invalid inputs
+            print(self.getData())
+            wrapper.set_values(json.dumps(self.getData()))
+            wrapper.send_config_to_cydaq()
+            wrapper.send_config_to_cydaq()
+            wrapper.start_sampling()
+            self.sampling = True
+            self.start_stop_sampling_btn.setText("Stop")
+            print("started sampling!")
         else:
-            # if the start/stop button was clicked while writing
-            if self.writing:
-                return
-            self.writing = True
-
             # stop sampling
-            self.writingData()
-            # added a wait here so the UI actually updates the "writing..." prompt before freezing
-            # this needs fixed in the future but makes sense for now
-            QtTest.QTest.qWait(100)  # type: ignore
-            wrapper.stop_sampling(self.filename)
-            self.writingDataFinished()
+            wrapper.stop_sampling()
             self.sampling = False
-            self.writing = False
+            self.start_stop_sampling_btn.setText("Start")
             print("stopped sampling!")
 
+    def update_wrongs(self, wrong):
+        wrong_dict = {
+            "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(247, 86, 74);")
+            }
+
+        right_dict = {
+            "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(217, 217, 217);")
+            }
+
+        for i in wrong.keys():
+            if wrong.get(i) == "":
+                right_dict.get(i)()
+            else:
+                wrong_dict.get(i)()
 
 
 # TODO this will get used later
@@ -388,13 +399,14 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
 class InvalidInputException(IOError):
     pass
 
+
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
-        self._timer     = None
-        self.interval   = interval
-        self.function   = function
-        self.args       = args
-        self.kwargs     = kwargs
+        self._timer = None
+        self.interval = interval
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
         self.is_running = False
         self.start()
 
@@ -414,12 +426,14 @@ class RepeatedTimer(object):
             self._timer.cancel()
         self.is_running = False
 
+
 def updateWindowsConnected(windows, connectedBool):
     for window in windows:
         if connectedBool:
             window.cyDaqConnected()
-        else:  
+        else:
             window.cyDaqDisconnected()
+
 
 def createNewWrapper(windows):
     print("createNewWrapper")
@@ -438,6 +452,7 @@ def createNewWrapper(windows):
         updateWindowsConnected(windows, cyDaqConnected)
     return wrapper
 
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QStackedWidget()
@@ -451,6 +466,7 @@ if __name__ == "__main__":
 
         # global
         wrapper = createNewWrapper(windows)  # type: ignore
+
 
         def timerHandler():
             global cyDaqConnected
@@ -473,6 +489,7 @@ if __name__ == "__main__":
             if before != cyDaqConnected:
                 updateWindowsConnected(windows, cyDaqConnected)
             print(cyDaqConnected, ": ", ping)
+
 
         # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the cyDAQ on and off. Still working on it...
         # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
