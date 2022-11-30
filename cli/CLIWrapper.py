@@ -44,7 +44,11 @@ class CLI:
         if not self.connectionEnabled:
             return
         self.p.sendline(command)
-        self.p.expect(self.END_CHAR)
+        try: 
+            self.p.expect(self.END_CHAR)
+        except pexpect.exceptions.EOF:
+            print("Unexpected EOF. Printing before")
+            print(self.p.before)
         response = self.p.before
         if response is None:
             raise CLINoResponseException
@@ -59,7 +63,7 @@ class CLI:
         """
         response = self._send_command("ping")
         print("response|", response,"|")
-        return int(''.join(filter(str.isdigit, response)))
+        return int(''.join(filter(str.isdigit, response)))  # type: ignore
 
     def clear_config(self):
         """
@@ -76,7 +80,7 @@ class CLI:
         """
         response = self._send_command("print")
         try:
-            return json.dumps(json.loads(response))
+            return json.dumps(json.loads(response))  # type: ignore
         except json.JSONDecodeError:
             raise CLIException("Error parsing json from printed configuration")
 

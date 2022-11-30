@@ -76,33 +76,47 @@ def validateInput(data):
             wrong.update({"Sample Rate": f"{str(sample)} + is an invalid input for the Sample Rate! Must be 100 ≤ "
                                          f"x ≤ 50000."})
 
+    filter = data.get("Filter")
+    filters = [
+        "All Pass",
+        "60 hz Notch",
+        "1st Order High Pass",
+        "1st Order Low Pass",
+        "6th Order High Pass",
+        "6th Order Low Pass",
+        "2nd Order Band Pass",
+        "6th Order Band Pass"
+    ]
     # Mid Corner
-    if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
-        wrong.update({"Mid Corner": "Field cannot be empty."})
-    else:
-        midCorner = int(data.get('Mid Corner').replace(',', ''))
-        if midCorner > 40000 or midCorner < 100:
-            wrong.update({"Mid Corner": f"{str(midCorner)} + is an invalid input for the Mid Corner! Must be 100 "
-                                        f"≤ x ≤ 40000."})
+    if filter in filters[2 : 6]: # 1st and 6th Order High/Low Pass
+        if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
+            wrong.update({"Mid Corner": "Field cannot be empty."})
+        else:
+            midCorner = int(data.get('Mid Corner').replace(',', ''))
+            if midCorner > 40000 or midCorner < 100:
+                wrong.update({"Mid Corner": f"{str(midCorner)} is an invalid input for the Mid Corner! Must be 100 "
+                                            f"≤ x ≤ 40000."})
 
     # Low Corner
-    if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
-        wrong.update({"Lower Corner": "Field cannot be empty."})
-    else:
-        lowCorner = int(data.get('Lower Corner').replace(',', ''))
-        if lowCorner > 20000 or lowCorner < 100:
-            wrong.update({"Lower Corner": f"{str(lowCorner)} + is an invalid input for the Low Corner! Must be 100 "
-                                          f"≤ x ≤ 20000."})
+    if filter in filters[6:8]: # 2nd and 6th Order Band Pass
+        if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
+            wrong.update({"Lower Corner": "Field cannot be empty."})
+        else:
+            lowCorner = int(data.get('Lower Corner').replace(',', ''))
+            if lowCorner > 20000 or lowCorner < 100:
+                wrong.update({"Lower Corner": f"{str(lowCorner)} is an invalid input for the Low Corner! Must be 100 "
+                                            f"≤ x ≤ 20000."})
 
     # High Corner
-    if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
-        wrong.update({"Upper Corner": "Field cannot be empty."})
-    else:
-        midCorner = int(data.get('Upper Corner').replace(',', ''))
-        if midCorner > 40000 or midCorner < 2000:
-            wrong.update(
-                {"Upper Corner": f"{str(midCorner)} + is an invalid input for the Mid Corner! Must be 2000 "
-                                 f"≤ x ≤ 40000."})
+    if filter in filters[6:8]: # 2nd and 6th Order Band Pass
+        if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
+            wrong.update({"Upper Corner": "Field cannot be empty."})
+        else:
+            midCorner = int(data.get('Upper Corner').replace(',', ''))
+            if midCorner > 40000 or midCorner < 2000:
+                wrong.update(
+                    {"Upper Corner": f"{str(midCorner)} is an invalid input for the Mid Corner! Must be 2000 "
+                                    f"≤ x ≤ 40000."})
 
     return wrong
 
@@ -232,9 +246,9 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             "Sample Rate": self.sample_rate_input_box.currentText(),
             "Input": self.input_input_box.currentText(),
             "Filter": self.filter_input_box.currentText(),
-            "Upper Corner": self.high_corner_input.text(),
-            "Mid Corner": self.mid_corner_input_box.currentText(),
-            "Lower Corner": self.low_corner_input.text(),
+            "Upper Corner": self.high_corner_input.text() or 0,
+            "Mid Corner": self.mid_corner_input_box.currentText() or 0,
+            "Lower Corner": self.low_corner_input.text() or 0,
 
         }
 
@@ -247,6 +261,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                 print(wrong)
                 return  # TODO Do something with the error messages for invalid inputs
             else:
+                print(self.getData())
                 wrapper.set_values(json.dumps(self.getData()))
                 wrapper.send_config_to_cydaq()
                 wrapper.start_sampling()
