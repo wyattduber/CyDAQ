@@ -48,6 +48,13 @@ class Ui_basic_operation(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.home_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.home_btn.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/assets/assets/home_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.home_btn.setIcon(icon)
+        self.home_btn.setObjectName("home_btn")
+        self.verticalLayout.addWidget(self.home_btn, 0, QtCore.Qt.AlignLeft)
         self.sampling_rate_label = QtWidgets.QLabel(self.centralwidget)
         self.sampling_rate_label.setObjectName("sampling_rate_label")
         self.verticalLayout.addWidget(self.sampling_rate_label, 0, QtCore.Qt.AlignHCenter)
@@ -320,3 +327,4 @@ class Ui_basic_operation(object):
         self.actionRestart.setText(_translate("basic_operation", "&Restart"))
         self.actionQuit.setText(_translate("basic_operation", "&Quit"))
         self.actionPing_CyDAQ.setText(_translate("basic_operation", "&Ping CyDAQ"))
+import basic_operation_rc

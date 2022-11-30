@@ -4,7 +4,7 @@ import sys, sched, time, threading
 from threading import Event, Thread, Timer
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtCore import QObject
 from PyQt5 import QtTest
 
@@ -133,6 +133,9 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.sampling = False
         self.writing = False
         self.filename = None
+
+        # Home Button
+        # self.home_btn.clicked.connect(self.MainWindow)
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(

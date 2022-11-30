@@ -69,6 +69,17 @@ QPushButton {
 }</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item alignment="Qt::AlignLeft">
+     <widget class="QPushButton" name="home_btn">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="basic_operation.qrc">
+        <normaloff>:/assets/assets/home_icon.png</normaloff>:/assets/assets/home_icon.png</iconset>
+      </property>
+     </widget>
+    </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="sampling_rate_label">
       <property name="text">
@@ -780,6 +791,8 @@ QPushButton {
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="basic_operation.qrc"/>
+ </resources>
  <connections/>
 </ui>
