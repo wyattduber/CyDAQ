@@ -67,18 +67,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         pass
 
 def validateInput(data):
-    wrong = {}
+    wrong = {"Sample Rate": "",
+             "Upper Corner": "",
+             "Mid Corner": "",
+             "Lower Corner": ""}
 
     # Sample Rate
     if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
         wrong.update({"Sample Rate": "Field cannot be empty."})
+    elif int(data.get('Sample Rate').replace(',', '')) > 50000 or int(data.get('Sample Rate').replace(',', '')) < 100:
+        wrong.update({
+                         "Sample Rate": f"{str(int(data.get('Sample Rate').replace(',', '')))} is an invalid input for the Sample Rate! Must be 100 ≤ "
+                                        f"x ≤ 50000."})
     else:
-        sample = int(data.get('Sample Rate').replace(',', ''))
-        if sample > 50000 or sample < 100:
-            wrong.update({"Sample Rate": f"{str(sample)} + is an invalid input for the Sample Rate! Must be 100 ≤ "
-                                         f"x ≤ 50000."})
+        wrong.update({"Sample Rate": ""})
 
-    filter = data.get("Filter")
+
+    filter_val = data.get("Filter")
     filters = [
         "All Pass",
         "60 hz Notch",
@@ -90,35 +95,40 @@ def validateInput(data):
         "6th Order Band Pass"
     ]
     # Mid Corner
-    if filter in filters[2 : 6]: # 1st and 6th Order High/Low Pass
+    if filter_val in filters[2: 6]:  # 1st and 6th Order High/Low Pass
         if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
             wrong.update({"Mid Corner": "Field cannot be empty."})
+        elif int(data.get('Mid Corner').replace(',', '')) > 40000 or int(data.get('Mid Corner').replace(',', '')) < 100:
+            wrong.update({
+                             "Mid Corner": f"{str(int(data.get('Mid Corner').replace(',', '')))} is an invalid input for the Mid Corner! Must be 100 "
+                                           f"≤ x ≤ 40000."})
         else:
-            midCorner = int(data.get('Mid Corner').replace(',', ''))
-            if midCorner > 40000 or midCorner < 100:
-                wrong.update({"Mid Corner": f"{str(midCorner)} is an invalid input for the Mid Corner! Must be 100 "
-                                            f"≤ x ≤ 40000."})
+            wrong.update({"Mid Corner": ""})
 
     # Low Corner
-    if filter in filters[6:8]: # 2nd and 6th Order Band Pass
+    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
         if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
             wrong.update({"Lower Corner": "Field cannot be empty."})
+        elif int(data.get('Lower Corner').replace(',', '')) > 20000 or int(
+                data.get('Lower Corner').replace(',', '')) < 100:
+            wrong.update({
+                             "Lower Corner": f"{str(int(data.get('Lower Corner').replace(',', '')))} is an invalid input for the Low Corner! Must be 100 "
+                                             f"≤ x ≤ 20000."})
         else:
-            lowCorner = int(data.get('Lower Corner').replace(',', ''))
-            if lowCorner > 20000 or lowCorner < 100:
-                wrong.update({"Lower Corner": f"{str(lowCorner)} is an invalid input for the Low Corner! Must be 100 "
-                                            f"≤ x ≤ 20000."})
+            wrong.update({"Lower Corner": ""})
 
     # High Corner
-    if filter in filters[6:8]: # 2nd and 6th Order Band Pass
+    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
         if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
             wrong.update({"Upper Corner": "Field cannot be empty."})
+        elif int(data.get('Upper Corner').replace(',', '')) > 40000 or int(
+                data.get('Upper Corner').replace(',', '')) < 2000:
+            wrong.update({
+                             "Upper Corner": f"{str(int(data.get('Upper Corner').replace(',', '')))} is an invalid input for the Mid Corner! Must be 2000 "
+                                             f"≤ x ≤ 40000."})
         else:
-            midCorner = int(data.get('Upper Corner').replace(',', ''))
-            if midCorner > 40000 or midCorner < 2000:
-                wrong.update(
-                    {"Upper Corner": f"{str(midCorner)} is an invalid input for the Mid Corner! Must be 2000 "
-                                    f"≤ x ≤ 40000."})
+            wrong.update({"Upper Corner": ""})
+
 
     return wrong
 
@@ -263,23 +273,25 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         if not self.sampling:
             # start sampling
             wrong = validateInput(self.getData())
-            if len(wrong) > 0:
-                print("HANDLE ERRORS")
-                print(wrong)
-                return  # TODO Do something with the error messages for invalid inputs
-            else:
-                if self.filename is None:
-                    # get file save location
-                    options = QFileDialog.Options()
-                    self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!", DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;", options = options)
+            self.update_wrongs(wrong)
+            for i in wrong.values():
+                if i != "":
+                    print("HANDLE ERRORS")
+                    print(wrong)
+                    return  # TODO Do something with the error messages for invalid inputs
 
-                print(self.getData())
-                wrapper.set_values(json.dumps(self.getData()))
-                wrapper.send_config_to_cydaq()
-                wrapper.start_sampling()
-                self.sampling = True
-                self.start_stop_sampling_btn.setText("Stop")
-                print("started sampling!")
+            if self.filename is None:
+                # get file save location
+                options = QFileDialog.Options()
+                self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!", DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;", options = options)
+
+            print(self.getData())
+            wrapper.set_values(json.dumps(self.getData()))
+            wrapper.send_config_to_cydaq()
+            wrapper.start_sampling()
+            self.sampling = True
+            self.start_stop_sampling_btn.setText("Stop")
+            print("started sampling!")
     
         else:
             # if the start/stop button was clicked while writing
@@ -298,6 +310,26 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             self.writing = False
             print("stopped sampling!")
 
+    def update_wrongs(self, wrong):
+        wrong_dict = {
+            "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(247, 86, 74);")
+            }
+
+        right_dict = {
+            "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(217, 217, 217);")
+            }
+
+        for i in wrong.keys():
+            if wrong.get(i) == "":
+                right_dict.get(i)()
+            else:
+                wrong_dict.get(i)()
 
 
 # TODO this will get used later
