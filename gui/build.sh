@@ -8,3 +8,4 @@ pyuic5.exe qtdesigner/DacModeWidget.ui -o DacModeWidget.py
 pyuic5.exe qtdesigner/SamplingGenerationStart.ui -o SamplingGenerationStart.py
 
 pyrcc5.exe qtdesigner/main_window.qrc -o main_window_rc.py
+pyrcc5.exe qtdesigner/basic_operation.qrc -o basic_operation_rc.py
