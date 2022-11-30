@@ -6,26 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>947</width>
-    <height>692</height>
+    <width>548</width>
+    <height>779</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>947</width>
-    <height>692</height>
+    <width>428</width>
+    <height>625</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>947</width>
-    <height>692</height>
+    <height>993</height>
    </size>
   </property>
   <property name="font">
@@ -224,7 +218,7 @@ QPushButton {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>947</width>
+     <width>548</width>
      <height>19</height>
     </rect>
    </property>

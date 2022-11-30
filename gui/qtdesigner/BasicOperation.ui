@@ -13,10 +13,16 @@
     <height>779</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>428</width>
+    <height>625</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>700</width>
-    <height>900</height>
+    <height>800</height>
    </size>
   </property>
   <property name="font">
