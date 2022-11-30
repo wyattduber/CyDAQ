@@ -293,12 +293,13 @@ def main():
 	global comm_port
 	generating = False
 
+	print("CyDAQ Command Line Interface")
+	
 	# try to connect to cyDAQ. If unable, print error and exit CLI
 	if comm_port == "" or comm_port is None:
 		print("Zybo not connected")
 		return 0
 
-	print("CyDAQ Command Line Interface")
 	while True:
 		try:
 			raw_command = input("> ")
