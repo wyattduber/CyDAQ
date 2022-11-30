@@ -71,22 +71,6 @@ QPushButton {
      </widget>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Maximum</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>4</width>
-        <height>4</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="sample_rate_bar_layout">
       <item>
        <spacer name="horizontalSpacer">
@@ -246,22 +230,6 @@ QPushButton {
       </property>
      </widget>
     </item>
-    <item>
-     <spacer name="verticalSpacer_5">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Maximum</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>4</width>
-        <height>4</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QComboBox" name="input_input_box">
       <property name="minimumSize">
@@ -343,22 +311,6 @@ QPushButton {
        <string>Filter</string>
       </property>
      </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_6">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Maximum</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>4</width>
-        <height>4</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QComboBox" name="filter_input_box">
