@@ -19,12 +19,6 @@
     <height>625</height>
    </size>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>700</width>
-    <height>800</height>
-   </size>
-  </property>
   <property name="font">
    <font>
     <family>Segoe UI</family>
@@ -71,6 +65,12 @@ QPushButton {
    <layout class="QVBoxLayout" name="verticalLayout">
     <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="sampling_rate_label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>37</height>
+       </size>
+      </property>
       <property name="text">
        <string>Sampling Rate</string>
       </property>
@@ -368,28 +368,12 @@ QPushButton {
       </item>
      </widget>
     </item>
-    <item>
-     <spacer name="verticalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Minimum</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>10</width>
-        <height>10</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="mid_corner_label">
       <property name="maximumSize">
        <size>
-        <width>100</width>
-        <height>50</height>
+        <width>16777215</width>
+        <height>37</height>
        </size>
       </property>
       <property name="text">
@@ -527,6 +511,12 @@ QPushButton {
     </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="low_corner_label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>37</height>
+       </size>
+      </property>
       <property name="text">
        <string>Low Corner</string>
       </property>
@@ -620,6 +610,12 @@ QPushButton {
     </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="high_corner_label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>37</height>
+       </size>
+      </property>
       <property name="text">
        <string>High Corner</string>
       </property>
@@ -711,6 +707,22 @@ QPushButton {
       </item>
      </layout>
     </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>10</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QPushButton" name="start_stop_sampling_btn">
       <property name="minimumSize">
@@ -726,6 +738,12 @@ QPushButton {
     </item>
     <item>
      <widget class="QLabel" name="connection_status_label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>38</height>
+       </size>
+      </property>
       <property name="text">
        <string/>
       </property>
