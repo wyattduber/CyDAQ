@@ -33,6 +33,7 @@ cyDaqConnected = False
 wrapper: CLIWrapper.CLI or None
 
 PING_TIMER_DELAY_SECONDS = 1
+DEFAULT_SAVE_LOCATION = "U:\\"
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, inwidget, inwindows):
@@ -140,6 +141,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.widget = inwidget
         self.windows = inwindows
         self.sampling = False
+        self.filename = None
 
         # Home Button
         # self.home_btn.clicked.connect(self.MainWindow)
@@ -244,6 +246,18 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         """
         self.connection_status_label.setText("Not Connected!")
 
+    def writingData(self):
+        """
+        What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file.
+        """
+        self.start_stop_sampling_btn.setText("Writing Data...")
+    
+    def writingDataFinished(self):
+        """
+        What happens to the UI when the cyDAQ is finished writing data.
+        """
+        self.start_stop_sampling_btn.setText("Start")
+
     def getData(self):
         return {
             "Sample Rate": self.sample_rate_input_box.currentText(),
@@ -252,7 +266,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             "Upper Corner": self.high_corner_input.text() or 0,
             "Mid Corner": self.mid_corner_input_box.currentText() or 0,
             "Lower Corner": self.low_corner_input.text() or 0,
-
         }
 
     def start_stop_sampling(self):
@@ -264,6 +277,11 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                 print(wrong)
                 return  # TODO Do something with the error messages for invalid inputs
             else:
+                if self.filename is None:
+                    # get file save location
+                    options = QFileDialog.Options()
+                    self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!", DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;", options = options)
+
                 print(self.getData())
                 wrapper.set_values(json.dumps(self.getData()))
                 wrapper.send_config_to_cydaq()
@@ -272,11 +290,12 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                 self.start_stop_sampling_btn.setText("Stop")
                 print("started sampling!")
     
-        else:
+        else:            
             # stop sampling
-            wrapper.stop_sampling()
+            self.writingData()
+            wrapper.stop_sampling(self.filename)
+            self.writingDataFinished()
             self.sampling = False
-            self.start_stop_sampling_btn.setText("Start")
             print("stopped sampling!")
 
 
