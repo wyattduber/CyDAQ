@@ -142,6 +142,9 @@ QPushButton {
         <property name="editable">
          <bool>true</bool>
         </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
         <item>
          <property name="text">
           <string>48000</string>

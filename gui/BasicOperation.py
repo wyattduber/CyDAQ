@@ -267,6 +267,7 @@ class Ui_basic_operation(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(basic_operation)
+        self.sample_rate_input_box.setCurrentIndex(1)
         self.input_input_box.setCurrentIndex(3)
         self.mid_corner_input_box.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(basic_operation)
