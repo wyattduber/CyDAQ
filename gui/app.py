@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import QObject
+from PyQt5 import QtTest
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -121,18 +122,7 @@ def validateInput(data):
 
     return wrong
 
-
-def bind(objectName, propertyName):
-    def getter(self):
-        return self.findChild(QObject, objectName).property(propertyName)
-
-    def setter(self, value):
-        self.findChild(QObject, objectName).setProperty(propertyName, value)
-
-    return property(getter, setter)
-
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
-    test = bind("connection_status_label", "cyDaqConnected")
 
     def __init__(self, inwidget, inwindows):
         super(BasicOperationWindow, self).__init__()
@@ -141,6 +131,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.widget = inwidget
         self.windows = inwindows
         self.sampling = False
+        self.writing = False
         self.filename = None
 
         # Sample Rate
@@ -247,7 +238,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         """
         What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file.
         """
-        self.start_stop_sampling_btn.setText("Writing Data...")
+        self.start_stop_sampling_btn.setText("Writing...")
     
     def writingDataFinished(self):
         """
@@ -287,12 +278,21 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                 self.start_stop_sampling_btn.setText("Stop")
                 print("started sampling!")
     
-        else:            
+        else:
+            # if the start/stop button was clicked while writing
+            if self.writing:
+                return
+            self.writing = True
+
             # stop sampling
             self.writingData()
+            # added a wait here so the UI actually updates the "writing..." prompt before freezing
+            # this needs fixed in the future but makes sense for now
+            QtTest.QTest.qWait(100)  # type: ignore
             wrapper.stop_sampling(self.filename)
             self.writingDataFinished()
             self.sampling = False
+            self.writing = False
             print("stopped sampling!")
 
 
