@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>779</height>
+    <width>428</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -749,7 +749,7 @@ QPushButton {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>548</width>
+     <width>428</width>
      <height>19</height>
     </rect>
    </property>

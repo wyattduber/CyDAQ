@@ -15,7 +15,7 @@ class Ui_basic_operation(object):
     def setupUi(self, basic_operation):
         basic_operation.setObjectName("basic_operation")
         basic_operation.setEnabled(True)
-        basic_operation.resize(548, 779)
+        basic_operation.resize(428, 625)
         basic_operation.setMinimumSize(QtCore.QSize(428, 625))
         basic_operation.setMaximumSize(QtCore.QSize(700, 800))
         font = QtGui.QFont()
@@ -241,7 +241,7 @@ class Ui_basic_operation(object):
         self.verticalLayout.addWidget(self.connection_status_label)
         basic_operation.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(basic_operation)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 548, 19))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 428, 19))
         font = QtGui.QFont()
         font.setPointSize(8)
         self.menubar.setFont(font)

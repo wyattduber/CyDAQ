@@ -135,7 +135,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.filename = None
 
         # Home Button
-        # self.home_btn.clicked.connect(self.MainWindow)
+        self.home_btn.clicked.connect(lambda: self.widget.setCurrentWidget(self.windows[0]))
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
