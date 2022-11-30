@@ -169,6 +169,52 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling)  # TODO used for debug, remove!
 
+        def onFilterChange():
+
+            midCorner = [
+                self.mid_corner_label,
+                self.lessThan1,
+                self.lessThan2,
+                self.mid_corner_input_box,
+                self.mid_corner_max_btn,
+                self.mid_corner_min_btn,
+            ]
+
+            lowHighCorner = [
+                self.low_corner_label,
+                self.label_3,
+                self.label_2,
+                self.low_corner_input,
+                self.low_corner_max_btn,
+                self.low_corner_min_btn,
+                self.high_corner_label,
+                self.label_4,
+                self.label_5,
+                self.high_corner_input,
+                self.high_corner_max_btn,
+                self.high_corner_min_btn,
+            ]
+
+            if self.filter_input_box.currentIndex() == 0 or self.filter_input_box.currentIndex() == 1:
+                for hide in midCorner:
+                    hide.hide()
+                for hide in lowHighCorner:
+                    hide.hide()
+            
+            elif self.filter_input_box.currentIndex() == 6 or self.filter_input_box.currentIndex() == 7:
+                for hide in midCorner:
+                    hide.hide()
+                for show in lowHighCorner:
+                    show.show()
+
+            else:
+                for show in midCorner:
+                    show.show()
+                for hide in lowHighCorner:
+                    hide.hide()
+
+        self.filter_input_box.currentIndexChanged.connect(onFilterChange)
+        onFilterChange()
     def cyDaqConnected(self):
         """
         What happens to the UI when the cyDaq changes to connected
