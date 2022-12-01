@@ -185,7 +185,10 @@ def stop_sampling(outFile=None):
 				except:
 					break
 				if byte_value != ord(sig_serial.END_BYTE.value):
-					writeFunction(f, adc_raw_to_volts(byte_value), time_stamp=time * period)
+					volts = adc_raw_to_volts(byte_value)
+					if volts > 12: # TODO this is terrible but it eliminates the bad 6 at the end
+						continue
+					writeFunction(f, volts, time_stamp=time * period)
 					time += 1
 		print("Wrote samples to ", outFile)
 
