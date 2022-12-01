@@ -280,12 +280,15 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                     print(wrong)
                     return  # TODO Do something with the error messages for invalid inputs
 
-            if self.filename is None:
+            if self.filename is None or self.filename.strip() == "":
                 # get file save location
                 options = QFileDialog.Options()
                 self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
                                                                DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
                                                                options=options)
+                print("filename: |", self.filename, "|")
+                if self.filename.strip() == "": # no file chosen
+                    return
 
             print(self.getData())
             wrapper.set_values(json.dumps(self.getData()))
@@ -310,6 +313,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             self.writingDataFinished()
             self.sampling = False
             self.writing = False
+            self.filename = None
             print("stopped sampling!")
 
     def update_wrongs(self, wrong):
@@ -505,6 +509,7 @@ if __name__ == "__main__":
                 cyDaqConnected = False
                 updateWindowsConnected(windows, cyDaqConnected)
                 wrapper.closeConnection()
+                del wrapper
                 wrapper = None  # type: ignore
                 return
             before = cyDaqConnected
@@ -515,7 +520,8 @@ if __name__ == "__main__":
 
 
         # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the
-        # cyDAQ on and off. Still working on it... rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
+        # cyDAQ on and off. Still working on it... 
+        # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
 
         for window in windows:
             widget.addWidget(window)
