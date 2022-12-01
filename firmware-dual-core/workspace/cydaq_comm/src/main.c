@@ -155,6 +155,11 @@ int main(void) {
 				sprintf(txBuf,"%cERR%c",COMM_START_CHAR,COMM_STOP_CHAR);
 				usb_commSend(txBuf, 5);
 				if(DEBUG){
+					int i;
+					for(i = 0; i < bytes-1; i++){
+						xil_printf("array index: %d, data: %d\n\r",i,recvBuf[i]);
+					}
+
 					xil_printf("Error: Incorrect Format\n\r");
 				}
 			}
@@ -322,12 +327,13 @@ int main(void) {
 					continue;
 
 				}else if(cmd == START_SAMPLING){//8
-					for(i=0;i<SAMPLE_BUFFER_SIZE*sizeof(u16)-1;i+=2){
+					for(i=0;i<SAMPLE_BUFFER_SIZE-1;i+=2){
 						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
 						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
-//						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
+						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
 					}
-					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE*sizeof(u16));
+
+					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE*sizeof(u32));
 
 //					*flagPtr |= 0x10;
 //					*bufStart = *bufEnd;
