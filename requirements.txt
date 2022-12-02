@@ -4,3 +4,4 @@ pylint
 pyserial
 scipy
 pexpect
+pyqt5-tools
