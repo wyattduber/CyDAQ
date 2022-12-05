@@ -59,9 +59,9 @@ python app.py
 ## Making Changes
 > Note: Any changes to the *.ui or *.qrc files in gui/qtdesigner requires re-building the python files. 
 
-First make sure you have pyqt5-tools installed
+First make sure you have the PyQt5 python package installed
 ```bash
-pip install pyqt5-tools
+pip install PyQt5
 ```
 
 > Note: You might need to do the following (in git bash) to get the command to work.
