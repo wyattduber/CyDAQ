@@ -8,6 +8,9 @@
 - Yohan Bopearatchy
 ---
 
+# Wiki
+To view all of our official documentation for this project, check out our [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home)!
+
 # Firmware
 
 > TODO
