@@ -1,6 +1,6 @@
 import CLIWrapper
 
-cli = CLIWrapper.CLI("main.py")
+cli = CLIWrapper.CLI()
 
 # Ping Test
 print(cli.ping())

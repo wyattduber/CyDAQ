@@ -18,6 +18,7 @@ from DacModeWidget import Ui_DAC_mode_widget
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
 sys.path.append("../cli")
+sys.path.append("cli")
 import CLIWrapper
 
 page_dict = {0: "DAC Mode",
@@ -466,7 +467,7 @@ def createNewWrapper(windows):
     print("createNewWrapper")
     wrapper = None
     try:
-        wrapper = CLIWrapper.CLI("../cli/main.py")
+        wrapper = CLIWrapper.CLI()
         ping = wrapper.ping()
         print("create wrapper ping: ", ping)
         cyDaqConnected = (ping >= 0)

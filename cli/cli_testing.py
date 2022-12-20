@@ -1,7 +1,7 @@
 import CLIWrapper
 import unittest
 
-cli = CLIWrapper.CLI("main.py")
+cli = CLIWrapper.CLI()
 
 
 class TestCLIWrapper(unittest.TestCase):

@@ -1,9 +1,11 @@
+import os
 import signal
 from pexpect import popen_spawn
 import json
 
 import pexpect
 
+CLI_MAIN_FILE_NAME = "main.py"
 
 class CLI:
     """
@@ -11,14 +13,14 @@ class CLI:
     the CLI tool
 
     example usage: 
-    cli = CLI("../cli/main.py")
+    cli = CLI()
     print(cli.ping())
     """
 
-    def __init__(self, cli_main_path):
+    def __init__(self):
         self.END_CHAR = ">"
         self.NOT_CONNECTED = "Zybo not connected"
-        self.p = popen_spawn.PopenSpawn("python " + cli_main_path)
+        self.p = popen_spawn.PopenSpawn("python " + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
         self.connectionEnabled = True
 
         # wait for cli to start up
