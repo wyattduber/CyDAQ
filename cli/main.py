@@ -67,17 +67,6 @@ def ping():
 	print("CyDaq latency {} microseconds".format(c.microseconds))
 	return 1
 
-
-def configure():
-	global config
-	config = construct()
-
-
-def print_config():
-	global config
-	print(json.dumps(config))
-
-
 def send():
 	"""
 	Send the current configuration to the cyDAQ
@@ -136,9 +125,7 @@ def update_multiple_config(json_str):
 	"""
 	Updates multiple entries specified as a JSON object
 	"""
-
 	# TODO some form of config validation here
-
 	jsonList = {}
 
 	try:
@@ -321,18 +308,18 @@ def main():
 			print("Zybo not connected")
 			continue
 
+		global config
 		if command[0] == 'h' or command[0] == 'help':
 			print_help(False)
 		elif command[0] == 'ping':
 			ping()
 		elif command[0] == 'configure':
-			configure()
+			config = construct()
 		elif command[0] == 'clear':
-			global config
 			config = default_config.copy()
 			print("success")
 		elif command[0] == 'print':
-			print_config()
+			print(json.dumps(config))
 		elif command[0] == 'send':
 			send()
 		elif command[0] == 'set':
