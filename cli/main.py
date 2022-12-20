@@ -137,11 +137,6 @@ def update_multiple_config(json_str):
 	for key in jsonList:
 		config[key] = jsonList[key]
 
-
-def flush():
-	pass
-
-
 def start_sampling():
 	cmd_obj.send_start_cmd(comm_port)
 
@@ -326,11 +321,11 @@ def main():
 			if len(command) == 3:
 				update_single_config(command[1], command[2])
 		elif command[0] == 'setm':
-			json = raw_command.split(',',1)[1]
-			print("setm json: ", json)
-			update_multiple_config(json)
+			raw_json = raw_command.split(',',1)[1]
+			print("setm json: ", raw_json)
+			update_multiple_config(raw_json)
 		elif command[0] == 'flush':
-			flush()
+			cmd_obj.flush(comm_port)
 		elif command[0] == 'start':
 			start_sampling()
 		elif command[0] == "stop":
