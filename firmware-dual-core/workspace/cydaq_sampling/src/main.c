@@ -68,7 +68,10 @@
 #define startPtr (*(volatile u8 **)(0xFFFF0007))
 #define endPtr (*(volatile u8 **)(0xFFFF000B))
 #define flagShare (*(volatile u8 *)(0xFFFF000F))
-#define cmdShare (*(volatile u8 **)(0xFFF0000))
+#define cmdShare (*(volatile u8 **)(0xFFFF0000))
+#define payloadShare (*(volatile u8 **)(0xFFFF0001))
+#define modeShare (*(volatile u8 **)(0xFFFF0005))
+#define intrptShare (*(volatile u8 **)(0xFFFF0006))
 
 
 int main()
@@ -97,6 +100,10 @@ int main()
 	baseAddr = startPtr;
 	maxAddr = startPtr + 3000000;
 
+	//test
+//	xil_printf("xil_printf testing\n\r");
+//	print("print testing\n\r");
+//	printf("printf testing\n\r");
 
 	//Sample Code
 	SYSConfigPtr = XSysMon_LookupConfig(SYSMON_DEVICE_ID);
@@ -143,6 +150,8 @@ int main()
 
 
 	while(1){
+		//testing
+		xil_printf("ARM1: cmd = %d, payload = %d, flag = %d, mode = %d, intrpt = %d\r\n", cmdShare, payloadShare, flagShare, modeShare, intrptShare);
 		if(flagShare & 0x10){
 //			xil_printf("ARM1: Start streaming... \n\r");
 			Status = XAxiDma_SimpleTransfer(&AxiDma,(UINTPTR)endPtr,MAX_PKT_LEN, XAXIDMA_DEVICE_TO_DMA);
