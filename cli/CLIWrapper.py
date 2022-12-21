@@ -7,6 +7,9 @@ import pexpect
 
 CLI_MAIN_FILE_NAME = "main.py"
 
+# Default timeout for all commands (in seconds). May be increased if some commands take longer
+TIMEOUT = 120
+
 class CLI:
     """
     A class that handles communication with the cyDAQ. Uses the library pexpect to initialize and communicate with
@@ -20,7 +23,7 @@ class CLI:
     def __init__(self):
         self.END_CHAR = ">"
         self.NOT_CONNECTED = "Zybo not connected"
-        self.p = popen_spawn.PopenSpawn("python " + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
+        self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = "python " + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
         self.connectionEnabled = True
 
         # wait for cli to start up
@@ -49,8 +52,9 @@ class CLI:
         try: 
             self.p.expect(self.END_CHAR)
         except pexpect.exceptions.EOF:
-            print("Unexpected EOF. Printing before")
-            print(self.p.before)
+            raise CLICloseException(self.p.before)
+        except pexpect.exceptions.TIMEOUT:
+            raise CLITimeoutException
         response = self.p.before
         if response is None:
             raise CLINoResponseException
@@ -145,7 +149,7 @@ class CLI:
 
 class CLIException(Exception):
     """
-    Exception raised for errors when using the CLI tool
+    Generic exception raised for errors when using the CLI tool
     """
 
     def __init__(self, message):
@@ -159,3 +163,21 @@ class CLINoResponseException(Exception):
 
 class cyDAQNotConnectedException(Exception):
     pass
+
+
+class CLICloseException(Exception):
+    """
+    Thrown when the CLI closes unexpectedly. The last message sent to the output should be included in this error. 
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init(self.message)
+
+class CLITimeoutException(Exception):
+    """
+    Thrown when the CLI doesn't write to output in TIMEOUT time
+    """
+
+    def __init__(self):
+        self.message = "CLI didn't write to output in " + str(TIMEOUT) + " seconds." 

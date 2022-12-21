@@ -310,7 +310,11 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             # added a wait here so the UI actually updates the "writing..." prompt before freezing
             # this needs fixed in the future but makes sense for now
             QtTest.QTest.qWait(100)  # type: ignore
-            wrapper.stop_sampling(self.filename)
+            try:
+                wrapper.stop_sampling(self.filename)
+            except CLIWrapper.CLITimeoutException:
+                # TODO what happens when the wrapper reports that the CLI timed out?
+                print("CLI timed out!!!!")
             self.writingDataFinished()
             self.sampling = False
             self.writing = False
