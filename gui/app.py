@@ -529,7 +529,7 @@ if __name__ == "__main__":
 
         # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the
         # cyDAQ on and off. Still working on it... 
-        rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
+        # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
 
         for window in windows:
             widget.addWidget(window)

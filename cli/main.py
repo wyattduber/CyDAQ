@@ -118,11 +118,11 @@ class CyDAQ_CLI:
 				continue
 			elif command[0] == 'generate':
 				if not generating:
-					self.cmd_obj.send_start_gen(comm_port)
+					self.cmd_obj.send_start_gen(self.comm_port)
 					generating = True
 					print("Generating Started")
 				else:
-					cmd_obj.send_stop_gen(comm_port)
+					self.cmd_obj.send_stop_gen(self.comm_port)
 					generating = not generating
 					print("Generating Stopped")
 				continue
