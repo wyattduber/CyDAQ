@@ -5,6 +5,8 @@ import json
 
 import pexpect
 
+from main import CyDAQ_CLI
+
 CLI_MAIN_FILE_NAME = "main.py"
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
@@ -70,7 +72,7 @@ class CLI:
         if response is None:
             raise CLINoResponseException
         response = response.decode()
-        if response.strip() == self.NOT_CONNECTED:
+        if response.strip() == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
             raise cyDAQNotConnectedException
         return response
 
@@ -79,7 +81,7 @@ class CLI:
         Ping cyDAQ, returns the response time in microseconds or -1 if error
         """
         response = self._send_command("ping")
-        # print("response|", response,"|")
+        print("response|", response,"|")
         return int(''.join(filter(str.isdigit, response)))  # type: ignore
 
     def clear_config(self):

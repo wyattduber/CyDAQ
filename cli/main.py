@@ -9,9 +9,9 @@ from command_comm import cmd
 from master_enum import nameToEnum, sig_serial
 from serial_comm import ctrl_comm, get_port
 
-CYDAQ_NOT_CONNECTED = "Zybo not connected"
-
 class CyDAQ_CLI:
+
+	CYDAQ_NOT_CONNECTED = "CyDAQ not connected"
 
 	def __init__(self):
 		self.cmd_obj = cmd()
@@ -44,7 +44,7 @@ class CyDAQ_CLI:
 	
 		# Need to check CyDAQ connection once before input prompt
 		if not self.is_cydaq_connected():
-			print(CYDAQ_NOT_CONNECTED)
+			print(self.CYDAQ_NOT_CONNECTED)
 
 		while True:
 			# Get user input and split up individual commands
@@ -89,7 +89,7 @@ class CyDAQ_CLI:
 
 			# Now need to check if connection is still active before any of the next commands can run
 			if not self.is_cydaq_connected():
-				print(CYDAQ_NOT_CONNECTED)
+				print(self.CYDAQ_NOT_CONNECTED)
 				# Try to establish connection again
 				# cmd_obj = cmd()
 				self.cmd_obj.ctrl_comm_obj._init_comm()
@@ -98,7 +98,6 @@ class CyDAQ_CLI:
 
 			# Next check for commands that require direct connection to CyDAQ. 
 			if command[0] == 'ping':
-				print("before ping. cmd_obj: ", self.cmd_obj, " comm_port: ", self.comm_port)
 				self.ping()
 				continue
 			elif command[0] == 'send':
@@ -131,11 +130,11 @@ class CyDAQ_CLI:
 			self.print_help(True)
 
 	def is_cydaq_connected(self):
-		print("is_cydaq_connected called. comm_port: ", self.comm_port)
+		# print("is_cydaq_connected called. comm_port: ", self.comm_port)
 		# TODO clean up this logic unless more checks are needed
 		self.comm_port = get_port()
 		if self.comm_port == "" or self.comm_port is None:
-			print("comm port not set. returning false")
+			# print("comm port not set. returning false")
 			return False
 		return True
 
