@@ -479,9 +479,6 @@ def createNewWrapper(windows):
         updateWindowsConnected(windows, cyDaqConnected)
     except CLIWrapper.cyDAQNotConnectedException:
         cyDaqConnected = False
-        if wrapper is not None:
-            wrapper.closeConnection()
-            return None
         updateWindowsConnected(windows, cyDaqConnected)
     return wrapper
 
@@ -504,8 +501,7 @@ if __name__ == "__main__":
         def timerHandler():
             global cyDaqConnected
             global wrapper
-            # print("wrapper: ", wrapper)
-            print("timerHandler called")
+            # print("timerHandler called")
 
             # Create a new wrapper instance if it doesn't exist. Should only need to do this on startup or if some weird crashes occur.
             if wrapper is None:
@@ -513,7 +509,7 @@ if __name__ == "__main__":
                 return
             try:
                 # Try to get a connection to the CyDAQ by pinging. This could be changed out with some other verification if needed.
-                print("trying ping in timerHandler")
+                # print("trying ping in timerHandler")
                 ping = wrapper.ping()
             except CLIWrapper.cyDAQNotConnectedException:
                 # If the CyDAQ was previously connected
@@ -527,7 +523,7 @@ if __name__ == "__main__":
             cyDaqConnected = (ping >= 0)
             if before != cyDaqConnected:
                 updateWindowsConnected(windows, cyDaqConnected)
-            print(cyDaqConnected, ": ", ping)
+            # print(cyDaqConnected, ": ", ping)
 
 
         # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the
