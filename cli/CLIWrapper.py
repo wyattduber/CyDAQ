@@ -39,8 +39,15 @@ class CLI:
         self.p.expect(self.END_CHAR, timeout=5)
 
     def closeConnection(self):
+        # TODO send quit command?
+        # self._send_command("q") # TODO handle thrown errors?
+
         self.connectionEnabled = False
-        self.p.kill(signal.SIGTERM)
+        try:
+            self.p.kill(signal.SIGTERM)
+        except PermissionError:
+            # Most likely means already killed, so ignore
+            pass
 
     def _send_command(self, command):
         """
@@ -48,7 +55,11 @@ class CLI:
         """
         if not self.connectionEnabled:
             return
-        self.p.sendline(command)
+        try:
+            self.p.sendline(command)
+        except OSError:
+            print("OSError in wrapper _send_command for command: ", command)
+            raise cyDAQNotConnectedException
         try: 
             self.p.expect(self.END_CHAR)
         except pexpect.exceptions.EOF:
@@ -68,7 +79,7 @@ class CLI:
         Ping cyDAQ, returns the response time in microseconds or -1 if error
         """
         response = self._send_command("ping")
-        print("response|", response,"|")
+        # print("response|", response,"|")
         return int(''.join(filter(str.isdigit, response)))  # type: ignore
 
     def clear_config(self):

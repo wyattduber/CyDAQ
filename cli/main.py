@@ -5,9 +5,11 @@ import json
 import time
 from check_params import ParameterConstructor
 
-from command_comm import cmd, recieve_acknowlege_zybo
+from command_comm import cmd
 from master_enum import nameToEnum, sig_serial
 from serial_comm import ctrl_comm, get_port
+
+CYDAQ_NOT_CONNECTED = "Zybo not connected"
 
 cmd_obj = cmd()
 comm_port = get_port()
@@ -52,7 +54,6 @@ def print_help(cmnd):
 	q/quit\t\t\t\t Exit The Command-Line"""
 	print(helpMsg)
 
-
 def ping():
 	"""
 		Sends a command to the device to determine what the latency of the device communication is
@@ -91,7 +92,7 @@ def send():
 		while i < n:
 			# print("calling func: ", func, " with args: ", args)
 			func(*args)
-			if recieve_acknowlege_zybo(comm_port):
+			if cmd_obj.recieve_acknowlege_zybo():
 				break
 			i += 1
 
@@ -112,14 +113,12 @@ def send():
 	send_config_with_retry(cmd_obj.send_dac_reps, comm_port, config_send["Dac Reps"])
 	send_config_with_retry(cmd_obj.send_dac_gen_rate, comm_port, config_send["Dac Generation Rate"])
 
-
 def update_single_config(key, value):
 	"""
 	Updates a single entry in the config
 	"""
 	# TODO some form of config validation here
 	config[key] = value
-
 
 def update_multiple_config(json_str):
 	"""
@@ -139,7 +138,6 @@ def update_multiple_config(json_str):
 
 def start_sampling():
 	cmd_obj.send_start_cmd(comm_port)
-
 
 def stop_sampling(outFile=None):
 	sampleRate = config["Sample Rate"]
@@ -174,7 +172,6 @@ def stop_sampling(outFile=None):
 					time += 1
 		print("Wrote samples to ", outFile)
 
-
 def construct():
 	pc = ParameterConstructor()
 	ticket = pc.ticket()
@@ -208,7 +205,6 @@ def construct():
 	print(params)
 	return params
 
-
 def handle_ticket(pc):
 	response = input(' :')
 	if '/' in response:
@@ -225,7 +221,6 @@ def handle_ticket(pc):
 	else:
 		pc.input(response)
 	return 1
-
 
 # TODO this probably needs removed/changed
 def loadCSV(filepath):
@@ -253,17 +248,14 @@ def loadCSV(filepath):
 	except:
 		return None
 
-
 def writeCSV(f, value, time_stamp=None):
 	if time_stamp is not None:
 		f.write("{},{}\n".format(time_stamp, value))
 	else:
 		f.write("{}\n".format(value))
 
-
 def generateFilename():
 	return 'sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
-
 
 def adc_raw_to_volts(sample):
 	ADC_N_BITS = 12  # Number of bits in the ADC
@@ -273,6 +265,19 @@ def adc_raw_to_volts(sample):
 	sample_volts = sample / (2 ** ADC_N_BITS - 1) * ADC_MAX_V
 	return (sample_volts - ADC_DC_OFFSET_V) * ADC_GAIN
 
+def is_cydaq_connected():
+	# TODO clean up logic and avoid globals
+	global comm_port
+	print("is_cydaq_connected called. comm_port: ", comm_port)
+	comm_port = get_port()
+	if comm_port == "" or comm_port is None:
+		print("comm port not set. returning false")
+		return False
+	# if not cmd_obj.ctrl_comm_obj.isOpen(): #TODO connection error print
+	# 	print("cmd_obj not open! returning false")
+	# 	return False
+
+	return True
 
 def main():
 	global comm_port
@@ -280,12 +285,14 @@ def main():
 
 	print("CyDAQ Command Line Interface")
 	
-	# try to connect to cyDAQ. If unable, print error and exit CLI
-	if comm_port == "" or comm_port is None:
-		print("Zybo not connected")
-		return 0
+	# Need to check CyDAQ connection once before input prompt
+	if not is_cydaq_connected():
+		print(CYDAQ_NOT_CONNECTED)
 
 	while True:
+		global config
+		global cmd_obj
+		# Get user input and split up individual commands
 		try:
 			raw_command = input("> ")
 		except EOFError:
@@ -293,46 +300,70 @@ def main():
 		command = raw_command.split(",")
 		command = [s.strip(" ") for s in command]
 
+		# First process commands that don't require direct connection to the CyDAQ
 		if command[0] == 'q' or command[0] == 'quit':
 			print("Terminating...\n")
 			break
-
-		# make sure zybo is still connected
-		comm_port = get_port()
-		if comm_port == "" or comm_port is None:
-			print("Zybo not connected")
+		elif command[0] == "" or command[0] == "\n":
 			continue
-
-		global config
-		if command[0] == 'h' or command[0] == 'help':
+		elif command[0] == 'h' or command[0] == 'help':
 			print_help(False)
-		elif command[0] == 'ping':
-			ping()
+			continue
 		elif command[0] == 'configure':
 			config = construct()
+			continue
 		elif command[0] == 'clear':
 			config = default_config.copy()
 			print("success")
+			continue
 		elif command[0] == 'print':
-			print(json.dumps(config))
-		elif command[0] == 'send':
-			send()
+			print(json.dumps(config))	
+			continue
 		elif command[0] == 'set':
 			if len(command) == 3:
 				update_single_config(command[1], command[2])
+			else:
+				# TODO print correct syntax?
+				pass
+			continue
 		elif command[0] == 'setm':
 			raw_json = raw_command.split(',',1)[1]
 			print("setm json: ", raw_json)
 			update_multiple_config(raw_json)
+			continue
+
+		# Now need to check if connection is still active before any of the next commands can run
+		if not is_cydaq_connected():
+			print(CYDAQ_NOT_CONNECTED)
+
+			# Try to establish connection again
+			#TODO get rid of globals
+			# cmd_obj = cmd()
+			cmd_obj.ctrl_comm_obj._init_comm()
+			comm_port = get_port()
+
+			continue
+
+		# Next check for commands that require direct connection to CyDAQ. 
+		if command[0] == 'ping':
+			print("before ping. cmd_obj: ", cmd_obj, " comm_port: ", comm_port )
+			ping()
+			continue
+		elif command[0] == 'send':
+			send()
+			continue
 		elif command[0] == 'flush':
 			cmd_obj.flush(comm_port)
+			continue
 		elif command[0] == 'start':
 			start_sampling()
+			continue
 		elif command[0] == "stop":
 			if len(command) == 1:
 				stop_sampling()
 			elif len(command) == 2:
 				stop_sampling(outFile=command[1])
+			continue
 		elif command[0] == 'generate':
 			if not generating:
 				cmd_obj.send_start_gen(comm_port)
@@ -342,10 +373,10 @@ def main():
 				cmd_obj.send_stop_gen(comm_port)
 				generating = not generating
 				print("Generating Stopped")
-		elif command[0] == "" or command[0] == "\n":
-			pass
-		else:
-			print_help(True)
+			continue
+
+		# Otherwise command not found
+		print_help(True)
 
 
 if __name__ == "__main__":

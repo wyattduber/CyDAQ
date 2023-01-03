@@ -21,21 +21,24 @@ sys.path.append("../cli")
 sys.path.append("cli")
 import CLIWrapper
 
+# TODO make these not global if possible (or turn to consts)
 page_dict = {0: "DAC Mode",
              1: "Sampling Rate",
              2: "Input",
              3: "Filter",
              4: "Corners"}
-
 allData = {}
 generationFilename = ""
 cyDaqConnected = False
+
+# CLI Wrapper, which sends commands to the CyDAQ. Must be global as it is used in different threads. 
 wrapper: CLIWrapper.CLI or None
 
+# Constants
 PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-
+# Main window of the app. Allows the user to switch between modes
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, inwidget, inwindows):
         super(MainWindow, self).__init__()
@@ -66,7 +69,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         pass
 
-
+# TODO comment method
 def validateInput(data):
     wrong = {"Sample Rate": "",
              "Upper Corner": "",
@@ -131,7 +134,7 @@ def validateInput(data):
 
     return wrong
 
-
+# Basic operation mode window. Allows for basic sampling of data with basic filters and presets. 
 class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
 
     def __init__(self, inwidget, inwindows):
@@ -342,7 +345,6 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             else:
                 wrong_dict.get(i)()
 
-
 # TODO this will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
@@ -427,11 +429,10 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         })
         return allData
 
-
 class InvalidInputException(IOError):
     pass
 
-
+# A basic timer class that runs a function (with args and kwargs) at an interval specified. Currently used in periodically checking connection to the CyDAQ.
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
         self._timer = None
@@ -458,7 +459,7 @@ class RepeatedTimer(object):
             self._timer.cancel()
         self.is_running = False
 
-
+# TODO comment
 def updateWindowsConnected(windows, connectedBool):
     for window in windows:
         if connectedBool:
@@ -466,7 +467,7 @@ def updateWindowsConnected(windows, connectedBool):
         else:
             window.cyDaqDisconnected()
 
-
+# TODO comment
 def createNewWrapper(windows):
     print("createNewWrapper")
     wrapper = None
@@ -484,7 +485,7 @@ def createNewWrapper(windows):
         updateWindowsConnected(windows, cyDaqConnected)
     return wrapper
 
-
+# Create the main app and populate it with the various windows for the different modes. 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QStackedWidget()
@@ -496,18 +497,20 @@ if __name__ == "__main__":
             BasicOperationWindow(widget, windows)
         ]
 
-        # global
+        # Set the global wrapper to a new one. Can return None.
         wrapper = createNewWrapper(windows)  # type: ignore
 
-
+        # Function called at an interval to check connection to the CyDAQ. It should try to make a new wrapper if the connection fails.
         def timerHandler():
             global cyDaqConnected
             global wrapper
-            print("wrapper: ", wrapper)
+            # print("wrapper: ", wrapper)
+            print("timerHandler called")
             if wrapper is None:
                 wrapper = createNewWrapper(windows)  # type: ignore
                 return
             try:
+                print("trying ping in timerHandler")
                 ping = wrapper.ping()
             except CLIWrapper.cyDAQNotConnectedException:
                 # cyDAQ must have disconnected, we will need a new wrapper instance
@@ -526,7 +529,7 @@ if __name__ == "__main__":
 
         # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the
         # cyDAQ on and off. Still working on it... 
-        # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
+        rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
 
         for window in windows:
             widget.addWidget(window)

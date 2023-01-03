@@ -42,12 +42,17 @@ class ctrl_comm:
        """
 
     def __init__(self):
+        print("ctrl_comm init")
+        self._init_comm()
+
+    def _init_comm(self):
         self.__s_comm = serial.Serial()
         self.__s_comm.port = None
         # while self.__s_comm.port is None:
         try:
             self.__s_comm.port = get_port()
         except:
+            # TODO bad..
             pass
         self.__s_comm.baudrate = 921600
         self.__s_comm.bytesize = serial.EIGHTBITS
@@ -111,7 +116,11 @@ class ctrl_comm:
         """
 
         if self.__s_comm.isOpen() is True:
-            self.__s_comm.write(data)
+            try:
+                self.__s_comm.write(data)
+            except serial.serialutil.SerialException:
+                # print("Serial exception while writing. Assuming bad connection.")
+                return False
             return True
         else:
             return False
@@ -128,7 +137,11 @@ class ctrl_comm:
         """
 
         if self.__s_comm.isOpen() is True:
-            buffer = self.__s_comm.read(1)
+            try:
+                buffer = self.__s_comm.read(1)
+            except serial.serialutil.SerialException:
+                # print("Serial exception while reading. Assuming bad connection.")
+                return False
 
             if len(buffer) >= 2:
                 self.__throw_exception('SerialReadTimeout')
@@ -155,7 +168,11 @@ class ctrl_comm:
         """
 
         if self.__s_comm.isOpen() is True:
-            buffer = self.__s_comm.read(1)
+            try:
+                buffer = self.__s_comm.read(1)
+            except serial.serialutil.SerialException:
+                # print("Serial exception while reading. Assuming bad connection.")
+                return False
 
             if 1 != len(buffer):
                 self.__throw_exception('SerialReadTimeout')
@@ -176,7 +193,11 @@ class ctrl_comm:
         """
 
         if self.__s_comm.isOpen() is True:
-            buffer = self.__s_comm.read(2)
+            try:
+                buffer = self.__s_comm.read(2)
+            except serial.serialutil.SerialException:
+                # print("Serial exception while reading. Assuming bad connection.")
+                return False
 
             if len(buffer) != 2:
                 self.__throw_exception('SerialReadTimeout')

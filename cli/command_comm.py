@@ -3,62 +3,66 @@ from master_enum import enum_filter, enum_commands, sig_serial
 import struct
 import time as t
 
-ctrl_comm_obj = ctrl_comm()
+# ctrl_comm_obj = ctrl_comm()
 
-
-def recieve_acknowlege_zybo(port_select):
-    """
-           receives ACK! from the ZYBO
-
-           Args:
-               port_select: Zybo comm port
-
-           Returns:
-               None
-           """
-
-    if ctrl_comm_obj.isOpen() is True:
-        while True:
-            cnt = 0
-            if ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
-                buffer = ""
-                byte_value = ""
-                if len(buffer) < 6:
-                    while byte_value != sig_serial.END_BYTE.value:
-                        byte_value = ctrl_comm_obj.read_byte()
-                        if byte_value != sig_serial.END_BYTE.value:
-                            buffer += byte_value
-
-                if len(buffer) != 3:
-                    # self.__throw_exception('SerialReadTimeout')
-                    print("read cycle count: " + str(cnt))
-                    return False
-                # buffer = buffer.decode('ascii')
-                if buffer == "ACK":
-                    return True
-                elif buffer == 'ERR':
-                    print('CyDAQ encountered error during configuration, contact ETG')
-                    return False
-                else:
-                    # self.__throw_exception('ack was not received')
-                    print("'ack' was not received")
-                    return False
-            else:
-                """
-                buffer = ""
-                byte_value = ""
-                if len(buffer) < 6:
-                    while byte_value != sig_serial.END_BYTE.value:
-                        byte_value = ctrl_comm_obj.read_byte()
-                        if byte_value != False and byte_value != sig_serial.END_BYTE.value:
-                            buffer += byte_value
-                """
-                return False
-    else:
-        return False
 
 
 class cmd:
+
+    def __init__(self):
+        print("cmd init")
+        # TODO remove global
+        # global ctrl_comm_obj
+        self.ctrl_comm_obj = ctrl_comm()
+
+    def recieve_acknowlege_zybo(self):
+        """
+            receives ACK! from the ZYBO
+
+            Returns:
+                None
+            """
+
+        if self.ctrl_comm_obj.isOpen() is True:
+            while True:
+                cnt = 0
+                if self.ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
+                    buffer = ""
+                    byte_value = ""
+                    if len(buffer) < 6:
+                        while byte_value != sig_serial.END_BYTE.value:
+                            byte_value = self.ctrl_comm_obj.read_byte()
+                            if byte_value != sig_serial.END_BYTE.value:
+                                buffer += byte_value
+
+                    if len(buffer) != 3:
+                        # self.__throw_exception('SerialReadTimeout')
+                        print("read cycle count: " + str(cnt))
+                        return False
+                    # buffer = buffer.decode('ascii')
+                    if buffer == "ACK":
+                        return True
+                    elif buffer == 'ERR':
+                        print('CyDAQ encountered error during configuration, contact ETG')
+                        return False
+                    else:
+                        # self.__throw_exception('ack was not received')
+                        print("'ack' was not received")
+                        return False
+                else:
+                    """
+                    buffer = ""
+                    byte_value = ""
+                    if len(buffer) < 6:
+                        while byte_value != sig_serial.END_BYTE.value:
+                            byte_value = ctrl_comm_obj.read_byte()
+                            if byte_value != False and byte_value != sig_serial.END_BYTE.value:
+                                buffer += byte_value
+                    """
+                    return False
+        else:
+            return False
+
 
     # NOTE: Probably won't use this anymore TODO delete?
     def send_parameters(self, port_select, data):
@@ -621,28 +625,28 @@ class cmd:
                     None
                 """
         try:
-            ctrl_comm_obj.open(port_select)
+            self.ctrl_comm_obj.open(port_select)
         except ValueError:
             return False
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.PING.value))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('ascii'))
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.PING.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('ascii'))
             cnt = 0
             while True:
-                if recieve_acknowlege_zybo(port_select):
+                if self.recieve_acknowlege_zybo():
                     return True
                 elif cnt > 10:
                     return False
                 else:
                     t.sleep(0.1)
                     cnt += 1
-                    if ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
+                    if self.ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
                         buffer = ""
                         byte_value = ""
                         if len(buffer) < 20:
                             while byte_value != sig_serial.END_BYTE.value:
-                                byte_value = ctrl_comm_obj.read_byte()
+                                byte_value = self.ctrl_comm_obj.read_byte()
                                 if byte_value != sig_serial.END_BYTE.value:
                                     buffer += byte_value
                         else:
