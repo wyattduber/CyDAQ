@@ -3,16 +3,10 @@ from master_enum import enum_filter, enum_commands, sig_serial
 import struct
 import time as t
 
-# ctrl_comm_obj = ctrl_comm()
-
-
-
 class cmd:
 
     def __init__(self):
         print("cmd init")
-        # TODO remove global
-        # global ctrl_comm_obj
         self.ctrl_comm_obj = ctrl_comm()
 
     def recieve_acknowlege_zybo(self):
@@ -62,7 +56,6 @@ class cmd:
                     return False
         else:
             return False
-
 
     # NOTE: Probably won't use this anymore TODO delete?
     def send_parameters(self, port_select, data):
@@ -116,7 +109,7 @@ class cmd:
             dac_gen_rate = data["Dac Generation Rate"]
 
         try:
-            ctrl_comm_obj.open(port_select)
+            self.ctrl_comm_obj.open(port_select)
         except ValueError as e:
             return -1
         cnt = 0
@@ -153,7 +146,7 @@ class cmd:
                 self.send_dac_gen_rate(port_select, dac_gen_rate)
                 wait = 1
             if wait == 1:
-                if recieve_acknowlege_zybo(port_select):
+                if self.recieve_acknowlege_zybo():
                     print("Ack received")
                     cursor += 1
                     cnt = 0
@@ -168,7 +161,7 @@ class cmd:
             print("Commands Not Sent/Received")
             self.flush(port_select)
             return 0
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
         return 1
 
     def send_dataset(self, port_select, dataset):
@@ -184,7 +177,7 @@ class cmd:
 
         """
         try:
-            ctrl_comm_obj.open(port_select)
+            self.ctrl_comm_obj.open(port_select)
         except ValueError as e:
             return -1
         cnt = 0
@@ -198,7 +191,7 @@ class cmd:
                 self.send_data(port_select, dataset)
                 wait = 1
             if wait == 1:
-                if recieve_acknowlege_zybo(port_select):
+                if self.recieve_acknowlege_zybo():
                     print("Ack received")
                     cursor += 1
                     cnt = 0
@@ -212,7 +205,7 @@ class cmd:
         else:
             print("Commands Not Sent/Received")
             return -2
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
         return 1
 
     def send_data(self, port_select, dataset):
@@ -227,12 +220,12 @@ class cmd:
                     True
                 """
 
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             for i in range(len(dataset)):
-                ctrl_comm_obj.write(struct.pack('!H', int(dataset[i])))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+                self.ctrl_comm_obj.write(struct.pack('!H', int(dataset[i])))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending Dataset Failed')
@@ -250,12 +243,12 @@ class cmd:
                     True
                 """
 
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_SEND_DATASET.value, int(dataset_size)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_SEND_DATASET.value, int(dataset_size)))
             print("Dataset Size = " + str(dataset_size))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending Dataset Size Failed')
@@ -267,52 +260,52 @@ class cmd:
     def send_start_gen_cmd(self, port_select):
         cursor = 0
         wait = 0
-        ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(port_select)
         while cursor < 1:
             if cursor == 0:
                 self.send_start_gen(port_select)
                 wait = 1
-            if wait == 1 and recieve_acknowlege_zybo(port_select):
+            if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Generation start ACK received")
                 cursor += 1
                 wait = 0
             else:
                 pass
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
         return True
 
     def send_stop_gen_cmd(self, port_select):
         cursor = 0
         wait = 0
-        ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(port_select)
         while cursor < 1:
             if cursor == 0:
                 self.send_stop_gen(port_select)
                 wait = 1
-            if wait == 1 and recieve_acknowlege_zybo(port_select):
+            if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Generation stop ACK received")
                 cursor += 1
                 wait = 0
             else:
                 pass
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
         return True
 
     def send_start_cmd(self, port_select):
         cursor = 0
         wait = 0
-        ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(port_select)
         while cursor < 1:
             if cursor == 0:
                 self.send_start(port_select)
                 wait = 1
-            if wait == 1 and recieve_acknowlege_zybo(port_select):
+            if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Sampling start ACK received")
                 cursor += 1
                 wait = 0
             else:
                 pass
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
         return True
 
     def send_stop_cmd(self, port_select):
@@ -322,30 +315,30 @@ class cmd:
         # Basically all of the GUI code needs to be rewritten.
         cursor = 0
         wait = 0
-        ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(port_select)
         while cursor < 1:
             if cursor == 0:
                 self.send_stop(port_select)
                 wait = 1
-            if wait == 1 and recieve_acknowlege_zybo(port_select):
+            if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Sampling stop ACK received")
                 cursor += 1
                 wait = 0
             else:
                 pass
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
 
     def send_fetch(self, port_select):
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.FETCH_SAMPLES.value))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.FETCH_SAMPLES.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sample transfer init failed')
             return False
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
 
     def send_input(self, port_select, input_set):
         """
@@ -358,13 +351,13 @@ class cmd:
                 Returns:
                     True
                 """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
-            ctrl_comm_obj.write(struct.pack('!B', int(input_set)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
+            self.ctrl_comm_obj.write(struct.pack('!B', int(input_set)))
             print("Input set Enum = " + str(input_set))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending Input Failed')
@@ -382,12 +375,12 @@ class cmd:
                     True
                 """
 
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!BI', enum_commands.SAMPLE_RATE_SET.value, int(sample_rate)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.SAMPLE_RATE_SET.value, int(sample_rate)))
             print("Sample Rate = " + str(sample_rate))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending Sample Rate Failed')
@@ -404,12 +397,12 @@ class cmd:
                 Returns:
                     True or False
                 """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
             print("Filter Enum = " + str(filter_select))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending filter failed')
@@ -429,9 +422,9 @@ class cmd:
                     True or false
                 """
         val_to_write = None
-        ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(port_select)
 
-        if ctrl_comm_obj.isOpen() is True:
+        if self.ctrl_comm_obj.isOpen() is True:
             if filter == enum_filter.BP2.value or filter == enum_filter.BP6.value:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
                                            int(u_corner_freq))
@@ -447,9 +440,9 @@ class cmd:
                                            int(u_corner_freq))
                 print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
 
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(val_to_write)
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(val_to_write)
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
             return True
         else:
             self.__throw_exception('Sending corner freq failed')
@@ -466,13 +459,13 @@ class cmd:
         Returns:
             True
         """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.DAC_MODE_SELECT.value))
-            ctrl_comm_obj.write(struct.pack('!B', int(dac_mode)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.DAC_MODE_SELECT.value))
+            self.ctrl_comm_obj.write(struct.pack('!B', int(dac_mode)))
             print("DAC Mode set Enum = " + str(dac_mode))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending DAC Mode Failed')
@@ -489,12 +482,12 @@ class cmd:
         Returns:
             True
         """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_NUM_REPS_SET.value, int(dac_reps)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_NUM_REPS_SET.value, int(dac_reps)))
             print("DAC repetitions = " + str(dac_reps))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending DAC Reps Failed')
@@ -511,12 +504,12 @@ class cmd:
         Returns:
             True
         """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_GEN_RATE_SET.value, int(dac_gen_rate)))
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_GEN_RATE_SET.value, int(dac_gen_rate)))
             print("DAC Generation Rate = " + str(dac_gen_rate))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending DAC Reps Failed')
@@ -532,34 +525,34 @@ class cmd:
                 Returns:
                     True or false
                 """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
             self.__throw_exception('Sending start failed')
             return False
 
     def send_start_gen(self, port_select):
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_GENERATION.value))
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_GENERATION.value))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_GENERATION.value))
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_GENERATION.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending start gen failed')
             return False
 
     def send_stop_gen(self, port_select):
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_GENERATION.value))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_GENERATION.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending stop gen failed')
             return False
@@ -574,11 +567,11 @@ class cmd:
                 Returns:
                     True or false
                 """
-        ctrl_comm_obj.open(port_select)
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_GENERATION.value))
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        self.ctrl_comm_obj.open(port_select)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_GENERATION.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
 
         else:
@@ -592,26 +585,26 @@ class cmd:
         raise Exception(text)
 
     def close(self):
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
 
     def flush(self, port_select):
-        ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(port_select)
         for i in range(50000):
-            if ctrl_comm_obj.isOpen() is True:
-                ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-                ctrl_comm_obj.write(0)
-                ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+            if self.ctrl_comm_obj.isOpen() is True:
+                self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+                self.ctrl_comm_obj.write(0)
+                self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
             else:
                 self.__throw_exception('Sending flush failed')
                 return False
-        if ctrl_comm_obj.isOpen() is True:
-            ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
-            ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending Empty Dataset Failed')
             return False
         self.ping_zybo(port_select)
-        ctrl_comm_obj.close()
+        self.ctrl_comm_obj.close()
 
     def ping_zybo(self, port_select):
         """
