@@ -2,6 +2,7 @@ import os
 import signal
 from pexpect import popen_spawn
 import json
+import re
 
 import pexpect
 
@@ -25,20 +26,27 @@ class CLI:
     def __init__(self):
         self.END_CHAR = ">"
         self.NOT_CONNECTED = "Zybo not connected"
+
+        # Run the CLI tool using the pexpect library just like a user would in the terminal
         self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = "python " + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
+
         self.connectionEnabled = True
 
-        # wait for cli to start up
+        # Wait for cli to start up. It will NOT be in wrapper mode yet
         self.p.expect("CyDAQ Command Line Interface")
 
+        # If the CyDAQ is not connected at this point the CLI will immedately say so
         try:
             self.p.expect(self.NOT_CONNECTED, timeout=0)
             raise cyDAQNotConnectedException
         except pexpect.exceptions.TIMEOUT:
             pass
 
-        # wait for command input
+        # Wait for command input
         self.p.expect(self.END_CHAR, timeout=5)
+
+        # Set CLI to wrapper mode. After this, all commands must be parsed in the new mode unless it's specifially toggled off
+        self._send_command("wrapper, enable")
 
     def closeConnection(self):
         # TODO send quit command?
@@ -51,7 +59,7 @@ class CLI:
             # Most likely means already killed, so ignore
             pass
 
-    def _send_command(self, command):
+    def _send_command(self, command, wrapper_mode=True):
         """
         Send a command to the cyDAQ and returns the result
         """
@@ -72,9 +80,54 @@ class CLI:
         if response is None:
             raise CLINoResponseException
         response = response.decode()
-        if response.strip() == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
+        response = response.strip()
+
+        if wrapper_mode:
+            return self._parse_wrapper_mode_message(response)
+        else:
+            if response.strip() == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
+                raise cyDAQNotConnectedException
+            return response
+
+    def _parse_wrapper_mode_message(self, line):
+        """
+        Parse a message in the format "%level% message". For example, the following is returned from the ping command:
+
+        %INFO% CyDaq latency 745161 microseconds
+
+        If a message isn't in the log format, print it to standard output anyway but otherwise don't act upon it.
+
+        Properly formatted messages are treated differently based on their log level. 
+        INFO: Message is simply returned
+        ERROR: Error message is parsed and the proper exception is thrown, or a generic one is thrown instead.
+        IGNORE: Returns an empty string
+        """
+
+        pattern = re.compile("%(.+)% (.*)")
+        matches = re.findall(pattern, line)
+        if len(matches) > 0:
+            level = matches[0][0]
+            message = matches[0][1]
+
+            if level == CyDAQ_CLI.WRAPPER_INFO:
+                return message
+            elif level == CyDAQ_CLI.WRAPPER_ERROR:
+                self._error_parser(message)
+            elif level == CyDAQ_CLI.WRAPPER_IGNORE:
+                return ""
+            else:
+                raise CLIUnknownLogLevelException
+        print(line)
+        return ""
+
+    def _error_parser(self, message):
+        """
+        Parses known error messages and throws the appropiate exception if needed. Otherwise, throws a generic exception.
+        """
+        if message == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
             raise cyDAQNotConnectedException
-        return response
+        else:
+            raise CLIException(message)
 
     def ping(self):
         """
@@ -82,7 +135,10 @@ class CLI:
         """
         response = self._send_command("ping")
         # print("response|", response,"|")
-        return int(''.join(filter(str.isdigit, response)))  # type: ignore
+        try:
+            return int(''.join(filter(str.isdigit, response)))  # type: ignore
+        except ValueError:
+            raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
     def clear_config(self):
         """
@@ -185,7 +241,7 @@ class CLICloseException(Exception):
 
     def __init__(self, message):
         self.message = message
-        super().__init(self.message)
+        super().__init__(self.message)
 
 class CLITimeoutException(Exception):
     """
@@ -194,3 +250,6 @@ class CLITimeoutException(Exception):
 
     def __init__(self):
         self.message = "CLI didn't write to output in " + str(TIMEOUT) + " seconds." 
+
+class CLIUnknownLogLevelException(Exception):
+    pass

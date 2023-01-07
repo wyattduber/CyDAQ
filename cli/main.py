@@ -13,8 +13,16 @@ class CyDAQ_CLI:
 
 	CYDAQ_NOT_CONNECTED = "CyDAQ not connected"
 
+	WRAPPER_INFO = "INFO"
+	WRAPPER_ERROR = "ERROR"
+	WRAPPER_IGNORE = "IGNORE"
+
 	def __init__(self):
+
+		# Has methods for serial communication with CyDAQ
 		self.cmd_obj = cmd()
+
+		# TODO should comm_port just be handled in cmd_obj?
 		self.comm_port = get_port()
 
 		# Default values that are sent to the cyDAQ
@@ -34,17 +42,18 @@ class CyDAQ_CLI:
 		# or manually using other commands
 		self.config = self.default_config.copy()
 
+		self.wrapper_mode = False
 
 	def start(self):
 		"""
 		Start the CLI tool. Blocks indefinately for user input until the quit command is issued.
 		"""
 
-		print("CyDAQ Command Line Interface")
+		self.print_to_output("CyDAQ Command Line Interface")
 	
 		# Need to check CyDAQ connection once before input prompt
 		if not self.is_cydaq_connected():
-			print(self.CYDAQ_NOT_CONNECTED)
+			self.print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
 
 		while True:
 			# Get user input and split up individual commands
@@ -57,7 +66,7 @@ class CyDAQ_CLI:
 
 			# First process commands that don't require direct connection to the CyDAQ
 			if command[0] == 'q' or command[0] == 'quit':
-				print("Terminating...\n")
+				self.print_to_output("Terminating...\n")
 				break
 			elif command[0] == "" or command[0] == "\n":
 				continue
@@ -69,10 +78,10 @@ class CyDAQ_CLI:
 				continue
 			elif command[0] == 'clear':
 				self.config = self.default_config.copy()
-				print("success")
+				self.print_to_output("success")
 				continue
 			elif command[0] == 'print':
-				print(json.dumps(self.config))	
+				self.print_to_output(json.dumps(self.config), self.WRAPPER_INFO)	
 				continue
 			elif command[0] == 'set':
 				if len(command) == 3:
@@ -83,13 +92,26 @@ class CyDAQ_CLI:
 				continue
 			elif command[0] == 'setm':
 				raw_json = raw_command.split(',',1)[1]
-				print("setm json: ", raw_json)
+				self.print_to_output("setm json: {0}".format(raw_json))
 				self.update_multiple_config(raw_json)
+				continue
+			elif command[0] == 'wrapper':
+				if len(command) == 2:
+					if command[1] == 'enable':
+						self.wrapper_mode = True
+					elif command[1] == 'disable':
+						self.wrapper_mode = False
+					else:
+						# TODO print correct syntax
+						pass
+				else:
+					# TODO print correct syntax?
+					pass
 				continue
 
 			# Now need to check if connection is still active before any of the next commands can run
 			if not self.is_cydaq_connected():
-				print(self.CYDAQ_NOT_CONNECTED)
+				self.print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
 				# Try to establish connection again
 				# cmd_obj = cmd()
 				self.cmd_obj.ctrl_comm_obj._init_comm()
@@ -119,15 +141,24 @@ class CyDAQ_CLI:
 				if not generating:
 					self.cmd_obj.send_start_gen(self.comm_port)
 					generating = True
-					print("Generating Started")
+					self.print_to_output("Generating Started", self.WRAPPER_INFO)
 				else:
 					self.cmd_obj.send_stop_gen(self.comm_port)
 					generating = not generating
-					print("Generating Stopped")
+					self.print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
 
 			# Otherwise command not found
 			self.print_help(True)
+
+	def print_to_output(self, message, log_level=WRAPPER_IGNORE):
+		# print("message: |{}|".format(message))
+		for line in message.split("\n"):
+			# print("reee: ", line)
+			if self.wrapper_mode:
+				print("%{0}% {1}".format(log_level, message))
+			else:
+				print(line)
 
 	def is_cydaq_connected(self):
 		# print("is_cydaq_connected called. comm_port: ", self.comm_port)
@@ -142,9 +173,9 @@ class CyDAQ_CLI:
 		usages = {}  # TODO dict for individual command usage messages
 
 		if cmnd:
-			print("\tUnknown command. Command List:")
+			self.print_to_output("\tUnknown command. Command List:", self.WRAPPER_INFO)
 		else:
-			print("\tCommand List & Info")
+			self.print_to_output("\tCommand List & Info", self.WRAPPER_INFO)
 		helpMsg = """	h/help\t\t\t\t Print This Help Menu
 	ping\t\t\t\t Ping the Zybo
 	configure\t\t\t Configure Parameters (Guided)
@@ -158,7 +189,7 @@ class CyDAQ_CLI:
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
 	q/quit\t\t\t\t Exit The Command-Line"""
-		print(helpMsg)
+		self.print_to_output(helpMsg, self.WRAPPER_INFO)
 
 	def ping(self):
 		"""
@@ -171,7 +202,7 @@ class CyDAQ_CLI:
 		self.cmd_obj.ping_zybo(self.comm_port)
 		b = datetime.datetime.now()
 		c = b - a
-		print("CyDaq latency {} microseconds".format(c.microseconds))
+		self.print_to_output("CyDaq latency {} microseconds".format(c.microseconds), self.WRAPPER_INFO)
 		return 1
 
 	def send(self):
@@ -196,7 +227,6 @@ class CyDAQ_CLI:
 			n = 3
 			i = 0
 			while i < n:
-				# print("calling func: ", func, " with args: ", args)
 				func(*args)
 				if self.cmd_obj.recieve_acknowlege_zybo():
 					break
@@ -234,10 +264,10 @@ class CyDAQ_CLI:
 		jsonList = {}
 
 		try:
-			print(json_str)
+			self.print_to_output(json_str, self.WRAPPER_INFO)
 			jsonList = json.loads(json_str)
 		except json.JSONDecodeError:
-			print("ERROR: Improper JSON specified")
+			self.print_to_output("ERROR: Improper JSON specified", self.WRAPPER_ERROR)
 
 		for key in jsonList:
 			self.config[key] = jsonList[key]
@@ -254,7 +284,7 @@ class CyDAQ_CLI:
 		writeFunction = self.writeCSV
 		f = None
 		with open(outFile, "w") as f:
-			print("Fetching samples...")
+			self.print_to_output("Fetching samples...", self.WRAPPER_INFO)
 			self.cmd_obj.send_fetch(self.comm_port)
 
 			# open a new connection to get data
@@ -276,7 +306,9 @@ class CyDAQ_CLI:
 							continue
 						writeFunction(f, volts, time_stamp=time * period)
 						time += 1
-			print("Wrote samples to ", outFile)
+			
+			comm_obj.close()
+			self.print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
 
 	def construct(self):
 		pc = ParameterConstructor()
@@ -284,13 +316,13 @@ class CyDAQ_CLI:
 
 		# Go through each ticket and let the user input either an integer or pick from a list
 		while ticket is not None:
-			print(ticket["Node"])
+			self.print_to_output(ticket["Node"], self.WRAPPER_INFO)
 			if ticket["Type"] == "Integer":
-				print("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]))
+				self.print_to_output("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]), self.WRAPPER_INFO)
 			else:
 				if len(ticket["Options"]) == 1:
 					pc.input(ticket["Options"][0])
-				print(ticket["Options"])
+				self.print_to_output(ticket["Options"], self.WRAPPER_INFO)
 			if not self.handle_ticket(pc):
 				return None
 			ticket = pc.ticket()
@@ -300,15 +332,15 @@ class CyDAQ_CLI:
 		if params["Dac Mode"] == 'Dataset':
 			valid_data = True
 			while valid_data:
-				print('Filepath for DAC dataset (must be .csv)')
+				self.print_to_output('Filepath for DAC dataset (must be .csv)', self.WRAPPER_INFO)
 				dac_dataset_filepath = input(': ')
 				if '.csv' in dac_dataset_filepath:
 					if self.loadCSV(dac_dataset_filepath) is not None:
 						params['Dataset Filepath'] = dac_dataset_filepath
 						valid_data = False
 				else:
-					print("file must be .csv")
-		print(params)
+					self.print_to_output("file must be .csv", self.WRAPPER_ERROR)
+		self.print_to_output(params, self.WRAPPER_INFO)
 		return params
 
 	def handle_ticket(self, pc):
@@ -319,7 +351,7 @@ class CyDAQ_CLI:
 				pc.back()
 			elif words[0] == '/goto':
 				if len(words) < 2:
-					print('Not enough arguments, second arg should be the Step to navigate back to')
+					self.print_to_output('Not enough arguments, second arg should be the Step to navigate back to', self.WRAPPER_ERROR)
 				pc.goto(' '.join(words[1:]))
 			elif words[0] == '/quit':
 				return 0
@@ -334,7 +366,7 @@ class CyDAQ_CLI:
 		try:
 			with open(filepath) as f:
 				if os.path.getsize(filepath) > 6000000:
-					print("File too large")
+					self.print_to_output("File too large", self.WRAPPER_ERROR)
 					return None
 				for line in f:
 					row_data = line.strip("\n").split()

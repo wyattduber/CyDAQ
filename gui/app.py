@@ -30,6 +30,7 @@ page_dict = {0: "DAC Mode",
 allData = {}
 generationFilename = ""
 cyDaqConnected = False
+timerEnabled = False
 
 # CLI Wrapper, which sends commands to the CyDAQ. Must be global as it is used in different threads. 
 wrapper: CLIWrapper.CLI or None
@@ -274,6 +275,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         }
 
     def start_stop_sampling(self):
+        global timerEnabled
         if not self.sampling:
             # start sampling
             wrong = validateInput(self.getData())
@@ -297,8 +299,9 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             print(self.getData())
             wrapper.set_values(json.dumps(self.getData()))
             wrapper.send_config_to_cydaq()
-            wrapper.start_sampling()
+            timerEnabled = False 
             self.sampling = True
+            wrapper.start_sampling()
             self.start_stop_sampling_btn.setText("Stop")
             print("started sampling!")
 
@@ -315,6 +318,7 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             QtTest.QTest.qWait(100)  # type: ignore
             try:
                 wrapper.stop_sampling(self.filename)
+                timerEnabled = True
             except CLIWrapper.CLITimeoutException:
                 # TODO what happens when the wrapper reports that the CLI timed out?
                 print("CLI timed out!!!!")
@@ -501,7 +505,11 @@ if __name__ == "__main__":
         def timerHandler():
             global cyDaqConnected
             global wrapper
+            global timerEnabled
             # print("timerHandler called")
+
+            if not timerEnabled:
+                return
 
             # Create a new wrapper instance if it doesn't exist. Should only need to do this on startup or if some weird crashes occur.
             if wrapper is None:
@@ -526,9 +534,10 @@ if __name__ == "__main__":
             # print(cyDaqConnected, ": ", ping)
 
 
-        # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the
-        # cyDAQ on and off. Still working on it... 
+        # Starts a periodic timer, but can be toggled on/off with the timerEnabled global
         rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
+
+        timerEnabled = True
 
         for window in windows:
             widget.addWidget(window)
