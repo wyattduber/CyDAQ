@@ -5,3 +5,4 @@ pyserial
 scipy
 pexpect
 PyQt5
+waiting

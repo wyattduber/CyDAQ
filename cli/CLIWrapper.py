@@ -1,6 +1,7 @@
 import os
 import signal
 from pexpect import popen_spawn
+from waiting import wait
 import json
 import re
 
@@ -44,9 +45,12 @@ class CLI:
 
         # Wait for command input
         self.p.expect(self.END_CHAR, timeout=5)
+        
+        self.running_command = False
 
         # Set CLI to wrapper mode. After this, all commands must be parsed in the new mode unless it's specifially toggled off
         self._send_command("wrapper, enable")
+
 
     def closeConnection(self):
         # TODO send quit command?
@@ -65,10 +69,16 @@ class CLI:
         """
         if not self.connectionEnabled:
             return
+
+        # Use the waiting library to prevent two commands from being run at the same time
+        wait(lambda: not self.running_command)
+
         try:
+            self.running_command = True
             self.p.sendline(command)
         except OSError:
             print("OSError in wrapper _send_command for command: ", command)
+            self.running_command = False
             raise cyDAQNotConnectedException
         try: 
             self.p.expect(self.END_CHAR)
@@ -76,6 +86,8 @@ class CLI:
             raise CLICloseException(self.p.before)
         except pexpect.exceptions.TIMEOUT:
             raise CLITimeoutException
+        finally:
+            self.running_command = False
         response = self.p.before
         if response is None:
             raise CLINoResponseException
