@@ -1,10 +1,14 @@
 import json
 import sys
 from threading import Timer
+import traceback
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
 from PyQt5 import QtTest
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -39,14 +43,79 @@ wrapper: CLIWrapper.CLI or None
 PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
+class WorkerSignals(QObject):
+    """
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        tuple (exctype, value, traceback.format_exc() )
+
+    result
+        object data returned from processing, anything
+
+    progress
+        int indicating % progress
+    """
+    finished = pyqtSignal()
+    error = pyqtSignal(tuple)
+    result = pyqtSignal(object)
+    progress = pyqtSignal(int)
+
+class Worker(QRunnable):
+    """
+    A worker thread that handles execution of a function with optional arguments.
+
+    Emits a WorkerSignal based on the execution of the function. 
+    """
+
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+        # Add the callback to our kwargs (removed for now as wrapper doesn't support kwargs)
+        # self.kwargs['progress_callback'] = self.signals.progress
+
+    @pyqtSlot()
+    def run(self):
+        """
+        Initialise the runner function with passed args, kwargs.
+        """
+
+        # Retrieve args/kwargs here; and fire processing using them
+        try:
+            result = self.fn(*self.args, **self.kwargs) # Run the function
+        except:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)  # Return the result of the processing
+        finally:
+            self.signals.finished.emit()  # Done
+
 # Main window of the app. Allows the user to switch between modes
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    """
+    TODO
+    """
     def __init__(self, inwidget, inwindows):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
         self.widget = inwidget
         self.windows = inwindows
+
+        self.threadpool = QThreadPool()
 
         button = self.basic_operation_btn
         button.setCheckable(True)
@@ -148,6 +217,8 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.writing = False
         self.filename = None
 
+        self.threadpool = QThreadPool()
+
         # Home Button
         self.home_btn.clicked.connect(lambda: self.widget.setCurrentWidget(self.windows[0]))
 
@@ -240,6 +311,22 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.filter_input_box.currentIndexChanged.connect(onFilterChange)
         onFilterChange()
 
+    # TODO move to parent class so other windows can use
+    def run_in_worker_thread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
+        """
+        Run a function in a seperate thread. Connect optional result, progres, finished, and error callback functions.
+        """
+        worker = Worker(func, func_args, **func_kwargs)
+        if result_func is not None:
+            worker.signals.result.connect(result_func)
+        if progress_func is not None:
+            worker.signals.finished.connect(progress_func)
+        if finished_func is not None:
+            worker.signals.progress.connect(finished_func)
+        if error_func is not None:
+            worker.signals.error.connect(error_func)
+        self.threadpool.start(worker)
+
     def cyDaqConnected(self):
         """
         What happens to the UI when the cyDaq changes to connected
@@ -317,7 +404,14 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             # this needs fixed in the future but makes sense for now
             QtTest.QTest.qWait(100)  # type: ignore
             try:
-                wrapper.stop_sampling(self.filename)
+                self.run_in_worker_thread(
+                    wrapper.stop_sampling, 
+                    func_args=self.filename,
+                    result_func=lambda s: print(s), 
+                    progress_func=None, 
+                    finished_func=self.writingDataFinished, 
+                    error_func=None
+                )
                 timerEnabled = True
             except CLIWrapper.CLITimeoutException:
                 # TODO what happens when the wrapper reports that the CLI timed out?
@@ -533,9 +627,8 @@ if __name__ == "__main__":
                 updateWindowsConnected(windows, cyDaqConnected)
             # print(cyDaqConnected, ": ", ping)
 
-
         # Starts a periodic timer, but can be toggled on/off with the timerEnabled global
-        rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
+        # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
 
         timerEnabled = True
 
