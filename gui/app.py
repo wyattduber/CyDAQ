@@ -43,6 +43,15 @@ wrapper: CLIWrapper.CLI or None
 PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
+# class CyDAQGUI():
+#     """TODO"""
+#     wrapper: CLIWrapper.CLI
+
+#     def __init__(self):
+#         pass
+
+
+
 class WorkerSignals(QObject):
     """
     Defines the signals available from a running worker thread.
@@ -106,6 +115,8 @@ class Worker(QRunnable):
 class CyDAQWindow():
     """TODO"""
     
+    #TODO add requirement for self.threadpool to this class?
+
     def run_in_worker_thread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
         """TODO"""
         worker = Worker(func, func_args, **func_kwargs)
@@ -423,9 +434,9 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQWindo
                 wrong_dict.get(i)()
 
 # TODO this will get used later
-class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
+class DACModeWindow(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
-        super(DACModeWidget, self).__init__()
+        super(DACModeWindow, self).__init__()
         self.setupUi(self)
         onlyInt = QIntValidator()
         onlyInt.setRange(0, 2147483647)
