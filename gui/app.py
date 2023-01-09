@@ -103,11 +103,24 @@ class Worker(QRunnable):
         finally:
             self.signals.finished.emit()  # Done
 
-# Main window of the app. Allows the user to switch between modes
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    """
-    TODO
-    """
+class CyDAQWindow():
+    """TODO"""
+    
+    def run_in_worker_thread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
+        """TODO"""
+        worker = Worker(func, func_args, **func_kwargs)
+        if result_func is not None:
+            worker.signals.result.connect(result_func)
+        if progress_func is not None:
+            worker.signals.finished.connect(progress_func)
+        if finished_func is not None:
+            worker.signals.progress.connect(finished_func)
+        if error_func is not None:
+            worker.signals.error.connect(error_func)
+        self.threadpool.start(worker)
+
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQWindow):
+    """Main window of the app. Allows the user to switch between modes"""
     def __init__(self, inwidget, inwindows):
         super(MainWindow, self).__init__()
         self.setupUi(self)
@@ -127,86 +140,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.w.show()
         # self.close()
 
-    def cyDaqConnected(self):
-        """
-        What happens to the UI when the cyDaq changes to connected
-        """
-        pass
-
-    def cyDaqDisconnected(self):
-        """
-        What happens to the UI when the cyDaq changes to disconnected
-        """
-        pass
-
-# TODO comment method
-def validateInput(data):
-    wrong = {"Sample Rate": "",
-             "Upper Corner": "",
-             "Mid Corner": "",
-             "Lower Corner": ""}
-
-    # Sample Rate
-    if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
-        wrong.update({"Sample Rate": "Field cannot be empty."})
-    elif int(data.get('Sample Rate').replace(',', '')) > 50000 or int(data.get('Sample Rate').replace(',', '')) < 100:
-        wrong.update({
-            "Sample Rate": f"{str(int(data.get('Sample Rate').replace(',', '')))} is an invalid input for the Sample "
-                           f"Rate! Must be 100 ≤ x ≤ 50000."})
-    else:
-        wrong.update({"Sample Rate": ""})
-
-    filter_val = data.get("Filter")
-    filters = [
-        "All Pass",
-        "60 hz Notch",
-        "1st Order High Pass",
-        "1st Order Low Pass",
-        "6th Order High Pass",
-        "6th Order Low Pass",
-        "2nd Order Band Pass",
-        "6th Order Band Pass"
-    ]
-    # Mid Corner
-    if filter_val in filters[2: 6]:  # 1st and 6th Order High/Low Pass
-        if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
-            wrong.update({"Mid Corner": "Field cannot be empty."})
-        elif int(data.get('Mid Corner').replace(',', '')) > 40000 or int(data.get('Mid Corner').replace(',', '')) < 100:
-            wrong.update({
-                "Mid Corner": f"{str(int(data.get('Mid Corner').replace(',', '')))} is an invalid input "
-                              f"for the Mid Corner! Must be 100 ≤ x ≤ 40000."})
-        else:
-            wrong.update({"Mid Corner": ""})
-
-    # Low Corner
-    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
-        if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
-            wrong.update({"Lower Corner": "Field cannot be empty."})
-        elif int(data.get('Lower Corner').replace(',', '')) > 20000 or int(
-                data.get('Lower Corner').replace(',', '')) < 100:
-            wrong.update({
-                "Lower Corner": f"{str(int(data.get('Lower Corner').replace(',', '')))} is an invalid "
-                                f"input for the Low Corner! Must be 100 ≤ x ≤ 20000."})
-        else:
-            wrong.update({"Lower Corner": ""})
-
-    # High Corner
-    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
-        if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
-            wrong.update({"Upper Corner": "Field cannot be empty."})
-        elif int(data.get('Upper Corner').replace(',', '')) > 40000 or int(
-                data.get('Upper Corner').replace(',', '')) < 2000:
-            wrong.update({
-                "Upper Corner": f"{str(int(data.get('Upper Corner').replace(',', '')))} is an invalid "
-                                f"input for the Mid Corner! Must be 2000 ≤ x ≤ 40000."})
-        else:
-            wrong.update({"Upper Corner": ""})
-
-    return wrong
-
-# Basic operation mode window. Allows for basic sampling of data with basic filters and presets. 
-class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
-
+class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQWindow):
+    """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
     def __init__(self, inwidget, inwindows):
         super(BasicOperationWindow, self).__init__()
         self.setupUi(self)
@@ -311,47 +246,24 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.filter_input_box.currentIndexChanged.connect(onFilterChange)
         onFilterChange()
 
-    # TODO move to parent class so other windows can use
-    def run_in_worker_thread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
-        """
-        Run a function in a seperate thread. Connect optional result, progres, finished, and error callback functions.
-        """
-        worker = Worker(func, func_args, **func_kwargs)
-        if result_func is not None:
-            worker.signals.result.connect(result_func)
-        if progress_func is not None:
-            worker.signals.finished.connect(progress_func)
-        if finished_func is not None:
-            worker.signals.progress.connect(finished_func)
-        if error_func is not None:
-            worker.signals.error.connect(error_func)
-        self.threadpool.start(worker)
-
     def cyDaqConnected(self):
-        """
-        What happens to the UI when the cyDaq changes to connected
-        """
+        """When CyDAQ changes from disconnected to connected"""
         self.connection_status_label.setText("Connected!")
 
     def cyDaqDisconnected(self):
-        """
-        What happens to the UI when the cyDaq changes to disconnected
-        """
+        """When CyDAQ changes from connected to disconnected"""
         self.connection_status_label.setText("Not Connected!")
 
     def writingData(self):
-        """
-        What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file.
-        """
+        """What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file."""
         self.start_stop_sampling_btn.setText("Writing...")
 
     def writingDataFinished(self):
-        """
-        What happens to the UI when the cyDAQ is finished writing data.
-        """
+        """What happens to the UI when the cyDAQ is finished writing data."""
         self.start_stop_sampling_btn.setText("Start")
 
     def getData(self):
+        """TODO"""
         return {
             "Sample Rate": self.sample_rate_input_box.currentText(),
             "Input": self.input_input_box.currentText(),
@@ -362,10 +274,11 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         }
 
     def start_stop_sampling(self):
+        """TODO"""
         global timerEnabled
         if not self.sampling:
             # start sampling
-            wrong = validateInput(self.getData())
+            wrong = self.validateInput()
             self.update_wrongs(wrong)
             for i in wrong.values():
                 if i != "":
@@ -421,6 +334,72 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             self.writing = False
             self.filename = None
             print("stopped sampling!")
+
+    def validateInput(self):
+        """TODO"""
+        data = self.getData()
+        wrong = {"Sample Rate": "",
+                "Upper Corner": "",
+                "Mid Corner": "",
+                "Lower Corner": ""}
+
+        # Sample Rate
+        if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
+            wrong.update({"Sample Rate": "Field cannot be empty."})
+        elif int(data.get('Sample Rate').replace(',', '')) > 50000 or int(data.get('Sample Rate').replace(',', '')) < 100:
+            wrong.update({
+                "Sample Rate": f"{str(int(data.get('Sample Rate').replace(',', '')))} is an invalid input for the Sample "
+                            f"Rate! Must be 100 ≤ x ≤ 50000."})
+        else:
+            wrong.update({"Sample Rate": ""})
+
+        filter_val = data.get("Filter")
+        filters = [
+            "All Pass",
+            "60 hz Notch",
+            "1st Order High Pass",
+            "1st Order Low Pass",
+            "6th Order High Pass",
+            "6th Order Low Pass",
+            "2nd Order Band Pass",
+            "6th Order Band Pass"
+        ]
+        # Mid Corner
+        if filter_val in filters[2: 6]:  # 1st and 6th Order High/Low Pass
+            if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
+                wrong.update({"Mid Corner": "Field cannot be empty."})
+            elif int(data.get('Mid Corner').replace(',', '')) > 40000 or int(data.get('Mid Corner').replace(',', '')) < 100:
+                wrong.update({
+                    "Mid Corner": f"{str(int(data.get('Mid Corner').replace(',', '')))} is an invalid input "
+                                f"for the Mid Corner! Must be 100 ≤ x ≤ 40000."})
+            else:
+                wrong.update({"Mid Corner": ""})
+
+        # Low Corner
+        if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
+            if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
+                wrong.update({"Lower Corner": "Field cannot be empty."})
+            elif int(data.get('Lower Corner').replace(',', '')) > 20000 or int(
+                    data.get('Lower Corner').replace(',', '')) < 100:
+                wrong.update({
+                    "Lower Corner": f"{str(int(data.get('Lower Corner').replace(',', '')))} is an invalid "
+                                    f"input for the Low Corner! Must be 100 ≤ x ≤ 20000."})
+            else:
+                wrong.update({"Lower Corner": ""})
+
+        # High Corner
+        if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
+            if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
+                wrong.update({"Upper Corner": "Field cannot be empty."})
+            elif int(data.get('Upper Corner').replace(',', '')) > 40000 or int(
+                    data.get('Upper Corner').replace(',', '')) < 2000:
+                wrong.update({
+                    "Upper Corner": f"{str(int(data.get('Upper Corner').replace(',', '')))} is an invalid "
+                                    f"input for the Mid Corner! Must be 2000 ≤ x ≤ 40000."})
+            else:
+                wrong.update({"Upper Corner": ""})
+
+        return wrong
 
     def update_wrongs(self, wrong):
         wrong_dict = {
