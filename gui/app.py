@@ -15,116 +15,22 @@ from BasicOperation import Ui_basic_operation
 from DacModeWidget import Ui_DAC_mode_widget
 from ModeSelectorWidget import Ui_ModeSelectorWidget
 
-# from SamplingRateWidget import Ui_sampling_rate_widget
-# from InputWidget import Ui_input_widget
-# from FilterWidget import Ui_filter_widget
-# from CornersWidget import Ui_corners_widget
-
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
 sys.path.append("../cli")
 sys.path.append("cli")
 import CLIWrapper
 
-# TODO make these not global if possible (or turn to consts)
-page_dict = {0: "DAC Mode",
-             1: "Sampling Rate",
-             2: "Input",
-             3: "Filter",
-             4: "Corners"}
-allData = {}
-generationFilename = ""
-cyDaqConnected = False
-
-# CLI Wrapper, which sends commands to the CyDAQ. Must be global as it is used in different threads. 
-# wrapper: CLIWrapper.CLI or None
-
 # Constants
 PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-# class CyDAQGUI():
-#     """TODO"""
-#     wrapper: CLIWrapper.CLI
-
-#     def __init__(self):
-#         pass
-
-
-
-class WorkerSignals(QObject):
-    """
-    Defines the signals available from a running worker thread.
-
-    Supported signals are:
-
-    finished
-        No data
-
-    error
-        tuple (exctype, value, traceback.format_exc() )
-
-    result
-        object data returned from processing, anything
-
-    progress
-        int indicating % progress
-    """
-    finished = pyqtSignal()
-    error = pyqtSignal(tuple)
-    result = pyqtSignal(object)
-    progress = pyqtSignal(int)
-
-class Worker(QRunnable):
-    """
-    A worker thread that handles execution of a function with optional arguments.
-
-    Emits a WorkerSignal based on the execution of the function. 
-    """
-
-    def __init__(self, fn, *args, **kwargs):
-        super(Worker, self).__init__()
-
-        # Store constructor arguments (re-used for processing)
-        self.fn = fn
-        self.args = args
-        self.kwargs = kwargs
-        self.signals = WorkerSignals()
-
-        # Add the callback to our kwargs (removed for now as wrapper doesn't support kwargs)
-        # self.kwargs['progress_callback'] = self.signals.progress
-
-    @pyqtSlot()
-    def run(self):
-        """
-        Initialise the runner function with passed args, kwargs.
-        """
-
-        # Retrieve args/kwargs here; and fire processing using them
-        try:
-            if len(self.args) == 1 and self.args[0] is None: # Fixes errors with functions with no params
-                result = self.fn(**self.kwargs)
-            else:
-                result = self.fn(*self.args, **self.kwargs) # Run the function
-        except:
-            # traceback.print_exc()
-            exctype, value = sys.exc_info()[:2]
-            self.signals.error.emit((exctype, value, traceback.format_exc()))
-        else:
-            self.signals.result.emit(result)  # Return the result of the processing
-        finally:
-            # print("emitting finished for: ", self.fn)
-            self.signals.finished.emit()  # Done
-
 class CyDAQModeWidget():
     """TODO"""
-    
-    #TODO add requirement for self.threadpool to this class?
-    #TODO camel case method names?
 
-    def run_in_worker_thread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
+    def runInWorkerThread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
         """TODO
-        self.run_in_worker_thread(
+        self.runInWorkerThread(
             function, 
             func_args=None,
             result_func=None, 
@@ -200,7 +106,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                 #Raise any other exceptions
                 raise extype(traceback)
         
-        self.run_in_worker_thread(
+        self.runInWorkerThread(
             self.wrapper.ping,
             result_func=setConnected,
             error_func=setConnectedError
@@ -219,10 +125,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def stopPingTimer(self):
         self.pingTimer.stop()
 
-    def switch_to_mode_selector(self):
+    def switchToModeSelector(self):
         self.stack.setCurrentIndex(0)
     
-    def switch_to_basic_operation(self):
+    def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
 
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
@@ -239,7 +145,7 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
 
         basicOperationButton = self.basic_operation_btn
         basicOperationButton.setCheckable(True)
-        basicOperationButton.clicked.connect(lambda: self.mainWindow.switch_to_basic_operation())
+        basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
     
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
@@ -264,7 +170,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.filename = None
 
         # Home Button
-        self.home_btn.clicked.connect(lambda: self.mainWindow.switch_to_mode_selector())
+        self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -306,7 +212,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.high_corner_input.setValidator(onlyInt)
 
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling) 
+        self.start_stop_sampling_btn.clicked.connect(self.startStopSampling) 
 
         def onFilterChange():
             midCorner = [
@@ -386,7 +292,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             "Lower Corner": self.low_corner_input.text() or 0,
         }
 
-    def start_stop_sampling(self):
+    def startStopSampling(self):
         if not self.mainWindow.connected:
             return
 
@@ -396,7 +302,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         if not self.sampling:
             # start sampling
             wrong = self.validateInput()
-            self.update_wrongs(wrong)
+            self.updateWrongs(wrong)
             for i in wrong.values():
                 if i != "":
                     print("HANDLE ERRORS")
@@ -426,7 +332,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             # Stop sampling
             self.sampling = False
             self.writingData()
-            self.run_in_worker_thread(
+            self.runInWorkerThread(
                 self.wrapper.stop_sampling, 
                 func_args=self.filename,
                 finished_func=self.writingDataFinished, 
@@ -499,7 +405,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
         return wrong
 
-    def update_wrongs(self, wrong):
+    def updateWrongs(self, wrong):
         wrong_dict = {
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
             "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
@@ -519,6 +425,67 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 right_dict.get(i)()
             else:
                 wrong_dict.get(i)()
+
+class WorkerSignals(QObject):
+    """
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        tuple (exctype, value, traceback.format_exc() )
+
+    result
+        object data returned from processing, anything
+
+    progress
+        int indicating % progress
+    """
+    finished = pyqtSignal()
+    error = pyqtSignal(tuple)
+    result = pyqtSignal(object)
+    progress = pyqtSignal(int)
+
+class Worker(QRunnable):
+    """
+    A worker thread that handles execution of a function with optional arguments.
+
+    Emits a WorkerSignal based on the execution of the function. 
+    """
+
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+        # Add the callback to our kwargs (removed for now as wrapper doesn't support kwargs)
+        # self.kwargs['progress_callback'] = self.signals.progress
+
+    @pyqtSlot()
+    def run(self):
+        """Initialise the runner function with passed args, kwargs."""
+        
+        # Retrieve args/kwargs here; and fire processing using them
+        try:
+            if len(self.args) == 1 and self.args[0] is None: # Fixes errors with functions with no params
+                result = self.fn(**self.kwargs)
+            else:
+                result = self.fn(*self.args, **self.kwargs) # Run the function
+        except:
+            # traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)  # Return the result of the processing
+        finally:
+            self.signals.finished.emit()  # Done
 
 # TODO this will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
@@ -569,8 +536,8 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                                                       options=options)
             if fileName:
                 self.input_file_name.setText(fileName)
-                global generationFilename
-                generationFilename = fileName
+                # global generationFilename
+                # generationFilename = fileName
 
         self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
         self.repetitions_min_limit_btn.clicked.connect(
@@ -594,45 +561,19 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         pass
 
     def getData(self):
-        global generationFilename
-        if generationFilename is None or generationFilename == "":
-            generationFilename = self.input_file_name.text()
-        allData.update({
-            "Dac Mode": self.dac_mode_dropdown.currentText(),
-            "Dac Reps": self.repetitions_input.text(),
-            "Dac Generation Rate": self.gen_rate_input.text()
-        })
-        return allData
+        pass
+        # global generationFilename
+        # if generationFilename is None or generationFilename == "":
+        #     generationFilename = self.input_file_name.text()
+        # allData.update({
+        #     "Dac Mode": self.dac_mode_dropdown.currentText(),
+        #     "Dac Reps": self.repetitions_input.text(),
+        #     "Dac Generation Rate": self.gen_rate_input.text()
+        # })
+        # return allData
 
 class InvalidInputException(IOError):
     pass
-
-# A basic timer class that runs a function (with args and kwargs) at an interval specified. Currently used in periodically checking connection to the CyDAQ.
-class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
-        self._timer = None
-        self.interval = interval
-        self.function = function
-        self.args = args
-        self.kwargs = kwargs
-        self.is_running = False
-        self.start()
-
-    def _run(self):
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
-
-    def start(self):
-        if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.start()
-            self.is_running = True
-
-    def stop(self):
-        if self._timer is not None:
-            self._timer.cancel()
-        self.is_running = False
 
 # Create the main app and populate it with the various windows for the different modes. 
 if __name__ == "__main__":
