@@ -35,10 +35,9 @@ page_dict = {0: "DAC Mode",
 allData = {}
 generationFilename = ""
 cyDaqConnected = False
-timerEnabled = False
 
 # CLI Wrapper, which sends commands to the CyDAQ. Must be global as it is used in different threads. 
-wrapper: CLIWrapper.CLI or None
+# wrapper: CLIWrapper.CLI or None
 
 # Constants
 PING_TIMER_DELAY_SECONDS = 1
@@ -103,14 +102,18 @@ class Worker(QRunnable):
 
         # Retrieve args/kwargs here; and fire processing using them
         try:
-            result = self.fn(*self.args, **self.kwargs) # Run the function
+            if len(self.args) == 1 and self.args[0] is None: # Fixes errors with functions with no params
+                result = self.fn(**self.kwargs)
+            else:
+                result = self.fn(*self.args, **self.kwargs) # Run the function
         except:
-            traceback.print_exc()
+            # traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
             self.signals.result.emit(result)  # Return the result of the processing
         finally:
+            # print("emitting finished for: ", self.fn)
             self.signals.finished.emit()  # Done
 
 class CyDAQModeWidget():
@@ -120,23 +123,28 @@ class CyDAQModeWidget():
     #TODO camel case method names?
 
     def run_in_worker_thread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
-        """TODO"""
+        """TODO
+        self.run_in_worker_thread(
+            function, 
+            func_args=None,
+            result_func=None, 
+            progress_func=None, 
+            finished_func=None, 
+            error_func=None
+        )
+        """
         worker = Worker(func, func_args, **func_kwargs)
         if result_func is not None:
             worker.signals.result.connect(result_func)
         if progress_func is not None:
-            worker.signals.finished.connect(progress_func)
+            worker.signals.progress.connect(progress_func)
         if finished_func is not None:
-            worker.signals.progress.connect(finished_func)
+            worker.signals.finished.connect(finished_func)
         if error_func is not None:
             worker.signals.error.connect(error_func)
         self.threadpool.start(worker)
 
-    def switch_to_window(self):
-        """TODO"""
-        pass
-
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """TODO"""
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -144,20 +152,78 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.threadpool = QThreadPool()
 
+        # CyDAQ communication
+        self.wrapper = None
+        try:
+            self.wrapper = CLIWrapper.CLI()
+            self.connected = self.wrapper.ping() >= 0
+        except CLIWrapper.cyDAQNotConnectedException:  
+            self.connected = False
+
+        # Widgets
         self.stack = QtWidgets.QStackedWidget(self)
         self.verticalLayout.addWidget(self.stack)
-        self.modeSelectorWidget = ModeSelectorWidget(self)
-        self.basicOperationModeWidget = BasicOperationModeWidget(self)
-        self.stack.addWidget(self.modeSelectorWidget)
-        self.stack.addWidget(self.basicOperationModeWidget)
-        self.stack.setCurrentWidget(self.modeSelectorWidget)
+        self.widgets = []
+        self.widgets.append(ModeSelectorWidget(self))
+        self.widgets.append(BasicOperationModeWidget(self))
+        for widget in self.widgets:
+            self.stack.addWidget(widget)
+        self.stack.setCurrentIndex(0)
+
+        self.updateWidgetConnectionStatus()
+
+        # Ping the CyDAQ periodically to verify connection
+        self.pingTimerInterval = 1000
+        self.pingTimer = QTimer()
+        self.pingTimer.timeout.connect(self.pingCyDAQ)
+        self.startPingTimer()
+
         self.show()
     
+    def pingCyDAQ(self):
+        def setConnected(x):
+            before = self.connected
+            self.connected = x >= 0
+            if before != self.connected:
+                self.updateWidgetConnectionStatus()
+
+        def setConnectedError(a):
+            extype = a[0]
+            value = a[1]
+            traceback = a[2]
+            before = self.connected
+            if extype is CLIWrapper.cyDAQNotConnectedException:
+                self.connected = False
+                if before != self.connected:
+                    self.updateWidgetConnectionStatus()
+            else:
+                #Raise any other exceptions
+                raise extype(traceback)
+        
+        self.run_in_worker_thread(
+            self.wrapper.ping,
+            result_func=setConnected,
+            error_func=setConnectedError
+        )
+
+    def updateWidgetConnectionStatus(self):
+        for widget in self.widgets:
+            if self.connected:
+                widget.cyDaqConnected()
+            else:
+                widget.cyDaqDisconnected()
+
+    def startPingTimer(self):
+        self.pingTimer.start(self.pingTimerInterval)
+
+    def stopPingTimer(self):
+        self.pingTimer.stop()
+
     def switch_to_mode_selector(self):
-        self.stack.setCurrentWidget(self.modeSelectorWidget)
+        self.stack.setCurrentIndex(0)
     
     def switch_to_basic_operation(self):
-        self.stack.setCurrentWidget(self.basicOperationModeWidget)
+        self.stack.setCurrentIndex(1)
 
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Main window of the app. Allows the user to switch between modes"""
@@ -167,12 +233,19 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
 
         self.mainWindow = mainWindow
 
-        # Share the main window's thread pool
+        # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
 
-        button = self.basic_operation_btn
-        button.setCheckable(True)
-        button.clicked.connect(lambda: self.mainWindow.switch_to_basic_operation())
+        basicOperationButton = self.basic_operation_btn
+        basicOperationButton.setCheckable(True)
+        basicOperationButton.clicked.connect(lambda: self.mainWindow.switch_to_basic_operation())
+    
+    def cyDaqConnected(self):
+        """When CyDAQ changes from disconnected to connected"""
+
+    def cyDaqDisconnected(self):
+        """When CyDAQ changes from connected to disconnected"""
 
 class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQModeWidget):
     """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
@@ -182,8 +255,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         
         self.mainWindow = mainWindow
         
-        # Share the main window's thread pool
+        # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
 
         self.sampling = False
         self.writing = False
@@ -232,10 +306,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.high_corner_input.setValidator(onlyInt)
 
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling)  # TODO used for debug, remove!
+        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling) 
 
         def onFilterChange():
-
             midCorner = [
                 self.mid_corner_label,
                 self.lessThan1,
@@ -290,15 +363,20 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.connection_status_label.setText("Not Connected!")
 
     def writingData(self):
-        """What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file."""
+        """When the cyDAQ is sending data to the frontend and it's writing it to a file."""
+        self.writing = True
+        self.mainWindow.pingTimer.stop()
         self.start_stop_sampling_btn.setText("Writing...")
 
     def writingDataFinished(self):
-        """What happens to the UI when the cyDAQ is finished writing data."""
+        """When the cyDAQ is finished writing data."""
+        print("writing data finished")
+        self.filename = None # Causes an ask for filename every sample
+        self.writing = False
+        self.mainWindow.startPingTimer()
         self.start_stop_sampling_btn.setText("Start")
 
     def getData(self):
-        """TODO"""
         return {
             "Sample Rate": self.sample_rate_input_box.currentText(),
             "Input": self.input_input_box.currentText(),
@@ -309,9 +387,12 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         }
 
     def start_stop_sampling(self):
-        """TODO"""
-        global timerEnabled
-        global wrapper
+        if not self.mainWindow.connected:
+            return
+
+        if self.writing:
+            return
+
         if not self.sampling:
             # start sampling
             wrong = self.validateInput()
@@ -332,44 +413,25 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 if self.filename.strip() == "": # no file chosen
                     return
 
-            print(self.getData())
-            wrapper.set_values(json.dumps(self.getData()))
-            wrapper.send_config_to_cydaq()
-            timerEnabled = False 
+            # print(self.getData())
+            # TODO change to async wrapper calls
+            self.wrapper.set_values(json.dumps(self.getData()))
+            self.wrapper.send_config_to_cydaq()
             self.sampling = True
-            wrapper.start_sampling()
+            self.mainWindow.stopPingTimer()
+            self.wrapper.start_sampling()
             self.start_stop_sampling_btn.setText("Stop")
-            print("started sampling!")
 
         else:
-            # if the start/stop button was clicked while writing
-            if self.writing:
-                return
-            self.writing = True
-
-            # stop sampling
-            self.writingData()
-            # added a wait here so the UI actually updates the "writing..." prompt before freezing
-            # this needs fixed in the future but makes sense for now
-            QtTest.QTest.qWait(100)  # type: ignore
-            try:
-                self.run_in_worker_thread(
-                    wrapper.stop_sampling, 
-                    func_args=self.filename,
-                    result_func=lambda s: print(s), 
-                    progress_func=None, 
-                    finished_func=self.writingDataFinished, 
-                    error_func=None
-                )
-                timerEnabled = True
-            except CLIWrapper.CLITimeoutException:
-                # TODO what happens when the wrapper reports that the CLI timed out?
-                print("CLI timed out!!!!")
-            self.writingDataFinished()
+            # Stop sampling
             self.sampling = False
-            self.writing = False
-            self.filename = None
-            print("stopped sampling!")
+            self.writingData()
+            self.run_in_worker_thread(
+                self.wrapper.stop_sampling, 
+                func_args=self.filename,
+                finished_func=self.writingDataFinished, 
+                error_func=lambda x: print("ERROR IN STOP SAMPLING: ", x) # TODO error handling
+            )
 
     def validateInput(self):
         """TODO"""
@@ -572,90 +634,9 @@ class RepeatedTimer(object):
             self._timer.cancel()
         self.is_running = False
 
-# TODO comment
-def updateWindowsConnected(windows, connectedBool):
-    for window in windows:
-        if connectedBool:
-            window.cyDaqConnected()
-        else:
-            window.cyDaqDisconnected()
-
-# TODO comment
-def createNewWrapper():
-    print("createNewWrapper")
-    wrapper = None
-    try:
-        wrapper = CLIWrapper.CLI()
-        ping = wrapper.ping()
-        print("create wrapper ping: ", ping)
-        cyDaqConnected = (ping >= 0)
-        # updateWindowsConnected(windows, cyDaqConnected)
-    except CLIWrapper.cyDAQNotConnectedException:
-        cyDaqConnected = False
-        # updateWindowsConnected(windows, cyDaqConnected)
-    return wrapper
-
 # Create the main app and populate it with the various windows for the different modes. 
 if __name__ == "__main__":
-    # widget = QtWidgets.QStackedWidget()
-    rt = None
-    try:
-        # windows = []
-        # windows += [
-        #     MainWindow(windows),
-        #     BasicOperationWindow(windows)
-        # ]
+    app = QtWidgets.QApplication(sys.argv)
+    main = MainWindow()
+    sys.exit(app.exec_())
 
-        #Set the global wrapper to a new one. Can return None.
-        wrapper = createNewWrapper()  # type: ignore
-
-        # Function called at an interval to check connection to the CyDAQ. It should try to make a new wrapper if the connection fails.
-        # def timerHandler():
-        #     global cyDaqConnected
-        #     global wrapper
-        #     global timerEnabled
-        #     # print("timerHandler called")
-
-        #     if not timerEnabled:
-        #         return
-
-        #     # Create a new wrapper instance if it doesn't exist. Should only need to do this on startup or if some weird crashes occur.
-        #     if wrapper is None:
-        #         wrapper = createNewWrapper(windows)  # type: ignore
-        #         return
-        #     try:
-        #         # Try to get a connection to the CyDAQ by pinging. This could be changed out with some other verification if needed.
-        #         # print("trying ping in timerHandler")
-        #         ping = wrapper.ping()
-        #     except CLIWrapper.cyDAQNotConnectedException:
-        #         # If the CyDAQ was previously connected
-        #         if cyDaqConnected:
-        #             cyDaqConnected = False
-        #             updateWindowsConnected(windows, cyDaqConnected)
-        #         return
-
-        #     # If ping is -1 there is also an error
-        #     before = cyDaqConnected
-        #     cyDaqConnected = (ping >= 0)
-        #     if before != cyDaqConnected:
-        #         updateWindowsConnected(windows, cyDaqConnected)
-            # print(cyDaqConnected, ": ", ping)
-
-        # Starts a periodic timer, but can be toggled on/off with the timerEnabled global
-        # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
-
-        timerEnabled = True
-
-        # for window in windows:
-        #     widget.addWidget(window)
-
-        # # set current widget to MainWindow
-        # widget.setCurrentWidget(windows[0])
-        # widget.show()
-        app = QtWidgets.QApplication(sys.argv)
-        main = MainWindow()
-        sys.exit(app.exec_())
-    finally:
-        if rt is not None:
-            rt.stop()
-        # sys.exit()
