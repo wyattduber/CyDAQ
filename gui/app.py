@@ -61,6 +61,7 @@ class CyDAQModeWidget():
 
     def showError(self, message):
         """Show a simple error message in the middle of the parent window"""
+        print(message)
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Error")
         dlg.setText(message)
@@ -69,11 +70,13 @@ class CyDAQModeWidget():
 
     def showInfo(self, message):
         """Show a simple message in the middle of the parent window"""
+        print(message)
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Error")
         dlg.setText(message)
         dlg.setIcon(QMessageBox.Information)
         dlg.exec()
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
     def __init__(self):
@@ -345,17 +348,45 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 if self.filename.strip() == "": # no file chosen
                     return
 
-            # print(self.getData())
-            # TODO change to async wrapper calls
-            try:
-                self.wrapper.set_values(json.dumps(self.getData()))
-                self.wrapper.send_config_to_cydaq()
+            def handleError(x):
+                self.startSamplingError = True
+                self.showError(x[2])
+
+            def step1():
+                if self.startSamplingError:
+                    return
+                self.runInWorkerThread(
+                    self.wrapper.send_config_to_cydaq, 
+                    finished_func=step2,
+                    error_func=handleError
+                )
+
+            def step2():
+                if self.startSamplingError:
+                    return
                 self.sampling = True
                 self.mainWindow.stopPingTimer()
-                self.wrapper.start_sampling()
+                self.runInWorkerThread(
+                    self.wrapper.start_sampling, 
+                    finished_func=step3,
+                    error_func=handleError
+                )
+            
+            def step3():
+                if self.startSamplingError:
+                    self.sampling = False
+                    self.filename = None
+                    return
                 self.start_stop_sampling_btn.setText("Stop")
-            except Exception:
-                self.showError(traceback.format_exc())
+
+            self.startSamplingError = False
+
+            self.runInWorkerThread(
+                self.wrapper.set_values, 
+                func_args=json.dumps(self.getData()), 
+                finished_func=step1,
+                error_func=handleError
+            )
 
         else:
             # Stop sampling
@@ -477,8 +508,9 @@ class Worker(QRunnable):
     Emits a WorkerSignal based on the execution of the function. 
     """
 
-    def __init__(self, fn, *args, **kwargs):
+    def __init__(self, fn, args, **kwargs):
         super(Worker, self).__init__()
+        # print("__init__: ", "args: ", args, " kwargs: ", kwargs)
 
         # Store constructor arguments (re-used for processing)
         self.fn = fn
@@ -494,11 +526,12 @@ class Worker(QRunnable):
         """Initialise the runner function with passed args, kwargs."""
         
         # Retrieve args/kwargs here; and fire processing using them
+        # print("fn: ", self.fn, " args: ", self.args, " kwargs: ", self.kwargs)
         try:
-            if len(self.args) == 1 and self.args[0] is None: # Fixes errors with functions with no params
+            if self.args is None:
                 result = self.fn(**self.kwargs)
             else:
-                result = self.fn(*self.args, **self.kwargs) # Run the function
+                result = self.fn(self.args, **self.kwargs) # Run the function
         except:
             # traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
