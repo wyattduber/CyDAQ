@@ -15,6 +15,7 @@ class CyDAQ_CLI:
 	"""
 
 	CYDAQ_NOT_CONNECTED = "CyDAQ not connected"
+	CLI_START_MESSAGE = "CyDAQ Command Line Interface"
 
 	WRAPPER_INFO = "INFO"
 	WRAPPER_ERROR = "ERROR"
@@ -44,7 +45,7 @@ class CyDAQ_CLI:
 	def start(self):
 		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
 
-		self._print_to_output("CyDAQ Command Line Interface")
+		self._print_to_output(self.CLI_START_MESSAGE)
 	
 		# Need to check CyDAQ connection once before input prompt
 		if not self._is_cydaq_connected():

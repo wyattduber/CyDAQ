@@ -52,7 +52,7 @@ class CLI:
         self._send_command("wrapper, enable")
 
 
-    def closeConnection(self):
+    def closeConnection(self, **_):
         """TODO"""
         # TODO send quit command?
         # self._send_command("q") # TODO handle thrown errors?
@@ -64,7 +64,7 @@ class CLI:
             # Most likely means already killed, so ignore
             pass
 
-    def _send_command(self, command, wrapper_mode=True):
+    def _send_command(self, command, wrapper_mode=True, **_):
         """Send a command to the cyDAQ and returns the result"""
         if not self.connectionEnabled:
             return
@@ -141,7 +141,7 @@ class CLI:
         else:
             raise CLIException(message)
 
-    def ping(self):
+    def ping(self, **_):
         """Ping cyDAQ, returns the response time in microseconds or -1 if error"""
         response = self._send_command("ping")
         # print("response|", response,"|")
@@ -150,13 +150,13 @@ class CLI:
         except ValueError:
             raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
-    def clear_config(self):
+    def clear_config(self, **_):
         """Clear the config to its default values"""
         response = self._send_command("clear")
         if response != " success\r\n":
             raise CLIException("Unexpected output from clear: |" + repr(response) + "|")
 
-    def get_config(self):
+    def get_config(self, **_):
         """Get the current config stored in the CLI. This doesn't necessarily mean it's the config on the cyDAQ itself."""
         response = self._send_command("print")
         try:
@@ -164,11 +164,11 @@ class CLI:
         except json.JSONDecodeError:
             raise CLIException("Error parsing json from printed configuration")
 
-    def send_config_to_cydaq(self):
+    def send_config_to_cydaq(self, **_):
         """Send the current configuration stored in the CLI to the cyDAQ"""
         self._send_command("send")
 
-    def set_value(self, key, value):
+    def set_value(self, key, value, **_):
         """
         Set one config value
         Note: This only updates the stored config in the CLI tool. To update the cyDAQ device, 
@@ -176,7 +176,7 @@ class CLI:
         """
         self._send_command("set, " + key + ", " + value)
 
-    def set_values(self, json_input):
+    def set_values(self, json_input, **_):
         """
         Set multiple config values. Takes a json string
         Note: This only updates the stored config in the CLI tool. To update the cyDAQ device, 
@@ -189,22 +189,22 @@ class CLI:
 
         self._send_command("setm, " + json.dumps(jsonList))
 
-    def start_sampling(self):
+    def start_sampling(self, **_):
         """Send the start sampling command to the CyDAQ. Will not wait for a response"""
         self._send_command("start")
 
-    def stop_sampling(self, fileName=None):
+    def stop_sampling(self, fileName=None, **_):
         """Stops sampling, can have a custom filename or generate a timestamped default. Will block until file is transferred"""
         if fileName is None:
             self._send_command("stop")
         else:
             self._send_command("stop, " + fileName) 
 
-    def flush(self):
+    def flush(self, **_):
         """Flushes the current values in the cydaq"""
         self._send_command("flush")
 
-    def generate(self):
+    def generate(self, **_):
         """Start/Stop DAC Generation"""
         self._send_command("generate")
 

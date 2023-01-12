@@ -26,10 +26,19 @@ PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
 class CyDAQModeWidget():
-    """TODO"""
+    """Parent class for all widgets. Holds methods they will all use."""
 
     def runInWorkerThread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
-        """TODO
+        """
+        Run a function with optional args and kwargs in a seperate thread. The calling class must have self.threadpool created already. 
+
+        The following callback functions can be optinally specified to handle specific scenarios during/after the function's execution.
+        result_func: Is called with one parameter, the return value of func, when it has sucessfully completed execution
+        progress_func: Is called when func emits a progress signal
+        finished_func: Is called when func is finished executing
+        error_func: Is called with three parameters, exctype, value, and traceback, if func throws an exception
+
+        The following template can be used:
         self.runInWorkerThread(
             function, 
             func_args=None,
@@ -51,7 +60,7 @@ class CyDAQModeWidget():
         self.threadpool.start(worker)
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
-    """TODO"""
+    """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
@@ -132,7 +141,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(1)
 
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
-    """Main window of the app. Allows the user to switch between modes"""
+    """Starter widget that allows the user to switch between all other widgets"""
     def __init__(self, mainWindow: MainWindow):
         super(ModeSelectorWidget, self).__init__()
         self.setupUi(self)
@@ -431,18 +440,10 @@ class WorkerSignals(QObject):
     Defines the signals available from a running worker thread.
 
     Supported signals are:
-
-    finished
-        No data
-
-    error
-        tuple (exctype, value, traceback.format_exc() )
-
-    result
-        object data returned from processing, anything
-
-    progress
-        int indicating % progress
+    finished: No data
+    error: tuple (exctype, value, traceback.format_exc() )
+    result: object data returned from processing, anything
+    progress: int indicating % progress
     """
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
@@ -465,8 +466,8 @@ class Worker(QRunnable):
         self.kwargs = kwargs
         self.signals = WorkerSignals()
 
-        # Add the callback to our kwargs (removed for now as wrapper doesn't support kwargs)
-        # self.kwargs['progress_callback'] = self.signals.progress
+        # Add the callback to our kwargs
+        self.kwargs['progress_callback'] = self.signals.progress
 
     @pyqtSlot()
     def run(self):
@@ -575,7 +576,6 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
 class InvalidInputException(IOError):
     pass
 
-# Create the main app and populate it with the various windows for the different modes. 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     main = MainWindow()
