@@ -59,6 +59,21 @@ class CyDAQModeWidget():
             worker.signals.error.connect(error_func)
         self.threadpool.start(worker)
 
+    def showError(self, message):
+        """Show a simple error message in the middle of the parent window"""
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Error")
+        dlg.setText(message)
+        dlg.setIcon(QMessageBox.Critical)
+        dlg.exec()
+
+    def showInfo(self, message):
+        """Show a simple message in the middle of the parent window"""
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Error")
+        dlg.setText(message)
+        dlg.setIcon(QMessageBox.Information)
+        dlg.exec()
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
     def __init__(self):
@@ -312,11 +327,13 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             # start sampling
             wrong = self.validateInput()
             self.updateWrongs(wrong)
-            for i in wrong.values():
-                if i != "":
-                    print("HANDLE ERRORS")
-                    print(wrong)
-                    return  # TODO Do something with the error messages for invalid inputs
+            s = ""
+            for title, message in wrong.items():
+                if message != "":
+                    s += title + ": " + message + "\n"
+            if s != "":
+                self.showInfo(s)
+                return
 
             if self.filename is None or self.filename.strip() == "":
                 # get file save location
@@ -330,12 +347,15 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
             # print(self.getData())
             # TODO change to async wrapper calls
-            self.wrapper.set_values(json.dumps(self.getData()))
-            self.wrapper.send_config_to_cydaq()
-            self.sampling = True
-            self.mainWindow.stopPingTimer()
-            self.wrapper.start_sampling()
-            self.start_stop_sampling_btn.setText("Stop")
+            try:
+                self.wrapper.set_values(json.dumps(self.getData()))
+                self.wrapper.send_config_to_cydaq()
+                self.sampling = True
+                self.mainWindow.stopPingTimer()
+                self.wrapper.start_sampling()
+                self.start_stop_sampling_btn.setText("Stop")
+            except Exception:
+                self.showError(traceback.format_exc())
 
         else:
             # Stop sampling

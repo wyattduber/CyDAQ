@@ -218,7 +218,8 @@ class CLINoResponseException(Exception):
     pass
 
 class cyDAQNotConnectedException(Exception):
-    pass
+    def __init__(self):
+        super().__init__()
 
 class CLICloseException(Exception):
     """Thrown when the CLI closes unexpectedly. The last message sent to the output should be included in this error. """
