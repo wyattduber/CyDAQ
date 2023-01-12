@@ -365,11 +365,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 self.wrapper.stop_sampling, 
                 func_args=self.filename,
                 finished_func=self.writingDataFinished, 
-                error_func=lambda x: print("ERROR IN STOP SAMPLING: ", x) # TODO error handling
+                error_func=lambda x: self.showError(x)
             )
 
     def validateInput(self):
-        """TODO"""
+        """Validate configuration and populate a return dictionary with any error messages. An empty string means there is no error."""
         data = self.getData()
         wrong = {"Sample Rate": "",
                 "Upper Corner": "",
