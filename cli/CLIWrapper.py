@@ -34,7 +34,7 @@ class CLI:
         self.connectionEnabled = True
 
         # Wait for cli to start up. It will NOT be in wrapper mode yet
-        self.p.expect("CyDAQ Command Line Interface")
+        self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
 
         # If the CyDAQ is not connected at this point the CLI will immedately say so
         try:
