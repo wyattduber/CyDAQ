@@ -51,19 +51,6 @@ class CLI:
         # Set CLI to wrapper mode. After this, all commands must be parsed in the new mode unless it's specifially toggled off
         self._send_command("wrapper, enable")
 
-
-    def closeConnection(self, **_):
-        """TODO"""
-        # TODO send quit command?
-        # self._send_command("q") # TODO handle thrown errors?
-
-        self.connectionEnabled = False
-        try:
-            self.p.kill(signal.SIGTERM)
-        except PermissionError:
-            # Most likely means already killed, so ignore
-            pass
-
     def _send_command(self, command, wrapper_mode=True, **_):
         """Send a command to the cyDAQ and returns the result"""
         if not self.connectionEnabled:

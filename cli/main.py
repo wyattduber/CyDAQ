@@ -83,8 +83,7 @@ class CyDAQ_CLI:
 				if len(command) == 3:
 					self._update_single_config(command[1], command[2])
 				else:
-					# TODO print correct syntax?
-					pass
+					self._print_to_output("Invalid syntax. Ex: set, Sample Rate, 200")
 				continue
 			elif command[0] == 'setm':
 				raw_json = raw_command.split(',',1)[1]
@@ -98,11 +97,9 @@ class CyDAQ_CLI:
 					elif command[1] == 'disable':
 						self.wrapper_mode = False
 					else:
-						# TODO print correct syntax
-						pass
+						self._print_to_output("Invalid syntax. Ex: wrapper, enable/disable")
 				else:
-					# TODO print correct syntax?
-					pass
+					self._print_to_output("Invalid syntax. Ex: wrapper, enable/disable")
 				continue
 
 			# Now need to check if connection is still active before any of the next commands can run
@@ -155,10 +152,8 @@ class CyDAQ_CLI:
 				print(line)
 
 	def _is_cydaq_connected(self):
-		# TODO clean up this logic unless more checks are needed
 		self.comm_port = get_port()
 		if self.comm_port == "" or self.comm_port is None:
-			# print("comm port not set. returning false")
 			return False
 		return True
 
@@ -177,6 +172,7 @@ class CyDAQ_CLI:
 	send\t\t\t\t Send config to cyDAQ
 	set (key) (value)\t\t Set one config value
 	setm (json list)\t\t Set multiple config values as a json object
+	wrapper (enable/disable)\t\t Enable Wrapper Mode for CLIWrapper library
 	flush\t\t\t\t Flush 
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
@@ -248,9 +244,7 @@ class CyDAQ_CLI:
 		self.config[key] = value
 
 	def _update_multiple_config(self, json_str):
-		"""
-		Updates multiple entries specified as a JSON object
-		"""
+		"""Updates multiple entries specified as a JSON object"""
 		# TODO some form of config validation here
 		jsonList = {}
 
