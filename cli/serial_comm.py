@@ -1,39 +1,6 @@
 import serial
 import serial.tools.list_ports
 
-
-def get_port():
-    """
-    Returns a list of available serial devices on the host computer.
-    Typical usage is to call this function to determine the computer's
-    ports and open a connection with the open() function, using one of
-    the devices returned by this function.
-
-    Args:
-        None
-
-    Returns:
-        A list of available serial devices, as strings
-
-****CHANGE: Only the COM port that says 'USB Serial Port' (this is what the zybo
-            shows up as) will appear
-    """
-
-    all_ports = serial.tools.list_ports.comports()
-    open_ports = []
-    for element in all_ports:
-        if "USB Serial Port" in element.description:
-            open_ports.append(element.device)
-    try:
-        zybo_port = open_ports[0]
-        port = str(zybo_port)
-        # print("Zybo found on ",str(zybo_port))
-        return port
-    except:
-        # print("Zybo not connected")
-        return None
-
-
 class ctrl_comm:
     """
        This class creates an abstraction for a connection to a device over
@@ -50,7 +17,7 @@ class ctrl_comm:
         self.__s_comm.port = None
         # while self.__s_comm.port is None:
         try:
-            self.__s_comm.port = get_port()
+            self.__s_comm.port = self.get_port()
         except:
             # TODO bad..
             pass
@@ -63,6 +30,37 @@ class ctrl_comm:
         self.__s_comm.parity = serial.PARITY_NONE  # PARITY_EVEN
         self.__s_comm.timeout = 4
         self.__order = "little"
+
+    def get_port(self):
+        """
+        Returns a list of available serial devices on the host computer.
+        Typical usage is to call this function to determine the computer's
+        ports and open a connection with the open() function, using one of
+        the devices returned by this function.
+
+        Args:
+            None
+
+        Returns:
+            A list of available serial devices, as strings
+
+    ****CHANGE: Only the COM port that says 'USB Serial Port' (this is what the zybo
+                shows up as) will appear
+        """
+
+        all_ports = serial.tools.list_ports.comports()
+        open_ports = []
+        for element in all_ports:
+            if "USB Serial Port" in element.description:
+                open_ports.append(element.device)
+        try:
+            zybo_port = open_ports[0]
+            port = str(zybo_port)
+            # print("Zybo found on ",str(zybo_port))
+            return port
+        except:
+            # print("Zybo not connected")
+            return None
 
     def close(self):
         """
@@ -95,7 +93,7 @@ class ctrl_comm:
             None
         """
         if self.__s_comm.port is None or self.__s_comm.port == "":
-            self.__s_comm.port = get_port()
+            self.__s_comm.port = self.get_port()
         if self.__s_comm.isOpen() is False:
             self.__s_comm.port = port
             self.__s_comm.open()

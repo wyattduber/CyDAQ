@@ -8,6 +8,10 @@ class cmd:
     def __init__(self):
         print("cmd init")
         self.ctrl_comm_obj = ctrl_comm()
+        self.port = self.ctrl_comm_obj.get_port()
+
+    def refresh_port(self):
+        self.port = self.ctrl_comm_obj.get_port()
 
     def recieve_acknowlege_zybo(self):
         """
@@ -57,7 +61,7 @@ class cmd:
         else:
             return False
 
-    def send_dataset(self, port_select, dataset):
+    def send_dataset(self, dataset):
         """
         sends dataset to the Zybo
 
@@ -69,7 +73,7 @@ class cmd:
         Returns: True if successfully sent, false otherwise
         """
         try:
-            self.ctrl_comm_obj.open(port_select)
+            self.ctrl_comm_obj.open(self.port)
         except ValueError as e:
             return -1
         cnt = 0
@@ -77,10 +81,10 @@ class cmd:
         wait = 0
         while cnt < 1 and cursor < 2:
             if cursor == 0 and wait == 0:
-                self.send_dataset_size(port_select, len(dataset))
+                self.send_dataset_size(self.port, len(dataset))
                 wait = 1
             elif cursor == 1 and wait == 0:
-                self.send_data(port_select, dataset)
+                self.send_data(self.port, dataset)
                 wait = 1
             if wait == 1:
                 if self.recieve_acknowlege_zybo():
@@ -122,7 +126,7 @@ class cmd:
         else:
             self.__throw_exception('Sending Dataset Failed')
 
-    def send_dataset_size(self, port_select, dataset_size):
+    def send_dataset_size(self, dataset_size):
         """
         Sends the Dataset Size.
 
@@ -134,7 +138,7 @@ class cmd:
             True
         """
 
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_SEND_DATASET.value, int(dataset_size)))
@@ -147,13 +151,13 @@ class cmd:
     def validate_params(self, data):
         pass
 
-    def send_start_gen_cmd(self, port_select):
+    def send_start_gen_cmd(self):
         cursor = 0
         wait = 0
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         while cursor < 1:
             if cursor == 0:
-                self.send_start_gen(port_select)
+                self.send_start_gen()
                 wait = 1
             if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Generation start ACK received")
@@ -164,13 +168,13 @@ class cmd:
         self.ctrl_comm_obj.close()
         return True
 
-    def send_stop_gen_cmd(self, port_select):
+    def send_stop_gen_cmd(self):
         cursor = 0
         wait = 0
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         while cursor < 1:
             if cursor == 0:
-                self.send_stop_gen(port_select)
+                self.send_stop_gen()
                 wait = 1
             if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Generation stop ACK received")
@@ -181,13 +185,13 @@ class cmd:
         self.ctrl_comm_obj.close()
         return True
 
-    def send_start_cmd(self, port_select):
+    def send_start_cmd(self):
         cursor = 0
         wait = 0
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         while cursor < 1:
             if cursor == 0:
-                self.send_start(port_select)
+                self.send_start()
                 wait = 1
             if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Sampling start ACK received")
@@ -198,17 +202,17 @@ class cmd:
         self.ctrl_comm_obj.close()
         return True
 
-    def send_stop_cmd(self, port_select):
+    def send_stop_cmd(self):
         # The 'cursor' variable name is a legacy holdover from when the fetch command was sent inside this while loop.
         # Instead of properly fixing the code, I've left it like this for two reasons: one, a timeout feature needs to
         # be added anyway (so we can fail safe AND so we're not constantly pinging CyDAQ with a stop command); two, 
         # Basically all of the GUI code needs to be rewritten.
         cursor = 0
         wait = 0
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         while cursor < 1:
             if cursor == 0:
-                self.send_stop(port_select)
+                self.send_stop()
                 wait = 1
             if wait == 1 and self.recieve_acknowlege_zybo():
                 print("Sampling stop ACK received")
@@ -218,8 +222,8 @@ class cmd:
                 pass
         self.ctrl_comm_obj.close()
 
-    def send_fetch(self, port_select):
-        self.ctrl_comm_obj.open(port_select)
+    def send_fetch(self):
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.FETCH_SAMPLES.value))
@@ -229,7 +233,7 @@ class cmd:
             self.__throw_exception('Sample transfer init failed')
         self.ctrl_comm_obj.close()
 
-    def send_input(self, port_select, input_set):
+    def send_input(self, input_set):
         """
         Sends the Input.
 
@@ -240,7 +244,7 @@ class cmd:
         Returns:
             True
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
@@ -251,7 +255,7 @@ class cmd:
         else:
             self.__throw_exception('Sending Input Failed')
 
-    def send_sample_rate(self, port_select, sample_rate):
+    def send_sample_rate(self, sample_rate):
         """
         Sends the Input.
 
@@ -263,7 +267,7 @@ class cmd:
             True
         """
 
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.SAMPLE_RATE_SET.value, int(sample_rate)))
@@ -273,7 +277,7 @@ class cmd:
         else:
             self.__throw_exception('Sending Sample Rate Failed')
 
-    def send_filter(self, port_select, filter_select):
+    def send_filter(self, filter_select):
         """
         Sends the Input.
 
@@ -284,7 +288,7 @@ class cmd:
         Returns:
             True or False
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
@@ -294,12 +298,11 @@ class cmd:
         else:
             self.__throw_exception('Sending filter failed')
 
-    def send_corner_freq(self, port_select, u_corner_freq, l_corner_freq, corner_freq, filter):
+    def send_corner_freq(self, u_corner_freq, l_corner_freq, corner_freq, filter):
         """
         Sends the Input.
 
         Args:
-            port_select: Zybo comm port
             u_corner_freq: upper corner frequency value
             l_corner_freq: lower corner frequency value
 
@@ -308,7 +311,7 @@ class cmd:
             True or false
         """
         val_to_write = None
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
 
         if self.ctrl_comm_obj.isOpen() is True:
             if filter == enum_filter.BP2.value or filter == enum_filter.BP6.value:
@@ -333,7 +336,7 @@ class cmd:
         else:
             self.__throw_exception('Sending corner freq failed')
 
-    def send_dac_mode(self, port_select, dac_mode):
+    def send_dac_mode(self, dac_mode):
         """
         Sends the DAC Mode.
 
@@ -344,7 +347,7 @@ class cmd:
         Returns:
             True
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.DAC_MODE_SELECT.value))
@@ -355,7 +358,7 @@ class cmd:
         else:
             self.__throw_exception('Sending DAC Mode Failed')
 
-    def send_dac_reps(self, port_select, dac_reps):
+    def send_dac_reps(self, dac_reps):
         """
         Sends the number of DAC repetitions.
 
@@ -366,7 +369,7 @@ class cmd:
         Returns:
             True
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_NUM_REPS_SET.value, int(dac_reps)))
@@ -376,7 +379,7 @@ class cmd:
         else:
             self.__throw_exception('Sending DAC Reps Failed')
 
-    def send_dac_gen_rate(self, port_select, dac_gen_rate):
+    def send_dac_gen_rate(self, dac_gen_rate):
         """
         Sends the DAC Generation Rate.
 
@@ -387,7 +390,7 @@ class cmd:
         Returns:
             True
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_GEN_RATE_SET.value, int(dac_gen_rate)))
@@ -397,7 +400,7 @@ class cmd:
         else:
             self.__throw_exception('Sending DAC Reps Failed')
 
-    def send_start(self, port_select):
+    def send_start(self):
         """
         Sends the Input.
 
@@ -407,7 +410,7 @@ class cmd:
         Returns:
             True or false
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
@@ -418,8 +421,8 @@ class cmd:
             self.__throw_exception('Sending start failed')
             return False
 
-    def send_start_gen(self, port_select):
-        self.ctrl_comm_obj.open(port_select)
+    def send_start_gen(self):
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_GENERATION.value))
@@ -428,8 +431,8 @@ class cmd:
         else:
             self.__throw_exception('Sending start gen failed')
 
-    def send_stop_gen(self, port_select):
-        self.ctrl_comm_obj.open(port_select)
+    def send_stop_gen(self):
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_GENERATION.value))
@@ -437,7 +440,7 @@ class cmd:
         else:
             self.__throw_exception('Sending stop gen failed')
 
-    def send_stop(self, port_select):
+    def send_stop(self):
         """
         Sends the Input.
 
@@ -447,7 +450,7 @@ class cmd:
         Returns:
             True or false
         """
-        self.ctrl_comm_obj.open(port_select)
+        self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_GENERATION.value))
@@ -464,8 +467,8 @@ class cmd:
     def close(self):
         self.ctrl_comm_obj.close()
 
-    def flush(self, port_select):
-        self.ctrl_comm_obj.open(port_select)
+    def flush(self):
+        self.ctrl_comm_obj.open(self.port)
         for i in range(50000):
             if self.ctrl_comm_obj.isOpen() is True:
                 self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -478,10 +481,10 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending Empty Dataset Failed')
-        self.ping_zybo(port_select)
+        self.ping_zybo()
         self.ctrl_comm_obj.close()
 
-    def ping_zybo(self, port_select):
+    def ping_zybo(self):
         """
         Handshake between zybo and the cydaq
 
@@ -492,7 +495,7 @@ class cmd:
             None
         """
         try:
-            self.ctrl_comm_obj.open(port_select)
+            self.ctrl_comm_obj.open(self.port)
         except ValueError:
             return False
         if self.ctrl_comm_obj.isOpen() is True:

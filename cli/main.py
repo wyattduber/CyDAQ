@@ -7,7 +7,7 @@ from check_params import ParameterConstructor
 
 from command_comm import cmd
 from master_enum import nameToEnum, sig_serial
-from serial_comm import ctrl_comm, get_port
+from serial_comm import ctrl_comm
 
 class CyDAQ_CLI:
 	"""
@@ -23,9 +23,6 @@ class CyDAQ_CLI:
 
 	def __init__(self):
 		self.cmd_obj = cmd()
-
-		# TODO should comm_port just be handled in cmd_obj?
-		self.comm_port = get_port()
 
 		self.default_config = {
 			"Sample Rate": 100,
@@ -108,7 +105,7 @@ class CyDAQ_CLI:
 				# Try to establish connection again
 				# cmd_obj = cmd()
 				self.cmd_obj.ctrl_comm_obj._init_comm()
-				self.comm_port = get_port()
+				self.cmd_obj.refresh_port()
 				continue
 
 			# Next check for commands that require direct connection to CyDAQ. 
@@ -119,7 +116,7 @@ class CyDAQ_CLI:
 				self._send()
 				continue
 			elif command[0] == 'flush':
-				self.cmd_obj.flush(self.comm_port)
+				self.cmd_obj.flush()
 				continue
 			elif command[0] == 'start':
 				self._start_sampling()
@@ -132,11 +129,11 @@ class CyDAQ_CLI:
 				continue
 			elif command[0] == 'generate':
 				if not generating:
-					self.cmd_obj.send_start_gen(self.comm_port)
+					self.cmd_obj.send_start_gen()
 					generating = True
 					self._print_to_output("Generating Started", self.WRAPPER_INFO)
 				else:
-					self.cmd_obj.send_stop_gen(self.comm_port)
+					self.cmd_obj.send_stop_gen()
 					generating = not generating
 					self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
@@ -152,10 +149,11 @@ class CyDAQ_CLI:
 				print(line)
 
 	def _is_cydaq_connected(self):
-		self.comm_port = get_port()
-		if self.comm_port == "" or self.comm_port is None:
+		self.cmd_obj.refresh_port()
+		if self.cmd_obj.port == "" or self.cmd_obj.port is None:
 			return False
 		return True
+		
 
 	def _print_help(self, cmnd):
 		usages = {}  # TODO dict for individual command usage messages
@@ -188,7 +186,7 @@ class CyDAQ_CLI:
 				True if the message was acknowleged, False if device is not connected.
 			"""
 		a = datetime.datetime.now()
-		self.cmd_obj.ping_zybo(self.comm_port)
+		self.cmd_obj.ping_zybo()
 		b = datetime.datetime.now()
 		c = b - a
 		self._print_to_output("CyDaq latency {} microseconds".format(c.microseconds), self.WRAPPER_INFO)
@@ -222,21 +220,21 @@ class CyDAQ_CLI:
 				i += 1
 
 		# must be sent in order? (Not 100% sure on this but the old code did so I'm rolling with it)
-		send_config_with_retry(self.cmd_obj.send_input, self.comm_port, nameToEnum(config_send["Input"]))
-		send_config_with_retry(self.cmd_obj.send_sample_rate, self.comm_port, config_send["Sample Rate"])
-		send_config_with_retry(self.cmd_obj.send_filter, self.comm_port, nameToEnum(config_send["Filter"]))
+		send_config_with_retry(self.cmd_obj.send_input, nameToEnum(config_send["Input"]))
+		send_config_with_retry(self.cmd_obj.send_sample_rate, config_send["Sample Rate"])
+		send_config_with_retry(self.cmd_obj.send_filter, nameToEnum(config_send["Filter"]))
 
 		upper = config_send["Upper Corner"]
 		lower = config_send["Lower Corner"]
 		mid = config_send["Mid Corner"]
 		# This logic is probably wrong but it's how it was before... TODO fix?
 		if upper != 0 or lower != 0 or mid != 0:
-			send_config_with_retry(self.cmd_obj.send_corner_freq, self.comm_port, upper, lower, mid, config_send["Filter"])
+			send_config_with_retry(self.cmd_obj.send_corner_freq, upper, lower, mid, config_send["Filter"])
 
 		# send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented
 		#  out before
-		send_config_with_retry(self.cmd_obj.send_dac_reps, self.comm_port, config_send["Dac Reps"])
-		send_config_with_retry(self.cmd_obj.send_dac_gen_rate, self.comm_port, config_send["Dac Generation Rate"])
+		send_config_with_retry(self.cmd_obj.send_dac_reps, config_send["Dac Reps"])
+		send_config_with_retry(self.cmd_obj.send_dac_gen_rate, config_send["Dac Generation Rate"])
 
 	def _update_single_config(self, key, value):
 		"""Updates a single entry in the config"""
@@ -258,7 +256,7 @@ class CyDAQ_CLI:
 			self.config[key] = jsonList[key]
 
 	def _start_sampling(self):
-		self.cmd_obj.send_start_cmd(self.comm_port)
+		self.cmd_obj.send_start_cmd()
 
 	def _stop_sampling(self, outFile=None):
 		sampleRate = self.config["Sample Rate"]
@@ -270,11 +268,11 @@ class CyDAQ_CLI:
 		f = None
 		with open(outFile, "w") as f:
 			self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
-			self.cmd_obj.send_fetch(self.comm_port)
+			self.cmd_obj.send_fetch()
 
 			# open a new connection to get data
 			comm_obj = ctrl_comm()
-			comm_obj.open(self.comm_port)
+			comm_obj.open(self.cmd_obj.port)
 
 			# read the data one byte at a time and write to file
 			byte = comm_obj.read_byte()
