@@ -11,11 +11,11 @@ class cmd:
 
     def recieve_acknowlege_zybo(self):
         """
-            receives ACK! from the ZYBO
+        receives ACK! from the ZYBO
 
-            Returns:
-                None
-            """
+        Returns:
+            None
+        """
 
         if self.ctrl_comm_obj.isOpen() is True:
             while True:
@@ -67,7 +67,6 @@ class cmd:
 
 
         Returns: True if successfully sent, false otherwise
-
         """
         try:
             self.ctrl_comm_obj.open(port_select)
@@ -103,15 +102,15 @@ class cmd:
 
     def send_data(self, port_select, dataset):
         """
-                Sends the Dataset.
+        Sends the Dataset.
 
-                Args:
-                    port_select: Zybo comm port
-                    dataset:  the dataset
+        Args:
+            port_select: Zybo comm port
+            dataset:  the dataset
 
-                Returns:
-                    True
-                """
+        Returns:
+            True
+        """
 
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
@@ -122,19 +121,18 @@ class cmd:
 
         else:
             self.__throw_exception('Sending Dataset Failed')
-            return False
 
     def send_dataset_size(self, port_select, dataset_size):
         """
-                Sends the Dataset Size.
+        Sends the Dataset Size.
 
-                Args:
-                    port_select: Zybo comm port
-                    dataset_size: size of the dataset
+        Args:
+            port_select: Zybo comm port
+            dataset_size: size of the dataset
 
-                Returns:
-                    True
-                """
+        Returns:
+            True
+        """
 
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
@@ -145,7 +143,6 @@ class cmd:
 
         else:
             self.__throw_exception('Sending Dataset Size Failed')
-            return False
 
     def validate_params(self, data):
         pass
@@ -230,20 +227,19 @@ class cmd:
 
         else:
             self.__throw_exception('Sample transfer init failed')
-            return False
         self.ctrl_comm_obj.close()
 
     def send_input(self, port_select, input_set):
         """
-                Sends the Input.
+        Sends the Input.
 
-                Args:
-                    port_select: Zybo comm port
-                    input_set: input select enum value
+        Args:
+            port_select: Zybo comm port
+            input_set: input select enum value
 
-                Returns:
-                    True
-                """
+        Returns:
+            True
+        """
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -254,19 +250,18 @@ class cmd:
 
         else:
             self.__throw_exception('Sending Input Failed')
-            return False
 
     def send_sample_rate(self, port_select, sample_rate):
         """
-                Sends the Input.
+        Sends the Input.
 
-                Args:
-                    port_select: Zybo comm port
-                    sample_rate: sample rate enum value
+        Args:
+            port_select: Zybo comm port
+            sample_rate: sample rate enum value
 
-                Returns:
-                    True
-                """
+        Returns:
+            True
+        """
 
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
@@ -277,19 +272,18 @@ class cmd:
 
         else:
             self.__throw_exception('Sending Sample Rate Failed')
-            return False
 
     def send_filter(self, port_select, filter_select):
         """
-                Sends the Input.
+        Sends the Input.
 
-                Args:
-                    port_select: Zybo comm port
-                    filter_select: filter selection enum
+        Args:
+            port_select: Zybo comm port
+            filter_select: filter selection enum
 
-                Returns:
-                    True or False
-                """
+        Returns:
+            True or False
+        """
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -299,21 +293,20 @@ class cmd:
 
         else:
             self.__throw_exception('Sending filter failed')
-            return False
 
     def send_corner_freq(self, port_select, u_corner_freq, l_corner_freq, corner_freq, filter):
         """
-                Sends the Input.
+        Sends the Input.
 
-                Args:
-                    port_select: Zybo comm port
-                    u_corner_freq: upper corner frequency value
-                    l_corner_freq: lower corner frequency value
+        Args:
+            port_select: Zybo comm port
+            u_corner_freq: upper corner frequency value
+            l_corner_freq: lower corner frequency value
 
 
-                Returns:
-                    True or false
-                """
+        Returns:
+            True or false
+        """
         val_to_write = None
         self.ctrl_comm_obj.open(port_select)
 
@@ -339,7 +332,6 @@ class cmd:
             return True
         else:
             self.__throw_exception('Sending corner freq failed')
-            return False
 
     def send_dac_mode(self, port_select, dac_mode):
         """
@@ -362,7 +354,6 @@ class cmd:
 
         else:
             self.__throw_exception('Sending DAC Mode Failed')
-            return False
 
     def send_dac_reps(self, port_select, dac_reps):
         """
@@ -384,7 +375,6 @@ class cmd:
 
         else:
             self.__throw_exception('Sending DAC Reps Failed')
-            return False
 
     def send_dac_gen_rate(self, port_select, dac_gen_rate):
         """
@@ -406,18 +396,17 @@ class cmd:
 
         else:
             self.__throw_exception('Sending DAC Reps Failed')
-            return False
 
     def send_start(self, port_select):
         """
-                Sends the Input.
+        Sends the Input.
 
-                Args:
-                    port_select: Zybo comm port
+        Args:
+            port_select: Zybo comm port
 
-                Returns:
-                    True or false
-                """
+        Returns:
+            True or false
+        """
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -438,7 +427,6 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending start gen failed')
-            return False
 
     def send_stop_gen(self, port_select):
         self.ctrl_comm_obj.open(port_select)
@@ -448,18 +436,17 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending stop gen failed')
-            return False
 
     def send_stop(self, port_select):
         """
-                Sends the Input.
+        Sends the Input.
 
-                Args:
-                    port_select: Zybo comm port
+        Args:
+            port_select: Zybo comm port
 
-                Returns:
-                    True or false
-                """
+        Returns:
+            True or false
+        """
         self.ctrl_comm_obj.open(port_select)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -469,12 +456,9 @@ class cmd:
 
         else:
             self.__throw_exception('Sending stop failed')
-            return False
 
     def __throw_exception(self, text):
-        """
-        Throws an exception for a read timeout
-        """
+        """Throws an exception for a read timeout"""
         raise Exception(text)
 
     def close(self):
@@ -489,27 +473,24 @@ class cmd:
                 self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
             else:
                 self.__throw_exception('Sending flush failed')
-                return False
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Sending Empty Dataset Failed')
-            return False
         self.ping_zybo(port_select)
         self.ctrl_comm_obj.close()
 
     def ping_zybo(self, port_select):
         """
-                Handshake between zybo and the cydaq
+        Handshake between zybo and the cydaq
 
-                Args:
-                    port_select: Zybo comm port
+        Args:
+            port_select: Zybo comm port
 
-
-                Returns:
-                    None
-                """
+        Returns:
+            None
+        """
         try:
             self.ctrl_comm_obj.open(port_select)
         except ValueError:
