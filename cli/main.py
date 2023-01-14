@@ -170,7 +170,7 @@ class CyDAQ_CLI:
 	send\t\t\t\t Send config to cyDAQ
 	set (key) (value)\t\t Set one config value
 	setm (json list)\t\t Set multiple config values as a json object
-	wrapper (enable/disable)\t\t Enable Wrapper Mode for CLIWrapper library
+	wrapper (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
 	flush\t\t\t\t Flush 
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling

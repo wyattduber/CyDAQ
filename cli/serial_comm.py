@@ -9,7 +9,7 @@ class ctrl_comm:
        """
 
     def __init__(self):
-        print("ctrl_comm init")
+        # print("ctrl_comm init")
         self._init_comm()
 
     def _init_comm(self):

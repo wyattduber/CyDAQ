@@ -6,7 +6,7 @@ import time as t
 class cmd:
 
     def __init__(self):
-        print("cmd init")
+        # print("cmd init")
         self.ctrl_comm_obj = ctrl_comm()
         self.port = self.ctrl_comm_obj.get_port()
 
@@ -249,7 +249,7 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
             self.ctrl_comm_obj.write(struct.pack('!B', int(input_set)))
-            print("Input set Enum = " + str(input_set))
+            # print("Input set Enum = " + str(input_set))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
@@ -271,7 +271,7 @@ class cmd:
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.SAMPLE_RATE_SET.value, int(sample_rate)))
-            print("Sample Rate = " + str(sample_rate))
+            # print("Sample Rate = " + str(sample_rate))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
@@ -292,7 +292,7 @@ class cmd:
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
-            print("Filter Enum = " + str(filter_select))
+            # print("Filter Enum = " + str(filter_select))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
@@ -317,17 +317,17 @@ class cmd:
             if filter == enum_filter.BP2.value or filter == enum_filter.BP6.value:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
                                            int(u_corner_freq))
-                print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
+                # print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
             elif filter == enum_filter.LP1.value or filter == enum_filter.LP6.value:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
-                print("Corner Frequency = " + str(corner_freq) + " / " + str(0))
+                # print("Corner Frequency = " + str(corner_freq) + " / " + str(0))
             elif filter == enum_filter.HP1.value or filter == enum_filter.HP6.value:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
-                print("Corner Frequency = " + str(corner_freq) + " / " + str(0))
+                # print("Corner Frequency = " + str(corner_freq) + " / " + str(0))
             else:
                 val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
                                            int(u_corner_freq))
-                print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
+                # print("Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
 
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(val_to_write)
@@ -352,7 +352,7 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.DAC_MODE_SELECT.value))
             self.ctrl_comm_obj.write(struct.pack('!B', int(dac_mode)))
-            print("DAC Mode set Enum = " + str(dac_mode))
+            # print("DAC Mode set Enum = " + str(dac_mode))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
@@ -373,7 +373,7 @@ class cmd:
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_NUM_REPS_SET.value, int(dac_reps)))
-            print("DAC repetitions = " + str(dac_reps))
+            # print("DAC repetitions = " + str(dac_reps))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
@@ -394,7 +394,7 @@ class cmd:
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!BI', enum_commands.DAC_GEN_RATE_SET.value, int(dac_gen_rate)))
-            print("DAC Generation Rate = " + str(dac_gen_rate))
+            # print("DAC Generation Rate = " + str(dac_gen_rate))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
