@@ -1,150 +1,203 @@
 import json
 import sys
 from threading import Timer
+import traceback
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
 from PyQt5 import QtTest
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
 from DacModeWidget import Ui_DAC_mode_widget
-
-# from SamplingRateWidget import Ui_sampling_rate_widget
-# from InputWidget import Ui_input_widget
-# from FilterWidget import Ui_filter_widget
-# from CornersWidget import Ui_corners_widget
+from ModeSelectorWidget import Ui_ModeSelectorWidget
 
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
 sys.path.append("../cli")
+sys.path.append("cli")
 import CLIWrapper
 
-page_dict = {0: "DAC Mode",
-             1: "Sampling Rate",
-             2: "Input",
-             3: "Filter",
-             4: "Corners"}
-
-allData = {}
-generationFilename = ""
-cyDaqConnected = False
-wrapper: CLIWrapper.CLI or None
-
+# Constants
 PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
+class CyDAQModeWidget():
+    """Parent class for all widgets. Holds methods they will all use."""
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, inwidget, inwindows):
+    def runInWorkerThread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
+        """
+        Run a function with optional args and kwargs in a seperate thread. The calling class must have self.threadpool created already. 
+
+        The following callback functions can be optinally specified to handle specific scenarios during/after the function's execution.
+        result_func: Is called with one parameter, the return value of func, when it has sucessfully completed execution
+        progress_func: Is called when func emits a progress signal
+        finished_func: Is called when func is finished executing
+        error_func: Is called with three parameters, exctype, value, and traceback, if func throws an exception
+
+        The following template can be used:
+        self.runInWorkerThread(
+            function, 
+            func_args=None,
+            result_func=None, 
+            progress_func=None, 
+            finished_func=None, 
+            error_func=None
+        )
+        """
+        worker = Worker(func, func_args, **func_kwargs)
+        if result_func is not None:
+            worker.signals.result.connect(result_func)
+        if progress_func is not None:
+            worker.signals.progress.connect(progress_func)
+        if finished_func is not None:
+            worker.signals.finished.connect(finished_func)
+        if error_func is not None:
+            worker.signals.error.connect(error_func)
+        self.threadpool.start(worker)
+
+    def showError(self, message):
+        """Show a simple error message in the middle of the parent window"""
+        print(message)
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Error")
+        dlg.setText(message)
+        dlg.setIcon(QMessageBox.Critical)
+        dlg.exec()
+
+    def showInfo(self, message):
+        """Show a simple message in the middle of the parent window"""
+        print(message)
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Error")
+        dlg.setText(message)
+        dlg.setIcon(QMessageBox.Information)
+        dlg.exec()
+
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
+    """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
+    def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
-        self.widget = inwidget
-        self.windows = inwindows
+        self.threadpool = QThreadPool()
 
-        button = self.basic_operation_btn
-        button.setCheckable(True)
-        button.clicked.connect(self.was_clicked)
+        # CyDAQ communication
+        self.wrapper = None
+        try:
+            self.wrapper = CLIWrapper.CLI()
+            self.connected = self.wrapper.ping() >= 0
+        except CLIWrapper.cyDAQNotConnectedException:  
+            self.connected = False
 
-    def was_clicked(self):
-        widget.setCurrentWidget(self.windows[1])
-        # self.w = BasicOperationWindow()
-        # self.w.show()
-        # self.close()
+        # Widgets
+        self.stack = QtWidgets.QStackedWidget(self)
+        self.verticalLayout.addWidget(self.stack)
+        self.widgets = []
+        self.widgets.append(ModeSelectorWidget(self))
+        self.widgets.append(BasicOperationModeWidget(self))
+        for widget in self.widgets:
+            self.stack.addWidget(widget)
+        self.stack.setCurrentIndex(0)
 
-    def cyDaqConnected(self):
-        """
-        What happens to the UI when the cyDaq changes to connected
-        """
-        pass
+        self.updateWidgetConnectionStatus()
 
-    def cyDaqDisconnected(self):
-        """
-        What happens to the UI when the cyDaq changes to disconnected
-        """
-        pass
+        # Ping the CyDAQ periodically to verify connection
+        self.pingTimerInterval = 1000
+        self.pingTimer = QTimer()
+        self.pingTimer.timeout.connect(self.pingCyDAQ)
+        self.startPingTimer()
 
+        self.show()
+    
+    def pingCyDAQ(self):
+        def setConnected(x):
+            before = self.connected
+            self.connected = x >= 0
+            if before != self.connected:
+                self.updateWidgetConnectionStatus()
 
-def validateInput(data):
-    wrong = {"Sample Rate": "",
-             "Upper Corner": "",
-             "Mid Corner": "",
-             "Lower Corner": ""}
+        def setConnectedError(a):
+            extype = a[0]
+            value = a[1]
+            traceback = a[2]
+            before = self.connected
+            if extype is CLIWrapper.cyDAQNotConnectedException:
+                self.connected = False
+                if before != self.connected:
+                    self.updateWidgetConnectionStatus()
+            else:
+                #Raise any other exceptions
+                raise extype(traceback)
+        
+        self.runInWorkerThread(
+            self.wrapper.ping,
+            result_func=setConnected,
+            error_func=setConnectedError
+        )
 
-    # Sample Rate
-    if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
-        wrong.update({"Sample Rate": "Field cannot be empty."})
-    elif int(data.get('Sample Rate').replace(',', '')) > 50000 or int(data.get('Sample Rate').replace(',', '')) < 100:
-        wrong.update({
-            "Sample Rate": f"{str(int(data.get('Sample Rate').replace(',', '')))} is an invalid input for the Sample "
-                           f"Rate! Must be 100 ≤ x ≤ 50000."})
-    else:
-        wrong.update({"Sample Rate": ""})
+    def updateWidgetConnectionStatus(self):
+        for widget in self.widgets:
+            if self.connected:
+                widget.cyDaqConnected()
+            else:
+                widget.cyDaqDisconnected()
 
-    filter_val = data.get("Filter")
-    filters = [
-        "All Pass",
-        "60 hz Notch",
-        "1st Order High Pass",
-        "1st Order Low Pass",
-        "6th Order High Pass",
-        "6th Order Low Pass",
-        "2nd Order Band Pass",
-        "6th Order Band Pass"
-    ]
-    # Mid Corner
-    if filter_val in filters[2: 6]:  # 1st and 6th Order High/Low Pass
-        if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
-            wrong.update({"Mid Corner": "Field cannot be empty."})
-        elif int(data.get('Mid Corner').replace(',', '')) > 40000 or int(data.get('Mid Corner').replace(',', '')) < 100:
-            wrong.update({
-                "Mid Corner": f"{str(int(data.get('Mid Corner').replace(',', '')))} is an invalid input "
-                              f"for the Mid Corner! Must be 100 ≤ x ≤ 40000."})
-        else:
-            wrong.update({"Mid Corner": ""})
+    def startPingTimer(self):
+        self.pingTimer.start(self.pingTimerInterval)
 
-    # Low Corner
-    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
-        if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
-            wrong.update({"Lower Corner": "Field cannot be empty."})
-        elif int(data.get('Lower Corner').replace(',', '')) > 20000 or int(
-                data.get('Lower Corner').replace(',', '')) < 100:
-            wrong.update({
-                "Lower Corner": f"{str(int(data.get('Lower Corner').replace(',', '')))} is an invalid "
-                                f"input for the Low Corner! Must be 100 ≤ x ≤ 20000."})
-        else:
-            wrong.update({"Lower Corner": ""})
+    def stopPingTimer(self):
+        self.pingTimer.stop()
 
-    # High Corner
-    if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
-        if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
-            wrong.update({"Upper Corner": "Field cannot be empty."})
-        elif int(data.get('Upper Corner').replace(',', '')) > 40000 or int(
-                data.get('Upper Corner').replace(',', '')) < 2000:
-            wrong.update({
-                "Upper Corner": f"{str(int(data.get('Upper Corner').replace(',', '')))} is an invalid "
-                                f"input for the Mid Corner! Must be 2000 ≤ x ≤ 40000."})
-        else:
-            wrong.update({"Upper Corner": ""})
+    def switchToModeSelector(self):
+        self.stack.setCurrentIndex(0)
+    
+    def switchToBasicOperation(self):
+        self.stack.setCurrentIndex(1)
 
-    return wrong
-
-
-class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
-
-    def __init__(self, inwidget, inwindows):
-        super(BasicOperationWindow, self).__init__()
+class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
+    """Starter widget that allows the user to switch between all other widgets"""
+    def __init__(self, mainWindow: MainWindow):
+        super(ModeSelectorWidget, self).__init__()
         self.setupUi(self)
 
-        self.widget = inwidget
-        self.windows = inwindows
+        self.mainWindow = mainWindow
+
+        # Share resources from main window
+        self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
+
+        basicOperationButton = self.basic_operation_btn
+        basicOperationButton.setCheckable(True)
+        basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
+    
+    def cyDaqConnected(self):
+        """When CyDAQ changes from disconnected to connected"""
+
+    def cyDaqDisconnected(self):
+        """When CyDAQ changes from connected to disconnected"""
+
+class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQModeWidget):
+    """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
+    def __init__(self, mainWindow: MainWindow):
+        super(BasicOperationModeWidget, self).__init__()
+        self.setupUi(self)
+        
+        self.mainWindow = mainWindow
+        
+        # Share resources from main window
+        self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
+
         self.sampling = False
         self.writing = False
         self.filename = None
 
         # Home Button
-        self.home_btn.clicked.connect(lambda: self.widget.setCurrentWidget(self.windows[0]))
+        self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -186,10 +239,9 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         self.high_corner_input.setValidator(onlyInt)
 
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(self.start_stop_sampling)  # TODO used for debug, remove!
+        self.start_stop_sampling_btn.clicked.connect(self.startStopSampling) 
 
         def onFilterChange():
-
             midCorner = [
                 self.mid_corner_label,
                 self.lessThan1,
@@ -236,27 +288,25 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
         onFilterChange()
 
     def cyDaqConnected(self):
-        """
-        What happens to the UI when the cyDaq changes to connected
-        """
+        """When CyDAQ changes from disconnected to connected"""
         self.connection_status_label.setText("Connected!")
 
     def cyDaqDisconnected(self):
-        """
-        What happens to the UI when the cyDaq changes to disconnected
-        """
+        """When CyDAQ changes from connected to disconnected"""
         self.connection_status_label.setText("Not Connected!")
 
     def writingData(self):
-        """
-        What happens to the UI when the cyDAQ is sending data to the frontend and it's writing it to a file.
-        """
+        """When the cyDAQ is sending data to the frontend and it's writing it to a file."""
+        self.writing = True
+        self.mainWindow.pingTimer.stop()
         self.start_stop_sampling_btn.setText("Writing...")
 
     def writingDataFinished(self):
-        """
-        What happens to the UI when the cyDAQ is finished writing data.
-        """
+        """When the cyDAQ is finished writing data."""
+        print("writing data finished")
+        self.filename = None # Causes an ask for filename every sample
+        self.writing = False
+        self.mainWindow.startPingTimer()
         self.start_stop_sampling_btn.setText("Start")
 
     def getData(self):
@@ -269,16 +319,24 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             "Lower Corner": self.low_corner_input.text() or 0,
         }
 
-    def start_stop_sampling(self):
+    def startStopSampling(self):
+        if not self.mainWindow.connected:
+            return
+
+        if self.writing:
+            return
+
         if not self.sampling:
             # start sampling
-            wrong = validateInput(self.getData())
-            self.update_wrongs(wrong)
-            for i in wrong.values():
-                if i != "":
-                    print("HANDLE ERRORS")
-                    print(wrong)
-                    return  # TODO Do something with the error messages for invalid inputs
+            wrong = self.validateInput()
+            self.updateWrongs(wrong)
+            s = ""
+            for title, message in wrong.items():
+                if message != "":
+                    s += title + ": " + message + "\n"
+            if s != "":
+                self.showInfo(s)
+                return
 
             if self.filename is None or self.filename.strip() == "":
                 # get file save location
@@ -290,33 +348,124 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
                 if self.filename.strip() == "": # no file chosen
                     return
 
-            print(self.getData())
-            wrapper.set_values(json.dumps(self.getData()))
-            wrapper.send_config_to_cydaq()
-            wrapper.start_sampling()
-            self.sampling = True
-            self.start_stop_sampling_btn.setText("Stop")
-            print("started sampling!")
+            def handleError(x):
+                self.startSamplingError = True
+                self.showError(x[2])
+
+            def step1():
+                if self.startSamplingError:
+                    return
+                self.runInWorkerThread(
+                    self.wrapper.send_config_to_cydaq, 
+                    finished_func=step2,
+                    error_func=handleError
+                )
+
+            def step2():
+                if self.startSamplingError:
+                    return
+                self.sampling = True
+                self.mainWindow.stopPingTimer()
+                self.runInWorkerThread(
+                    self.wrapper.start_sampling, 
+                    finished_func=step3,
+                    error_func=handleError
+                )
+            
+            def step3():
+                if self.startSamplingError:
+                    self.sampling = False
+                    self.filename = None
+                    return
+                self.start_stop_sampling_btn.setText("Stop")
+
+            self.startSamplingError = False
+
+            self.runInWorkerThread(
+                self.wrapper.set_values, 
+                func_args=json.dumps(self.getData()), 
+                finished_func=step1,
+                error_func=handleError
+            )
 
         else:
-            # if the start/stop button was clicked while writing
-            if self.writing:
-                return
-            self.writing = True
-
-            # stop sampling
-            self.writingData()
-            # added a wait here so the UI actually updates the "writing..." prompt before freezing
-            # this needs fixed in the future but makes sense for now
-            QtTest.QTest.qWait(100)  # type: ignore
-            wrapper.stop_sampling(self.filename)
-            self.writingDataFinished()
+            # Stop sampling
             self.sampling = False
-            self.writing = False
-            self.filename = None
-            print("stopped sampling!")
+            self.writingData()
+            self.runInWorkerThread(
+                self.wrapper.stop_sampling, 
+                func_args=self.filename,
+                finished_func=self.writingDataFinished, 
+                error_func=lambda x: self.showError(x)
+            )
 
-    def update_wrongs(self, wrong):
+    def validateInput(self):
+        """Validate configuration and populate a return dictionary with any error messages. An empty string means there is no error."""
+        data = self.getData()
+        wrong = {"Sample Rate": "",
+                "Upper Corner": "",
+                "Mid Corner": "",
+                "Lower Corner": ""}
+
+        # Sample Rate
+        if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
+            wrong.update({"Sample Rate": "Field cannot be empty."})
+        elif int(data.get('Sample Rate').replace(',', '')) > 50000 or int(data.get('Sample Rate').replace(',', '')) < 100:
+            wrong.update({
+                "Sample Rate": f"{str(int(data.get('Sample Rate').replace(',', '')))} is an invalid input for the Sample "
+                            f"Rate! Must be 100 ≤ x ≤ 50000."})
+        else:
+            wrong.update({"Sample Rate": ""})
+
+        filter_val = data.get("Filter")
+        filters = [
+            "All Pass",
+            "60 hz Notch",
+            "1st Order High Pass",
+            "1st Order Low Pass",
+            "6th Order High Pass",
+            "6th Order Low Pass",
+            "2nd Order Band Pass",
+            "6th Order Band Pass"
+        ]
+        # Mid Corner
+        if filter_val in filters[2: 6]:  # 1st and 6th Order High/Low Pass
+            if data.get('Mid Corner') is None or data.get('Mid Corner') == "":
+                wrong.update({"Mid Corner": "Field cannot be empty."})
+            elif int(data.get('Mid Corner').replace(',', '')) > 40000 or int(data.get('Mid Corner').replace(',', '')) < 100:
+                wrong.update({
+                    "Mid Corner": f"{str(int(data.get('Mid Corner').replace(',', '')))} is an invalid input "
+                                f"for the Mid Corner! Must be 100 ≤ x ≤ 40000."})
+            else:
+                wrong.update({"Mid Corner": ""})
+
+        # Low Corner
+        if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
+            if data.get('Lower Corner') is None or data.get('Lower Corner') == "":
+                wrong.update({"Lower Corner": "Field cannot be empty."})
+            elif int(data.get('Lower Corner').replace(',', '')) > 20000 or int(
+                    data.get('Lower Corner').replace(',', '')) < 100:
+                wrong.update({
+                    "Lower Corner": f"{str(int(data.get('Lower Corner').replace(',', '')))} is an invalid "
+                                    f"input for the Low Corner! Must be 100 ≤ x ≤ 20000."})
+            else:
+                wrong.update({"Lower Corner": ""})
+
+        # High Corner
+        if filter_val in filters[6:8]:  # 2nd and 6th Order Band Pass
+            if data.get('Upper Corner') is None or data.get('Upper Corner') == "":
+                wrong.update({"Upper Corner": "Field cannot be empty."})
+            elif int(data.get('Upper Corner').replace(',', '')) > 40000 or int(
+                    data.get('Upper Corner').replace(',', '')) < 2000:
+                wrong.update({
+                    "Upper Corner": f"{str(int(data.get('Upper Corner').replace(',', '')))} is an invalid "
+                                    f"input for the Mid Corner! Must be 2000 ≤ x ≤ 40000."})
+            else:
+                wrong.update({"Upper Corner": ""})
+
+        return wrong
+
+    def updateWrongs(self, wrong):
         wrong_dict = {
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
             "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
@@ -337,6 +486,60 @@ class BasicOperationWindow(QtWidgets.QMainWindow, Ui_basic_operation):
             else:
                 wrong_dict.get(i)()
 
+class WorkerSignals(QObject):
+    """
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+    finished: No data
+    error: tuple (exctype, value, traceback.format_exc() )
+    result: object data returned from processing, anything
+    progress: int indicating % progress
+    """
+    finished = pyqtSignal()
+    error = pyqtSignal(tuple)
+    result = pyqtSignal(object)
+    progress = pyqtSignal(int)
+
+class Worker(QRunnable):
+    """
+    A worker thread that handles execution of a function with optional arguments.
+
+    Emits a WorkerSignal based on the execution of the function. 
+    """
+
+    def __init__(self, fn, args, **kwargs):
+        super(Worker, self).__init__()
+        # print("__init__: ", "args: ", args, " kwargs: ", kwargs)
+
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+        # Add the callback to our kwargs
+        self.kwargs['progress_callback'] = self.signals.progress
+
+    @pyqtSlot()
+    def run(self):
+        """Initialise the runner function with passed args, kwargs."""
+        
+        # Retrieve args/kwargs here; and fire processing using them
+        # print("fn: ", self.fn, " args: ", self.args, " kwargs: ", self.kwargs)
+        try:
+            if self.args is None:
+                result = self.fn(**self.kwargs)
+            else:
+                result = self.fn(self.args, **self.kwargs) # Run the function
+        except:
+            # traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)  # Return the result of the processing
+        finally:
+            self.signals.finished.emit()  # Done
 
 # TODO this will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
@@ -387,8 +590,8 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
                                                       options=options)
             if fileName:
                 self.input_file_name.setText(fileName)
-                global generationFilename
-                generationFilename = fileName
+                # global generationFilename
+                # generationFilename = fileName
 
         self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
         self.repetitions_min_limit_btn.clicked.connect(
@@ -412,126 +615,22 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         pass
 
     def getData(self):
-        global generationFilename
-        if generationFilename is None or generationFilename == "":
-            generationFilename = self.input_file_name.text()
-        allData.update({
-            "Dac Mode": self.dac_mode_dropdown.currentText(),
-            "Dac Reps": self.repetitions_input.text(),
-            "Dac Generation Rate": self.gen_rate_input.text()
-        })
-        return allData
-
+        pass
+        # global generationFilename
+        # if generationFilename is None or generationFilename == "":
+        #     generationFilename = self.input_file_name.text()
+        # allData.update({
+        #     "Dac Mode": self.dac_mode_dropdown.currentText(),
+        #     "Dac Reps": self.repetitions_input.text(),
+        #     "Dac Generation Rate": self.gen_rate_input.text()
+        # })
+        # return allData
 
 class InvalidInputException(IOError):
     pass
 
-
-class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
-        self._timer = None
-        self.interval = interval
-        self.function = function
-        self.args = args
-        self.kwargs = kwargs
-        self.is_running = False
-        self.start()
-
-    def _run(self):
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
-
-    def start(self):
-        if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.start()
-            self.is_running = True
-
-    def stop(self):
-        if self._timer is not None:
-            self._timer.cancel()
-        self.is_running = False
-
-
-def updateWindowsConnected(windows, connectedBool):
-    for window in windows:
-        if connectedBool:
-            window.cyDaqConnected()
-        else:
-            window.cyDaqDisconnected()
-
-
-def createNewWrapper(windows):
-    print("createNewWrapper")
-    wrapper = None
-    try:
-        wrapper = CLIWrapper.CLI("../cli/main.py")
-        ping = wrapper.ping()
-        print("create wrapper ping: ", ping)
-        cyDaqConnected = (ping >= 0)
-        updateWindowsConnected(windows, cyDaqConnected)
-    except CLIWrapper.cyDAQNotConnectedException:
-        cyDaqConnected = False
-        if wrapper is not None:
-            wrapper.closeConnection()
-            return None
-        updateWindowsConnected(windows, cyDaqConnected)
-    return wrapper
-
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    widget = QtWidgets.QStackedWidget()
-    rt = None
-    try:
-        windows = []
-        windows += [
-            MainWindow(widget, windows),
-            BasicOperationWindow(widget, windows)
-        ]
+    main = MainWindow()
+    sys.exit(app.exec_())
 
-        # global
-        wrapper = createNewWrapper(windows)  # type: ignore
-
-
-        def timerHandler():
-            global cyDaqConnected
-            global wrapper
-            print("wrapper: ", wrapper)
-            if wrapper is None:
-                wrapper = createNewWrapper(windows)  # type: ignore
-                return
-            try:
-                ping = wrapper.ping()
-            except CLIWrapper.cyDAQNotConnectedException:
-                # cyDAQ must have disconnected, we will need a new wrapper instance
-                cyDaqConnected = False
-                updateWindowsConnected(windows, cyDaqConnected)
-                wrapper.closeConnection()
-                del wrapper
-                wrapper = None  # type: ignore
-                return
-            before = cyDaqConnected
-            cyDaqConnected = (ping >= 0)
-            if before != cyDaqConnected:
-                updateWindowsConnected(windows, cyDaqConnected)
-            print(cyDaqConnected, ": ", ping)
-
-
-        # Uncomment to enable periodic checking of connection. Currently throws some weird errors when turning the
-        # cyDAQ on and off. Still working on it... 
-        # rt = RepeatedTimer(PING_TIMER_DELAY_SECONDS, timerHandler)
-
-        for window in windows:
-            widget.addWidget(window)
-
-        # set current widget to MainWindow
-        widget.setCurrentWidget(windows[0])
-        widget.show()
-
-        app.exec()
-    finally:
-        if rt is not None:
-            rt.stop()
-        # sys.exit()
