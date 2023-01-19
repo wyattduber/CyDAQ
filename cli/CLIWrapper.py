@@ -4,6 +4,7 @@ from pexpect import popen_spawn
 from waiting import wait
 import json
 import re
+from sys import platform
 
 import pexpect
 
@@ -29,7 +30,13 @@ class CLI:
         self.NOT_CONNECTED = "Zybo not connected"
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
-        self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = "python " + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
+        pythonCmd = "python " # Default for windows
+        if platform == "linux":
+            pythonCmd = "python3 "
+        elif platform == "darwin":
+            pythonCmd = "python3 "
+
+        self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
 
         self.connectionEnabled = True
 

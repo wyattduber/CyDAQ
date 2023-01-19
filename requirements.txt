@@ -4,5 +4,5 @@ pylint
 pyserial
 scipy
 pexpect
-PyQt5
+# PyQt5 # was having install issues with this one
 waiting
