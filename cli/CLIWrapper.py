@@ -36,16 +36,22 @@ class CLI:
         elif platform == "darwin":
             pythonCmd = "python3 "
 
+        dirname = f"\"{os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME)}\""
+
         try:
-            self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
-        except Exception as e:
-            print("Error with popen: ")
+            self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + dirname)
+        except Exception as _:
+            print("1 Error with popen: ")
             print(self.p.before)
 
         self.connectionEnabled = True
 
         # Wait for cli to start up. It will NOT be in wrapper mode yet
-        self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
+        try:
+            self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
+        except Exception as _:
+            print("2 Error with popen: ")
+            print(self.p.before)
 
         # If the CyDAQ is not connected at this point the CLI will immedately say so
         try:
@@ -56,7 +62,7 @@ class CLI:
 
         # Wait for command input
         self.p.expect(self.INPUT_CHAR, timeout=5)
-        
+
         self.running_command = False
 
         # Set CLI to wrapper mode. After this, all commands must be parsed in the new mode unless it's specifially toggled off
@@ -78,9 +84,9 @@ class CLI:
             print("OSError in wrapper _send_command for command: ", command)
             self.running_command = False
             raise cyDAQNotConnectedException
-        
+
         # Wait for response
-        try: 
+        try:
             self.p.expect(self.INPUT_CHAR)
         except pexpect.exceptions.EOF:
             raise CLICloseException(self.p.before)
@@ -89,7 +95,7 @@ class CLI:
         finally:
             self.running_command = False
         response = self.p.before
-        
+
         # Parse response
         if response is None:
             raise CLINoResponseException
@@ -196,7 +202,7 @@ class CLI:
         if fileName is None:
             self._send_command("stop")
         else:
-            self._send_command("stop, " + fileName) 
+            self._send_command("stop, " + fileName)
 
     def flush(self, **_):
         """Flushes the current values in the cydaq"""
@@ -228,7 +234,7 @@ class CLICloseException(Exception):
 class CLITimeoutException(Exception):
     """Thrown when the CLI doesn't write to output in TIMEOUT time"""
     def __init__(self):
-        self.message = "CLI didn't write to output in " + str(TIMEOUT) + " seconds." 
+        self.message = "CLI didn't write to output in " + str(TIMEOUT) + " seconds."
 
 class CLIUnknownLogLevelException(Exception):
     pass

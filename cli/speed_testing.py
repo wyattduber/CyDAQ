@@ -45,7 +45,7 @@ class TestTransferSpeeds(unittest.TestCase):
         minutes = (millis / (1000 * 60)) % 60
         minutes = int(minutes)
 
-        print(f"\nTest {type}:")
+        print(f"\n{type} second test:")
         print("\tData Transfer took approximately: %d:%d" % (minutes, seconds))
         print(f"\tLines Generated: {lines}")
         print("\tLines Transferred per Second: " + "{:,}".format(round(lines / (millis / 1000))) + "\n")
