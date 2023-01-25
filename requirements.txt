@@ -4,5 +4,6 @@ pylint
 pyserial
 scipy
 pexpect
+pandas
 # PyQt5 # was having install issues with this one
 waiting

@@ -1,50 +1,51 @@
 import CLIWrapper
 import unittest
 import time
+import pandas
 
 cli = CLIWrapper.CLI()
+
 
 class TestTransferSpeeds(unittest.TestCase):
 
     # 5 Second Sample Rate Test
-    def five_seconds(self):
-        result = sample(5)
-        fancy_date(result)
+    def test_five_seconds(self):
+        result = self.sample(5)
+        self.fancy_data(result, len(pandas.read_csv("5.csv")), 5)
         self.assertTrue(result > 0)
-
 
     # 10 Second Sample Rate Test
-    def ten_seconds(self):
-        result = sample(5)
-        fancy_date(result)
+    def test_ten_seconds(self):
+        result = self.sample(10)
+        self.fancy_data(result, len(pandas.read_csv("10.csv")), 10)
         self.assertTrue(result > 0)
 
-    
     # 30 Second Sample Rate Test
-    def thirty_seconds(self):
-        result = sample(5)
-        fancy_date(result)
+    def test_thirty_seconds(self):
+        result = self.sample(30)
+        self.fancy_data(result, len(pandas.read_csv("30.csv")), 30)
         self.assertTrue(result > 0)
 
-    
     def sample(self, length):
         cli.start_sampling()
         time.sleep(length)
-        start = current_time_millis()
-        cli.stop_sampling()
-        stop = current_time_millis()
-        return (stop - start)
-        
+        start = self.current_time_millis()
+        cli.stop_sampling(f"{length}.csv")
+        stop = self.current_time_millis()
+        return stop - start
 
-    def current_time_millis(self):
+    @staticmethod
+    def current_time_millis():
         return round(time.time() * 1000)
 
-
-    def fancy_date(self, millis):
+    @staticmethod
+    def fancy_data(millis, lines, type):
         seconds = (millis / 1000) % 60
         seconds = int(seconds)
         minutes = (millis / (1000 * 60)) % 60
         minutes = int(minutes)
-        hours = (millis / (1000 * 60 * 60)) % 24
 
-        print("Data Transfer took approximately: %d:%d:%d" % (hours, minutes, seconds))
+        print(f"\nTest {type}:")
+        print("\tData Transfer took approximately: %d:%d" % (minutes, seconds))
+        print(f"\tLines Generated: {lines}")
+        print("\tLines Transferred per Second: " + "{:,}".format(round(lines / (millis / 1000))) + "\n")
