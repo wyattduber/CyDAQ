@@ -36,7 +36,11 @@ class CLI:
         elif platform == "darwin":
             pythonCmd = "python3 "
 
-        self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
+        try:
+            self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
+        except Exception as e:
+            print("Error with popen: ")
+            print(self.p.before)
 
         self.connectionEnabled = True
 
