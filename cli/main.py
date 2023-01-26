@@ -292,6 +292,7 @@ class CyDAQ_CLI:
 			
 			comm_obj.close()
 			self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+			f.close()
 
 	def _construct(self):
 		pc = ParameterConstructor()
