@@ -36,7 +36,9 @@ class CLI:
         elif platform == "darwin":
             pythonCmd = "python3 "
 
-        self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME))
+        dirname = f"\"{os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME)}\""
+
+        self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + dirname)
 
         self.connectionEnabled = True
 

@@ -3,11 +3,10 @@ import unittest
 
 cli = CLIWrapper.CLI()
 
-
 class TestCLIWrapper(unittest.TestCase):
 
     # Ping Test
-    def test_pint(self):
+    def test_ping(self):
         # print(cli.ping())
         ping = cli.ping()
         self.assertTrue(ping < 50000 or ping > 1)

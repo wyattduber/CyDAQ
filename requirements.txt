@@ -5,4 +5,5 @@ pyserial
 scipy
 pexpect
 # PyQt5 # was having install issues with this one
+pyqtgraph
 waiting
