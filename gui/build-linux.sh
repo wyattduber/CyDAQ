@@ -9,4 +9,4 @@ pyuic5 qtdesigner/ModeSelectorWidget.ui -o ModeSelectorWidget.py
 
 pyrcc5 qtdesigner/main_window.qrc -o main_window_rc.py
 pyrcc5 qtdesigner/basic_operation.qrc -o basic_operation_rc.py
-pyrcc5 qtdesigner/balance_beam.qrc -o balance_beam_rc_py
+pyrcc5 qtdesigner/balance_beam.qrc -o balance_beam_rc.py

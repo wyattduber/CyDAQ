@@ -1,11 +1,9 @@
 import json
 import sys
-from threading import Timer
 import traceback
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
-from PyQt5 import QtTest
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -27,7 +25,7 @@ import CLIWrapper
 PING_TIMER_DELAY_SECONDS = 1
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-class CyDAQModeWidget():
+class CyDAQModeWidget:
     """Parent class for all widgets. Holds methods they will all use."""
 
     def runInWorkerThread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None, finished_func=None, error_func=None):
@@ -519,16 +517,16 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
         self.wrapper = mainWindow.wrapper
 
         # Home Button
-        self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
+        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
 
         # Widget Buttons
-        self.send_constants_btn.clicked.connect(lambda: self.sendConstants)
-        self.send_set_point_btn.clicked.connect(lambda: self.sendSetPoint)
-        self.save_step_btn.clicked.connect(lambda: self.saveStep)
-        self.save_plot_data_btn.clicked.connect(lambda: self.savePlotData)
-        self.offset_inc_btn.clicked.connect(lambda: self.offsetInc)
-        self.offset_dec_btn.clicked.connect(lambda: self.offsetDec)
-        self.pause_btn.clicked.connect(lambda: self.pause)
+        self.send_constants_btn.clicked.connect(self.sendConstants)
+        self.send_set_point_btn.clicked.connect(self.sendSetPoint)
+        self.save_step_btn.clicked.connect(self.saveStep)
+        self.save_plot_data_btn.clicked.connect(self.savePlotData)
+        self.offset_inc_btn.clicked.connect(self.writeData)
+        self.offset_dec_btn.clicked.connect(self.readData)
+        self.pause_btn.clicked.connect(self.pause)
 
 
     # CyDAQ Connection Label (disabled until re-layout)
@@ -581,7 +579,21 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
     def pause(self):
         pass
 
-        
+
+    def writeData(self):
+        self.runInWorkerThread(
+            self.wrapper.writeALotOfData,
+            finished_func=lambda: print("Success!"),
+            error_func=lambda x: self.showError(x)
+        )
+
+    def readData(self):
+        self.runInWorkerThread(
+            self.wrapper.readALotOfData,
+            finished_func=lambda: print("Success"),
+            error_func=lambda x: self.showError(x)
+        )
+
 
 class WorkerSignals(QObject):
     """

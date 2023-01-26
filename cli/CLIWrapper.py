@@ -5,6 +5,9 @@ from waiting import wait
 import json
 import re
 from sys import platform
+import csv
+import time
+import pandas
 
 import pexpect
 
@@ -211,6 +214,39 @@ class CLI:
     def generate(self, **_):
         """Start/Stop DAC Generation"""
         self._send_command("generate")
+
+    def writeALotOfData(self, **_):
+        print("Writing Data for 20 Seconds....")
+        start = round(time.time() * 1000)
+        with open('lotsOfData.csv', 'w', encoding='utf-8') as file:
+            header = [ 'Times' ]
+            writer = csv.DictWriter(file, fieldnames=header)
+            writer.writeheader()
+            curr = round(time.time() * 1000)
+            while curr - start < 20:
+                writer.writerows([ { 'Times': f'{time.time()}' } ])
+                curr = round(time.time() * 1000)
+            file.close()
+        print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
+        print("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
+
+
+    def readALotOfData(self, **_):
+        start = round(time.time())
+        with open('lotsOfData.csv', newline='') as csvfile:
+            csvFile = pandas.read_csv('lotsOfData.csv')
+            file = csv.DictReader(csvfile)
+            for i in file:
+                print(i['Times'])
+            stop = round(time.time())
+            csvfile.close()
+        print("Time Taken: " + str(round(stop - start)))
+        print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
+        print("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
+
+
+
+
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""
