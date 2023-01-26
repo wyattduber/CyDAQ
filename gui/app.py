@@ -101,6 +101,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.widgets = []
         self.widgets.append(ModeSelectorWidget(self))
         self.widgets.append(BasicOperationModeWidget(self))
+        self.widgets.append(BalanceBeamWidget(self))
         for widget in self.widgets:
             self.stack.addWidget(widget)
         self.stack.setCurrentIndex(0)
@@ -531,14 +532,16 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
 
 
     # CyDAQ Connection Label (disabled until re-layout)
-    # def cyDaqConnected(self):
-        # """When CyDAQ changes from disconnected to connected"""
-        # self.connection_status_label.setText("Connected!")
+    def cyDaqConnected(self):
+        """When CyDAQ changes from disconnected to connected"""
+        #self.connection_status_label.setText("Connected!")
+        pass
 
 
-    # def cyDaqDisconnected(self):
-        # """When CyDAQ changes from connected to disconnected"""
-        # self.connection_status_label.setText("Not Connected!")
+    def cyDaqDisconnected(self):
+        """When CyDAQ changes from connected to disconnected"""
+        #self.connection_status_label.setText("Not Connected!")
+        pass
 
 
     # Send in the user-defined constants
