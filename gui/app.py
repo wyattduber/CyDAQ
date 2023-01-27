@@ -1,6 +1,7 @@
 import json
 import sys
 import traceback
+import time
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
@@ -12,6 +13,7 @@ import pyqtgraph as pg
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
 from BalanceBeam import Ui_balance_beam
+from LiveStream import Ui_live_stream
 from DacModeWidget import Ui_DAC_mode_widget
 from ModeSelectorWidget import Ui_ModeSelectorWidget
 
@@ -100,6 +102,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.widgets.append(ModeSelectorWidget(self))
         self.widgets.append(BasicOperationModeWidget(self))
         self.widgets.append(BalanceBeamWidget(self))
+        self.widgets.append(LiveStreamWidget(self))
         for widget in self.widgets:
             self.stack.addWidget(widget)
         self.stack.setCurrentIndex(0)
@@ -162,6 +165,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToBalanceBeam(self):
         self.stack.setCurrentIndex(2)
 
+    def switchToLiveStream(self):
+        self.stack.setCurrentIndex(3)
+
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Starter widget that allows the user to switch between all other widgets"""
     def __init__(self, mainWindow: MainWindow):
@@ -181,6 +187,10 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         balanceBeamButton = self.balance_beam_btn
         balanceBeamButton.setCheckable(True)
         balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
+
+        liveStreamButton = self.livestream_btn
+        liveStreamButton.setCheckable(True)
+        liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream())
     
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
@@ -593,6 +603,62 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
             finished_func=lambda: print("Success"),
             error_func=lambda x: self.showError(x)
         )
+
+
+class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
+
+    def __init__(self, mainWindow: MainWindow):
+        super(LiveStreamWidget, self).__init__()
+        self.setupUi(self)
+
+        self.mainWindow = mainWindow
+
+        # Share resources from main window
+        self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
+
+        # Home Button
+        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+
+        # Widget Buttons
+        self.start_btn.clicked.connect(self.start)
+        self.stop_btn.clicked.connect(self.stop)
+
+        # CyDAQ Connection Label (disabled until re-layout)
+    def cyDaqConnected(self):
+        """When CyDAQ changes from disconnected to connected"""
+        #self.connection_status_label.setText("Connected!")
+        pass
+
+
+    def cyDaqDisconnected(self):
+        """When CyDAQ changes from connected to disconnected"""
+        #self.connection_status_label.setText("Not Connected!")
+        pass
+
+    def start(self):
+        if self.infile_line.text() is None or "":
+            print("A filename is needed!")
+            return
+        filename = self.infile_line.text()
+        with open(filename, 'r') as file:
+            self.graphWidget = pg.PlotWidget()
+            self.setCentralWidget(self.graphWidget)
+
+
+            hour = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+            temperature = [ 30, 32, 34, 32, 33, 31, 29, 32, 35, 45 ]
+
+            self.graphWidget.setBackground('w')
+            self.graphWidget.plot(hour, temperature)
+
+            time.sleep(5)
+
+            file.close()
+            
+        
+    def stop(self):
+        print("Stopped!")
 
 
 class WorkerSignals(QObject):

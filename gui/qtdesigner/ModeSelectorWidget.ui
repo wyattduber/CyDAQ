@@ -152,7 +152,7 @@ QPushButton {
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QPushButton" name="config_btn">
+    <widget class="QPushButton" name="livestream_btn">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -166,7 +166,7 @@ QPushButton {
       </size>
      </property>
      <property name="text">
-      <string>Config</string>
+      <string>Live Stream</string>
      </property>
     </widget>
    </item>

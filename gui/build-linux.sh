@@ -2,6 +2,7 @@
 
 pyuic5 qtdesigner/BasicOperation.ui -o BasicOperation.py
 pyuic5 qtdesigner/BalanceBeam.ui -o BalanceBeam.py
+pyuic5 qtdesigner/LiveStream.ui -o LiveStream.py
 pyuic5 qtdesigner/MainWindow.ui -o MainWindow.py 
 pyuic5 qtdesigner/DacModeWidget.ui -o DacModeWidget.py
 pyuic5 qtdesigner/SamplingGenerationStart.ui -o SamplingGenerationStart.py
