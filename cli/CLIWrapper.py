@@ -18,6 +18,7 @@ CLI_MAIN_FILE_NAME = "main.py"
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
 TIMEOUT = 120
 
+
 class CLI:
     """
     A class that handles communication with the cyDAQ. Uses the library pexpect to initialize and communicate with
@@ -33,7 +34,7 @@ class CLI:
         self.NOT_CONNECTED = "Zybo not connected"
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
-        pythonCmd = "python " # Default for windows
+        pythonCmd = "python "  # Default for windows
         if platform == "linux":
             pythonCmd = "python3 "
         elif platform == "darwin":
@@ -42,7 +43,7 @@ class CLI:
         dirname = f"\"{os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME)}\""
 
         try:
-            self.p = popen_spawn.PopenSpawn(timeout = TIMEOUT, cmd = pythonCmd + dirname)
+            self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
         except Exception as _:
             print("1 Error with popen: ")
             print(self.p.before)
@@ -217,24 +218,24 @@ class CLI:
 
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")
-        start = round(time.time() * 1000)
+        start = round(time.time())
         with open('lotsOfData.csv', 'w', encoding='utf-8') as file:
-            header = [ 'Times' ]
+            header = ['Times']
             writer = csv.DictWriter(file, fieldnames=header)
             writer.writeheader()
-            curr = round(time.time() * 1000)
+            curr = round(time.time())
             while curr - start < 20:
-                writer.writerows([ { 'Times': f'{time.time()}' } ])
-                curr = round(time.time() * 1000)
+                writer.writerows([{'Times': f'{time.time()}'}])
+                curr = round(time.time())
             file.close()
         print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
         print("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
-
 
     def readALotOfData(self, **_):
         start = round(time.time())
         with open('lotsOfData.csv', newline='') as csvfile:
             csvFile = pandas.read_csv('lotsOfData.csv')
+            print("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
             file = csv.DictReader(csvfile)
             for i in file:
                 print(i['Times'])
@@ -245,32 +246,37 @@ class CLI:
         print("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
 
 
-
-
-
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
+
 class CLINoResponseException(Exception):
     pass
+
 
 class cyDAQNotConnectedException(Exception):
     def __init__(self):
         super().__init__()
 
+
 class CLICloseException(Exception):
     """Thrown when the CLI closes unexpectedly. The last message sent to the output should be included in this error. """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
+
 class CLITimeoutException(Exception):
     """Thrown when the CLI doesn't write to output in TIMEOUT time"""
+
     def __init__(self):
         self.message = "CLI didn't write to output in " + str(TIMEOUT) + " seconds."
+
 
 class CLIUnknownLogLevelException(Exception):
     pass
