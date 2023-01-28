@@ -592,7 +592,7 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
 
     def writeData(self):
         self.runInWorkerThread(
-            self.wrapper.writeALotOfData,
+            self.wrapper.writeALotOfDataV2,
             finished_func=lambda: print("Success!"),
             error_func=lambda x: self.showError(x)
         )

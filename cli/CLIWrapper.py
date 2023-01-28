@@ -1,5 +1,4 @@
 import os
-import signal
 from pexpect import popen_spawn
 from waiting import wait
 import json
@@ -230,6 +229,19 @@ class CLI:
             file.close()
         print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
         print("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
+
+    def writeALotOfDataV2(self, **_):
+        start = time.time()
+        data = "junk data\n".encode()
+        with open('lotsOfData.csv','wb',100*(2**20)) as f:
+            for _ in range(1,100000000):
+                # f.write("{}\n".format(time.time()).encode()) # this takes longer because time.time() and encode() use lots of cpu
+                f.write(data)
+        delta = time.time() - start
+        numLines = len(pandas.read_csv('lotsOfData.csv'))
+        print("Total Lines: " + "{:,}".format(numLines))
+        print("Time to write: ", delta)
+        print("Lines per second: {:,}".format(round(numLines/delta)))
 
     def readALotOfData(self, **_):
         start = round(time.time())
