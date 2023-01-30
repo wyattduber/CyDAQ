@@ -243,14 +243,14 @@ class CLI:
         print("Time to write: ", delta)
         print("Lines per second: {:,}".format(round(numLines/delta)))
 
-    def readALotOfData(self, **_):
-        start = round(time.time())
+    def readALotOfData(self, label, **_):
         with open('lotsOfData.csv', newline='') as csvfile:
             csvFile = pandas.read_csv('lotsOfData.csv')
             print("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
-            file = csv.DictReader(csvfile)
+            start = round(time.time())
+            file = csv.reader(csvfile)
             for i in file:
-                print(i['Times'])
+                label.setText(str(i))
             stop = round(time.time())
             csvfile.close()
         print("Time Taken: " + str(round(stop - start)))

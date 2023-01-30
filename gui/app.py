@@ -8,7 +8,16 @@ from PyQt5.QtGui import QIntValidator
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+
 import pyqtgraph as pg
+import random
+from pglive.kwargs import Axis
+from pglive.sources.data_connector import DataConnector
+from pglive.sources.live_axis import LiveAxis
+from pglive.sources.live_plot import LiveLinePlot
+from pglive.sources.live_plot_widget import LivePlotWidget
+from threading import Thread
+from typing import Union
 
 from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
@@ -600,16 +609,56 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
     def readData(self):
         self.runInWorkerThread(
             self.wrapper.readALotOfData,
+            func_args=self.graph_label,
             finished_func=lambda: print("Success"),
             error_func=lambda x: self.showError(x)
         )
 
 
 class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
+    running = False
+    in_thread = False
 
-    def __init__(self, mainWindow: MainWindow):
+    def __init__(self, mainWindow: MainWindow, parent=None):
         super(LiveStreamWidget, self).__init__()
         self.setupUi(self)
+
+        #super().__init__(parent)
+
+        layout = QGridLayout(self)
+        self.low_sample: Union[float, None] = 0
+        self.high_sample: Union[float, None] = 1
+
+        # Create one curve pre dataset
+        high_plot = LiveLinePlot(pen="blue")
+        low_plot = LiveLinePlot(pen="orange")
+        mid_plot = LiveLinePlot(pen="green")
+
+        # Data Connectors for each plot with dequeue of 600 points
+        self.high_connector = DataConnector(high_plot, max_points=600)
+        self.low_connector = DataConnector(low_plot, max_points=600)
+        self.mid_connector = DataConnector(mid_plot, max_points=600)
+
+        # Setup bottom axis with TIME tick format
+        bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
+
+        # Create plot itself
+        self.chart_view = LivePlotWidget(title="Line Plot - CyDAQ Data Sample", axisItems={'bottom': bottom_axis})
+
+        # Show grid
+        self.chart_view.showGrid(x=True, y=True, alpha=0.3)
+
+        # Set labels
+        self.chart_view.setLabel('bottom', 'Time (s)', units="s")
+        self.chart_view.setLabel('left', 'Samples')
+
+        # Add all three curves
+        self.chart_view.addItem(mid_plot)
+        self.chart_view.addItem(low_plot)
+        self.chart_view.addItem(high_plot)
+
+        # Using -1 to span through all rows available in the window
+        layout.addWidget(self.chart_view, 2, 0, -1, 3)
 
         self.mainWindow = mainWindow
 
@@ -621,7 +670,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
 
         # Widget Buttons
-        self.start_btn.clicked.connect(self.start)
+        self.start_btn.clicked.connect(self.start_app)
         self.stop_btn.clicked.connect(self.stop)
 
         # CyDAQ Connection Label (disabled until re-layout)
@@ -636,26 +685,51 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         # self.connection_status_label.setText("Not Connected!")
         pass
 
-    def start(self):
-        if self.infile_line.text() is None or "":
-            print("A filename is needed!")
+#    def start(self):
+#        if self.infile_line.text() is None or "":
+#            print("A filename is needed!")
+#            return
+#        filename = self.infile_line.text()
+#        with open(filename, 'r') as file:
+#            self.graphWidget = pg.PlotWidget()
+#            self.setCentralWidget(self.graphWidget)
+#
+#            hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+#            temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+#
+#            self.graphWidget.setBackground('w')
+#            self.graphWidget.plot(hour, temperature)
+#
+#            time.sleep(5)
+#
+#           file.close()
+
+    def update(self):
+
+        print("Started!")
+        if self.in_thread is True:
+            self.running = True
             return
-        filename = self.infile_line.text()
-        with open(filename, 'r') as file:
-            self.graphWidget = pg.PlotWidget()
-            self.setCentralWidget(self.graphWidget)
 
-            hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+        start = time.time()
+        while self.running:
+            timestamp = round(time.time() - start)
 
-            self.graphWidget.setBackground('w')
-            self.graphWidget.plot(hour, temperature)
+            mid_px = random.random()
 
-            time.sleep(5)
+            self.mid_connector.cb_append_data_point(mid_px, timestamp)
+            self.low_connector.cb_append_data_point(self.low_sample, timestamp)
+            self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
-            file.close()
+            print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+            time.sleep(0.5)
+
+    def start_app(self):
+        self.running = True
+        Thread(target=self.update).start()
 
     def stop(self):
+        self.running = False
         print("Stopped!")
 
 

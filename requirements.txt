@@ -5,6 +5,7 @@ pyserial
 scipy
 pexpect
 pandas
+pglive
 # PyQt5 # was having install issues with this one
 pyqtgraph
 waiting
