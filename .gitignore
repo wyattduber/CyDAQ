@@ -3,3 +3,8 @@
 *.pyc
 *.csv
 cli/__pycache__
+
+# These directories are created when compile.sh is run
+build
+dist
+app.spec
