@@ -55,6 +55,14 @@ QTDesigner was used to create most of the layout/styling. The official documenta
 
 Our additional documentation can be found [here](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/GUI).
 
+## Build 
+To build an executable, run the following
+
+```bash
+bash compile.sh
+```
+
+The .exe should be located under the newly created ```dist/app/app.exe```
 
 ## Install
 ```bash
