@@ -9,6 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+import csv
 import pyqtgraph as pg
 import random
 from pglive.kwargs import Axis
@@ -28,6 +29,7 @@ from ModeSelectorWidget import Ui_ModeSelectorWidget
 
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
+sys.path.append("../cli")
 sys.path.insert(0, "./cli")
 import CLIWrapper
 
@@ -617,16 +619,85 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
 class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     running = False
     in_thread = False
+    window = None
 
-    def __init__(self, mainWindow: MainWindow, parent=None):
+    def __init__(self, mainWindow: MainWindow):
         super(LiveStreamWidget, self).__init__()
         self.setupUi(self)
 
-        #super().__init__(parent)
+        self.mainWindow = mainWindow
+
+        # Share resources from main window
+        self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
+
+        # Home Button
+        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+
+        self.window = LiveStreamGraph()
+        self.window.show()
+
+        # Widget Buttons
+        self.start_btn.clicked.connect(self.start_graph)
+        self.stop_btn.clicked.connect(self.stop)
+
+        # CyDAQ Connection Label (disabled until re-layout)
+
+    def cyDaqConnected(self):
+        """When CyDAQ changes from disconnected to connected"""
+        # self.connection_status_label.setText("Connected!")
+        pass
+
+    def cyDaqDisconnected(self):
+        """When CyDAQ changes from connected to disconnected"""
+        # self.connection_status_label.setText("Not Connected!")
+        pass
+
+
+    def start_graph(self):
+
+        if self.infile_line.text() is None or "":
+            print("An input filename is needed!")
+            return
+
+        if self.outfile_line.text() is None or "":
+            print("An output filename is needed!")
+            return
+
+        self.window.start_app(self.infile_line.text())
+        #window.running = False
+
+    def start(self):
+        filename = self.infile_line.text()
+        with open(filename, 'r') as file:
+            self.graphWidget = pg.PlotWidget()
+            self.setCentralWidget(self.graphWidget)
+
+            hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+
+            self.graphWidget.setBackground('w')
+            self.graphWidget.plot(hour, temperature)
+
+            time.sleep(5)
+
+            file.close()
+
+    def stop(self):
+        self.window.stop()
+
+
+class LiveStreamGraph(QWidget):
+    running = False
+    in_thread = False
+    filename = ""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         layout = QGridLayout(self)
         self.low_sample: Union[float, None] = 0
-        self.high_sample: Union[float, None] = 1
+        self.high_sample: Union[float, None] = 10
 
         # Create one curve pre dataset
         high_plot = LiveLinePlot(pen="blue")
@@ -648,7 +719,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.chart_view.showGrid(x=True, y=True, alpha=0.3)
 
         # Set labels
-        self.chart_view.setLabel('bottom', 'Time (s)', units="s")
+        self.chart_view.setLabel('bottom', 'Time', units="s")
         self.chart_view.setLabel('left', 'Samples')
 
         # Add all three curves
@@ -659,72 +730,31 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         # Using -1 to span through all rows available in the window
         layout.addWidget(self.chart_view, 2, 0, -1, 3)
 
-        self.mainWindow = mainWindow
-
-        # Share resources from main window
-        self.threadpool = self.mainWindow.threadpool
-        self.wrapper = mainWindow.wrapper
-
-        # Home Button
-        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
-
-        # Widget Buttons
-        self.start_btn.clicked.connect(self.start_app)
-        self.stop_btn.clicked.connect(self.stop)
-
-        # CyDAQ Connection Label (disabled until re-layout)
-
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        # self.connection_status_label.setText("Connected!")
-        pass
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        # self.connection_status_label.setText("Not Connected!")
-        pass
-
-#    def start(self):
-#        if self.infile_line.text() is None or "":
-#            print("A filename is needed!")
-#            return
-#        filename = self.infile_line.text()
-#        with open(filename, 'r') as file:
-#            self.graphWidget = pg.PlotWidget()
-#            self.setCentralWidget(self.graphWidget)
-#
-#            hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-#            temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
-#
-#            self.graphWidget.setBackground('w')
-#            self.graphWidget.plot(hour, temperature)
-#
-#            time.sleep(5)
-#
-#           file.close()
-
     def update(self):
 
-        print("Started!")
         if self.in_thread is True:
             self.running = True
             return
 
-        start = time.time()
-        while self.running:
-            timestamp = round(time.time() - start)
+        print("Started!")
 
-            mid_px = random.random()
+        with open(self.filename, 'r') as file:
+            csvreader = csv.reader(file)
+            for row in csvreader:
 
-            self.mid_connector.cb_append_data_point(mid_px, timestamp)
-            self.low_connector.cb_append_data_point(self.low_sample, timestamp)
-            self.high_connector.cb_append_data_point(self.high_sample, timestamp)
+                timestamp = float(row[0])
+                mid_px = float(row[1])
 
-            print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-            time.sleep(0.5)
+                self.mid_connector.cb_append_data_point(mid_px, timestamp)
+                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
+                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
-    def start_app(self):
+                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep(0.1)
+
+    def start_app(self, filename):
         self.running = True
+        self.filename = filename
         Thread(target=self.update).start()
 
     def stop(self):
