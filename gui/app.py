@@ -10,8 +10,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import csv
-import pyqtgraph as pg
-import random
 from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis import LiveAxis
@@ -29,8 +27,7 @@ from ModeSelectorWidget import Ui_ModeSelectorWidget
 
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
-sys.path.append("../cli")
-sys.path.insert(0, "./cli")
+sys.path.insert(0, "../cli")
 import CLIWrapper
 
 # Constants
@@ -41,7 +38,7 @@ DEFAULT_SAVE_LOCATION = "U:\\"
 class CyDAQModeWidget:
     """Parent class for all widgets. Holds methods they will all use."""
 
-    def runInWorkerThread(self, func, func_args=None, func_kwargs={}, result_func=None, progress_func=None,
+    def runInWorkerThread(self, func, func_args=None, func_kwargs=None, result_func=None, progress_func=None,
                           finished_func=None, error_func=None):
         """
         Run a function with optional args and kwargs in a seperate thread. The calling class must have self.threadpool created already. 
@@ -62,6 +59,8 @@ class CyDAQModeWidget:
             error_func=None
         )
         """
+        if func_kwargs is None:
+            func_kwargs = {}
         worker = Worker(func, func_args, **func_kwargs)
         if result_func is not None:
             worker.signals.result.connect(result_func)
@@ -181,6 +180,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToLiveStream(self):
         self.stack.setCurrentIndex(3)
+        LiveStreamWidget.show_window(LiveStreamWidget)
 
 
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
@@ -634,9 +634,6 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         # Home Button
         self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
 
-        self.window = LiveStreamGraph()
-        self.window.show()
-
         # Widget Buttons
         self.start_btn.clicked.connect(self.start_graph)
         self.stop_btn.clicked.connect(self.stop)
@@ -654,6 +651,16 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         pass
 
 
+    @staticmethod
+    def show_window(self):
+
+        if self.window is None:
+            self.window = LiveStreamGraph()
+            self.window.show()
+        else:
+            self.window.show()
+
+
     def start_graph(self):
 
         if self.infile_line.text() is None or "":
@@ -666,22 +673,6 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
         self.window.start_app(self.infile_line.text())
         #window.running = False
-
-    def start(self):
-        filename = self.infile_line.text()
-        with open(filename, 'r') as file:
-            self.graphWidget = pg.PlotWidget()
-            self.setCentralWidget(self.graphWidget)
-
-            hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
-
-            self.graphWidget.setBackground('w')
-            self.graphWidget.plot(hour, temperature)
-
-            time.sleep(5)
-
-            file.close()
 
     def stop(self):
         self.window.stop()
@@ -728,7 +719,7 @@ class LiveStreamGraph(QWidget):
         self.chart_view.addItem(high_plot)
 
         # Using -1 to span through all rows available in the window
-        layout.addWidget(self.chart_view, 2, 0, -1, 3)
+        layout.addWidget(self.chart_view)
 
     def update(self):
 
@@ -819,7 +810,7 @@ class Worker(QRunnable):
             self.signals.finished.emit()  # Done
 
 
-# TODO this will get used later
+# TODO This will get used later
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
