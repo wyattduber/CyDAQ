@@ -27,7 +27,10 @@ from ModeSelectorWidget import Ui_ModeSelectorWidget
 
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
-sys.path.insert(0, "../cli")
+if sys.platform == "linux":
+    sys.path.insert(0, "../cli")
+else:
+    sys.path.insert(0, "./cli")
 import CLIWrapper
 
 # Constants
@@ -656,6 +659,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
         if self.window is None:
             self.window = LiveStreamGraph()
+            self.window.setWindowTitle("CyDAQ Live Plotting Graph")
             self.window.show()
         else:
             self.window.show()

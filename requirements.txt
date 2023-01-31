@@ -6,6 +6,7 @@ scipy
 pexpect
 pandas
 pglive
-# PyQt5 # was having install issues with this one
+PyQt5 # was having install issues with this one, tentatively reenabled
 pyqtgraph
 waiting
+PyInstaller
