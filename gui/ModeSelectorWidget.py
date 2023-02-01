@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ModeSelectorWidget(object):
     def setupUi(self, ModeSelectorWidget):
         ModeSelectorWidget.setObjectName("ModeSelectorWidget")
-        ModeSelectorWidget.resize(389, 545)
+        ModeSelectorWidget.resize(389, 727)
         ModeSelectorWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 20px;\n"
@@ -77,6 +77,10 @@ class Ui_ModeSelectorWidget(object):
         self.external_adc_btn.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.external_adc_btn.setObjectName("external_adc_btn")
         self.verticalLayout.addWidget(self.external_adc_btn, 0, QtCore.Qt.AlignHCenter)
+        self.debug_btn = QtWidgets.QPushButton(ModeSelectorWidget)
+        self.debug_btn.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.debug_btn.setObjectName("debug_btn")
+        self.verticalLayout.addWidget(self.debug_btn)
 
         self.retranslateUi(ModeSelectorWidget)
         QtCore.QMetaObject.connectSlotsByName(ModeSelectorWidget)
@@ -89,4 +93,5 @@ class Ui_ModeSelectorWidget(object):
         self.balance_beam_btn.setText(_translate("ModeSelectorWidget", "Balance Beam"))
         self.livestream_btn.setText(_translate("ModeSelectorWidget", "Live Stream"))
         self.external_adc_btn.setText(_translate("ModeSelectorWidget", "External ADC"))
+        self.debug_btn.setText(_translate("ModeSelectorWidget", "Debug"))
 import main_window_rc

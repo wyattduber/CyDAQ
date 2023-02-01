@@ -22,6 +22,7 @@ from MainWindow import Ui_MainWindow
 from BasicOperation import Ui_basic_operation
 from BalanceBeam import Ui_balance_beam
 from LiveStream import Ui_live_stream
+from Debug import Ui_debug
 from DacModeWidget import Ui_DAC_mode_widget
 from ModeSelectorWidget import Ui_ModeSelectorWidget
 
@@ -116,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.widgets.append(BasicOperationModeWidget(self))
         self.widgets.append(BalanceBeamWidget(self))
         self.widgets.append(LiveStreamWidget(self))
+        self.widgets.append(DebugWidget(self))
         for widget in self.widgets:
             self.stack.addWidget(widget)
         self.stack.setCurrentIndex(0)
@@ -182,6 +184,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(3)
         LiveStreamWidget.show_window(LiveStreamWidget)
 
+    def switchToDebug(self):
+        self.stack.setCurrentIndex(4)
+
 
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Starter widget that allows the user to switch between all other widgets"""
@@ -207,6 +212,10 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         liveStreamButton = self.livestream_btn
         liveStreamButton.setCheckable(True)
         liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream())
+
+        debugButton = self.debug_btn
+        debugButton.setCheckable(True)
+        debugButton.clicked.connect(lambda: self.mainWindow.switchToDebug())
 
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
@@ -554,8 +563,8 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
         self.save_plot_data_btn.clicked.connect(self.savePlotData)
-        self.offset_inc_btn.clicked.connect(self.writeData)
-        self.offset_dec_btn.clicked.connect(self.readData)
+        self.offset_inc_btn.clicked.connect(self.offsetInc)
+        self.offset_dec_btn.clicked.connect(self.offsetDec)
         self.pause_btn.clicked.connect(self.pause)
 
     # CyDAQ Connection Label (disabled until re-layout)
@@ -600,21 +609,6 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
     def pause(self):
         pass
 
-    def writeData(self):
-        self.runInWorkerThread(
-            self.wrapper.writeALotOfDataV2,
-            finished_func=lambda: print("Success!"),
-            error_func=lambda x: self.showError(x)
-        )
-
-    def readData(self):
-        self.runInWorkerThread(
-            self.wrapper.readALotOfData,
-            func_args=self.graph_label,
-            finished_func=lambda: print("Success"),
-            error_func=lambda x: self.showError(x)
-        )
-
 
 class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     running = False
@@ -638,8 +632,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.start_btn.clicked.connect(self.start_graph)
         self.clear_btn.clicked.connect(self.clear)
 
-        # CyDAQ Connection Label (disabled until re-layout)
 
+    # CyDAQ Connection Label
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
         self.connection_status_label.setText("Connected!")
@@ -789,6 +783,58 @@ class LiveStreamGraph(QWidget):
         self.chart_view.addItem(self.high_plot)
 
 
+class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
+
+    def __init__(self, mainWindow: MainWindow):
+        super(DebugWidget, self).__init__()
+        self.setupUi(self)
+
+        self.mainWindow = mainWindow
+
+        # Share resources from main window
+        self.threadpool = self.mainWindow.threadpool
+        self.wrapper = mainWindow.wrapper
+
+        # Home Button
+        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+
+        # Widget Buttons
+        self.write_btn.clicked.connect(self.writeData)
+        self.write2_btn.clicked.connect(self.writeDataV2)
+        self.read_btn.clicked.connect(self.readData)
+
+
+    # CyDAQ Connection Label
+    def cyDaqConnected(self):
+        """When CyDAQ changes from disconnected to connected"""
+        self.connection_status_label.setText("Connected!")
+        pass
+
+    def cyDaqDisconnected(self):
+        """When CyDAQ changes from connected to disconnected"""
+        self.connection_status_label.setText("Not Connected!")
+        pass
+
+    def writeData(self):
+        self.runInWorkerThread(
+            self.wrapper.writeALotOfData,
+            finished_func=lambda: print("Success!"),
+            error_func=lambda x: self.showError(x)
+        )
+
+    def writeDataV2(self):
+        self.runInWorkerThread(
+            self.wrapper.writeALotOfDataV2,
+            finished_func=lambda: print("Success!"),
+            error_func=lambda x: self.showError(x)
+        )
+
+    def readData(self):
+        self.runInWorkerThread(
+            self.wrapper.readALotOfData,
+            finished_func=lambda: print("Success"),
+            error_func=lambda x: self.showError(x)
+        )
 
 
 class WorkerSignals(QObject):
