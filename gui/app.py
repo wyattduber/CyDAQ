@@ -636,18 +636,18 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
         # Widget Buttons
         self.start_btn.clicked.connect(self.start_graph)
-        self.stop_btn.clicked.connect(self.stop)
+        self.clear_btn.clicked.connect(self.clear)
 
         # CyDAQ Connection Label (disabled until re-layout)
 
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
-        # self.connection_status_label.setText("Connected!")
+        self.connection_status_label.setText("Connected!")
         pass
 
     def cyDaqDisconnected(self):
         """When CyDAQ changes from connected to disconnected"""
-        # self.connection_status_label.setText("Not Connected!")
+        self.connection_status_label.setText("Not Connected!")
         pass
 
     @staticmethod
@@ -661,15 +661,17 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
     def start_graph(self):
 
-        if self.infile_line.text() is None or "":
-            print("An input filename is needed!")
+        if self.infile_line.text() is None or '':
+            self.filename_wl.setText("Missing Filename!")
             return
 
-        if self.outfile_line.text() is None or "":
-            print("An output filename is needed!")
+        if self.speed_line.text() is None or '' or float(self.speed_line.text()) < 0 or float(self.speed_line.text()) > 100:
+            self.speed_wl.setText("Speed: 0 < x < 100")
             return
 
-        self.window.start_app(self.infile_line.text())
+        self.filename_wl.setText("")
+        self.speed_wl.setText("")
+        self.window.start_app(self.infile_line.text(), float(self.speed_line.text()))
         # window.running = False
 
     def stop(self):
@@ -684,27 +686,29 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.mainWindow.switchToModeSelector()
 
 
+    def clear(self):
+        self.window.clear()
+
+
 class LiveStreamGraph(QWidget):
     running = False
     in_thread = False
     filename = ""
+    speed = 0.1
+    chart_view = None
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.mid_connector = None
+        self.low_connector = None
+        self.high_connector = None
+        self.low_plot = None
+        self.high_plot = None
+        self.mid_plot = None
         layout = QGridLayout(self)
         self.low_sample: Union[float, None] = -10
         self.high_sample: Union[float, None] = 10
-
-        # Create one curve pre dataset
-        high_plot = LiveLinePlot(pen="blue")
-        low_plot = LiveLinePlot(pen="orange")
-        mid_plot = LiveLinePlot(pen="green")
-
-        # Data Connectors for each plot with dequeue of 600 points
-        self.high_connector = DataConnector(high_plot, max_points=600)
-        self.low_connector = DataConnector(low_plot, max_points=600)
-        self.mid_connector = DataConnector(mid_plot, max_points=600)
 
         # Setup bottom axis with TIME tick format
         bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
@@ -712,17 +716,15 @@ class LiveStreamGraph(QWidget):
         # Create plot itself
         self.chart_view = LivePlotWidget(title="Line Plot - CyDAQ Data Sample", axisItems={'bottom': bottom_axis})
 
+        # Create one curve per dataset & add them to the view
+        self.gen_plots()
+
         # Show grid
         self.chart_view.showGrid(x=True, y=True, alpha=0.3)
 
         # Set labels
         self.chart_view.setLabel('bottom', 'Time', units="s")
         self.chart_view.setLabel('left', 'Samples')
-
-        # Add all three curves
-        self.chart_view.addItem(mid_plot)
-        self.chart_view.addItem(low_plot)
-        self.chart_view.addItem(high_plot)
 
         # Using -1 to span through all rows available in the window
         layout.addWidget(self.chart_view)
@@ -749,12 +751,44 @@ class LiveStreamGraph(QWidget):
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep(0.1)
+                time.sleep(self.speed)
 
-    def start_app(self, filename):
+    def start_app(self, filename, speed):
         self.running = True
         self.filename = filename
+        self.speed = speed
         Thread(target=self.update).start()
+
+
+    def clear(self):
+        # Delete the plot lines from the graph
+        self.chart_view.removeItem(self.mid_plot)
+        self.chart_view.removeItem(self.low_plot)
+        self.chart_view.removeItem(self.high_plot)
+
+        # Nullify them so they lose their data
+        self.mid_plot = None
+        self.low_plot = None
+        self.high_plot = None
+
+        # Re-create them and re-add them to the graph
+        self.gen_plots()
+
+
+    def gen_plots(self):
+        self.mid_plot = LiveLinePlot(pen="green")
+        self.low_plot = LiveLinePlot(pen="orange")
+        self.high_plot = LiveLinePlot(pen="blue")
+
+        self.high_connector = DataConnector(self.high_plot, max_points=600)
+        self.low_connector = DataConnector(self.low_plot, max_points=600)
+        self.mid_connector = DataConnector(self.mid_plot, max_points=600)
+
+        self.chart_view.addItem(self.mid_plot)
+        self.chart_view.addItem(self.low_plot)
+        self.chart_view.addItem(self.high_plot)
+
+
 
 
 class WorkerSignals(QObject):
