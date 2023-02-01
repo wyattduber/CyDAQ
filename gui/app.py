@@ -27,10 +27,7 @@ from ModeSelectorWidget import Ui_ModeSelectorWidget
 
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
-if sys.platform == "linux":
-    sys.path.insert(0, "../cli")
-else:
-    sys.path.insert(0, "./cli")
+sys.path.insert(0, "../cli")
 import CLIWrapper
 
 # Constants
@@ -635,7 +632,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.wrapper = mainWindow.wrapper
 
         # Home Button
-        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+        self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons
         self.start_btn.clicked.connect(self.start_graph)
@@ -653,17 +650,14 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         # self.connection_status_label.setText("Not Connected!")
         pass
 
-
     @staticmethod
     def show_window(self):
-
         if self.window is None:
             self.window = LiveStreamGraph()
             self.window.setWindowTitle("CyDAQ Live Plotting Graph")
             self.window.show()
         else:
             self.window.show()
-
 
     def start_graph(self):
 
@@ -676,10 +670,18 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             return
 
         self.window.start_app(self.infile_line.text())
-        #window.running = False
+        # window.running = False
 
     def stop(self):
-        self.window.stop()
+        self.window.running = False
+        self.window.in_thread = False
+        self.window.clearMask()
+        self.window.clearFocus()
+        self.window.close()
+
+    def home(self):
+        self.stop()
+        self.mainWindow.switchToModeSelector()
 
 
 class LiveStreamGraph(QWidget):
@@ -691,7 +693,7 @@ class LiveStreamGraph(QWidget):
         super().__init__(parent)
 
         layout = QGridLayout(self)
-        self.low_sample: Union[float, None] = 0
+        self.low_sample: Union[float, None] = -10
         self.high_sample: Union[float, None] = 10
 
         # Create one curve pre dataset
@@ -736,6 +738,8 @@ class LiveStreamGraph(QWidget):
         with open(self.filename, 'r') as file:
             csvreader = csv.reader(file)
             for row in csvreader:
+                if self.running is False:
+                    return
 
                 timestamp = float(row[0])
                 mid_px = float(row[1])
@@ -751,10 +755,6 @@ class LiveStreamGraph(QWidget):
         self.running = True
         self.filename = filename
         Thread(target=self.update).start()
-
-    def stop(self):
-        self.running = False
-        print("Stopped!")
 
 
 class WorkerSignals(QObject):
