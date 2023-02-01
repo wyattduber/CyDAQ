@@ -29,6 +29,7 @@ from ModeSelectorWidget import Ui_ModeSelectorWidget
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
 sys.path.insert(0, "../cli")
+sys.path.insert(0, "./cli")
 import CLIWrapper
 
 # Constants
