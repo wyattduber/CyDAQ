@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>live_stream</class>
- <widget class="QMainWindow" name="live_stream">
+ <class>debug</class>
+ <widget class="QMainWindow" name="debug">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -129,24 +129,10 @@ QPushButton {
          <number>1</number>
         </property>
         <property name="text">
-         <string>Live Streaming Tool</string>
+         <string>Debug Menu</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="start_btn">
-        <property name="text">
-         <string>Start</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="clear_btn">
-        <property name="text">
-         <string>Clear Graph</string>
         </property>
        </widget>
       </item>
@@ -154,56 +140,24 @@ QPushButton {
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="infile_line"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Graphing Speed:</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QPushButton" name="write_btn">
         <property name="text">
-         <string>Input Filename:</string>
+         <string>Write Speed Test</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="speed_line"/>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="filename_wl">
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>-1</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="read_btn">
         <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <string>Read Speed Test</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="speed_wl">
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>-1</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="write2_btn">
         <property name="text">
-         <string/>
+         <string>Write Speed Test 2</string>
         </property>
        </widget>
       </item>

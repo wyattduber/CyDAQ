@@ -151,7 +151,7 @@ int main()
 
 	while(1){
 		//testing
-		xil_printf("ARM1: cmd = %d, payload = %d, flag = %d, mode = %d, intrpt = %d\r\n", cmdShare, payloadShare, flagShare, modeShare, intrptShare);
+		//xil_printf("ARM1: cmd = %d, payload = %d, flag = %d, mode = %d, intrpt = %d\r\n", cmdShare, payloadShare, flagShare, modeShare, intrptShare);
 		if(flagShare & 0x10){
 //			xil_printf("ARM1: Start streaming... \n\r");
 			Status = XAxiDma_SimpleTransfer(&AxiDma,(UINTPTR)endPtr,MAX_PKT_LEN, XAXIDMA_DEVICE_TO_DMA);

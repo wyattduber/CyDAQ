@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>389</width>
-    <height>545</height>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -186,6 +186,19 @@ QPushButton {
      </property>
      <property name="text">
       <string>External ADC</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="debug_btn">
+     <property name="maximumSize">
+      <size>
+       <width>120</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Debug</string>
      </property>
     </widget>
    </item>

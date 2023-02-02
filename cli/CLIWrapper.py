@@ -250,7 +250,7 @@ class CLI:
             start = round(time.time())
             file = csv.reader(csvfile)
             for i in file:
-                label.setText(str(i))
+                print(str(i))
             stop = round(time.time())
             csvfile.close()
         print("Time Taken: " + str(round(stop - start)))
