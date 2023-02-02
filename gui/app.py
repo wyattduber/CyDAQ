@@ -656,15 +656,18 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
     def start_graph(self):
 
-        if self.infile_line.text() is None or '':
-            self.filename_wl.setText("Missing Filename!")
+        if self.window.running is True:
             return
 
-        if self.speed_line.text() is None or '' or float(self.speed_line.text()) < 0 or float(self.speed_line.text()) > 100:
+        if self.infile_line.text() == "":
+            self.filename_wl.setText("Missing Filename!")
+            return
+        self.filename_wl.setText("")
+
+        if self.speed_line.text() == '' or float(self.speed_line.text()) < 0 or float(self.speed_line.text()) > 100:
             self.speed_wl.setText("Speed: 0 < x < 100")
             return
 
-        self.filename_wl.setText("")
         self.speed_wl.setText("")
         self.window.start_app(self.infile_line.text(), float(self.speed_line.text()))
         # window.running = False

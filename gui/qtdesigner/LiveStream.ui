@@ -119,10 +119,6 @@ QPushButton {
          <font>
           <family>Segoe UI</family>
           <pointsize>-1</pointsize>
-          <weight>75</weight>
-          <italic>true</italic>
-          <bold>true</bold>
-          <underline>true</underline>
          </font>
         </property>
         <property name="lineWidth">
@@ -180,15 +176,13 @@ QPushButton {
          <font>
           <family>Segoe UI</family>
           <pointsize>-1</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
          </font>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -198,8 +192,6 @@ QPushButton {
          <font>
           <family>Segoe UI</family>
           <pointsize>-1</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
          </font>
         </property>
         <property name="text">
