@@ -14,6 +14,7 @@ from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis import LiveAxis
 from pglive.sources.live_plot import LiveLinePlot
+from pglive.sources.live_plot import LiveScatterPlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 from threading import Thread
 from typing import Union
@@ -632,6 +633,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         # Widget Buttons
         self.start_btn.clicked.connect(self.start_graph)
         self.clear_btn.clicked.connect(self.clear)
+        self.pause_btn.clicked.connect(self.pause)
 
 
     # CyDAQ Connection Label
@@ -669,18 +671,22 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             return
 
         self.speed_wl.setText("")
-        self.window.start_app(self.infile_line.text(), float(self.speed_line.text()))
+        self.window.start_app(self.infile_line.text(), float(self.speed_line.text()), self.graph_type_dropdown.currentText())
         # window.running = False
 
-    def stop(self):
+    def pause(self):
+        if self.window.pause is True:
+            self.window.pause = False
+        else:
+            self.window.pause = True
+
+
+    def home(self):
         self.window.running = False
         self.window.in_thread = False
         self.window.clearMask()
         self.window.clearFocus()
         self.window.close()
-
-    def home(self):
-        self.stop()
         self.mainWindow.switchToModeSelector()
 
 
@@ -694,6 +700,8 @@ class LiveStreamGraph(QWidget):
     filename = ""
     speed = 0.1
     chart_view = None
+    pause = False
+    plotType = ""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -715,7 +723,7 @@ class LiveStreamGraph(QWidget):
         self.chart_view = LivePlotWidget(title="Line Plot - CyDAQ Data Sample", axisItems={'bottom': bottom_axis})
 
         # Create one curve per dataset & add them to the view
-        self.gen_plots()
+        # self.gen_plots()
 
         # Show grid
         self.chart_view.showGrid(x=True, y=True, alpha=0.3)
@@ -729,13 +737,14 @@ class LiveStreamGraph(QWidget):
 
     def update(self):
 
-        if self.in_thread is True:
-            self.running = True
-            return
-
         print("Started!")
 
         with open(self.filename, 'r') as file:
+
+            # If paused, just spin in a loop and do nothing until un-paused
+            while self.pause is True:
+                pass
+
             csvreader = csv.reader(file)
             for row in csvreader:
                 if self.running is False:
@@ -751,10 +760,12 @@ class LiveStreamGraph(QWidget):
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
                 time.sleep(self.speed)
 
-    def start_app(self, filename, speed):
+    def start_app(self, filename, speed, plotType):
         self.running = True
         self.filename = filename
         self.speed = speed
+        self.plotType = plotType
+        self.gen_plots()
         Thread(target=self.update).start()
 
 
@@ -774,9 +785,16 @@ class LiveStreamGraph(QWidget):
 
 
     def gen_plots(self):
-        self.mid_plot = LiveLinePlot(pen="green")
-        self.low_plot = LiveLinePlot(pen="orange")
-        self.high_plot = LiveLinePlot(pen="blue")
+
+        # Determine plotter type
+        if self.plotType == "Line":
+            self.mid_plot = LiveLinePlot(pen="green")
+            self.low_plot = LiveLinePlot(pen="orange")
+            self.high_plot = LiveLinePlot(pen="blue")
+        elif self.plotType == "Scatter":
+            self.mid_plot = LiveScatterPlot(pen="green")
+            self.low_plot = LiveScatterPlot(pen="orange")
+            self.high_plot = LiveScatterPlot(pen="blue")
 
         self.high_connector = DataConnector(self.high_plot, max_points=600)
         self.low_connector = DataConnector(self.low_plot, max_points=600)

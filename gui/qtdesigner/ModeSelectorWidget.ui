@@ -166,7 +166,7 @@ QPushButton {
       </size>
      </property>
      <property name="text">
-      <string>Live Stream</string>
+      <string>Plotter</string>
      </property>
     </widget>
    </item>

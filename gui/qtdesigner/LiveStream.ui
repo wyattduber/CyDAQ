@@ -125,7 +125,7 @@ QPushButton {
          <number>1</number>
         </property>
         <property name="text">
-         <string>Live Streaming Tool</string>
+         <string>Plotting Tool</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -136,6 +136,13 @@ QPushButton {
        <widget class="QPushButton" name="start_btn">
         <property name="text">
          <string>Start</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pause_btn">
+        <property name="text">
+         <string>Pause</string>
         </property>
        </widget>
       </item>
@@ -197,6 +204,20 @@ QPushButton {
         <property name="text">
          <string/>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="graph_type_dropdown">
+        <item>
+         <property name="text">
+          <string>Scatter</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Line</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

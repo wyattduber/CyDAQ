@@ -91,7 +91,7 @@ class Ui_ModeSelectorWidget(object):
         self.select_mode_header.setText(_translate("ModeSelectorWidget", "Select Mode"))
         self.basic_operation_btn.setText(_translate("ModeSelectorWidget", "Basic Operation"))
         self.balance_beam_btn.setText(_translate("ModeSelectorWidget", "Balance Beam"))
-        self.livestream_btn.setText(_translate("ModeSelectorWidget", "Live Stream"))
+        self.livestream_btn.setText(_translate("ModeSelectorWidget", "Plotter"))
         self.external_adc_btn.setText(_translate("ModeSelectorWidget", "External ADC"))
         self.debug_btn.setText(_translate("ModeSelectorWidget", "Debug"))
 import main_window_rc
