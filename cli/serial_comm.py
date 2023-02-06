@@ -39,6 +39,10 @@ class ctrl_comm:
                     elif res == b'@\x04!': # stop sampling
                         os.write(port, b'@')
                         os.write(port, b'\x02\x02'*10_000_000)
+
+                        # current CyDAQ firmware throws an @ACK in here.. not needed....
+                        os.write(port, b'@ACK') 
+
                         os.write(port, b'!') 
                     #TODO implement other commands that need to be mocked here
                     else:
@@ -256,6 +260,9 @@ class ctrl_comm:
     def read_all(self):
         #TODO add error handling
         return self.__s_comm.read_all()
+
+    def read(self):
+        return self.__s_comm.read(1)
 
     def __throw_exception(self, text):
         """

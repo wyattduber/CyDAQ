@@ -284,7 +284,7 @@ class CyDAQ_CLI:
 			outFile = self._generateFilename()
 		writeFunction = self._writeCSV
 		f = None
-		with open(outFile, "wb") as f:
+		with open(outFile, "w") as f:
 			self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
 			self.cmd_obj.send_fetch()
 
@@ -293,12 +293,40 @@ class CyDAQ_CLI:
 			comm_obj = self.cmd_obj.ctrl_comm_obj
 			comm_obj.open(self.cmd_obj.port)
 
+			#wait for an @, which signals start of data
+			byte = b""
+			while byte != b"@":
+				# print("not @ yet. Was: ", byte)
+				byte = comm_obj.read()
+		
+			print("loop exited: byte was: ", byte)
+
 			# read all from the buffer, writing it to file
-			res = b""
+			res = bytearray(b"")
 			count = 0
 			while not res.endswith(b"!"):
-				res = comm_obj.read_all()
-				f.write(res)
+				res.extend(comm_obj.read_all())
+				# print(res)
+				if len(res) < 2:
+					continue
+				# if count == 0:
+				# 	print("start res: ", res, " len res: ", len(res))
+				while len(res) >= 2:
+					# print("Bytes: ", res[i:i+2])
+					#grab next two bytes and convert to an int
+					# print(res[0:2])
+					if res[0:2] == b'@A' or res[0:2] == b'CK':
+						res.pop(0)
+						res.pop(0)
+						continue
+					raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
+					writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time*period)
+					res.pop(0)
+					res.pop(0)
+					time+=1
+				# if count == 0:
+				# 	print("start res after write: ", res)
+
 				count+=1
 			print("count: ", count)
 			# # read the data one byte at a time and write to file
