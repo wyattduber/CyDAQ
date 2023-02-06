@@ -1,3 +1,5 @@
+import os
+import threading
 import serial
 import serial.tools.list_ports
 
@@ -5,12 +7,56 @@ class ctrl_comm:
     """
        This class creates an abstraction for a connection to a device over
        a Serial connection.
-
        """
 
-    def __init__(self):
+    def __init__(self, mock_mode=False):
         # print("ctrl_comm init")
+        self.mock_mode = mock_mode
         self._init_comm()
+
+        if self.mock_mode:
+            print("ctrl_comm init with mock enabled")
+            import pty # TODO check if this import works and give useful message if not
+            master,slave = pty.openpty() #open the pseudoterminal
+            self.__s_comm.port = os.ttyname(slave) #translate the slave fd to a filename
+            self._mock_thread_running = True
+
+            # TODO move this to class method so it's cleaner
+            def listener(port):
+                print("---LISTENER STARTED on port: {}---".format(port))
+                while self._mock_thread_running:
+                    res = b""
+                    while not res.endswith(b"!"):
+                        res += os.read(port, 1)
+                    print("Command recieved: ", res) 
+
+                    if res == b'stop!':
+                        break
+                    if res == b'@\x08\x08!': # start sampling
+                        os.write(port, b'@')
+                        os.write(port, b'ACK') 
+                        os.write(port, b'!') 
+                    elif res == b'@\x04!': # stop sampling
+                        os.write(port, b'@')
+                        os.write(port, b'\x02\x02'*10_000_000)
+                        os.write(port, b'!') 
+                    #TODO implement other commands that need to be mocked here
+                    else:
+                        print("Unknown command sent to mock CyDAQ serial connection! Command: ", res)
+                        os.write(port, b'@')
+                        os.write(port, b'ERR')
+                        os.write(port, b'!')
+
+            #create a separate thread that listens on the master device for commands
+            thread = threading.Thread(target=listener, args=[master])
+            self.mock_thread = thread
+            thread.start()
+
+    def __del__(self):
+        print("__del__ called!")
+        if self.mock_mode:
+            self._mock_thread_running = False
+            self.mock_thread.join()
 
     def _init_comm(self):
         self.__s_comm = serial.Serial()
@@ -47,6 +93,9 @@ class ctrl_comm:
     ****CHANGE: Only the COM port that says 'USB Serial Port' (this is what the zybo
                 shows up as) will appear
         """
+        if self.mock_mode:
+            # Mock mode should already have the port set
+            return self.__s_comm.port
 
         all_ports = serial.tools.list_ports.comports()
         open_ports = []
@@ -203,6 +252,10 @@ class ctrl_comm:
             return int.from_bytes(buffer, byteorder=self.__order, signed=False)
         else:
             return False
+
+    def read_all(self):
+        #TODO add error handling
+        return self.__s_comm.read_all()
 
     def __throw_exception(self, text):
         """

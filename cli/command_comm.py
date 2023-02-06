@@ -5,9 +5,9 @@ import time as t
 
 class cmd:
 
-    def __init__(self):
-        # print("cmd init")
-        self.ctrl_comm_obj = ctrl_comm()
+    def __init__(self, mock_mode=False):
+        print("cmd init")
+        self.ctrl_comm_obj = ctrl_comm(mock_mode=mock_mode)
         self.port = self.ctrl_comm_obj.get_port()
 
     def refresh_port(self):

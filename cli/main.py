@@ -2,7 +2,10 @@ from copy import deepcopy
 import datetime
 import os
 import json
+import threading
 import time
+
+import serial
 from check_params import ParameterConstructor
 
 from command_comm import cmd
@@ -38,6 +41,7 @@ class CyDAQ_CLI:
 
 		self.config = self.default_config.copy()
 		self.wrapper_mode = False
+		self.mock_mode = False
 
 	def start(self):
 		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
@@ -98,14 +102,28 @@ class CyDAQ_CLI:
 				else:
 					self._print_to_output("Invalid syntax. Ex: wrapper, enable/disable")
 				continue
+			elif command[0] == 'mock':
+				if len(command) == 2:
+					if command[1] == 'enable' or command[1] == 'e':
+						if self.mock_mode:
+							continue
+						self.mock_mode = True
+						self.cmd_obj = cmd(self.mock_mode)
+						continue
+					elif command[1] == 'disable' or command[1] == 'd':
+						if not self.mock_mode:
+							continue
+						self.mock_mode = False
+						self.cmd_obj = cmd(self.mock_mode)						
+						continue
+				self._print_to_output("Invalid syntax. Ex: mock, enable")
+				continue
 
 			# Now need to check if connection is still active before any of the next commands can run
 			if not self._is_cydaq_connected():
 				self._print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
 				# Try to establish connection again
-				# cmd_obj = cmd()
-				self.cmd_obj.ctrl_comm_obj._init_comm()
-				self.cmd_obj.refresh_port()
+				self.cmd_obj = cmd(self.mock_mode)
 				continue
 
 			# Next check for commands that require direct connection to CyDAQ. 
@@ -266,31 +284,42 @@ class CyDAQ_CLI:
 			outFile = self._generateFilename()
 		writeFunction = self._writeCSV
 		f = None
-		with open(outFile, "w") as f:
+		with open(outFile, "wb") as f:
 			self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
 			self.cmd_obj.send_fetch()
 
 			# open a new connection to get data
-			comm_obj = ctrl_comm()
+			# comm_obj = ctrl_comm(self.mock_mode)
+			comm_obj = self.cmd_obj.ctrl_comm_obj
 			comm_obj.open(self.cmd_obj.port)
 
-			# read the data one byte at a time and write to file
-			byte = comm_obj.read_byte()
-			if byte != False and byte == sig_serial.START_BYTE.value:
-				byte_value = 0
-				while byte_value != ord(sig_serial.END_BYTE.value):
-					try:
-						byte_value = comm_obj.read_uint16()
-					except:
-						break
-					if byte_value != ord(sig_serial.END_BYTE.value):
-						volts = self._adc_raw_to_volts(byte_value)
-						if volts > 12: # TODO this is terrible but it eliminates the bad 6 at the end
-							continue
-						writeFunction(f, volts, time_stamp=time * period)
-						time += 1
+			# read all from the buffer, writing it to file
+			res = b""
+			count = 0
+			while not res.endswith(b"!"):
+				res = comm_obj.read_all()
+				f.write(res)
+				count+=1
+			print("count: ", count)
+			# # read the data one byte at a time and write to file
+			# byte = comm_obj.read_byte()
+			# print("first byte: ", byte)
+			# if byte != False and byte == sig_serial.START_BYTE.value:
+			# 	byte_value = 0
+			# 	while byte_value != ord(sig_serial.END_BYTE.value):
+			# 		try:
+			# 			byte_value = comm_obj.read_uint16()
+			# 		except:
+			# 			break
+			# 		if byte_value != ord(sig_serial.END_BYTE.value):
+			# 			volts = self._adc_raw_to_volts(byte_value)
+			# 			if volts > 12: # TODO this is terrible but it eliminates the bad 6 at the end
+			# 				continue
+			# 			writeFunction(f, volts, time_stamp=time * period)
+			# 			time += 1
 			
 			comm_obj.close()
+			# del comm_obj
 			self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
 			f.close()
 
