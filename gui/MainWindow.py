@@ -51,9 +51,12 @@ class Ui_MainWindow(object):
         self.actionQuit.setObjectName("actionQuit")
         self.actionPing_CyDAQ = QtWidgets.QAction(MainWindow)
         self.actionPing_CyDAQ.setObjectName("actionPing_CyDAQ")
+        self.actionDebug = QtWidgets.QAction(MainWindow)
+        self.actionDebug.setObjectName("actionDebug")
         self.menuFile.addAction(self.actionRestart)
         self.menuFile.addAction(self.actionQuit)
         self.menuHelp.addAction(self.actionPing_CyDAQ)
+        self.menuHelp.addAction(self.actionDebug)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
@@ -68,4 +71,5 @@ class Ui_MainWindow(object):
         self.actionRestart.setText(_translate("MainWindow", "Restart"))
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
         self.actionPing_CyDAQ.setText(_translate("MainWindow", "Ping CyDAQ"))
+        self.actionDebug.setText(_translate("MainWindow", "Debug"))
 import main_window_rc

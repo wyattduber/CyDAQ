@@ -239,7 +239,6 @@ class Ui_basic_operation(object):
         self.start_stop_sampling_btn.setObjectName("start_stop_sampling_btn")
         self.verticalLayout.addWidget(self.start_stop_sampling_btn, 0, QtCore.Qt.AlignHCenter)
         self.connection_status_label = QtWidgets.QLabel(self.centralwidget)
-        self.connection_status_label.setMaximumSize(QtCore.QSize(16777215, 50))
         self.connection_status_label.setText("")
         self.connection_status_label.setObjectName("connection_status_label")
         self.verticalLayout.addWidget(self.connection_status_label)

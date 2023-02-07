@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="assets">
+    <file>assets/CyDAQ_Logo_vector.png</file>
     <file>assets/home_icon.png</file>
     <file>assets/CyDAQ_300x300.png</file>
     <file>assets/CyDAQ.png</file>
