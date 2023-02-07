@@ -126,6 +126,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
+        debugAction = self.actionDebug
+        debugAction.triggered.connect(self.switchToDebug)
+
         # Ping the CyDAQ periodically to verify connection
         self.pingTimerInterval = 1000
         self.pingTimer = QTimer()
@@ -189,7 +192,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
 
-
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Starter widget that allows the user to switch between all other widgets"""
 
@@ -214,10 +216,6 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         liveStreamButton = self.livestream_btn
         liveStreamButton.setCheckable(True)
         liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream())
-
-        debugButton = self.debug_btn
-        debugButton.setCheckable(True)
-        debugButton.clicked.connect(lambda: self.mainWindow.switchToDebug())
 
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
