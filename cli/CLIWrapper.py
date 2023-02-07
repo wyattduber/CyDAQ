@@ -83,8 +83,9 @@ class CLI:
         try:
             self.running_command = True
             self.p.sendline(command)
-        except OSError:
+        except OSError as e:
             print("OSError in wrapper _send_command for command: ", command)
+            print("OsError: ", e)
             self.running_command = False
             raise cyDAQNotConnectedException
 
@@ -129,7 +130,7 @@ class CLI:
         matches = re.findall(pattern, line)
         if len(matches) > 0:
             level = matches[0][0]
-            message = matches[0][1]
+            message = matches[0][1].strip()
             if level == CyDAQ_CLI.WRAPPER_INFO:
                 return message
             elif level == CyDAQ_CLI.WRAPPER_ERROR:
@@ -214,6 +215,14 @@ class CLI:
     def generate(self, **_):
         """Start/Stop DAC Generation"""
         self._send_command("generate")
+
+    def enable_mock(self, **_):
+        """Enable CyDAQ serial connection mocking"""
+        self._send_command("mock, enable")
+
+    def disable_mock(self, **_):
+        """Disable CyDAQ serial connection mocking"""
+        self._send_command("mock, disable")
 
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")

@@ -16,7 +16,7 @@ class ctrl_comm:
         self._init_comm()
 
         if self.mock_mode:
-            print("ctrl_comm init with mock enabled")
+            # print("ctrl_comm init with mock enabled")
             import pty # TODO check if this import works and give useful message if not
             master,slave = pty.openpty() #open the pseudoterminal
             self.__s_comm.port = os.ttyname(slave) #translate the slave fd to a filename
@@ -29,18 +29,23 @@ class ctrl_comm:
                     res = b""
                     while not res.endswith(b"!"):
                         res += os.read(port, 1)
+                    
                     print("Command recieved: ", res) 
 
                     if res == b'stop!':
                         break
-                    if res == b'@\x08\x08!': # start sampling
+                    if res == b'@\x07!': # ping
+                        os.write(port, b'@')
+                        os.write(port, b'ACK') 
+                        os.write(port, b'!') 
+                    elif res == b'@\x08\x08!': # start sampling
                         os.write(port, b'@')
                         os.write(port, b'ACK') 
                         os.write(port, b'!') 
                     elif res == b'@\x04!': # stop sampling
                         time.sleep(.01) # must sleep or input in main thread flushes data below
                         os.write(port, b'@')
-                        os.write(port, b'\xd5\x07'*1_000_000)
+                        os.write(port, b'\xd5\x07'*10_000_000)
 
                         # current CyDAQ firmware throws an @ACK in here.. not needed....
                         os.write(port, b'@ACK') 
@@ -52,6 +57,7 @@ class ctrl_comm:
                         os.write(port, b'@')
                         os.write(port, b'ERR')
                         os.write(port, b'!')
+                print("listener on port {} stopped".format(port))
 
             #create a separate thread that listens on the master device for commands
             thread = threading.Thread(target=listener, args=[master])
@@ -59,7 +65,7 @@ class ctrl_comm:
             thread.start()
 
     def __del__(self):
-        print("__del__ called!")
+        print("__del__ called! port: ", self.__s_comm.port)
         if self.mock_mode:
             self._mock_thread_running = False
             self.mock_thread.join()
@@ -277,3 +283,8 @@ class ctrl_comm:
 
     def getSerialObj(self):
         return self.__s_comm
+
+    def kill_mock(self):
+        if self.mock_mode:
+            self._mock_thread_running = False
+            self.write(b'stop!')

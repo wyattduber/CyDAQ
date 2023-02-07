@@ -113,6 +113,7 @@ class CyDAQ_CLI:
 					elif command[1] == 'disable' or command[1] == 'd':
 						if not self.mock_mode:
 							continue
+						self.cmd_obj.ctrl_comm_obj.kill_mock()
 						self.mock_mode = False
 						self.cmd_obj = cmd(self.mock_mode)						
 						continue
@@ -193,6 +194,7 @@ class CyDAQ_CLI:
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
+	mock, (enable/disable)\t\t Enable CyDAQ serial mocking mode
 	q/quit\t\t\t\t Exit The Command-Line"""
 		self._print_to_output(helpMsg, self.WRAPPER_INFO)
 
