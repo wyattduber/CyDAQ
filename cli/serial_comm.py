@@ -1,5 +1,6 @@
 import os
 import threading
+import time
 import serial
 import serial.tools.list_ports
 
@@ -37,8 +38,9 @@ class ctrl_comm:
                         os.write(port, b'ACK') 
                         os.write(port, b'!') 
                     elif res == b'@\x04!': # stop sampling
+                        time.sleep(.01) # must sleep or input in main thread flushes data below
                         os.write(port, b'@')
-                        os.write(port, b'\x02\x02'*10_000_000)
+                        os.write(port, b'\xd5\x07'*1_000_000)
 
                         # current CyDAQ firmware throws an @ACK in here.. not needed....
                         os.write(port, b'@ACK') 

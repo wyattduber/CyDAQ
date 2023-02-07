@@ -289,65 +289,48 @@ class CyDAQ_CLI:
 			self.cmd_obj.send_fetch()
 
 			# open a new connection to get data
-			# comm_obj = ctrl_comm(self.mock_mode)
 			comm_obj = self.cmd_obj.ctrl_comm_obj
 			comm_obj.open(self.cmd_obj.port)
 
 			#wait for an @, which signals start of data
 			byte = b""
 			while byte != b"@":
-				# print("not @ yet. Was: ", byte)
 				byte = comm_obj.read()
-		
-			print("loop exited: byte was: ", byte)
 
 			# read all from the buffer, writing it to file
 			res = bytearray(b"")
 			count = 0
-			while not res.endswith(b"!"):
+			listening = True
+			while listening:
 				res.extend(comm_obj.read_all())
+				if b"!" in res:
+					listening = False
 				# print(res)
 				if len(res) < 2:
 					continue
-				# if count == 0:
-				# 	print("start res: ", res, " len res: ", len(res))
 				while len(res) >= 2:
-					# print("Bytes: ", res[i:i+2])
-					#grab next two bytes and convert to an int
-					# print(res[0:2])
+					# for some reason @ACK is sent at the end of data. Filter it out...
 					if res[0:2] == b'@A' or res[0:2] == b'CK':
 						res.pop(0)
 						res.pop(0)
 						continue
+					
+					# grab next two bytes and convert to uint16
 					raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
-					writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time*period)
 					res.pop(0)
 					res.pop(0)
-					time+=1
-				# if count == 0:
-				# 	print("start res after write: ", res)
+					volts = self._adc_raw_to_volts(raw_num)
+					
+					# hacky fix for bad data. Need firmware to fix though
+					if volts > 12:
+						continue
 
+					writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time*period)
+					time+=1
 				count+=1
-			print("count: ", count)
-			# # read the data one byte at a time and write to file
-			# byte = comm_obj.read_byte()
-			# print("first byte: ", byte)
-			# if byte != False and byte == sig_serial.START_BYTE.value:
-			# 	byte_value = 0
-			# 	while byte_value != ord(sig_serial.END_BYTE.value):
-			# 		try:
-			# 			byte_value = comm_obj.read_uint16()
-			# 		except:
-			# 			break
-			# 		if byte_value != ord(sig_serial.END_BYTE.value):
-			# 			volts = self._adc_raw_to_volts(byte_value)
-			# 			if volts > 12: # TODO this is terrible but it eliminates the bad 6 at the end
-			# 				continue
-			# 			writeFunction(f, volts, time_stamp=time * period)
-			# 			time += 1
+			print("Batch count: ", count)
 			
 			comm_obj.close()
-			# del comm_obj
 			self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
 			f.close()
 
