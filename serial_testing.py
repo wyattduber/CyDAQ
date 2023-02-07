@@ -19,7 +19,7 @@ def listener(port):
             break
         elif res == b'@\x04!':
             os.write(port, b'@')
-            os.write(port, b'\x02\x02'*100_000_000)
+            os.write(port, b'\x61\x61'*100_000_000)
             os.write(port, b'!') 
         else:
             print("unknown command")
@@ -45,10 +45,10 @@ ser.write(b'@\x04!')
 res = b""
 count = 0
 t0 = time.time()
-with open('hexdatafile.dat', 'wb') as datafile:
+with open('data.txt', 'w') as datafile:
     while not res.endswith(b"!"):
         res = ser.read_all()
-        datafile.write(res)
+        datafile.write(res.decode("ascii"))
         count+=1
 t1 = time.time()
 print("Time: ", t1-t0)

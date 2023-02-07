@@ -824,6 +824,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
         self.write_btn.clicked.connect(self.writeData)
         self.write2_btn.clicked.connect(self.writeDataV2)
         self.read_btn.clicked.connect(self.readData)
+        self.mock_checkBox.stateChanged.connect(self.mockToggle)
 
 
     # CyDAQ Connection Label
@@ -857,6 +858,12 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
             finished_func=lambda: print("Success"),
             error_func=lambda x: self.showError(x)
         )
+    
+    def mockToggle(self):
+        if self.mock_checkBox.isChecked():
+            self.wrapper.enable_mock()
+        else:
+            self.wrapper.disable_mock()
 
 
 class WorkerSignals(QObject):
