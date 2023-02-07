@@ -365,6 +365,16 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             "Sampling Time": self.sampling_time_input.text() or 0
         }
 
+    def stop_sampling(self):
+        self.sampling = False
+        self.writingData()
+        self.runInWorkerThread(
+        self.wrapper.stop_sampling,
+            func_args=self.filename,
+            finished_func=self.writingDataFinished,
+            error_func=lambda x: self.showError(x)
+        )
+
     def startStopSampling(self):
         if not self.mainWindow.connected:
             return
@@ -426,9 +436,6 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                     self.filename = None
                     return
                 self.start_stop_sampling_btn.setText("Stop")
-            
-            def startTimer(self, time):
-                time.sleep(30)
 
             self.startSamplingError = False
 
@@ -439,28 +446,19 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 error_func=handleError
             )
 
-            timeout = float(self.sampling_time_input.text())
-            self.runInWorkerThread(
-                    self.startTimer,
-                    func_args=timeout
-                    finished_func=stop_sampling,
+            try:
+                self.runInWorkerThread(
+                    time.sleep(int(self.sampling_time_input.text())),
+                    finished_func=self.stop_sampling,
                     error_func=handleError
                 )
+            except:
+                pass
+            
 
         else:
             # Stop sampling
             self.stop_sampling()
-            
-
-        def stop_sampling(self):
-            self.sampling = False
-            self.writingData()
-            self.runInWorkerThread(
-                self.wrapper.stop_sampling,
-                func_args=self.filename,
-                finished_func=self.writingDataFinished,
-                error_func=lambda x: self.showError(x)
-            )
 
     def validateInput(self):
         """Validate configuration and populate a return dictionary with any error messages. An empty string means there is no error."""
