@@ -364,6 +364,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             "Upper Corner": self.high_corner_input.text() or 0,
             "Mid Corner": self.mid_corner_input_box.currentText() or 0,
             "Lower Corner": self.low_corner_input.text() or 0,
+            "Sampling Time": self.sampling_time_input.text() or 0
         }
 
     def startStopSampling(self):
@@ -374,7 +375,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             return
 
         if not self.sampling:
-            # start sampling
+            """ start sampling """
+
+            # validate input
             wrong = self.validateInput()
             self.updateWrongs(wrong)
             s = ""
@@ -425,6 +428,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                     self.filename = None
                     return
                 self.start_stop_sampling_btn.setText("Stop")
+            
+            def startTimer(self, time):
+                time.sleep(30)
 
             self.startSamplingError = False
 
@@ -435,8 +441,20 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 error_func=handleError
             )
 
+            timeout = float(self.sampling_time_input.text())
+            self.runInWorkerThread(
+                    self.startTimer,
+                    func_args=timeout
+                    finished_func=stop_sampling,
+                    error_func=handleError
+                )
+
         else:
             # Stop sampling
+            self.stop_sampling()
+            
+
+        def stop_sampling(self):
             self.sampling = False
             self.writingData()
             self.runInWorkerThread(
@@ -512,6 +530,20 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             else:
                 wrong.update({"Upper Corner": ""})
 
+
+        # Sample Time
+        if data.get('Sampling Time') != "":
+            try:
+                st = float(data.get('Sampling Time'))
+            except(x):
+                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 100!"})
+                return wrong
+
+            if st > 60 or st < 0:
+                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 100!"})
+            else:
+                wrong.update({"Sampling Time": ""})
+
         return wrong
 
     def updateWrongs(self, wrong):
@@ -519,14 +551,16 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
             "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
             "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
-            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(247, 86, 74);")
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
+            "Sampling Time": lambda: self.sampling_time_input.setStyleSheet("background: rgb(247, 86, 74);")
         }
 
         right_dict = {
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
             "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(217, 217, 217);"),
             "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
-            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(217, 217, 217);")
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(217, 217, 217);"),
+            "Sampling Time": lambda: self.sampling_time_input.setStyleSheet("background: rgb(217, 217, 217);")
         }
 
         for i in wrong.keys():
