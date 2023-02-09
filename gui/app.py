@@ -365,6 +365,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             "Sampling Time": self.sampling_time_input.text() or 0
         }
 
+    def timeout(self):
+        time.sleep(float(self.sampling_time_input.text()))
+        print(f"{self.sampling_time_input.text()}s reached, timeout")
+        self.stop_sampling()
+
     def stop_sampling(self):
         self.sampling = False
         self.writingData()
@@ -447,13 +452,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             )
 
             try:
-                self.runInWorkerThread(
-                    time.sleep(int(self.sampling_time_input.text())),
-                    finished_func=self.stop_sampling,
-                    error_func=handleError
-                )
+                if self.sampling_time_input.text() != "":
+                    if float(self.sampling_time_input.text()) > 0:
+                        Thread(target=self.timeout).start()
             except:
-                pass
+                print("There was an exception!")
             
 
         else:
@@ -466,7 +469,8 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         wrong = {"Sample Rate": "",
                  "Upper Corner": "",
                  "Mid Corner": "",
-                 "Lower Corner": ""}
+                 "Lower Corner": "",
+                 "Sampling Time": ""}
 
         # Sample Rate
         if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
@@ -532,11 +536,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             try:
                 st = float(data.get('Sampling Time'))
             except(x):
-                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 100!"})
+                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 60!"})
                 return wrong
 
             if st > 60 or st < 0:
-                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 100!"})
+                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 60!"})
             else:
                 wrong.update({"Sampling Time": ""})
 
