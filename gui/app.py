@@ -239,6 +239,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
         self.sampling = False
         self.writing = False
+        self.shouldTimeout = False
         self.filename = None
 
         # Home Button
@@ -367,10 +368,17 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
     def timeout(self):
         time.sleep(float(self.sampling_time_input.text()))
+
+        # Check if timer was already stopped
+        if self.shouldTimeout is False:
+            print("Sampling already stopped, timeout cancelled")
+            return
+
         print(f"{self.sampling_time_input.text()}s reached, timeout")
         self.stop_sampling()
 
     def stop_sampling(self):
+        self.shouldTimeout = False
         self.sampling = False
         self.writingData()
         self.runInWorkerThread(
@@ -451,13 +459,14 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 error_func=handleError
             )
 
+            # Start timeout, if number given
             try:
                 if self.sampling_time_input.text() != "":
                     if float(self.sampling_time_input.text()) > 0:
+                        self.shouldTimeout = True
                         Thread(target=self.timeout).start()
             except:
                 print("There was an exception!")
-            
 
         else:
             # Stop sampling
@@ -830,9 +839,9 @@ class LiveStreamGraph(QWidget):
             self.low_plot = LiveScatterPlot(pen="orange")
             self.high_plot = LiveScatterPlot(pen="blue")
 
-        self.high_connector = DataConnector(self.high_plot, max_points=600)
-        self.low_connector = DataConnector(self.low_plot, max_points=600)
-        self.mid_connector = DataConnector(self.mid_plot, max_points=600)
+        self.high_connector = DataConnector(self.high_plot)
+        self.low_connector = DataConnector(self.low_plot)
+        self.mid_connector = DataConnector(self.mid_plot)
 
         self.chart_view.addItem(self.mid_plot)
         self.chart_view.addItem(self.low_plot)
