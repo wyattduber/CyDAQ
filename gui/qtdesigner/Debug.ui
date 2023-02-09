@@ -122,6 +122,9 @@ QPushButton {
      </layout>
     </item>
     <item>
+     <widget class="QTextBrowser" name="log_textBrowser"/>
+    </item>
+    <item>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QPushButton" name="write_btn">

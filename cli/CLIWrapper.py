@@ -31,6 +31,7 @@ class CLI:
     def __init__(self):
         self.INPUT_CHAR = ">"
         self.NOT_CONNECTED = "Zybo not connected"
+        self.log = ""
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python "  # Default for windows
@@ -82,6 +83,7 @@ class CLI:
         # Send command
         try:
             self.running_command = True
+            self.log += command + "\n"
             self.p.sendline(command)
         except OSError as e:
             print("OSError in wrapper _send_command for command: ", command)
@@ -105,6 +107,7 @@ class CLI:
             raise CLINoResponseException
         response = response.decode()
         response = response.strip()
+        self.log += response + "\n"
         if wrapper_mode:
             return self._parse_wrapper_mode_message(response)
         else:
@@ -265,6 +268,9 @@ class CLI:
         print("Time Taken: " + str(round(stop - start)))
         print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
         print("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
+
+    def getLog(self, **_):
+        return self.log
 
 
 class CLIException(Exception):

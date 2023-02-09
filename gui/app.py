@@ -860,6 +860,9 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
         self.read_btn.clicked.connect(self.readData)
         self.mock_checkBox.stateChanged.connect(self.mockToggle)
 
+        self.log_timer = QTimer()
+        self.log_timer.timeout.connect(self.logUpdate)
+        self.log_timer.start(1000)
 
     # CyDAQ Connection Label
     def cyDaqConnected(self):
@@ -898,6 +901,16 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
             self.wrapper.enable_mock()
         else:
             self.wrapper.disable_mock()
+
+    def logUpdate(self):
+        old_pos = self.log_textBrowser.verticalScrollBar().value()
+        old_max = self.log_textBrowser.verticalScrollBar().maximum()
+        self.log_textBrowser.setText(self.wrapper.getLog())
+        if old_max - old_pos <= 10:
+            self.log_textBrowser.verticalScrollBar().setSliderPosition(self.log_textBrowser.verticalScrollBar().maximum())
+        else:
+            self.log_textBrowser.verticalScrollBar().setSliderPosition(old_pos)
+
 
 
 class WorkerSignals(QObject):
