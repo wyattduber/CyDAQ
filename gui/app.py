@@ -714,14 +714,18 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             return
 
         self.speed_wl.setText("")
+        self.start_btn.setText("Running...")
+        self.start_btn.setCheckable(False)
         self.window.start_app(self.infile_line.text(), float(self.speed_line.text()), self.graph_type_dropdown.currentText())
         # window.running = False
 
     def pause(self):
         if self.window.pause is True:
             self.window.pause = False
+            self.pause_btn.setText("Pause")
         else:
             self.window.pause = True
+            self.pause_btn.setText("Resume")
 
 
     def home(self):
@@ -734,6 +738,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
 
     def clear(self):
+        self.start_btn.setText("Start")
+        self.start_btn.setCheckable(True)
         self.window.clear()
 
 
@@ -745,6 +751,7 @@ class LiveStreamGraph(QWidget):
     chart_view = None
     pause = False
     plotType = ""
+    thread = None
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -784,14 +791,14 @@ class LiveStreamGraph(QWidget):
 
         with open(self.filename, 'r') as file:
 
-            # If paused, just spin in a loop and do nothing until un-paused
-            while self.pause is True:
-                pass
-
             csvreader = csv.reader(file)
             for row in csvreader:
                 if self.running is False:
                     return
+
+                # If paused, just spin in a loop and do nothing until un-paused
+                while self.pause is True:
+                    pass
 
                 timestamp = float(row[0])
                 mid_px = float(row[1])
@@ -809,7 +816,8 @@ class LiveStreamGraph(QWidget):
         self.speed = speed
         self.plotType = plotType
         self.gen_plots()
-        Thread(target=self.update).start()
+        self.thread = Thread(target=self.update)
+        self.thread.start()
 
 
     def clear(self):
@@ -825,6 +833,13 @@ class LiveStreamGraph(QWidget):
 
         # Re-create them and re-add them to the graph
         self.gen_plots()
+
+        # End thread in process and reset thread in memory
+        self.running = False
+        self.in_thread = False
+        self.pause = False
+        self.thread = None
+
 
 
     def gen_plots(self):
