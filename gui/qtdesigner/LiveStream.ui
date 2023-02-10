@@ -107,12 +107,23 @@ QPushButton {
          </size>
         </property>
         <property name="text">
-         <string>Input Filename</string>
+         <string>Input File</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="infile_line"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="choose_file_btn">
+          <property name="text">
+           <string>Choose File</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="infile_line"/>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QLabel" name="filename_wl">
@@ -169,12 +180,12 @@ QPushButton {
        <widget class="QComboBox" name="graph_type_dropdown">
         <item>
          <property name="text">
-          <string>Scatter</string>
+          <string>Line</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Line</string>
+          <string>Scatter</string>
          </property>
         </item>
        </widget>
@@ -204,29 +215,45 @@ QPushButton {
          </size>
         </property>
         <property name="text">
-         <string>Graphing Speed</string>
+         <string>Graphing Speed (Delay in ms)</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="speed_line"/>
+       <widget class="QSlider" name="speed_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
+        </property>
+        <property name="tracking">
+         <bool>false</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+        <property name="tickInterval">
+         <number>10</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QLabel" name="speed_wl">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>-1</pointsize>
-         </font>
-        </property>
+       <widget class="QLabel" name="label_5">
         <property name="text">
-         <string/>
+         <string>1                                                                        100</string>
         </property>
        </widget>
       </item>

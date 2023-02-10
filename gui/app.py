@@ -478,8 +478,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         wrong = {"Sample Rate": "",
                  "Upper Corner": "",
                  "Mid Corner": "",
-                 "Lower Corner": "",
-                 "Sampling Time": ""}
+                 "Lower Corner": ""}
 
         # Sample Rate
         if data.get('Sample Rate') is None or data.get('Sample Rate') == "":
@@ -539,20 +538,6 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             else:
                 wrong.update({"Upper Corner": ""})
 
-
-        # Sample Time
-        if data.get('Sampling Time') != "":
-            try:
-                st = float(data.get('Sampling Time'))
-            except(x):
-                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 60!"})
-                return wrong
-
-            if st > 60 or st < 0:
-                wrong.update({"Sampling Time": "Invalid Entry! Must be a float between 0 and 60!"})
-            else:
-                wrong.update({"Sampling Time": ""})
-
         return wrong
 
     def updateWrongs(self, wrong):
@@ -560,16 +545,14 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
             "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
             "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
-            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(247, 86, 74);"),
-            "Sampling Time": lambda: self.sampling_time_input.setStyleSheet("background: rgb(247, 86, 74);")
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(247, 86, 74);")
         }
 
         right_dict = {
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
             "Lower Corner": lambda: self.low_corner_input.setStyleSheet("background: rgb(217, 217, 217);"),
             "Mid Corner": lambda: self.mid_corner_input_box.setStyleSheet("background: rgb(217, 217, 217);"),
-            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(217, 217, 217);"),
-            "Sampling Time": lambda: self.sampling_time_input.setStyleSheet("background: rgb(217, 217, 217);")
+            "Upper Corner": lambda: self.high_corner_input.setStyleSheet("background: rgb(217, 217, 217);")
         }
 
         for i in wrong.keys():
@@ -659,6 +642,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     running = False
     in_thread = False
     window = None
+    file_name = ""
 
     def __init__(self, mainWindow: MainWindow):
         super(LiveStreamWidget, self).__init__()
@@ -675,6 +659,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
         # Widget Buttons
         self.start_btn.clicked.connect(self.start_graph)
+        self.choose_file_btn.clicked.connect(self.chooseFile)
         self.clear_btn.clicked.connect(self.clear)
         self.pause_btn.clicked.connect(self.pause)
 
@@ -699,24 +684,31 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         else:
             self.window.show()
 
+    def chooseFile(self):
+        if self.infile_line.text() == "":
+            # get file save location
+            options = QFileDialog.Options()
+            self.file_name, _ = QFileDialog.getOpenFileName(self, "Pick a file !",
+                                                           DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
+                                                           options=options)
+            print("filename: |", self.file_name, "|")
+            if self.file_name.strip() == "":  # no file chosen
+                return
+            self.infile_line.setText(self.file_name)
+
     def start_graph(self):
 
         if self.window.running is True:
             return
 
-        if self.infile_line.text() == "":
-            self.filename_wl.setText("Missing Filename!")
+        if self.file_name is None or self.file_name == "":
+            self.filename_wl.setText("Please enter a file name!")
             return
+
         self.filename_wl.setText("")
-
-        if self.speed_line.text() == '' or float(self.speed_line.text()) < 0 or float(self.speed_line.text()) > 100:
-            self.speed_wl.setText("Speed: 0 < x < 100")
-            return
-
-        self.speed_wl.setText("")
         self.start_btn.setText("Running...")
         self.start_btn.setCheckable(False)
-        self.window.start_app(self.infile_line.text(), float(self.speed_line.text()), self.graph_type_dropdown.currentText())
+        self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
         # window.running = False
 
     def pause(self):
@@ -736,10 +728,12 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.window.close()
         self.mainWindow.switchToModeSelector()
 
-
-    def clear(self):
+    def finishedStartBtn(self):
         self.start_btn.setText("Start")
         self.start_btn.setCheckable(True)
+
+    def clear(self):
+        self.finishedStartBtn()
         self.window.clear()
 
 
@@ -747,7 +741,7 @@ class LiveStreamGraph(QWidget):
     running = False
     in_thread = False
     filename = ""
-    speed = 0.1
+    speed = 0
     chart_view = None
     pause = False
     plotType = ""
@@ -808,7 +802,7 @@ class LiveStreamGraph(QWidget):
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep(self.speed)
+                time.sleep((self.speed / 1000))
 
     def start_app(self, filename, speed, plotType):
         self.running = True
@@ -841,9 +835,7 @@ class LiveStreamGraph(QWidget):
         self.thread = None
 
 
-
     def gen_plots(self):
-
         # Determine plotter type
         if self.plotType == "Line":
             self.mid_plot = LiveLinePlot(pen="green")
