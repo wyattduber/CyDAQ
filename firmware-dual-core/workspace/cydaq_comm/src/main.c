@@ -144,6 +144,11 @@ int main(void) {
 
 
 	while(1) {
+		//Clear buffer
+		for(int i = 0; i < TEST_BUFFER_SIZE; i++){
+			recvBuf[i] = 0;
+		}
+
 		//Receive bytes
 		bytes = xusb_cdc_rx_bytes_available();// > 5 ? 5 : xusb_cdc_rx_bytes_available();
 
@@ -206,6 +211,20 @@ int main(void) {
 //					continue;
 //				}
 				xil_printf("ARM0: Cmd is %d\n\r",cmd);
+
+				//speed test testing
+				if(cmd == 16) { //@0! into putty
+					xil_printf("ARM0: Testing!!\r\n");
+
+
+					int numSamples = 100;
+					for(int i = 0; i < numSamples; i++){
+						sprintf(txBuf,"%c12%c",COMM_START_CHAR,COMM_STOP_CHAR);
+						usb_commSend(txBuf, 4);
+					}
+
+					continue;
+				}
 //
 				if(cmd >= NUM_COMMANDS){
 					sprintf(txBuf,"%cERR%c",COMM_START_CHAR,COMM_STOP_CHAR);

@@ -101,9 +101,9 @@ int main()
 	maxAddr = startPtr + 3000000;
 
 	//test
-//	xil_printf("xil_printf testing\n\r");
-//	print("print testing\n\r");
-//	printf("printf testing\n\r");
+	xil_printf("xil_printf testing\n\r");
+	print("print testing\n\r");
+	printf("printf testing\n\r");
 
 	//Sample Code
 	SYSConfigPtr = XSysMon_LookupConfig(SYSMON_DEVICE_ID);
@@ -151,7 +151,7 @@ int main()
 
 	while(1){
 		//testing
-		xil_printf("ARM1: cmd = %u, payload = %u, flag = %u, mode = %u, intrpt = %u\r\n", cmdShare, payloadShare, flagShare, modeShare, intrptShare);
+		//xil_printf("ARM1: cmd = %u, payload = %u, flag = %u, mode = %u, intrpt = %u\r\n", cmdShare, payloadShare, flagShare, modeShare, intrptShare);
 		if(flagShare & 0x10){
 //			xil_printf("ARM1: Start streaming... \n\r");
 			Status = XAxiDma_SimpleTransfer(&AxiDma,(UINTPTR)endPtr,MAX_PKT_LEN, XAXIDMA_DEVICE_TO_DMA);
