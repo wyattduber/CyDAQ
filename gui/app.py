@@ -112,13 +112,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = False
 
         # Widgets
+        self.livestream = LiveStreamWidget(self)
         self.stack = QtWidgets.QStackedWidget(self)
         self.verticalLayout.addWidget(self.stack)
         self.widgets = []
         self.widgets.append(ModeSelectorWidget(self))
         self.widgets.append(BasicOperationModeWidget(self))
         self.widgets.append(BalanceBeamWidget(self))
-        self.widgets.append(LiveStreamWidget(self))
+        self.widgets.append(self.livestream)
         self.widgets.append(DebugWidget(self))
         for widget in self.widgets:
             self.stack.addWidget(widget)
@@ -187,7 +188,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToLiveStream(self):
         self.stack.setCurrentIndex(3)
-        LiveStreamWidget.show_window(LiveStreamWidget)
+        self.livestream.show_window(self.livestream)
 
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
@@ -690,7 +691,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     @staticmethod
     def show_window(self):
         if self.window is None:
-            self.window = LiveStreamGraph(LiveStreamWidget)
+            self.window = LiveStreamGraph()
             self.window.setWindowTitle("CyDAQ Live Plotting Graph")
             self.window.show()
         else:
@@ -726,28 +727,30 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.infile_line.setStyleSheet("background: rgb(217, 217, 217);")
         self.start_btn.setText("Running...")
         self.start_btn.setCheckable(False)
+        self.reload_btn.setCheckable(False)
         self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
 
     def pause(self):
-        if self.window.pause is True:
-            self.window.pause = False
-            self.pause_btn.setText("Pause")
-        else:
-            self.window.pause = True
-            self.pause_btn.setText("Resume")
+        if self.window.running:
+            if self.window.pause is True:
+                self.window.pause = False
+                self.pause_btn.setText("Pause")
+            else:
+                self.window.pause = True
+                self.pause_btn.setText("Resume")
 
     def home(self):
         self.window.running = False
         self.window.in_thread = False
-        self.window.clearMask()
-        self.window.clearFocus()
         self.window.close()
+        self.window = None
         self.mainWindow.switchToModeSelector()
 
     def finishedStartBtn(self):
         self.start_btn.setText("Start")
         self.start_btn.setCheckable(True)
         self.pause_btn.setText("Pause")
+        self.reload_btn.setCheckable(True)
 
     def clear(self):
         self.finishedStartBtn()
@@ -756,8 +759,6 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     def reload(self):
         self.window.running = False
         self.window.in_thread = False
-        self.window.clearMask()
-        self.window.clearFocus()
         self.window.close()
         self.window = None
         self.show_window(self)
