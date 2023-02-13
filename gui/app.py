@@ -194,7 +194,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def closeEvent(self, event):
         close = QMessageBox.question(self,
-                                     "QUIT",
+                                     "Quit PyDAQ",
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
@@ -348,11 +348,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("Connected!")
+        self.connection_status_label.setText("CyDAQ Status: Connected!")
 
     def cyDaqDisconnected(self):
         """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("Not Connected!")
+        self.connection_status_label.setText("CyDAQ Status: Not Connected!")
 
     def writingData(self):
         """When the cyDAQ is sending data to the frontend and it's writing it to a file."""
@@ -674,50 +674,56 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.choose_file_btn.clicked.connect(self.chooseFile)
         self.clear_btn.clicked.connect(self.clear)
         self.pause_btn.clicked.connect(self.pause)
-
+        self.reload_btn.clicked.connect(self.reload)
 
     # CyDAQ Connection Label
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("Connected!")
+        self.connection_status_label.setText("CyDAQ Status: Connected!")
         pass
 
     def cyDaqDisconnected(self):
         """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("Not Connected!")
+        self.connection_status_label.setText("CyDAQ Status: Not Connected!")
         pass
 
     @staticmethod
     def show_window(self):
         if self.window is None:
-            self.window = LiveStreamGraph()
+            self.window = LiveStreamGraph(LiveStreamWidget)
             self.window.setWindowTitle("CyDAQ Live Plotting Graph")
             self.window.show()
         else:
             self.window.show()
 
     def chooseFile(self):
-        if self.infile_line.text() == "":
-            # get file save location
-            options = QFileDialog.Options()
-            self.file_name, _ = QFileDialog.getOpenFileName(self, "Pick a file !",
+        # get file save location
+        options = QFileDialog.Options()
+        self.file_name, _ = QFileDialog.getOpenFileName(self, "Pick a file!",
                                                            DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
                                                            options=options)
-            print("filename: |", self.file_name, "|")
-            if self.file_name.strip() == "":  # no file chosen
-                return
-            self.infile_line.setText(self.file_name)
+        print("filename: |", self.file_name, "|")
+        if self.file_name.strip() == "":  # no file chosen
+            return
+        self.infile_line.setText(self.file_name)
+        self.infile_line.setStyleSheet("background: rgb(217, 217, 217);")
 
     def start_graph(self):
 
         if self.window.running is True:
             return
 
-        if self.file_name is None or self.file_name == "":
-            self.filename_wl.setText("Please enter a file name!")
+        if self.file_name == "":
+            self.filename_wl.setText("Please enter a valid file name!")
+            self.infile_line.setStyleSheet("background: rgb(247, 86, 74);")
+            return
+        elif self.file_name is None:
+            self.filename_wl.setText("Invalid Filename!")
+            self.infile_line.setStylesheet("background: rgb(247, 86, 74);")
             return
 
         self.filename_wl.setText("")
+        self.infile_line.setStyleSheet("background: rgb(217, 217, 217);")
         self.start_btn.setText("Running...")
         self.start_btn.setCheckable(False)
         self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
@@ -733,11 +739,13 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
 
     def home(self):
-        self.window.running = False
-        self.window.in_thread = False
-        self.window.clearMask()
-        self.window.clearFocus()
-        self.window.close()
+        if self.window is not None:
+            self.window.running = False
+            self.window.in_thread = False
+            self.window.clearMask()
+            self.window.clearFocus()
+            self.window.close()
+            self.window = None
         self.mainWindow.switchToModeSelector()
 
     def finishedStartBtn(self):
@@ -747,6 +755,15 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     def clear(self):
         self.finishedStartBtn()
         self.window.clear()
+
+    def reload(self):
+        self.window.running = False
+        self.window.in_thread = False
+        self.window.clearMask()
+        self.window.clearFocus()
+        self.window.close()
+        self.window = None
+        self.show_window(self)
 
 
 class LiveStreamGraph(QWidget):
@@ -758,9 +775,11 @@ class LiveStreamGraph(QWidget):
     pause = False
     plotType = ""
     thread = None
+    parent = None
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        #super().__init__(parent)
+        super(LiveStreamGraph, self).__init__()
 
         self.mid_connector = None
         self.low_connector = None
@@ -771,6 +790,7 @@ class LiveStreamGraph(QWidget):
         layout = QGridLayout(self)
         self.low_sample: Union[float, None] = -10
         self.high_sample: Union[float, None] = 10
+        self.parent = parent
 
         # Setup bottom axis with TIME tick format
         bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
@@ -815,6 +835,7 @@ class LiveStreamGraph(QWidget):
 
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
                 time.sleep((self.speed / 1000))
+        self.parent.finishedStartBtn(self.parent)
 
     def start_app(self, filename, speed, plotType):
         self.running = True
@@ -845,6 +866,7 @@ class LiveStreamGraph(QWidget):
         self.in_thread = False
         self.pause = False
         self.thread = None
+        self.parent.finishedStartBtn(self.parent)
 
 
     def gen_plots(self):
@@ -865,6 +887,10 @@ class LiveStreamGraph(QWidget):
         self.chart_view.addItem(self.mid_plot)
         self.chart_view.addItem(self.low_plot)
         self.chart_view.addItem(self.high_plot)
+
+    def closeEvent(self, event):
+        self.parent.finishedStartBtn(self.parent)
+        event.accept()
 
 
 class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
