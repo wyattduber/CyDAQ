@@ -155,7 +155,6 @@ class CLI:
     def ping(self, **_):
         """Ping cyDAQ, returns the response time in microseconds or -1 if error"""
         response = self._send_command("ping")
-        # print("response|", response,"|")
         try:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:
@@ -165,7 +164,7 @@ class CLI:
         """Clear the config to its default values"""
         response = self._send_command("clear")
         if response != " success\r\n":
-            raise CLIException("Unexpected output from clear: |" + repr(response) + "|")
+            raise CLIException("Unexpected output from clear: " + repr(response))
 
     def get_config(self, **_):
         """Get the current config stored in the CLI. This doesn't necessarily mean it's the config on the cyDAQ itself."""

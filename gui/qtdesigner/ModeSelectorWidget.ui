@@ -145,25 +145,6 @@ QPushButton {
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QPushButton" name="balance_beam_btn">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Balance Beam</string>
-     </property>
-    </widget>
-   </item>
-   <item alignment="Qt::AlignHCenter">
     <widget class="QPushButton" name="livestream_btn">
      <property name="minimumSize">
       <size>
@@ -183,6 +164,25 @@ QPushButton {
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
+    <widget class="QPushButton" name="balance_beam_btn">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Disabled</string>
+     </property>
+    </widget>
+   </item>
+   <item alignment="Qt::AlignHCenter">
     <widget class="QPushButton" name="external_adc_btn">
      <property name="minimumSize">
       <size>
@@ -197,7 +197,7 @@ QPushButton {
       </size>
      </property>
      <property name="text">
-      <string>External ADC</string>
+      <string>Disabled</string>
      </property>
     </widget>
    </item>

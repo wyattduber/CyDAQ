@@ -6,9 +6,10 @@ import serial.tools.list_ports
 
 class ctrl_comm:
     """
-       This class creates an abstraction for a connection to a device over
-       a Serial connection.
-       """
+    This class creates an abstraction for a connection to a device over a Serial connection. 
+    
+    When mock_mode is True, a serial connection is mocked by creating a listener in another thread.
+    """
 
     def __init__(self, mock_mode=False):
         # print("ctrl_comm init")
@@ -16,64 +17,64 @@ class ctrl_comm:
         self._init_comm()
 
         if self.mock_mode:
-            # print("ctrl_comm init with mock enabled")
-            import pty # TODO check if this import works and give useful message if not
+            try:
+                import pty
+            except ModuleNotFoundError:
+                print("Mock mode not supported! Reverting to normal mode.")
+                self.mock_mode = False
+                return
+            
             master,slave = pty.openpty() #open the pseudoterminal
             self.__s_comm.port = os.ttyname(slave) #translate the slave fd to a filename
             self._mock_thread_running = True
 
-            # TODO move this to class method so it's cleaner
-            def listener(port):
-                print("---LISTENER STARTED on port: {}---".format(port))
-                while self._mock_thread_running:
-                    res = b""
-                    while not res.endswith(b"!"):
-                        res += os.read(port, 1)
-                    
-                    print("Command recieved: ", res) 
-
-                    if res == b'stop!':
-                        break
-                    if res == b'@\x07!': # ping
-                        os.write(port, b'@')
-                        os.write(port, b'ACK') 
-                        os.write(port, b'!') 
-                    elif res == b'@\x08\x08!': # start sampling
-                        os.write(port, b'@')
-                        os.write(port, b'ACK') 
-                        os.write(port, b'!') 
-                    elif res == b'@\x04!': # stop sampling
-                        time.sleep(.01) # must sleep or input in main thread flushes data below
-                        os.write(port, b'@')
-                        os.write(port, b'\xd5\x07'*10_000_000)
-
-                        # current CyDAQ firmware throws an @ACK in here.. not needed....
-                        os.write(port, b'@ACK') 
-
-                        os.write(port, b'!') 
-                    #TODO implement other commands that need to be mocked here
-                    else:
-                        print("Unknown command sent to mock CyDAQ serial connection! Command: ", res)
-                        os.write(port, b'@')
-                        os.write(port, b'ERR')
-                        os.write(port, b'!')
-                print("listener on port {} stopped".format(port))
-
             #create a separate thread that listens on the master device for commands
-            thread = threading.Thread(target=listener, args=[master])
+            thread = threading.Thread(target=self._mock_listener, args=[master])
             self.mock_thread = thread
             thread.start()
 
-    def __del__(self):
-        print("__del__ called! port: ", self.__s_comm.port)
-        if self.mock_mode:
-            self._mock_thread_running = False
-            self.mock_thread.join()
+    # def __del__(self):
+    #     self.kill_mock()
+
+    def _mock_listener(self, port):
+        print("---Mock serial started listening on port: {}---".format(port))
+        while self._mock_thread_running:
+            res = b""
+            while not res.endswith(b"!"):
+                res += os.read(port, 1)
+            
+            print("Command recieved in mock listener: ", res) 
+
+            if res == b'stop!':
+                break
+            if res == b'@\x07!': # ping
+                os.write(port, b'@')
+                os.write(port, b'ACK') 
+                os.write(port, b'!') 
+            elif res == b'@\x08\x08!': # start sampling
+                os.write(port, b'@')
+                os.write(port, b'ACK') 
+                os.write(port, b'!') 
+            elif res == b'@\x04!': # stop sampling
+                time.sleep(.01) # must sleep or input in main thread flushes data below
+                os.write(port, b'@')
+                os.write(port, b'\xd5\x07'*10_000_000)
+
+                # current CyDAQ firmware throws an @ACK in here.. not needed....
+                os.write(port, b'@ACK') 
+
+                os.write(port, b'!') 
+            #TODO implement other commands that need to be mocked here
+            else:
+                print("Unknown command sent to mock CyDAQ serial connection! Command: ", res)
+                os.write(port, b'@')
+                os.write(port, b'ERR')
+                os.write(port, b'!')
+        print("listener on port {} stopped".format(port))
 
     def _init_comm(self):
         self.__s_comm = serial.Serial()
         self.__s_comm.port = None
-        # while self.__s_comm.port is None:
         try:
             self.__s_comm.port = self.get_port()
         except:
@@ -174,14 +175,15 @@ class ctrl_comm:
             True if data was written, False if device is not open.
         """
 
-        if self.__s_comm.isOpen() is True:
+        if self.__s_comm.isOpen():
             try:
                 self.__s_comm.write(data)
             except serial.serialutil.SerialException:
-                # print("Serial exception while writing. Assuming bad connection.")
+                print("Serial exception while writing. Assuming bad connection.")
                 return False
             return True
         else:
+            print("else occured")
             return False
 
     def read_byte(self):
@@ -266,7 +268,6 @@ class ctrl_comm:
             return False
 
     def read_all(self):
-        #TODO add error handling
         return self.__s_comm.read_all()
 
     def read(self):
@@ -286,5 +287,11 @@ class ctrl_comm:
 
     def kill_mock(self):
         if self.mock_mode:
-            self._mock_thread_running = False
+            self.open(self.get_port())
             self.write(b'stop!')
+            self.close()
+            self._mock_thread_running = False
+            self.mock_thread.join()
+
+    def is_mock_mode(self):
+        return self.mock_mode

@@ -192,6 +192,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
 
+    def closeEvent(self, event):
+        close = QMessageBox.question(self,
+                                     "QUIT",
+                                     "Are you sure?",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if close == QMessageBox.Yes:
+            event.accept()
+            if main.widgets[3].window is not None:
+                main.widgets[3].window.close()
+        else:
+            event.ignore()
+
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Starter widget that allows the user to switch between all other widgets"""
 
@@ -209,9 +221,10 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         basicOperationButton.setCheckable(True)
         basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
 
-        balanceBeamButton = self.balance_beam_btn
-        balanceBeamButton.setCheckable(True)
-        balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
+        # Disabled for CyDAQ Lab Testing
+        # balanceBeamButton = self.balance_beam_btn
+        # balanceBeamButton.setCheckable(True)
+        # balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
 
         liveStreamButton = self.livestream_btn
         liveStreamButton.setCheckable(True)
@@ -415,7 +428,6 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
                                                                DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
                                                                options=options)
-                print("filename: |", self.filename, "|")
                 if self.filename.strip() == "":  # no file chosen
                     return
 
