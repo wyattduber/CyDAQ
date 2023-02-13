@@ -192,6 +192,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
 
+    def closeEvent(self, event):
+        close = QMessageBox.question(self,
+                                     "QUIT",
+                                     "Are you sure?",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if close == QMessageBox.Yes:
+            event.accept()
+            if main.widgets[3].window is not None:
+                main.widgets[3].window.close()
+        else:
+            event.ignore()
+
 class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Starter widget that allows the user to switch between all other widgets"""
 
