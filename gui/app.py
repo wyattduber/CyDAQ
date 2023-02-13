@@ -415,7 +415,6 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
                                                                DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
                                                                options=options)
-                print("filename: |", self.filename, "|")
                 if self.filename.strip() == "":  # no file chosen
                     return
 

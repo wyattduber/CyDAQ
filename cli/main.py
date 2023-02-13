@@ -2,19 +2,22 @@ from copy import deepcopy
 import datetime
 import os
 import json
-import threading
 import time
 
-import serial
 from check_params import ParameterConstructor
 
 from command_comm import cmd
-from master_enum import nameToEnum, sig_serial
-from serial_comm import ctrl_comm
+from master_enum import nameToEnum
 
 class CyDAQ_CLI:
 	"""
-	TODO
+	Handles the creation of a command line interface to communicate with a CyDAQ device. 
+
+	To use, instantiate the object then call the start() method on it, which will block for user input.
+	
+	For example, the following is all that is needed to start the CLI tool: 
+	
+	CyDAQ_CLI().start()
 	"""
 
 	CYDAQ_NOT_CONNECTED = "CyDAQ not connected"
@@ -57,6 +60,9 @@ class CyDAQ_CLI:
 			try:
 				raw_command = input("> ")
 			except EOFError:
+				break
+			except KeyboardInterrupt:
+				print()
 				break
 			command = raw_command.split(",")
 			command = [s.strip(" ") for s in command]
@@ -107,15 +113,14 @@ class CyDAQ_CLI:
 					if command[1] == 'enable' or command[1] == 'e':
 						if self.mock_mode:
 							continue
-						self.mock_mode = True
-						self.cmd_obj = cmd(self.mock_mode)
+						self.cmd_obj = cmd(mock_mode=True)
+						self.mock_mode = self.cmd_obj.is_mock_mode()
 						continue
 					elif command[1] == 'disable' or command[1] == 'd':
 						if not self.mock_mode:
 							continue
-						self.cmd_obj.ctrl_comm_obj.kill_mock()
-						self.mock_mode = False
-						self.cmd_obj = cmd(self.mock_mode)						
+						self.cmd_obj = cmd(mock_mode=False)						
+						self.mock_mode = self.cmd_obj.is_mock_mode()
 						continue
 				self._print_to_output("Invalid syntax. Ex: mock, enable")
 				continue
@@ -175,8 +180,6 @@ class CyDAQ_CLI:
 		
 
 	def _print_help(self, cmnd):
-		usages = {}  # TODO dict for individual command usage messages
-
 		if cmnd:
 			self._print_to_output("\tUnknown command. Command List:", self.WRAPPER_INFO)
 		else:
@@ -200,11 +203,11 @@ class CyDAQ_CLI:
 
 	def _ping(self):
 		"""
-			Sends a command to the device to determine what the latency of the device communication is
+		Sends a command to the device to determine what the latency of the device communication is
 
-			Returns:
-				True if the message was acknowleged, False if device is not connected.
-			"""
+		Returns:
+			True if the message was acknowleged, False if device is not connected.
+		"""
 		a = datetime.datetime.now()
 		self.cmd_obj.ping_zybo()
 		b = datetime.datetime.now()
@@ -330,7 +333,7 @@ class CyDAQ_CLI:
 					writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time*period)
 					time+=1
 				count+=1
-			print("Batch count: ", count)
+			# print("Batch count: ", count)
 			
 			comm_obj.close()
 			self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
@@ -386,7 +389,7 @@ class CyDAQ_CLI:
 			pc.input(response)
 		return 1
 
-	# TODO this probably needs removed/changed
+	# TODO this probably needs removed/changed. Will address when used
 	def _loadCSV(self, filepath):
 		data = []
 		try:

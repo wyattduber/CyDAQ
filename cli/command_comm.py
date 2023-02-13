@@ -6,9 +6,11 @@ import time as t
 class cmd:
 
     def __init__(self, mock_mode=False):
-        print("cmd init. mock_mode: ", mock_mode)
         self.ctrl_comm_obj = ctrl_comm(mock_mode=mock_mode)
         self.port = self.ctrl_comm_obj.get_port()
+
+    def __del__(self):
+        self.ctrl_comm_obj.kill_mock()
 
     def refresh_port(self):
         self.port = self.ctrl_comm_obj.get_port()
@@ -532,6 +534,9 @@ class cmd:
                         pass
         else:
             return False
+
+    def is_mock_mode(self):
+        return self.ctrl_comm_obj.is_mock_mode()
 
     # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):
