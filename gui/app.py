@@ -209,9 +209,10 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         basicOperationButton.setCheckable(True)
         basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
 
-        balanceBeamButton = self.balance_beam_btn
-        balanceBeamButton.setCheckable(True)
-        balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
+        # Disabled for CyDAQ Lab Testing
+        # balanceBeamButton = self.balance_beam_btn
+        # balanceBeamButton.setCheckable(True)
+        # balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
 
         liveStreamButton = self.livestream_btn
         liveStreamButton.setCheckable(True)
