@@ -24,12 +24,12 @@ It works by storing a local configuration for the cyDAQ, making it easily editab
 
 ## Install
 ```bash
-python -m pip install -r requirements.txt --user
+python3 -m pip install -r requirements.txt --user
 ```
 
 ## Run
 ```bash
-python cli/main.py
+python3 cli/main.py
 ```
 
 ## CLIWrapper
@@ -55,28 +55,29 @@ QTDesigner was used to create most of the layout/styling. The official documenta
 
 Our additional documentation can be found [here](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/GUI).
 
-## Build 
-To build an executable, run the following
-
-```bash
-bash compile.sh
-```
-
-The .exe should be located under the newly created ```dist/app/app.exe```
-
-## Install
+## Install Requirements
 ```bash
 pip install -r requirements.txt
 ```
+
 ## Run
 Then, you should just be able to start the GUI by running the following command:
 ```bash
-python gui/app.py
+python3 gui/app.py
 ```
 
-> Note: If the "python" command does not work, you might want to try a variant of the command, such as "py app.py" or "python3 app.py".
+> Note: If the "python3" command does not work, you might want to try a variant of the command, such as "py app.py" or "python3 app.py".
 
+## Build an Executable
+To build an executable, run the following
 
+```bash
+make # Installs project requirements
+make build # Builds the project into an executable
+```
+
+The .exe should be located under the newly created ```dist/app/app.exe```. 
+There is also a zip file with all the contents of the app for easy installation.
 
 
 
