@@ -210,19 +210,20 @@ int main(void) {
 //					}
 //					continue;
 //				}
-				xil_printf("ARM0: Cmd is %d\n\r",cmd);
 
-				//speed test testing
+				//speed test testing. Sends "@12...!" depending on size of numSamples
 				if(cmd == 16) { //@0! into putty
 					xil_printf("ARM0: Testing!!\r\n");
+					int numSamples = 10000;
 
-
-					int numSamples = 100;
-					for(int i = 0; i < numSamples; i++){
-						sprintf(txBuf,"%c12%c",COMM_START_CHAR,COMM_STOP_CHAR);
-						usb_commSend(txBuf, 4);
+					sprintf(txBuf,"%c",COMM_START_CHAR);
+					usb_commSend(txBuf, 1);
+					for(int i=0; i < numSamples; i++){
+						sprintf(txBuf,"12");
+						usb_commSend(txBuf, 2);
 					}
-
+					sprintf(txBuf,"%c",COMM_STOP_CHAR);
+					usb_commSend(txBuf, 1);
 					continue;
 				}
 //
