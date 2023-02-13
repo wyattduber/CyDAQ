@@ -206,7 +206,7 @@ QPushButton {
         </property>
        </spacer>
       </item>
-      <item alignment="Qt::AlignHCenter">
+      <item>
        <widget class="QLabel" name="label_2">
         <property name="maximumSize">
          <size>
@@ -228,13 +228,16 @@ QPushButton {
          </sizepolicy>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
          <number>100</number>
         </property>
         <property name="singleStep">
          <number>10</number>
+        </property>
+        <property name="value">
+         <number>0</number>
         </property>
         <property name="tracking">
          <bool>false</bool>
@@ -253,7 +256,7 @@ QPushButton {
       <item>
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>1                                                                        100</string>
+         <string>0                                                                                             100</string>
         </property>
        </widget>
       </item>
@@ -313,7 +316,7 @@ QPushButton {
        <widget class="QLabel" name="connection_status_label">
         <property name="minimumSize">
          <size>
-          <width>109</width>
+          <width>219</width>
           <height>32</height>
          </size>
         </property>
@@ -324,7 +327,7 @@ QPushButton {
          </size>
         </property>
         <property name="text">
-         <string>Not Connected!</string>
+         <string>CyDAQ Status: Not Connected!</string>
         </property>
        </widget>
       </item>

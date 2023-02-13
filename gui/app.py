@@ -727,7 +727,6 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.start_btn.setText("Running...")
         self.start_btn.setCheckable(False)
         self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
-        # window.running = False
 
     def pause(self):
         if self.window.pause is True:
@@ -737,20 +736,18 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             self.window.pause = True
             self.pause_btn.setText("Resume")
 
-
     def home(self):
-        if self.window is not None:
-            self.window.running = False
-            self.window.in_thread = False
-            self.window.clearMask()
-            self.window.clearFocus()
-            self.window.close()
-            self.window = None
+        self.window.running = False
+        self.window.in_thread = False
+        self.window.clearMask()
+        self.window.clearFocus()
+        self.window.close()
         self.mainWindow.switchToModeSelector()
 
     def finishedStartBtn(self):
         self.start_btn.setText("Start")
         self.start_btn.setCheckable(True)
+        self.pause_btn.setText("Pause")
 
     def clear(self):
         self.finishedStartBtn()
@@ -764,6 +761,25 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.window.close()
         self.window = None
         self.show_window(self)
+        self.finishedStartBtn()
+
+
+    def closeEvent(self, event):
+        if self.running:
+            close = QMessageBox.question(self,
+                                        "Close Graph",
+                                        "Really Close Graph While Plotting?",
+                                        QMessageBox.Yes | QMessageBox.No)
+            if close == QMessageBox.Yes:
+                self.running = False
+                self.window.running = False
+                self.window.in_thread = False
+                self.window.clearMask()
+                self.window.clearFocus()
+                self.window.close()
+                event.accept()
+            else:
+                event.ignore()
 
 
 class LiveStreamGraph(QWidget):
@@ -811,6 +827,7 @@ class LiveStreamGraph(QWidget):
         # Using -1 to span through all rows available in the window
         layout.addWidget(self.chart_view)
 
+
     def update(self):
 
         print("Started!")
@@ -835,7 +852,7 @@ class LiveStreamGraph(QWidget):
 
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
                 time.sleep((self.speed / 1000))
-        self.parent.finishedStartBtn(self.parent)
+
 
     def start_app(self, filename, speed, plotType):
         self.running = True
@@ -866,7 +883,6 @@ class LiveStreamGraph(QWidget):
         self.in_thread = False
         self.pause = False
         self.thread = None
-        self.parent.finishedStartBtn(self.parent)
 
 
     def gen_plots(self):
@@ -887,10 +903,6 @@ class LiveStreamGraph(QWidget):
         self.chart_view.addItem(self.mid_plot)
         self.chart_view.addItem(self.low_plot)
         self.chart_view.addItem(self.high_plot)
-
-    def closeEvent(self, event):
-        self.parent.finishedStartBtn(self.parent)
-        event.accept()
 
 
 class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
