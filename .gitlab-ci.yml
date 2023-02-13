@@ -10,6 +10,8 @@ run:
   script:
     - python -m pip install -r requirements.txt
     - python cli/main.py
+    - make build
   artifacts:
     paths:
       - dist/*.whl
+      - dist/app.exe
