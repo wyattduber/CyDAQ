@@ -711,7 +711,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
     def start_graph(self):
 
-        if self.window.running is True:
+        if self.window.running or self.window.plotted:
             return
 
         if self.file_name == "":
@@ -729,6 +729,11 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.start_btn.setCheckable(False)
         self.reload_btn.setCheckable(False)
         self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
+        self.runInWorkerThread(
+            self.updateSpeed,
+            finished_func=self.finishedStartBtn,
+            error_func=self.showError
+        )
 
     def pause(self):
         if self.window.running:
@@ -755,14 +760,21 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     def clear(self):
         self.finishedStartBtn()
         self.window.clear()
+    
+    def updateSpeed(self):
+        while self.window.running:
+            pass
+        self.finishedStartBtn()
 
     def reload(self):
-        self.window.running = False
-        self.window.in_thread = False
-        self.window.close()
-        self.window = None
-        self.show_window(self)
-        self.finishedStartBtn()
+        if not self.window.running:
+            self.window.running = False
+            self.window.in_thread = False
+            self.window.plotted = False
+            self.window.close()
+            self.window = None
+            self.show_window(self)
+            self.finishedStartBtn()
 
 
     def closeEvent(self, event):
@@ -793,6 +805,7 @@ class LiveStreamGraph(QWidget):
     plotType = ""
     thread = None
     parent = None
+    plotted = False
 
     def __init__(self, parent=None):
         #super().__init__(parent)
@@ -851,9 +864,11 @@ class LiveStreamGraph(QWidget):
                 self.low_connector.cb_append_data_point(self.low_sample, timestamp)
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
-                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                # print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
                 time.sleep((self.speed / 1000))
-
+        self.running = False
+        self.in_thread = False
+        self.plotted = True
 
     def start_app(self, filename, speed, plotType):
         self.running = True
@@ -883,6 +898,7 @@ class LiveStreamGraph(QWidget):
         self.running = False
         self.in_thread = False
         self.pause = False
+        self.plotted = False
         self.thread = None
 
 
