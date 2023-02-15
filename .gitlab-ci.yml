@@ -13,3 +13,4 @@ run:
   artifacts:
     paths:
       - dist/*.whl
+      - dist/app.exe
