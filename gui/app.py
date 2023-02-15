@@ -113,14 +113,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         # Widgets
         self.livestream = LiveStreamWidget(self)
+        self.mode_selector = ModeSelectorWidget(self)
+        self.basic_operation = BasicOperationModeWidget(self)
+        self.balance_beam = BalanceBeamWidget(self)
+        self.debug = DebugWidget(self)
         self.stack = QtWidgets.QStackedWidget(self)
         self.verticalLayout.addWidget(self.stack)
         self.widgets = []
-        self.widgets.append(ModeSelectorWidget(self))
-        self.widgets.append(BasicOperationModeWidget(self))
-        self.widgets.append(BalanceBeamWidget(self))
+        self.widgets.append(self.mode_selector)
+        self.widgets.append(self.basic_operation)
+        self.widgets.append(self.balance_beam)
         self.widgets.append(self.livestream)
-        self.widgets.append(DebugWidget(self))
+        self.widgets.append(self.debug)
         for widget in self.widgets:
             self.stack.addWidget(widget)
         self.stack.setCurrentIndex(0)
@@ -364,6 +368,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
     def writingDataFinished(self):
         """When the cyDAQ is finished writing data."""
         print("writing data finished")
+        self.mainWindow.livestream.infile_line.setText(self.filename)
         self.filename = None  # Causes an ask for filename every sample
         self.writing = False
         self.mainWindow.startPingTimer()
@@ -699,6 +704,9 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
 
     def chooseFile(self):
         # get file save location
+        if self.infile_line.text() != "":
+            self.file_name = self.infile_line.text()
+            return
         options = QFileDialog.Options()
         self.file_name, _ = QFileDialog.getOpenFileName(self, "Pick a file!",
                                                            DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
@@ -715,8 +723,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             return
 
         if self.file_name == "":
-            self.filename_wl.setText("Please enter a valid file name!")
-            self.infile_line.setStyleSheet("background: rgb(247, 86, 74);")
+            self.chooseFile()
             return
         elif self.file_name is None:
             self.filename_wl.setText("Invalid Filename!")
@@ -834,8 +841,21 @@ class LiveStreamGraph(QWidget):
         print("Started!")
 
         with open(self.filename, 'r') as file:
-
             csvreader = csv.reader(file)
+
+            ## Disabled until further work can be done
+            #if self.speed == 0:
+            #    mid_x = []
+            #    mid_y = []
+            #    upper = []
+            #    lower = []
+            #    for row in csvreader:
+            #        mid_x.append(row[0])
+            #        mid_y.append(row[1])
+            #
+            #    self.mid_connector.cb_set_data(mid_x, mid_y)
+            #    return
+
             for row in csvreader:
                 if self.running is False:
                     return
