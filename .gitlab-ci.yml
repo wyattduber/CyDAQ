@@ -6,6 +6,10 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
 
+test:
+  script:
+    - python cli/testing/cli_test.py
+  
 run:
   script:
     - python -m pip install -r requirements.txt
