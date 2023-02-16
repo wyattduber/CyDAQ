@@ -228,7 +228,7 @@ QPushButton {
          </sizepolicy>
         </property>
         <property name="minimum">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="maximum">
          <number>100</number>
@@ -236,8 +236,11 @@ QPushButton {
         <property name="singleStep">
          <number>10</number>
         </property>
+        <property name="pageStep">
+         <number>10</number>
+        </property>
         <property name="value">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="tracking">
          <bool>false</bool>
@@ -256,7 +259,7 @@ QPushButton {
       <item>
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>0                                                                                             100</string>
+         <string>1                                                                                              100</string>
         </property>
        </widget>
       </item>
