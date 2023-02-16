@@ -10,12 +10,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import csv
-<<<<<<< HEAD
 import ctypes
-=======
 import pyqtgraph as pg
 from pyqtgraph import exporters
->>>>>>> db963ea7248c34282167e4850de80e550761af1d
 from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis import LiveAxis
