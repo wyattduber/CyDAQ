@@ -10,6 +10,7 @@ test:
   script:
     - python -m pip install -r requirements.txt
     - python cli/testing/cli_test.py
+    - python cli/testing/speed_test.py
   
 run:
   script:
