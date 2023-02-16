@@ -8,6 +8,7 @@ before_script:
 
 test:
   script:
+    - python -m pip install -r requirements.txt
     - python cli/testing/cli_test.py
   
 run:
