@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, "../cli")
+sys.path.insert(0, "./cli")
 import CLIWrapper
 import unittest
 import time
