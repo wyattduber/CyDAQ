@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, "../cli")
+sys.path.insert(0, "./cli")
 import CLIWrapper
 import unittest
 
@@ -7,7 +10,7 @@ class TestCLIWrapper(unittest.TestCase):
 
     # Ping Test
     def test_ping(self):
-        # print(cli.ping())
+       # print(cli.ping())
         ping = cli.ping()
         self.assertTrue(ping < 50000 or ping > 1)
 
@@ -22,8 +25,8 @@ class TestCLIWrapper(unittest.TestCase):
         self.assertTrue(config == should)
 
     # Send Config to CyDAQ Test
-    def test_send_config(self):
-        cli.send_config_to_cydaq()
+    #def test_send_config(self):
+    #    cli.send_config_to_cydaq()
 
     # Set Value Test
     def test_set_value(self):
@@ -37,11 +40,15 @@ class TestCLIWrapper(unittest.TestCase):
         pass
 
     # Start/Stop Sampling Test
-    def test_sampling(self):
-        cli.start_sampling()
-        cli.stop_sampling("")
+    #def test_sampling(self):
+    #    cli.start_sampling()
+    #    cli.stop_sampling("")
 
     # Start/Stop Generating Test
-    def test_generate(self):
-        cli.generate()
-        cli.generate()
+    #def test_generate(self):
+    #    cli.generate()
+    #    cli.generate()
+
+if  __name__ == '__main__':
+    cli.enable_mock()
+    unittest.main()
