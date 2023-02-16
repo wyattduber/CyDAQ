@@ -9,10 +9,10 @@ cli = CLIWrapper.CLI()
 class TestCLIWrapper(unittest.TestCase):
 
     # Ping Test
-    #def test_ping(self):
-    #    print(cli.ping())
-    #   ping = cli.ping()
-    #    self.assertTrue(ping < 50000 or ping > 1)
+    def test_ping(self):
+       # print(cli.ping())
+        ping = cli.ping()
+        self.assertTrue(ping < 50000 or ping > 1)
 
     # Get Config Test
     def test_get_config(self):
@@ -50,5 +50,5 @@ class TestCLIWrapper(unittest.TestCase):
     #    cli.generate()
 
 if  __name__ == '__main__':
-
+    cli.enable_mock()
     unittest.main()
