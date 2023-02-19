@@ -23,16 +23,21 @@ print(ser)
 ser.write(b'@0!')
 res = b""
 count = 0
+size = 0
 t0 = time.time()
 with open('data.txt', 'w') as datafile:
     while not res.endswith(b"!"):
         res = ser.read_all()
+        if res.endswith(b"!"):
+            break
+        if res == b'': # no data
+            continue
         toWrite = res.decode("ascii")
-        # print(toWrite)
-        # datafile.write(toWrite)
+        size += len(toWrite)
+        print(toWrite)
+        datafile.write(toWrite)
         count+=1
 t1 = time.time()
 print("Time: ", t1-t0)
 print("chunks: ", count)
-
-ser.write(b'stop!')
+print("size: ", size)

@@ -263,10 +263,12 @@ int xusb_cdc_send_data(XUsbPs *usb, u8 *buffer, u32 length) {
 	int status;
 
 	status = XUsbPs_EpBufferSend(usb, 2, buffer, length);
+//	xil_printf("staus %d\n\r", status);
 	if (status == XST_SUCCESS) {
 		return length;
 	}
 	else {
+		xil_printf("unexpected staus %d\n\r", status);
 		return 0;
 	}
 }

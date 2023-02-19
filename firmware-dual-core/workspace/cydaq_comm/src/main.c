@@ -213,14 +213,16 @@ int main(void) {
 
 				//speed test testing. Sends "@12...!" depending on size of numSamples
 				if(cmd == 16) { //@0! into putty
+					//https://support.xilinx.com/s/question/0D52E00006hpUKHSA2/zynq-baremetal-usb-device-running-out-of-dtds?language=en_US
 					xil_printf("ARM0: Testing!!\r\n");
-					int numSamples = 10000;
+					int numSamples = 100;
 
 					sprintf(txBuf,"%c",COMM_START_CHAR);
 					usb_commSend(txBuf, 1);
 					for(int i=0; i < numSamples; i++){
-						sprintf(txBuf,"12");
-						usb_commSend(txBuf, 2);
+//						sprintf(txBuf,"12");
+						sprintf(txBuf,"12121212121212121212121212121212121212121212121212");
+						usb_commSend(txBuf, 50);
 					}
 					sprintf(txBuf,"%c",COMM_STOP_CHAR);
 					usb_commSend(txBuf, 1);

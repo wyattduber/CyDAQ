@@ -102,12 +102,15 @@ u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
 	//If the buffer is smaller then the max message size send the message
 	if(numBytes <= 16*1024){
 		//Attempt to resend message until resources are available or timeout
-		while(xusb_cdc_send_data(&usb, bufferPtr, numBytes) != numBytes){
+		int test = xusb_cdc_send_data(&usb, bufferPtr, numBytes);
+		while(test != numBytes){
+//			xil_printf("numfails++: test: %d\n\r", test);
 			numFails++;
 			if(numFails > 1000){
 				xil_printf("Send buffer still busy ... exiting\n\r");
 				return XST_FAILURE;
 			}
+			test = xusb_cdc_send_data(&usb, bufferPtr, numBytes);
 		}
 	}
 	//If message is bigger than the usb buffers break it up into smaller messages
