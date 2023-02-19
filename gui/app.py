@@ -10,6 +10,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import csv
+import ctypes
+import pyqtgraph as pg
+from pyqtgraph import exporters
 from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis import LiveAxis
@@ -98,7 +101,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
 
     def __init__(self):
+        myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         super(MainWindow, self).__init__()
+        self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         self.setupUi(self)
 
         self.threadpool = QThreadPool()
@@ -825,8 +831,8 @@ class LiveStreamGraph(QWidget):
         self.high_plot = None
         self.mid_plot = None
         layout = QGridLayout(self)
-        self.low_sample: Union[float, None] = -10
-        self.high_sample: Union[float, None] = 10
+        self.low_sample: Union[float, None] = 0.2
+        self.high_sample: Union[float, None] = 0.3
         self.parent = parent
 
         # Setup bottom axis with TIME tick format
@@ -856,19 +862,6 @@ class LiveStreamGraph(QWidget):
         with open(self.filename, 'r') as file:
             csvreader = csv.reader(file)
 
-            ## Disabled until further work can be done
-            #if self.speed == 0:
-            #    mid_x = []
-            #    mid_y = []
-            #    upper = []
-            #    lower = []
-            #    for row in csvreader:
-            #        mid_x.append(row[0])
-            #        mid_y.append(row[1])
-            #
-            #    self.mid_connector.cb_set_data(mid_x, mid_y)
-            #    return
-
             for row in csvreader:
                 if self.running is False:
                     return
@@ -884,7 +877,7 @@ class LiveStreamGraph(QWidget):
                 self.low_connector.cb_append_data_point(self.low_sample, timestamp)
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
-                # print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
                 time.sleep((self.speed / 1000))
         self.running = False
         self.in_thread = False
@@ -941,6 +934,13 @@ class LiveStreamGraph(QWidget):
         self.chart_view.addItem(self.low_plot)
         self.chart_view.addItem(self.high_plot)
 
+    def closeEvent(self, event):
+        self.running = False
+        self.in_thread = False
+        self.pause = False
+        self.plotted = False
+        event.accept()
+
 
 class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
 
@@ -958,9 +958,9 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
         self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
 
         # Widget Buttons
-        self.write_btn.clicked.connect(self.writeData)
-        self.write2_btn.clicked.connect(self.writeDataV2)
-        self.read_btn.clicked.connect(self.readData)
+        #self.write_btn.clicked.connect(self.writeData)
+        #self.write2_btn.clicked.connect(self.writeDataV2)
+        #self.read_btn.clicked.connect(self.readData)
         self.mock_checkBox.stateChanged.connect(self.mockToggle)
 
         self.log_timer = QTimer()

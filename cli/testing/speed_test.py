@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, "../cli")
+sys.path.insert(0, "./cli")
 import CLIWrapper
 import unittest
 import time
@@ -49,3 +52,8 @@ class TestTransferSpeeds(unittest.TestCase):
         print("\tData Transfer took approximately: %d:%d" % (minutes, seconds))
         print(f"\tLines Generated: {lines}")
         print("\tLines Transferred per Second: " + "{:,}".format(round(lines / (millis / 1000))) + "\n")
+
+
+if  __name__ == '__main__':
+    cli.enable_mock()
+    unittest.main()
