@@ -116,11 +116,11 @@ u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
 	//If message is bigger than the usb buffers break it up into smaller messages
 	else{
 		u32 numPacks = numBytes / (16*1024);
-		for(int i = 0; i < numPacks; ){
+		for(int i = 0; i < numPacks; i++){
 			numFails = 0;
 			if(i == numPacks - 1){
 				//Attempt to resend message until resources are available or timeout
-				while(xusb_cdc_send_data(&usb, bufferPtr + i*(16*1024) , numBytes % 16*1024) != numBytes){
+				while(xusb_cdc_send_data(&usb, bufferPtr + i*(16*1024) , numBytes % 16*1024) != numBytes % 16*1024){
 					numFails++;
 					if(numFails > 1000){
 						xil_printf("Send buffer still busy ... exiting\n\r");
@@ -130,7 +130,7 @@ u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
 			}
 			else{
 				//Attempt to resend message until resources are available or timeout
-				while(xusb_cdc_send_data(&usb, bufferPtr + i*(16*1024), 16*1024) != numBytes){
+				while(xusb_cdc_send_data(&usb, bufferPtr + i*(16*1024), 16*1024) != 16*1024){
 					numFails++;
 					if(numFails > 1000){
 						xil_printf("Send buffer still busy ... exiting\n\r");

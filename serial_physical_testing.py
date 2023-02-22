@@ -25,14 +25,15 @@ res = b""
 count = 0
 size = 0
 t0 = time.time()
-with open('data.txt', 'w') as datafile:
+with open('data.txt', 'bw') as datafile:
     while not res.endswith(b"!"):
         res = ser.read_all()
         if res.endswith(b"!"):
             break
         if res == b'': # no data
             continue
-        toWrite = res.decode("ascii")
+        # toWrite = res.decode("ascii")
+        toWrite = res
         size += len(toWrite)
         print(toWrite)
         datafile.write(toWrite)

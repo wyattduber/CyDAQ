@@ -215,17 +215,31 @@ int main(void) {
 				if(cmd == 16) { //@0! into putty
 					//https://support.xilinx.com/s/question/0D52E00006hpUKHSA2/zynq-baremetal-usb-device-running-out-of-dtds?language=en_US
 					xil_printf("ARM0: Testing!!\r\n");
-					int numSamples = 100;
+//					int numSamples = 100;
+//
+//					sprintf(txBuf,"%c",COMM_START_CHAR);
+//					usb_commSend(txBuf, 1);
+//					for(int i=0; i < numSamples; i++){
+////						sprintf(txBuf,"12");
+//						sprintf(txBuf,"12121212121212121212121212121212121212121212121212");
+//						usb_commSend(txBuf, 50);
+//					}
+//					sprintf(txBuf,"%c",COMM_STOP_CHAR);
+//					usb_commSend(txBuf, 1);
 
-					sprintf(txBuf,"%c",COMM_START_CHAR);
-					usb_commSend(txBuf, 1);
-					for(int i=0; i < numSamples; i++){
-//						sprintf(txBuf,"12");
-						sprintf(txBuf,"12121212121212121212121212121212121212121212121212");
-						usb_commSend(txBuf, 50);
+					for(i=0;i<SAMPLE_BUFFER_SIZE-1;i+=2){
+						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
+						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
+//						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
 					}
+
+					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE*sizeof(u32));
+					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE*sizeof(u32));
+
 					sprintf(txBuf,"%c",COMM_STOP_CHAR);
 					usb_commSend(txBuf, 1);
+
+					xil_printf("testing command finished\r\n");
 					continue;
 				}
 //
