@@ -111,11 +111,17 @@ u32 streamData(){
 	return XST_SUCCESS;
 }
 
+u32 input_feedback(u8 cmd){//sends the received command back to frontend
+	u8 txBuf[TEST_BUFFER_SIZE];
+	sprintf(txBuf,"%c%u%c",COMM_START_CHAR,cmd,COMM_STOP_CHAR);
+	return usb_commSend(txBuf, 5);
+}
+
 int main(void) {
 	u8 recvBuf[TEST_BUFFER_SIZE];
 	u8 txBuf[TEST_BUFFER_SIZE];
 	u8 bytes, payloadLength;
-	u8 cmd;
+	u8 cmd = 0;
 
 	*bufStart = malloc(SAMPLE_BUFFER_SIZE*sizeof(u16));
 	baseAddr = *bufStart;
@@ -145,7 +151,7 @@ int main(void) {
 
 	while(1) {
 		//Clear buffer
-		for(int i = 0; i < TEST_BUFFER_SIZE; i++){//@00110111!
+		for(int i = 0; i < TEST_BUFFER_SIZE; i++){
 			recvBuf[i] = 0x0;
 		}
 //		//TESTING USE DELETE THIS
@@ -352,8 +358,9 @@ int main(void) {
 					xil_printf("ARM0: not implemented yet\n\r");
 					//TODO
 					//TODO
-				}else if(cmd == PING) {//7
+				}else if(cmd == PING) {//7 @00110111!
 					xil_printf("ARM0: NEVER GONNA GIVE YOU UP!\n\r");
+					input_feedback(cmd);
 					continue;
 
 				}else if(cmd == START_SAMPLING){//8
@@ -407,6 +414,7 @@ int main(void) {
 					xil_printf("ARM0: not implemented yet\n\r");
 					//TODO
 				}
+
 
 
 
