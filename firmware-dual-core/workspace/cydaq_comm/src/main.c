@@ -145,12 +145,30 @@ int main(void) {
 
 	while(1) {
 		//Clear buffer
-		for(int i = 0; i < TEST_BUFFER_SIZE; i++){
-			recvBuf[i] = 0;
+		for(int i = 0; i < TEST_BUFFER_SIZE; i++){//@00110111!
+			recvBuf[i] = 0x0;
 		}
+//		//TESTING USE DELETE THIS
+//		recvBuf[0] = '@';
+//		recvBuf[1] = '0';
+//		recvBuf[2] = '0';
+//		recvBuf[3] = '1';
+//		recvBuf[4] = '1';
+//		recvBuf[5] = '0';
+//		recvBuf[6] = '1';
+//		recvBuf[7] = '1';
+//		recvBuf[8] = '1';
+//		recvBuf[9] = '!';
+//		//TESTING USE DELETE THIS
+
+
 
 		//Receive bytes
 		bytes = xusb_cdc_rx_bytes_available();// > 5 ? 5 : xusb_cdc_rx_bytes_available();
+
+//		//TESTING USE DELETE THIS
+//		bytes = 10;
+//		//TESTING USE DELETE THIS
 
 		if (bytes > 2) {
 			bytes = usb_commRecv(recvBuf, bytes);
@@ -171,33 +189,9 @@ int main(void) {
 			else{
 				//If valid
 				//cmd = recvBuf[COMM_NUM_START_CHARS + COMM_MODE_SIZE];
-				int cmd2 = 0;
-				cmd2 += (recvBuf[1] - 48) * 10000000;
-				cmd2 += (recvBuf[2] - 48) * 1000000;
-				cmd2 += (recvBuf[3] - 48)* 100000;
-				cmd2 += (recvBuf[4] - 48) * 10000;
-				cmd2 += (recvBuf[5] - 48) * 1000;
-				cmd2 += (recvBuf[6] - 48) * 100;
-				cmd2 += (recvBuf[7] - 48) * 10;
-				cmd2 += recvBuf[8] - 48;
+				cmd = ((recvBuf[1]-48 << 7) | (recvBuf[2]-48 << 6) | (recvBuf[3]-48 << 5) | (recvBuf[4]-48 << 4) | (recvBuf[5]-48 << 3) | (recvBuf[6]-48 << 2) | (recvBuf[7]-48 << 1) | (recvBuf[8]-48 << 0))-48;
 
-			    int dec_value = 0;
-			    // Initializing base value to 1, i.e 2^0
-			    int base = 1;
-
-			    int temp = cmd2;
-			    while (temp) {
-			        int last_digit = temp % 10;
-			        temp = temp / 10;
-
-			        dec_value += last_digit * base;
-
-			        base = base * 2;
-			    }
-
-			    cmd2 = dec_value - 48;
-			    cmd = (u8)cmd2;
-
+				xil_printf("ARM0 command: %u\r\n", cmd);
 
 				payloadLength = bytes - COMM_CMD_SIZE - COMM_NUM_START_CHARS
 						- COMM_MODE_SIZE - COMM_NUM_STOP_CHARS;
@@ -366,7 +360,7 @@ int main(void) {
 					for(i=0;i<SAMPLE_BUFFER_SIZE-1;i+=2){
 						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
 						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
-						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
+						//xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
 					}
 
 					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE*sizeof(u32));
