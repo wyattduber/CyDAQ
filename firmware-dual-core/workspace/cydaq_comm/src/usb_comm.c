@@ -4,6 +4,8 @@
 
 
 #include "usb_comm.h"
+#include "xusbps.h"
+#include "xusbps_endpoint.h"
 
 /* Global variables */
 //extern bool samplingEnabled;
@@ -97,55 +99,46 @@ u32 usb_commBytesAvailable(){
 	return xusb_cdc_rx_bytes_available();
 }
 
-u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
-	u32 numFails = 0;
-	//If the buffer is smaller then the max message size send the message
-	if(numBytes <= 16*1024){
-		//Attempt to resend message until resources are available or timeout
-		int test = xusb_cdc_send_data(&usb, bufferPtr, numBytes);
-		while(test != numBytes){
-//			xil_printf("numfails++: test: %d\n\r", test);
-			numFails++;
-			if(numFails > 1000){
-				xil_printf("Send buffer still busy ... exiting\n\r");
-				return XST_FAILURE;
-			}
-			test = xusb_cdc_send_data(&usb, bufferPtr, numBytes);
-		}
-	}
-	//If message is bigger than the usb buffers break it up into smaller messages
-	else{
-		//TODO rewrite this section next time
-		u32 numPacks = numBytes / (16*1024);
-		for(int i = 0; i < numPacks; i++){
-			numFails = 0;
-			if(i == numPacks - 1){
-				//Attempt to resend message until resources are available or timeout
-				while(xusb_cdc_send_data(&usb, bufferPtr + i*(16*1024) , numBytes % 16*1024) != numBytes % 16*1024){
-					numFails++;
-					if(numFails > 1000){
-						xil_printf("Send buffer still busy ... exiting\n\r");
-						return XST_FAILURE;
-					}
-					usleep(1000);
-				}
-			}
-			else{
-				//Attempt to resend message until resources are available or timeout
-				while(xusb_cdc_send_data(&usb, bufferPtr + i*(16*1024), 16*1024) != 16*1024){
-					numFails++;
-					if(numFails > 1000){
-						xil_printf("Send buffer still busy ... exiting\n\r");
-						return XST_FAILURE;
-					}
-					usleep(1000);
-				}
-			}
-			usleep(1000);
+int min(int a, int b){
+	return a < b ? a : b;
+}
 
+int max(int a, int b){
+	return a > b ? a : b;
+}
+
+//TODO write good description because this is confusing
+void wait_until_free_dt(XUsbPs *InstancePtr){
+	while(XUsbPs_dTDIsActive((&InstancePtr->DeviceConfig.Ep[2].In)->dTDHead)){
+		xil_printf("dt's full. waiting\r\n");
+		usleep(100);
+	}
+}
+
+u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
+	//max number of bytes that can be sent at once is 16*1024
+	int maxBytes = 16 * 1024; //TODO make constant in .h
+
+	for(int i = 0; i < numBytes; i+=maxBytes){
+		wait_until_free_dt(&usb);
+		int bytes = maxBytes;
+		if(i + maxBytes > numBytes){ //if we are sending the last chunk
+			bytes = numBytes - i;
+		}
+		int response = XUsbPs_EpBufferSend(&usb, 2, bufferPtr + i, bytes);
+		xil_printf("resposnse: %d\r\n", response);
+		usleep(100000); //unfortunately this big delay is needed otherwise data seems to not get sent.........
+		switch(response){
+		case XST_SUCCESS:
+			continue;
+		case XST_USB_NO_DESC_AVAILABLE:
+			xil_printf("XST_USB_NO_DESC_AVAILABLE\n\r");
+			continue;
+		default:
+			xil_printf("unexpected response %d\n\r", response);
+			return -1;
 		}
 	}
-	return XST_SUCCESS;
 
 }
 

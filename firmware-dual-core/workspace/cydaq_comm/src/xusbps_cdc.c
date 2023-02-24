@@ -259,6 +259,7 @@ int xusb_cdc_handle_bulk_request(XUsbPs *usb, u8 endpoint, u8 *buffer, u32 buffe
 	return XST_SUCCESS;
 }
 
+//TODO delete - not being used anymore
 int xusb_cdc_send_data(XUsbPs *usb, u8 *buffer, u32 length) {
 	int status;
 

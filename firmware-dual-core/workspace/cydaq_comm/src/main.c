@@ -257,13 +257,13 @@ int main(void) {
 //					}
 
 					fill_buf_with_incrementing(22);
-					print_buf();
+//					print_buf();
 
 					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE);
 					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE);
 
 					//if this sleep isn't here it only sends 4096 values :|
-					usleep(10000);
+//					usleep(100000);
 
 					sprintf(txBuf,"%c",COMM_STOP_CHAR);
 					usb_commSend(txBuf, 1);
