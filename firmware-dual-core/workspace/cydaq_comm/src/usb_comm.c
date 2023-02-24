@@ -115,6 +115,7 @@ u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
 	}
 	//If message is bigger than the usb buffers break it up into smaller messages
 	else{
+		//TODO rewrite this section next time
 		u32 numPacks = numBytes / (16*1024);
 		for(int i = 0; i < numPacks; i++){
 			numFails = 0;
@@ -126,6 +127,7 @@ u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
 						xil_printf("Send buffer still busy ... exiting\n\r");
 						return XST_FAILURE;
 					}
+					usleep(1000);
 				}
 			}
 			else{
@@ -136,8 +138,10 @@ u32 usb_commSend(u8 *bufferPtr, u32 numBytes){
 						xil_printf("Send buffer still busy ... exiting\n\r");
 						return XST_FAILURE;
 					}
+					usleep(1000);
 				}
 			}
+			usleep(1000);
 
 		}
 	}

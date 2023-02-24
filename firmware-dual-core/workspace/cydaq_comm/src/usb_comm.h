@@ -42,7 +42,7 @@
 #define COMM_START_CHAR '@'
 #define COMM_STOP_CHAR '!'
 #define TEST_BUFFER_SIZE	50
-#define SAMPLE_BUFFER_SIZE 10000
+#define SAMPLE_BUFFER_SIZE 1000000 //originally 10,000. Set lower for testing
 #define DEF_SAMPLE_BURST_SIZE 200 //number of bytes worth of samples to send in single burst (# samples* 2 bytes/sample)
 #define BUF_START 0x00100000 //FIXME
 #define BUF_END 0x102A00 //FIXME

@@ -113,18 +113,24 @@ u32 streamData(){
 
 void print_buf(){
 	for(int i = 0; i < SAMPLE_BUFFER_SIZE; i++){
-		xil_printf("%d ", (*bufStart)[i]);
-		if(i % 20 == 0){
+		if(i!= 0 && i % 10 == 0){
 			xil_printf("\r\n");
 		}
+		xil_printf("%lu ", (*bufStart)[i]);
 	}
 	xil_printf("\r\n");
 
 }
 
-void fill_buf_with_num(int num){
+void fill_buf_with_num(u16 num){
 	for(int i = 0; i < SAMPLE_BUFFER_SIZE; i++){
 		(*bufStart)[i] = num;
+	}
+}
+
+void fill_buf_with_incrementing(){
+	for(int i = 0; i < SAMPLE_BUFFER_SIZE; i++){
+		(*bufStart)[i] = i % 256;
 	}
 }
 
@@ -250,11 +256,14 @@ int main(void) {
 ////						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
 //					}
 
-					fill_buf_with_num(22);
+					fill_buf_with_incrementing(22);
 					print_buf();
 
-					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE*sizeof(u32));
-					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE*sizeof(u32));
+					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE);
+					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE);
+
+					//if this sleep isn't here it only sends 4096 values :|
+					usleep(10000);
 
 					sprintf(txBuf,"%c",COMM_STOP_CHAR);
 					usb_commSend(txBuf, 1);
