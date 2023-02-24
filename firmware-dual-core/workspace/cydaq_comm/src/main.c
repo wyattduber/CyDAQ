@@ -122,6 +122,12 @@ void print_buf(){
 
 }
 
+void fill_buf_with_num(int num){
+	for(int i = 0; i < SAMPLE_BUFFER_SIZE; i++){
+		(*bufStart)[i] = num;
+	}
+}
+
 u32 input_feedback(u8 cmd){//sends the received command back to frontend
 	u8 txBuf[TEST_BUFFER_SIZE];
 	sprintf(txBuf,"%c%u%c",COMM_START_CHAR,cmd,COMM_STOP_CHAR);
@@ -238,12 +244,13 @@ int main(void) {
 //					sprintf(txBuf,"%c",COMM_STOP_CHAR);
 //					usb_commSend(txBuf, 1);
 
-					for(i=0;i<SAMPLE_BUFFER_SIZE-1;i+=2){
-						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
-						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
-//						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
-					}
+//					for(i=0;i<SAMPLE_BUFFER_SIZE-1;i+=2){
+//						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
+//						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
+////						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
+//					}
 
+					fill_buf_with_num(22);
 					print_buf();
 
 					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE*sizeof(u32));
