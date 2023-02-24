@@ -8,3 +8,6 @@ cli/__pycache__
 build
 dist
 app.spec
+
+# Testing script creates this. Not needed in repo
+data.txt
