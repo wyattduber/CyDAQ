@@ -111,6 +111,17 @@ u32 streamData(){
 	return XST_SUCCESS;
 }
 
+void print_buf(){
+	for(int i = 0; i < SAMPLE_BUFFER_SIZE; i++){
+		xil_printf("%d ", (*bufStart)[i]);
+		if(i % 20 == 0){
+			xil_printf("\r\n");
+		}
+	}
+	xil_printf("\r\n");
+
+}
+
 u32 input_feedback(u8 cmd){//sends the received command back to frontend
 	u8 txBuf[TEST_BUFFER_SIZE];
 	sprintf(txBuf,"%c%u%c",COMM_START_CHAR,cmd,COMM_STOP_CHAR);
@@ -212,7 +223,7 @@ int main(void) {
 //				}
 
 				//speed test testing. Sends "@12...!" depending on size of numSamples
-				if(cmd == 16) { //@0! into putty
+				if(cmd == 192) { //@0! into putty
 					//https://support.xilinx.com/s/question/0D52E00006hpUKHSA2/zynq-baremetal-usb-device-running-out-of-dtds?language=en_US
 					xil_printf("ARM0: Testing!!\r\n");
 //					int numSamples = 100;
@@ -232,6 +243,8 @@ int main(void) {
 						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
 //						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
 					}
+
+					print_buf();
 
 					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE*sizeof(u32));
 					usb_commSend(*(u8**)startPtr, SAMPLE_BUFFER_SIZE*sizeof(u32));
