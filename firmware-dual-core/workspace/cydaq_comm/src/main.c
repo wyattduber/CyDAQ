@@ -134,10 +134,17 @@ void fill_buf_with_incrementing(){
 	}
 }
 
-u32 input_feedback(u8 cmd){//sends the received command back to frontend
+u32 input_feedback(u8 cmd){//sends the received command back to frontend when successful
 	u8 txBuf[TEST_BUFFER_SIZE];
-	sprintf(txBuf,"%c%u%c",COMM_START_CHAR,cmd,COMM_STOP_CHAR);
-	return usb_commSend(txBuf, 5);
+	sprintf(txBuf,"%cSUC%u%c",COMM_START_CHAR,cmd,COMM_STOP_CHAR);
+	return usb_commSend(txBuf, 5);//AWW, WHO'S BEING A GOOD BOY
+}
+
+u32 error_feedback(u8 err){//sends a error message back to frontend to indicated the error
+	//TODO
+	u8 txBuf[TEST_BUFFER_SIZE];
+	sprintf(txBuf,"%cERR%u%c",COMM_START_CHAR,err,COMM_STOP_CHAR);
+	return usb_commSend(txBuf, 5);//WHO SENT THE NAUGHTY INPUT? CYDAQ GON SPANK YOU!
 }
 
 int main(void) {
@@ -176,29 +183,11 @@ int main(void) {
 	while(1) {
 		//Clear buffer
 		for(int i = 0; i < TEST_BUFFER_SIZE; i++){
-			recvBuf[i] = 0x0;
+			recvBuf[i] = 0;
 		}
-//		//TESTING USE DELETE THIS
-//		recvBuf[0] = '@';
-//		recvBuf[1] = '0';
-//		recvBuf[2] = '0';
-//		recvBuf[3] = '1';
-//		recvBuf[4] = '1';
-//		recvBuf[5] = '0';
-//		recvBuf[6] = '1';
-//		recvBuf[7] = '1';
-//		recvBuf[8] = '1';
-//		recvBuf[9] = '!';
-//		//TESTING USE DELETE THIS
-
-
 
 		//Receive bytes
 		bytes = xusb_cdc_rx_bytes_available();// > 5 ? 5 : xusb_cdc_rx_bytes_available();
-
-//		//TESTING USE DELETE THIS
-//		bytes = 10;
-//		//TESTING USE DELETE THIS
 
 		if (bytes > 2) {
 			bytes = usb_commRecv(recvBuf, bytes);
@@ -216,9 +205,8 @@ int main(void) {
 					xil_printf("Error: Incorrect Format\n\r");
 				}
 			}
-			else{
-				//If valid
-				//cmd = recvBuf[COMM_NUM_START_CHARS + COMM_MODE_SIZE];
+			else{//If input is valid
+
 				cmd = ((recvBuf[1]-48 << 7) | (recvBuf[2]-48 << 6) | (recvBuf[3]-48 << 5) | (recvBuf[4]-48 << 4) | (recvBuf[5]-48 << 3) | (recvBuf[6]-48 << 2) | (recvBuf[7]-48 << 1) | (recvBuf[8]-48 << 0))-48;
 
 				xil_printf("ARM0 command: %u\r\n", cmd);
@@ -281,21 +269,20 @@ int main(void) {
 
 						xil_printf("Error: Invalid Command\n\r");
 					}
+					error_feedback(cmd);
 					continue;
 				}else if(cmd == INPUT_SELECT) {//0
 					if(DEBUG)
 						xil_printf("ARM0: INPUT_SELECT\n\r");
-					xil_printf("ARM0: not implemented yet\n\r");
-					//TODO
 					if(payloadLength == 0) {
 						if(DEBUG)
 							xil_printf("Error, payload length too small\n");
 						continue;
-
+						error_feedback(cmd);
 					} else {
 						status = muxSetInputPins(recvBuf[2]);//TODO change the recvBuf[2] to actual payload data
 						if (status > 0) {
-							//TODO error return
+							error_feedback(cmd);
 						}
 						input_feedback(cmd);
 
@@ -318,7 +305,7 @@ int main(void) {
 						if (DEBUG)
 							xil_printf("No filter param given to set\n");
 
-						//TODO error return
+						error_feedback(cmd);
 					} else {
 						status = muxSetActiveFilter(recvBuf[2]);//TODO change the recvBuf[2] to actual payload data
 					}
@@ -329,7 +316,7 @@ int main(void) {
 						if (DEBUG)
 							xil_printf("err in filter tune function");
 
-						//err = true; //TODO error return
+						error_feedback(cmd);
 					} else {//TODO add the filter functions
 						//https://git.ece.iastate.edu/cydaq/firmware/-/blob/master/zybo_z7_firmware/full_firmware_build/full_firmware_build.sdk/full_firmware_sw/src/filter.c
 //						//each frequency should be sent as two bytes each
@@ -348,6 +335,7 @@ int main(void) {
 					//acknowledge command before returning samples
 					xil_printf("%cACK%c", COMM_START_CHAR, COMM_STOP_CHAR);
 						//xadcProcessSamples();//TODO sampling core
+					input_feedback(cmd);
 						continue;
 
 				/*  ---Start Sampling---  */
