@@ -81,6 +81,53 @@ typedef enum commands
 	NUM_COMMANDS
 } commands_e;
 
+/**
+ * Maps the filters/paths on the board to numbers.
+ * Starts at 0 (used to create arrays of presets mapped to this enum.
+ * Do not change order unless you know what you are doing.
+ */
+typedef enum filters
+{
+    FILTER_1ST_ORDER_LP,
+    FILTER_1ST_ORDER_HP,
+    FILTER_2ND_ORDER_BP,
+    FILTER_6TH_ORDER_BP,
+    FILTER_6TH_ORDER_HP,
+    FILTER_6TH_ORDER_LP,
+    FILTER_60_HZ_NOTCH,
+    FILTER_PASSTHROUGH,
+    NUM_FILTERS
+} filters_e;
+
+/**
+ * Maps the board inputs to numbers.
+ * Starts at 0.
+ */
+typedef enum inputs
+{
+    AUXILARY35MM,
+    ANALOG,
+    SENSOR1V8,
+    SENSOR3V3,
+    SENSOR5V0,
+	DIGITAL_I2C,
+	DITIAL_SPI,
+	DIGITAL_UART,
+    NUM_INPUTS
+} inputs_e;
+
+/**
+ * Maps the available Analog-to-Digital converter options to numbers.
+ * Starts at 0.
+ */
+typedef enum adcs
+{
+	ADC_XADC,
+	ADC_SPI_EXTERNAL,
+	NUM_ADCS
+} adcs_e;
+
+
 
 int setup_interrupts(XScuGic *intc);
 void reset_usb(void);

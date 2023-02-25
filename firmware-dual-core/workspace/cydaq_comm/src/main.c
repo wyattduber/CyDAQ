@@ -145,6 +145,7 @@ int main(void) {
 	u8 txBuf[TEST_BUFFER_SIZE];
 	u8 bytes, payloadLength;
 	u8 cmd = 0;
+	int status = 0;
 
 	*bufStart = malloc(SAMPLE_BUFFER_SIZE*sizeof(u16));
 	baseAddr = *bufStart;
@@ -275,6 +276,7 @@ int main(void) {
 				if(cmd >= NUM_COMMANDS){
 					sprintf(txBuf,"%cERR%c",COMM_START_CHAR,COMM_STOP_CHAR);
 					usb_commSend(txBuf, 5);
+					input_feedback(cmd);
 					if(DEBUG){
 
 						xil_printf("Error: Invalid Command\n\r");
@@ -291,108 +293,81 @@ int main(void) {
 						continue;
 
 					} else {
-						//inputs_e inputSelect = buffer[2];
+						status = muxSetInputPins(recvBuf[2]);//TODO change the recvBuf[2] to actual payload data
+						if (status > 0) {
+							//TODO error return
+						}
+						input_feedback(cmd);
 
-						//if(inputSelect >= NUM_INPUTS) {
-							if(DEBUG)
-								//xil_printf("input requested %d not in valid range\n", inputSelect);
-							continue;
-
-						//} else {
-							//mutexSamplingConfig_SetInputSrc(buffer[2]);//TODO move to sampling core
-						//}
 					}
 
 				/*  ---Select Active Filter---  */
-				}else if(cmd == SAMPLE_RATE_SET) {//1
-					if(DEBUG)
-						xil_printf("ARM0: SAMPLE_RATE_SET\n\r");
-					xil_printf("ARM0: not implemented yet\n\r");
-					//TODO
-					if(payloadLength < COMM_SAMPLE_RATE_SIZE) {
-						if(DEBUG)
+				}else if (cmd == SAMPLE_RATE_SET) {
+					if (payloadLength < COMM_SAMPLE_RATE_SIZE) {
+						if (DEBUG)
 							xil_printf("Error, not enough bytes to represent sample rate\n");
-							continue;
-
+						//TODO error return
 					} else {
-						//u32 rate = buffer[2] << 24 | buffer[3] << 16 | buffer[4] << 8 | buffer[5];
-
-						//if(rate > XADC_MAX_SAMPLE_RATE) {
-							if(DEBUG)
-								xil_printf("Invalid sample rate given");
-							continue;
-
-						//} else {
-							//mutexSamplingConfig_SetSampleRate(rate);//TODO move to sampling core
-						//}
+						u32 rate = (recvBuf[2] << 24) | (recvBuf[2] << 16) | (recvBuf[2] << 8) | (recvBuf[2]);
+						//xadcSetSampleRate(rate); TODO pass this to sampling core
+						//ads7047_SetSampleRate(rate);TODO pass this to sampling core
+						input_feedback(cmd);
 					}
-				}else if(cmd == FILTER_SELECT){//2
-					if(DEBUG)
-						xil_printf("ARM0: FILTER_SELECT\n\r");
-					xil_printf("ARM0: not implemented yet\n\r");
-					//TODO
-					if(payloadLength < 1) {
-						if(DEBUG)
+				}else if (cmd == FILTER_SELECT) {
+					if (payloadLength < 1) {
+						if (DEBUG)
 							xil_printf("No filter param given to set\n");
-						continue;
 
+						//TODO error return
 					} else {
-						//filters_e filterSelect = ((u8) buffer[COMM_CMD_SIZE+1]);
-
-						//if(filterSelect >= NUM_FILTERS) {
-							if(DEBUG)
-								//xil_printf("Error, %d is not a valid filter enum #\n", filterSelect);
-							continue;
-
-						//} else {
-							//mutexSamplingConfig_SetFilterType(filterSelect);//TODO move to sampling core
-						//}
+						status = muxSetActiveFilter(recvBuf[2]);//TODO change the recvBuf[2] to actual payload data
 					}
 
 				/*  ---Set Filter Corner Frequencies---  */
-				}else if(cmd == CORNER_FREQ_SET){//3
-					if(DEBUG)
-						xil_printf("ARM0: CORNER_FREQ_SET\n\r");
-					xil_printf("ARM0: not implemented yet\n\r");
-					//TODO
-					//u8 filter = ((buffer[COMM_CMD_SIZE+1] << 8) & 0xFF00 ) + buffer[COMM_CMD_SIZE+2];
-					if(payloadLength < 4){
-						if(DEBUG)
-							xil_printf("err in filter tune function\n");
-						continue;
-					}else{
-						//each frequency should be sent as two bytes each
-						//FILTER_FREQ_TYPE lower = ((buffer[COMM_CMD_SIZE+1] << 8) & 0xFF00 ) + buffer[COMM_CMD_SIZE+2];//TODO move to sampling core
-						//FILTER_FREQ_TYPE upper = ((buffer[COMM_CMD_SIZE+3] << 8) & 0xFF00 ) + buffer[COMM_CMD_SIZE+4];//TODO move to sampling core
-						//tune filter
-						//err = tuneFilter(50, lower, upper);
-						//mutexSamplingConfig_SetCornerFreqLower(lower);//TODO move to sampling core
-						//mutexSamplingConfig_SetCornerFreqUpper(upper);//TODO move to sampling core
+				}else if (cmd == CORNER_FREQ_SET) {
+					if (payloadLength < 4) {
+						if (DEBUG)
+							xil_printf("err in filter tune function");
+
+						//err = true; //TODO error return
+					} else {//TODO add the filter functions
+						//https://git.ece.iastate.edu/cydaq/firmware/-/blob/master/zybo_z7_firmware/full_firmware_build/full_firmware_build.sdk/full_firmware_sw/src/filter.c
+//						//each frequency should be sent as two bytes each
+//						FILTER_FREQ_TYPE lower = ((recvBuf[0] << 8) & 0xFF00)//TODO change the recvBuf[0] to actual payload data
+//								+ payload[1];
+//						FILTER_FREQ_TYPE upper = ((recvBuf[2] << 8) & 0xFF00)//TODO change the recvBuf[2] to actual payload data
+//								+ payload[3];
+//
+//						//tune filter
+//						err = tuneFilter(50, lower, upper);
 					}
 
+
 				/*  ---Respond to Ping---  */
-				}else if(cmd == FETCH_SAMPLES) {//4
-					if(DEBUG)
-						xil_printf("ARM0: FETCH_SAMPLES\n\r");
-					xil_printf("ARM0: not implemented yet\n\r");
-					//TODO
+				}else if (cmd == FETCH_SAMPLES) {
+					//acknowledge command before returning samples
 					xil_printf("%cACK%c", COMM_START_CHAR, COMM_STOP_CHAR);
-					//xadcDisableSampling();//TODO finish me and move to sampling core
-					//xadcProcessSamples();//TODO move to sampling core
+						//xadcProcessSamples();//TODO sampling core
+						continue;
 
 				/*  ---Start Sampling---  */
 				}else if(cmd == ADC_SELECT) {//5
 					if(DEBUG)
 						xil_printf("ARM0: ADC_SELECT\n\r");
 					xil_printf("ARM0: not implemented yet\n\r");
-					//TODO
-					//TODO
+
 				}else if(cmd == PING) {//7 @00110111!
 					xil_printf("ARM0: NEVER GONNA GIVE YOU UP!\n\r");
 					input_feedback(cmd);
 					continue;
 
 				}else if(cmd == START_SAMPLING){//8
+					u8 useStreaming = 0;
+					if (payloadLength == 1) {
+						useStreaming = 1;
+					}
+						//xadcEnableSampling(useStreaming);//TODO sampling core
+
 					for(i=0;i<SAMPLE_BUFFER_SIZE-1;i+=2){
 						(*bufStart)[i] = (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1)) >> 8;
 						(*bufStart)[i+1] = 0x00FF & (u16)(128*(sin(2*3.1415*i/SAMPLE_BUFFER_SIZE)+1));
