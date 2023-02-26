@@ -99,14 +99,6 @@ u32 usb_commBytesAvailable(){
 	return xusb_cdc_rx_bytes_available();
 }
 
-int min(int a, int b){
-	return a < b ? a : b;
-}
-
-int max(int a, int b){
-	return a > b ? a : b;
-}
-
 //TODO write good description because this is confusing
 void wait_until_free_dt(XUsbPs *InstancePtr){
 	while(XUsbPs_dTDIsActive((&InstancePtr->DeviceConfig.Ep[2].In)->dTDHead)){
