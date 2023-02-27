@@ -101,6 +101,8 @@ class CyDAQModeWidget:
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
+
+    EXIT_CODE_REBOOT = -123
     def __init__(self):
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
@@ -109,9 +111,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         self.setupUi(self)
         self.threadpool = QThreadPool()
-
-        # Restart Code
-        self.EXIT_CODE_REBOOT = -123
 
         # CyDAQ communication
         self.wrapper = None
@@ -142,10 +141,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.updateWidgetConnectionStatus()
 
         # Upper Menu Buttons
+        pingAction = self.actionPing_CyDAQ
+        pingAction.triggered.connect(self.wrapper.ping)
+
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
 
-        # Disabled until I can figure out how to restart
         restartAction = self.actionRestart
         restartAction.triggered.connect(self.restartWindow)
 
