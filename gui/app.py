@@ -274,8 +274,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         # Home Button
         self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
 
-        # Plotter Button
+        # Bottom Buttons
         self.plotter_btn.clicked.connect(lambda: self.mainWindow.switchToLiveStream(True))
+        self.send_config_btn.clicked.connect(lambda: self.send_config_only())
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -592,6 +593,26 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
                 right_dict.get(i)()
             else:
                 wrong_dict.get(i)()
+
+    def send_config_only(self):
+        if not self.mainWindow.connected or self.writing or self.sampling:
+            return
+
+        # validate input
+        wrong = self.validateInput()
+        self.updateWrongs(wrong)
+        s = ""
+        for title, message in wrong.items():
+            if message != "":
+                s += title + ": " + message + "\n"
+        if s != "":
+            self.showInfo(s)
+            return
+
+        # send config
+        self.wrapper.set_values(json.dumps(self.getData()))
+        self.wrapper.send_config_to_cydaq()
+        print(self.wrapper.get_config())
 
 
 class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget):
@@ -953,10 +974,6 @@ class LiveStreamGraph(QWidget):
         self.plotted = False
         event.accept()
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 
 class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
 

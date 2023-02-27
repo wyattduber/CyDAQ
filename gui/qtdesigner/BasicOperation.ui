@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>428</width>
-    <height>625</height>
+    <height>732</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -778,17 +778,28 @@ QPushButton {
      </widget>
     </item>
     <item>
-     <widget class="QToolButton" name="plotter_btn">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>21</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Plotter</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QToolButton" name="plotter_btn">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>128</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Plotter</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="send_config_btn">
+        <property name="text">
+         <string>Send Config to CyDAQ</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
