@@ -2,7 +2,6 @@ import json
 import sys
 import traceback
 import time
-import numpy as np
 
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
@@ -13,8 +12,7 @@ from PyQt5.QtCore import *
 
 import csv
 import ctypes
-import pyqtgraph as pg
-from pyqtgraph import exporters
+from sys import platform
 from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis import LiveAxis
@@ -105,12 +103,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
 
     def __init__(self):
-        myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        if platform == "win32":
+            myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         super(MainWindow, self).__init__()
         self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         self.setupUi(self)
-
         self.threadpool = QThreadPool()
 
         # CyDAQ communication
@@ -141,8 +139,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
+        # Upper Menu Buttons
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
+
+        # Disabled until I can figure out how to restart
+        # restartAction = self.actionRestart
+        # restartAction.triggered.connect(self.restartWindow)
+
+        quitAction = self.actionQuit
+        quitAction.triggered.connect(self.close)
 
         # Ping the CyDAQ periodically to verify connection
         self.pingTimerInterval = PING_TIMER_DELAY_MS
@@ -153,16 +159,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.show()
 
     def pingCyDAQ(self):
-        def setConnected(x):
+
+        def setConnected(ping_delay):
             before = self.connected
-            self.connected = x >= 0
+            self.connected = ping_delay >= 0
             if before != self.connected:
                 self.updateWidgetConnectionStatus()
 
-        def setConnectedError(a):
-            extype = a[0]
-            value = a[1]
-            traceback = a[2]
+        def setConnectedError(errorMsg):
+            extype = errorMsg[0]
+            traceback_msg = errorMsg[2]
             before = self.connected
             if extype is CLIWrapper.cyDAQNotConnectedException:
                 self.connected = False
@@ -170,7 +176,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     self.updateWidgetConnectionStatus()
             else:
                 # Raise any other exceptions
-                raise extype(traceback)
+                raise extype(traceback_msg)
 
         self.runInWorkerThread(
             self.wrapper.ping,
@@ -283,12 +289,10 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_max_btn.text().replace(',', '')))
         self.sample_rate_min_btn.clicked.connect(
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_min_btn.text()))
+
+        # Sample Rate Input Validation
         validator = QDoubleValidator(100, 50000, 4)
         self.sample_rate_input_box.setValidator(validator)
-
-        # Input
-
-        # Filter
 
         # Corners
         self.low_corner_min_btn.clicked.connect(
@@ -304,6 +308,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.high_corner_max_btn.clicked.connect(
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
 
+        # Corner Input Validation
         validator = QDoubleValidator(100, 20000, 4)
         self.low_corner_input.setValidator(validator)
 
@@ -371,7 +376,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.connection_status_label.setText("CyDAQ Status: Not Connected!")
 
     def writingData(self):
-        """When the cyDAQ is sending data to the frontend and it's writing it to a file."""
+        """When the cyDAQ is sending data to the frontend, and it's writing it to a file."""
         self.writing = True
         self.mainWindow.pingTimer.stop()
         self.start_stop_sampling_btn.setText("Writing...")
@@ -1022,7 +1027,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
         # Home Button
         self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
 
-        # Widget Buttons
+        # Widget Buttons (Disabled for Lab Launch
         #self.write_btn.clicked.connect(self.writeData)
         #self.write2_btn.clicked.connect(self.writeDataV2)
         #self.read_btn.clicked.connect(self.readData)
@@ -1130,8 +1135,8 @@ class Worker(QRunnable):
                 result = self.fn(self.args, **self.kwargs)  # Run the function
         except:
             # traceback.print_exc()
-            exctype, value = sys.exc_info()[:2]
-            self.signals.error.emit((exctype, value, traceback.format_exc()))
+            exectype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exectype, value, traceback.format_exc()))
         else:
             self.signals.result.emit(result)  # Return the result of the processing
         finally:
@@ -1143,12 +1148,10 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
-        onlyInt = QIntValidator()
-        onlyInt.setRange(0, 2147483647)
-        self.repetitions_input.setValidator(onlyInt)
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 200000)
-        self.gen_rate_input.setValidator(onlyInt)
+        validator = QDoubleValidator(0, 2147483647, 9)
+        self.repetitions_input.setValidator(validator)
+        validator = QDoubleValidator(100, 200000, 5)
+        self.gen_rate_input.setValidator(validator)
 
         def onDropdownChanged():
 
