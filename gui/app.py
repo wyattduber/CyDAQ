@@ -6,7 +6,7 @@ import numpy as np
 
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -283,9 +283,8 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_max_btn.text().replace(',', '')))
         self.sample_rate_min_btn.clicked.connect(
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_min_btn.text()))
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 50000)
-        self.sample_rate_input_box.setValidator(onlyInt)
+        validator = QDoubleValidator(100, 50000, 4)
+        self.sample_rate_input_box.setValidator(validator)
 
         # Input
 
@@ -305,17 +304,14 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.high_corner_max_btn.clicked.connect(
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
 
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 20000)
-        self.low_corner_input.setValidator(onlyInt)
+        validator = QDoubleValidator(100, 20000, 4)
+        self.low_corner_input.setValidator(validator)
 
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 40000)
-        self.mid_corner_input_box.setValidator(onlyInt)
+        validator = QDoubleValidator(100, 40000, 4)
+        self.mid_corner_input_box.setValidator(validator)
 
-        onlyInt = QIntValidator()
-        onlyInt.setRange(2000, 40000)
-        self.high_corner_input.setValidator(onlyInt)
+        validator = QDoubleValidator(2000, 40000, 4)
+        self.high_corner_input.setValidator(validator)
 
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(self.startStopSampling)
@@ -390,15 +386,51 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.start_stop_sampling_btn.setText("Start")
 
     def getData(self):
-        return {
-            "Sample Rate": self.sample_rate_input_box.currentText(),
-            "Input": self.input_input_box.currentText(),
-            "Filter": self.filter_input_box.currentText(),
-            "Upper Corner": self.high_corner_input.text() or 0,
-            "Mid Corner": self.mid_corner_input_box.currentText() or 0,
-            "Lower Corner": self.low_corner_input.text() or 0,
-            "Sampling Time": self.sampling_time_input.text() or 0
-        }
+        # Temporary Dictionary
+        tmp_dict = {}
+
+        try:
+            tmp = "{:.0f}".format(float(self.sample_rate_input_box.currentText()))
+            if tmp == "inf":
+                tmp_dict["Sample Rate"] = "99999999"
+            else:
+                tmp_dict["Sample Rate"] = tmp
+        except ValueError:
+            tmp_dict["Sample Rate"] = "0"
+
+        tmp_dict["Input"] = self.input_input_box.currentText()
+        tmp_dict["Filter"] = self.filter_input_box.currentText()
+
+        try:
+            tmp =  "{:.0f}".format(float(self.high_corner_input.text()))
+            if tmp == "inf":
+                tmp_dict["Upper Corner"] = "99999999"
+            else:
+                tmp_dict["Upper Corner"] = tmp
+        except ValueError:
+            tmp_dict["Upper Corner"] = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.mid_corner_input_box.currentText()))
+            if tmp == "inf":
+                tmp_dict["Mid Corner"] = "99999999"
+            else:
+                tmp_dict["Mid Corner"] = tmp
+        except ValueError:
+            tmp_dict["Mid Corner"] = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.low_corner_input.text()))
+            if tmp == "inf":
+                tmp_dict["Low Corner"] = "99999999"
+            else:
+                tmp_dict["Low Corner"] = tmp
+        except ValueError:
+            tmp_dict["Low Corner"] = "0"
+
+        tmp_dict["Sampling Time"] = self.sampling_time_input.text() or 0
+
+        return tmp_dict
 
     def timeout(self):
         time.sleep(float(self.sampling_time_input.text()))
