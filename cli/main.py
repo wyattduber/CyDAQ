@@ -27,6 +27,22 @@ class CyDAQ_CLI:
 	WRAPPER_ERROR = "ERROR"
 	WRAPPER_IGNORE = "IGNORE"
 
+	HELP_MSG = """	h/help\t\t\t\t Print This Help Menu
+	ping\t\t\t\t Ping the Zybo
+	configure\t\t\t Configure Parameters (Guided)
+	clear\t\t\t\t Clear config to default
+	print\t\t\t\t Print Current Config
+	send\t\t\t\t Send config to cyDAQ
+	set (key) (value)\t\t Set one config value
+	setm (json list)\t\t Set multiple config values as a json object
+	wrapper (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
+	flush\t\t\t\t Flush 
+	start\t\t\t\t Start sampling
+	stop, [filename]\t\t Stop Sampling
+	generate\t\t\t Start/Stop DAC Generation
+	mock, (enable/disable)\t\t Enable CyDAQ serial mocking mode
+	q/quit\t\t\t\t Exit The Command-Line"""
+
 	def __init__(self):
 		self.cmd_obj = cmd()
 
@@ -184,22 +200,7 @@ class CyDAQ_CLI:
 			self._print_to_output("\tUnknown command. Command List:", self.WRAPPER_INFO)
 		else:
 			self._print_to_output("\tCommand List & Info", self.WRAPPER_INFO)
-		helpMsg = """	h/help\t\t\t\t Print This Help Menu
-	ping\t\t\t\t Ping the Zybo
-	configure\t\t\t Configure Parameters (Guided)
-	clear\t\t\t\t Clear config to default
-	print\t\t\t\t Print Current Config
-	send\t\t\t\t Send config to cyDAQ
-	set (key) (value)\t\t Set one config value
-	setm (json list)\t\t Set multiple config values as a json object
-	wrapper (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
-	flush\t\t\t\t Flush 
-	start\t\t\t\t Start sampling
-	stop, [filename]\t\t Stop Sampling
-	generate\t\t\t Start/Stop DAC Generation
-	mock, (enable/disable)\t\t Enable CyDAQ serial mocking mode
-	q/quit\t\t\t\t Exit The Command-Line"""
-		self._print_to_output(helpMsg, self.WRAPPER_INFO)
+		self._print_to_output(self.HELP_MSG, self.WRAPPER_INFO)
 
 	def _ping(self):
 		"""
