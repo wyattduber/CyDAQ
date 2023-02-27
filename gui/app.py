@@ -2,6 +2,8 @@ import json
 import sys
 import traceback
 import time
+import numpy as np
+
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QIntValidator
@@ -37,7 +39,9 @@ sys.path.insert(0, "./cli")
 import CLIWrapper
 
 # Constants
-PING_TIMER_DELAY_SECONDS = 1
+PING_TIMER_DELAY_MS = 1000
+LOG_TIMER_DELAY = 1000
+CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 
 
@@ -141,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         debugAction.triggered.connect(self.switchToDebug)
 
         # Ping the CyDAQ periodically to verify connection
-        self.pingTimerInterval = 1000
+        self.pingTimerInterval = PING_TIMER_DELAY_MS
         self.pingTimer = QTimer()
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
@@ -196,9 +200,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToBalanceBeam(self):
         self.stack.setCurrentIndex(2)
 
-    def switchToLiveStream(self):
+    def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
         self.livestream.show_window(self.livestream)
+        self.livestream.came_from_basic = came_from_basic
 
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
@@ -239,7 +244,7 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
 
         liveStreamButton = self.livestream_btn
         liveStreamButton.setCheckable(True)
-        liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream())
+        liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
 
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
@@ -268,6 +273,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
         # Home Button
         self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
+
+        # Plotter Button
+        self.plotter_btn.clicked.connect(lambda: self.mainWindow.switchToLiveStream(True))
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -667,6 +675,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     in_thread = False
     window = None
     file_name = ""
+    came_from_basic = False
 
     def __init__(self, mainWindow: MainWindow):
         super(LiveStreamWidget, self).__init__()
@@ -762,7 +771,10 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.window.in_thread = False
         self.window.close()
         self.window = None
-        self.mainWindow.switchToModeSelector()
+        if self.came_from_basic:
+            self.mainWindow.switchToBasicOperation()
+        else:
+            self.mainWindow.switchToModeSelector()
 
     def finishedStartBtn(self):
         self.start_btn.setText("Start")
@@ -877,8 +889,8 @@ class LiveStreamGraph(QWidget):
                 self.low_connector.cb_append_data_point(self.low_sample, timestamp)
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
-                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep((self.speed / 1000))
+                #print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep((self.speed / CONVERT_SEC_TO_MS))
         self.running = False
         self.in_thread = False
         self.plotted = True
@@ -941,6 +953,10 @@ class LiveStreamGraph(QWidget):
         self.plotted = False
         event.accept()
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 
 class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
 
@@ -965,7 +981,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
 
         self.log_timer = QTimer()
         self.log_timer.timeout.connect(self.logUpdate)
-        self.log_timer.start(1000)
+        self.log_timer.start(LOG_TIMER_DELAY)
 
     # CyDAQ Connection Label
     def cyDaqConnected(self):
