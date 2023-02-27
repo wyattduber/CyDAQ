@@ -101,7 +101,6 @@ class CyDAQModeWidget:
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
-
     def __init__(self):
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
@@ -110,6 +109,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         self.setupUi(self)
         self.threadpool = QThreadPool()
+
+        # Restart Code
+        self.EXIT_CODE_REBOOT = -123
 
         # CyDAQ communication
         self.wrapper = None
@@ -144,8 +146,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         debugAction.triggered.connect(self.switchToDebug)
 
         # Disabled until I can figure out how to restart
-        # restartAction = self.actionRestart
-        # restartAction.triggered.connect(self.restartWindow)
+        restartAction = self.actionRestart
+        restartAction.triggered.connect(self.restartWindow)
 
         quitAction = self.actionQuit
         quitAction.triggered.connect(self.close)
@@ -213,6 +215,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
+
+    def restartWindow(self):
+        qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     def closeEvent(self, event):
         close = QMessageBox.question(self,
@@ -1232,6 +1237,11 @@ class InvalidInputException(IOError):
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    main = MainWindow()
-    sys.exit(app.exec_())
+    app = None
+    currentExitCode = MainWindow.EXIT_CODE_REBOOT
+    while currentExitCode == MainWindow.EXIT_CODE_REBOOT:
+        app = QtWidgets.QApplication(sys.argv)
+        main = MainWindow()
+        currentExitCode = app.exec_()
+        app = None
+    # sys.exit(app.exec_())
