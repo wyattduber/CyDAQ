@@ -58,14 +58,21 @@
 QPushButton {
 	background-color: #033f63;
 	color: #d9d9d9;
+	border: 1px solid #033f63;
 	border-radius: 4px;
 	padding: 8px 16px;
 }
 
-#sampling_rate_label, #input_label, #filter_label, #mid_corner_label, #low_corner_label, #high_corner_label {
+#sampling_rate_label, #input_label, #filter_label, #mid_corner_label, #low_corner_label, #high_corner_label, #sampling_time_label {
 	font-size: 20px;
 	text-align: center;
 	color: #98012e;
+}
+
+#send_config_btn {
+	color: #033f63;
+	background-color: #d9d9d9;
+	border: 1px solid #033f63;
 }</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -743,17 +750,53 @@ QPushButton {
       </item>
      </layout>
     </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="sampling_time_label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Sampling Time (seconds)</string>
+      </property>
+     </widget>
+    </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLineEdit" name="sampling_time_input">
+      <property name="minimumSize">
+       <size>
+        <width>190</width>
+        <height>30</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Minimum</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>10</width>
+        <height>10</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="sampling_time_label">
+       <widget class="QPushButton" name="send_config_btn">
         <property name="text">
-         <string>Sampling Time (s)</string>
+         <string>Send Config</string>
         </property>
        </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="sampling_time_input"/>
       </item>
       <item>
        <widget class="QPushButton" name="start_stop_sampling_btn">
@@ -772,34 +815,16 @@ QPushButton {
     </item>
     <item>
      <widget class="QLabel" name="connection_status_label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
       <property name="text">
        <string/>
       </property>
      </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QToolButton" name="plotter_btn">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>128</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Plotter</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="send_config_btn">
-        <property name="text">
-         <string>Send Config to CyDAQ</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>

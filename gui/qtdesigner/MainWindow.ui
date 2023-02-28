@@ -23,7 +23,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>PyDAQ</string>
+   <string>CyDAQ</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #d9d9d9;</string>
@@ -52,6 +52,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionLaunch_Plotter"/>
+    <addaction name="separator"/>
     <addaction name="actionRestart"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -84,6 +86,11 @@
   <action name="actionDebug">
    <property name="text">
     <string>Debug</string>
+   </property>
+  </action>
+  <action name="actionLaunch_Plotter">
+   <property name="text">
+    <string>Launch Plotter</string>
    </property>
   </action>
  </widget>

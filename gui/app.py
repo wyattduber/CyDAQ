@@ -145,6 +145,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         pingAction = self.actionPing_CyDAQ
         pingAction.triggered.connect(self.wrapper.ping)
 
+        plotterAction = self.actionLaunch_Plotter
+        plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
+
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
 
@@ -300,8 +303,8 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
 
         # Bottom Buttons
-        self.plotter_btn.clicked.connect(lambda: self.mainWindow.switchToLiveStream(True))
-        self.send_config_btn.clicked.connect(lambda: self.send_config_only())
+        send_config = self.send_config_btn
+        send_config.clicked.connect(lambda: self.send_config_only())
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -663,6 +666,15 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
     # If the CyDAQ is to be used in a circuit or as a filter, send only the config
     # Still validates input, but just sends the config to the CyDAQ and implements it
     def send_config_only(self):
+        # Changing the button
+        send_config = self.send_config_btn
+        send_config.setText("Config Sent")
+        send_config.setStyleSheet("#send_config_btn"
+                                       "{"
+                                       "background-color: #0ead69;"
+                                       "border-color: #0ead69;"
+                                       "color: #02324F;"
+                                       "}")
         if not self.mainWindow.connected or self.writing or self.sampling:
             return
 
@@ -682,7 +694,6 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.wrapper.send_config_to_cydaq()
         print(self.wrapper.get_config())
         # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
-
 
 class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget):
     # Balance Beam Input Values
