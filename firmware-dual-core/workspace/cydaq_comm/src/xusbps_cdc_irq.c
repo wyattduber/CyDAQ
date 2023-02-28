@@ -97,6 +97,8 @@ void xusb_cdc_ep0_irq_handler(void *callback_ref, u8 endpoint, u8 event_type, vo
 
 	Xil_AssertVoid(NULL != callback_ref);
 
+	xil_printf("xusb_cdc_ep0_irq_handler\r\n");
+
 	usb = (XUsbPs *)callback_ref;
 
 	switch (event_type) {
@@ -166,6 +168,8 @@ void xusb_cdc_ep1_irq_handler(void *callback_ref, u8 endpoint, u8 event_type, vo
 
 	Xil_AssertVoid(NULL != callback_ref);
 
+	xil_printf("xusb_cdc_ep1_irq_handler\r\n");
+
 	usb = (XUsbPs *)callback_ref;
 
 	switch(event_type) {
@@ -214,6 +218,8 @@ void xusb_cdc_ep2_irq_handler(void *callback_ref, u8 endpoint, u8 event_type, vo
 
 	usb = (XUsbPs *)callback_ref;
 
+//	xil_printf("xusb_cdc_ep2_irq_handler\r\n");
+
 	switch(event_type) {
 	case XUSBPS_EP_EVENT_DATA_RX:
 		/* Get the data buffer */
@@ -239,6 +245,11 @@ void xusb_cdc_ep2_irq_handler(void *callback_ref, u8 endpoint, u8 event_type, vo
 			XUsbPs_EpBufferRelease(handle);
 		}
 		break;
+	case XUSBPS_EP_EVENT_DATA_TX:
+//		if(*data != 0){
+//			int test = 0;
+//		}
+
 	default:
 		/* Unhandled event */
 #ifdef XUSB_CDC_DEBUG
@@ -257,6 +268,8 @@ void xusb_cdc_ep3_irq_handler(void *callback_ref, u8 endpoint, u8 event_type, vo
 	u32 handle;
 
 	Xil_AssertVoid(NULL != callback_ref);
+
+	xil_printf("xusb_cdc_ep3_irq_handler\r\n");
 
 	usb = (XUsbPs *)callback_ref;
 

@@ -245,7 +245,7 @@ int main(void) {
 ////						xil_printf("Val: %d\r\n", (*bufStart)[i+1]);
 //					}
 
-					fill_buf_with_incrementing(22);
+					fill_buf_with_incrementing();
 //					print_buf();
 
 					xil_printf("Attempting to send buffer of size: %d bytes\r\n", SAMPLE_BUFFER_SIZE);

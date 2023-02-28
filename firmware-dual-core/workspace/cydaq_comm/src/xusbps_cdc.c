@@ -124,25 +124,32 @@ int xusb_cdc_init(XUsbPs *usb, u16 usb_device_id, u16 usb_irq, u32 rx_buf_size)
 	device_config.EpCfg[1].In.MaxPacketSize	= 64;
 
 	device_config.EpCfg[2].Out.Type		= XUSBPS_EP_TYPE_BULK;
-	device_config.EpCfg[2].Out.NumBufs	= 16;
+	device_config.EpCfg[2].Out.NumBufs	= 64;
 	device_config.EpCfg[2].Out.BufSize	= 512;
 	device_config.EpCfg[2].Out.MaxPacketSize	= 512;
 	device_config.EpCfg[2].In.Type		= XUSBPS_EP_TYPE_BULK;
-	device_config.EpCfg[2].In.NumBufs	= 16;
+	device_config.EpCfg[2].In.NumBufs	= 64;
 	device_config.EpCfg[2].In.MaxPacketSize	= 512;
 
 	device_config.EpCfg[3].Out.Type		= XUSBPS_EP_TYPE_BULK;
-	device_config.EpCfg[3].Out.NumBufs	= 16;
+	device_config.EpCfg[3].Out.NumBufs	= 64;
 	device_config.EpCfg[3].Out.BufSize	= 512;
 	device_config.EpCfg[3].Out.MaxPacketSize	= 512;
 	device_config.EpCfg[3].In.Type		= XUSBPS_EP_TYPE_BULK;
-	device_config.EpCfg[3].In.NumBufs	= 16;
+	device_config.EpCfg[3].In.NumBufs	= 64;
 	device_config.EpCfg[3].In.MaxPacketSize	= 512;
 
 	device_config.NumEndpoints = num_endpoints;
 
 	buffer_ptr = (u8 *)&usb_dma_buffer[0];
 	memset(buffer_ptr, 0, XUSBPS_CDC_MEM_SIZE);
+
+	//bug most likely happens here from my research. The memset above zeroes the memory, setting all the TDs
+	//active to zero, but calling flush right after removes that zeroeing for some reason, because the cache
+	//isn't getting saved correctly.
+//	memset(device_config.Ep, 0, 1104);
+//	Xil_DCacheFlushRange((unsigned int)(device_config.Ep), 1104);
+
 	Xil_DCacheFlushRange((unsigned int)buffer_ptr, XUSBPS_CDC_MEM_SIZE);
 
 	/* Finish the configuration of the DeviceConfig structure and configure
@@ -187,6 +194,12 @@ int xusb_cdc_init(XUsbPs *usb, u16 usb_device_id, u16 usb_irq, u32 rx_buf_size)
 	status = XUsbPs_EpSetHandler(usb, 2,
 								 XUSBPS_EP_DIRECTION_OUT,
 								 xusb_cdc_ep2_irq_handler, usb);
+
+	//added
+	status = XUsbPs_EpSetHandler(usb, 2,
+									 XUSBPS_EP_DIRECTION_IN,
+									 xusb_cdc_ep2_irq_handler, usb);
+
 	status = XUsbPs_EpSetHandler(usb, 3,
 								 XUSBPS_EP_DIRECTION_IN,
 								 xusb_cdc_ep3_irq_handler, usb);

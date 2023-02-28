@@ -27,6 +27,7 @@ size = 0
 t0 = time.time()
 with open('data.txt', 'bw') as datafile:
     while not res.endswith(b"!"):
+        # time.sleep(1)
         res = ser.read_all()
         if res.endswith(b"!"):
             break
@@ -38,6 +39,7 @@ with open('data.txt', 'bw') as datafile:
         print(toWrite)
         datafile.write(toWrite)
         count+=1
+        print("size: ", size, " count: ", count)
 t1 = time.time()
 print("Time: ", t1-t0)
 print("chunks: ", count)

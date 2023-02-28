@@ -497,6 +497,12 @@ extern "C" {
 #define XUsbPs_WritedQH(dQHPtr, Id, Val)	\
 			(*(u32 *) ((u32)(dQHPtr) + (u32)(Id)) = (u32)(Val))
 
+//TODO add meaningful comment if we use this
+#define XUsbPs_dTDClearActive(dTDPtr)                       \
+  XUsbPs_WritedTD(dTDPtr, XUSBPS_dTDTOKEN,                  \
+                  XUsbPs_ReaddTD(dTDPtr, XUSBPS_dTDTOKEN) & \
+                                 ~XUSBPS_dTDTOKEN_ACTIVE_MASK)
+
 
 
 #ifdef __cplusplus
