@@ -100,7 +100,8 @@ class CyDAQModeWidget:
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
-    """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
+    """Main window that contains all other windows within it. 
+    Responsible for communicating with CyDAQ through wrapper. """
 
     EXIT_CODE_REBOOT = -123
     def __init__(self):
@@ -161,6 +162,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.show()
 
+    # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
+    # Works with hotplugging the machine, will detect a new connection even without restarting the application
     def pingCyDAQ(self):
 
         def setConnected(ping_delay):
@@ -200,6 +203,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def stopPingTimer(self):
         self.pingTimer.stop()
 
+    ### The following are methods for switching to different modes of the gui application. 
+
     def switchToModeSelector(self):
         self.stack.setCurrentIndex(0)
 
@@ -220,9 +225,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def restartWindow(self):
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
+    # Override of the closeEvent method to add a confirmation box 
     def closeEvent(self, event):
         close = QMessageBox.question(self,
-                                     "Quit PyDAQ",
+                                     "Quit CyDAQ",
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
@@ -245,6 +251,8 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
 
+        ### Mode Selector Buttons and what they do when clicked ###
+
         basicOperationButton = self.basic_operation_btn
         basicOperationButton.setCheckable(True)
         basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
@@ -258,6 +266,8 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         liveStreamButton.setCheckable(True)
         liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
 
+    # These do nothing since the mode selector window doesn't have a status
+    # Necessary for app to function since the cydaq ping method is called on every window
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
 
@@ -278,10 +288,13 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
 
+        # Some flag booleans to determine what mode the basic operation mode is in
         self.sampling = False
         self.writing = False
         self.shouldTimeout = False
         self.filename = None
+
+        ### Below are the methods called when buttons are pressed ###
 
         # Home Button
         self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
@@ -396,6 +409,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.mainWindow.startPingTimer()
         self.start_stop_sampling_btn.setText("Start")
 
+    # Function to get the data from the GUI and format it into a JSON Dictionary
+    # Each try/catch statement is to determine if the input is in scientific notation
+    # If so, and the input is exceedingly high (returns "inf") then just set it to a num higher than the max
     def getData(self):
         # Temporary Dictionary
         tmp_dict = {}
@@ -465,6 +481,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             error_func=lambda x: self.showError(x)
         )
 
+    # Method that is run both to start and stop sampling
+    # Runs in a worker thread to keep the GUI from freezing and to allow use of other features
+    # Allows for the user to input a pre-determined time to sample for or just click when to start/stop
     def startStopSampling(self):
         if not self.mainWindow.connected:
             return
@@ -548,8 +567,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             # Stop sampling
             self.stop_sampling()
 
+    # Validate configuration and populate a return dictionary with any error messages
+    # An empty string means there is no error
     def validateInput(self):
-        """Validate configuration and populate a return dictionary with any error messages. An empty string means there is no error."""
         data = self.getData()
         wrong = {"Sample Rate": "",
                  "Upper Corner": "",
@@ -616,6 +636,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
 
         return wrong
 
+    # If there is anything wrong with the inputs, show it on the GUI
+    # Updates each individual field if the input in question is invalid in red
+    # If the input is correct, or was fixed and another input is incorrect, then adjust them as such
     def updateWrongs(self, wrong):
         wrong_dict = {
             "Sample Rate": lambda: self.sample_rate_input_box.setStyleSheet("background: rgb(247, 86, 74);"),
@@ -637,6 +660,8 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             else:
                 wrong_dict.get(i)()
 
+    # If the CyDAQ is to be used in a circuit or as a filter, send only the config
+    # Still validates input, but just sends the config to the CyDAQ and implements it
     def send_config_only(self):
         if not self.mainWindow.connected or self.writing or self.sampling:
             return
@@ -656,6 +681,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.wrapper.set_values(json.dumps(self.getData()))
         self.wrapper.send_config_to_cydaq()
         print(self.wrapper.get_config())
+        # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
 
 
 class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget):
@@ -678,6 +704,8 @@ class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget)
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+
+        ### Below are the methods called when buttons are pressed ###
 
         # Home Button
         self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
@@ -741,6 +769,13 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     file_name = ""
     came_from_basic = False
 
+    """ 
+    Widget that allows for the live plotting of sampled data that is received from the CyDAQ.
+    As it stands now, this widget only inputs an already written sample file and plots it live. 
+    It will eventually be used to livestream the data from the CyDAQ directly as it is sampled, 
+    and then will have the option to save it in a file or discard it. 
+    """
+
     def __init__(self, mainWindow: MainWindow):
         super(LiveStreamWidget, self).__init__()
         self.setupUi(self)
@@ -750,6 +785,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+
+        ### Below are the methods called when buttons are pressed ###
 
         # Home Button
         self.home_btn.clicked.connect(self.home)
@@ -762,6 +799,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.reload_btn.clicked.connect(self.reload)
 
     # CyDAQ Connection Label
+    # Pinged every second to confirm if the CyDAQ is connected (allows hotplugging)
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
         self.connection_status_label.setText("CyDAQ Status: Connected!")
@@ -772,6 +810,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.connection_status_label.setText("CyDAQ Status: Not Connected!")
         pass
 
+    # Called to open the plotter window
+    # Called when user switches to livestream window or resets the graph
     @staticmethod
     def show_window(self):
         if self.window is None:
@@ -781,6 +821,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         else:
             self.window.show()
 
+    # Button to either accept the user-entered filename
+    # or give the user the option to find a file on the system with the windows file box
     def chooseFile(self):
         # get file save location
         if self.infile_line.text() != "":
@@ -796,11 +838,15 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.infile_line.setText(self.file_name)
         self.infile_line.setStyleSheet("background: rgb(217, 217, 217);")
 
+    # Calls the start_app method in the child plotter window
+    # Starts live plotting with the file send from the UI
     def start_graph(self):
 
+        # Check if the window is already plotting or has plotted
         if self.window.running or self.window.plotted:
             return
 
+        # Check for filename and validity of filename
         if self.file_name == "":
             self.chooseFile()
             return
@@ -809,6 +855,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             self.infile_line.setStylesheet("background: rgb(247, 86, 74);")
             return
 
+        # Once everything is validated, start plotting the actual graph
         self.filename_wl.setText("")
         self.infile_line.setStyleSheet("background: rgb(217, 217, 217);")
         self.start_btn.setText("Running...")
@@ -821,6 +868,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             error_func=self.showError
         )
 
+    # Pause live plotting
     def pause(self):
         if self.window.running:
             if self.window.pause is True:
@@ -830,6 +878,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
                 self.window.pause = True
                 self.pause_btn.setText("Resume")
 
+    # Return to the home page
+    # Removes the graph window as it's not longer needed on another page
     def home(self):
         self.window.running = False
         self.window.in_thread = False
@@ -840,21 +890,26 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         else:
             self.mainWindow.switchToModeSelector()
 
+    # Changes the buttons back to their non-running state
     def finishedStartBtn(self):
         self.start_btn.setText("Start")
         self.start_btn.setCheckable(True)
         self.pause_btn.setText("Pause")
         self.reload_btn.setCheckable(True)
 
+    # Clears the graph
     def clear(self):
         self.finishedStartBtn()
         self.window.clear()
     
+    # Changes the speed at which the points are plotted 
+    # Not working at the moment
     def updateSpeed(self):
         while self.window.running:
             pass
         self.finishedStartBtn()
 
+    # Clears and reopens the graph window to reset any issues with it 
     def reload(self):
         if not self.window.running:
             self.window.running = False
@@ -865,7 +920,8 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
             self.show_window(self)
             self.finishedStartBtn()
 
-
+    # Custom-defined close event to make sure the graph isn't
+    # Accidentally closed when currently plotting
     def closeEvent(self, event):
         if self.running:
             close = QMessageBox.question(self,
@@ -1054,6 +1110,12 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
         self.connection_status_label.setText("Not Connected!")
         pass
 
+    """ 
+    Below are some tests that we came up with to test the reading/writing
+    speed of python an the GUI that we created to make sure that it can 
+    handle large amounts of data
+    """
+
     def writeData(self):
         self.runInWorkerThread(
             self.wrapper.writeALotOfData,
@@ -1075,6 +1137,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
             error_func=lambda x: self.showError(x)
         )
     
+    # Enables mocking of the project
     def mockToggle(self):
         if self.mock_checkBox.isChecked():
             self.wrapper.enable_mock()
