@@ -13,6 +13,8 @@ import pexpect
 from main import CyDAQ_CLI
 
 CLI_MAIN_FILE_NAME = "main.py"
+INPUT_CHAR = ">"
+NOT_CONNECTED = "Zybo not connected"
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
 TIMEOUT = 120
@@ -29,8 +31,6 @@ class CLI:
     """
 
     def __init__(self):
-        self.INPUT_CHAR = ">"
-        self.NOT_CONNECTED = "Zybo not connected"
         self.log = ""
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
@@ -59,13 +59,13 @@ class CLI:
 
         # If the CyDAQ is not connected at this point the CLI will immedately say so
         try:
-            self.p.expect(self.NOT_CONNECTED, timeout=0)
+            self.p.expect(NOT_CONNECTED, timeout=0)
             raise cyDAQNotConnectedException
         except pexpect.exceptions.TIMEOUT:
             pass
 
         # Wait for command input
-        self.p.expect(self.INPUT_CHAR, timeout=5)
+        self.p.expect(INPUT_CHAR, timeout=5)
 
         self.running_command = False
 
@@ -93,7 +93,7 @@ class CLI:
 
         # Wait for response
         try:
-            self.p.expect(self.INPUT_CHAR)
+            self.p.expect(INPUT_CHAR)
         except pexpect.exceptions.EOF:
             raise CLICloseException(self.p.before)
         except pexpect.exceptions.TIMEOUT:

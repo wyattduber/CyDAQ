@@ -2,17 +2,17 @@ import json
 import sys
 import traceback
 import time
+
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import csv
 import ctypes
-import pyqtgraph as pg
-from pyqtgraph import exporters
+from sys import platform
 from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis import LiveAxis
@@ -37,7 +37,9 @@ sys.path.insert(0, "./cli")
 import CLIWrapper
 
 # Constants
-PING_TIMER_DELAY_SECONDS = 1
+PING_TIMER_DELAY_MS = 1000
+LOG_TIMER_DELAY = 1000
+CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 
 
@@ -100,13 +102,14 @@ class CyDAQModeWidget:
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Holds all other widgets. Responsible for communicating with CyDAQ through wrapper. """
 
+    EXIT_CODE_REBOOT = -123
     def __init__(self):
-        myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        if platform == "win32":
+            myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         super(MainWindow, self).__init__()
         self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         self.setupUi(self)
-
         self.threadpool = QThreadPool()
 
         # CyDAQ communication
@@ -137,11 +140,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
+        # Upper Menu Buttons
+        pingAction = self.actionPing_CyDAQ
+        pingAction.triggered.connect(self.wrapper.ping)
+
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
 
+        restartAction = self.actionRestart
+        restartAction.triggered.connect(self.restartWindow)
+
+        quitAction = self.actionQuit
+        quitAction.triggered.connect(self.close)
+
         # Ping the CyDAQ periodically to verify connection
-        self.pingTimerInterval = 1000
+        self.pingTimerInterval = PING_TIMER_DELAY_MS
         self.pingTimer = QTimer()
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
@@ -149,16 +162,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.show()
 
     def pingCyDAQ(self):
-        def setConnected(x):
+
+        def setConnected(ping_delay):
             before = self.connected
-            self.connected = x >= 0
+            self.connected = ping_delay >= 0
             if before != self.connected:
                 self.updateWidgetConnectionStatus()
 
-        def setConnectedError(a):
-            extype = a[0]
-            value = a[1]
-            traceback = a[2]
+        def setConnectedError(errorMsg):
+            extype = errorMsg[0]
+            traceback_msg = errorMsg[2]
             before = self.connected
             if extype is CLIWrapper.cyDAQNotConnectedException:
                 self.connected = False
@@ -166,7 +179,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     self.updateWidgetConnectionStatus()
             else:
                 # Raise any other exceptions
-                raise extype(traceback)
+                raise extype(traceback_msg)
 
         self.runInWorkerThread(
             self.wrapper.ping,
@@ -196,12 +209,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToBalanceBeam(self):
         self.stack.setCurrentIndex(2)
 
-    def switchToLiveStream(self):
+    def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
         self.livestream.show_window(self.livestream)
+        self.livestream.came_from_basic = came_from_basic
 
     def switchToDebug(self):
         self.stack.setCurrentIndex(4)
+
+    def restartWindow(self):
+        qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     def closeEvent(self, event):
         close = QMessageBox.question(self,
@@ -239,7 +256,7 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
 
         liveStreamButton = self.livestream_btn
         liveStreamButton.setCheckable(True)
-        liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream())
+        liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
 
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
@@ -269,18 +286,19 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         # Home Button
         self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
 
+        # Bottom Buttons
+        self.plotter_btn.clicked.connect(lambda: self.mainWindow.switchToLiveStream(True))
+        self.send_config_btn.clicked.connect(lambda: self.send_config_only())
+
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_max_btn.text().replace(',', '')))
         self.sample_rate_min_btn.clicked.connect(
             lambda: self.sample_rate_input_box.setEditText(self.sample_rate_min_btn.text()))
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 50000)
-        self.sample_rate_input_box.setValidator(onlyInt)
 
-        # Input
-
-        # Filter
+        # Sample Rate Input Validation
+        validator = QDoubleValidator(100, 50000, 4)
+        self.sample_rate_input_box.setValidator(validator)
 
         # Corners
         self.low_corner_min_btn.clicked.connect(
@@ -296,17 +314,15 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.high_corner_max_btn.clicked.connect(
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
 
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 20000)
-        self.low_corner_input.setValidator(onlyInt)
+        # Corner Input Validation
+        validator = QDoubleValidator(100, 20000, 4)
+        self.low_corner_input.setValidator(validator)
 
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 40000)
-        self.mid_corner_input_box.setValidator(onlyInt)
+        validator = QDoubleValidator(100, 40000, 4)
+        self.mid_corner_input_box.setValidator(validator)
 
-        onlyInt = QIntValidator()
-        onlyInt.setRange(2000, 40000)
-        self.high_corner_input.setValidator(onlyInt)
+        validator = QDoubleValidator(2000, 40000, 4)
+        self.high_corner_input.setValidator(validator)
 
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(self.startStopSampling)
@@ -366,7 +382,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.connection_status_label.setText("CyDAQ Status: Not Connected!")
 
     def writingData(self):
-        """When the cyDAQ is sending data to the frontend and it's writing it to a file."""
+        """When the cyDAQ is sending data to the frontend, and it's writing it to a file."""
         self.writing = True
         self.mainWindow.pingTimer.stop()
         self.start_stop_sampling_btn.setText("Writing...")
@@ -381,15 +397,51 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         self.start_stop_sampling_btn.setText("Start")
 
     def getData(self):
-        return {
-            "Sample Rate": self.sample_rate_input_box.currentText(),
-            "Input": self.input_input_box.currentText(),
-            "Filter": self.filter_input_box.currentText(),
-            "Upper Corner": self.high_corner_input.text() or 0,
-            "Mid Corner": self.mid_corner_input_box.currentText() or 0,
-            "Lower Corner": self.low_corner_input.text() or 0,
-            "Sampling Time": self.sampling_time_input.text() or 0
-        }
+        # Temporary Dictionary
+        tmp_dict = {}
+
+        try:
+            tmp = "{:.0f}".format(float(self.sample_rate_input_box.currentText()))
+            if tmp == "inf":
+                tmp_dict["Sample Rate"] = "99999999"
+            else:
+                tmp_dict["Sample Rate"] = tmp
+        except ValueError:
+            tmp_dict["Sample Rate"] = "0"
+
+        tmp_dict["Input"] = self.input_input_box.currentText()
+        tmp_dict["Filter"] = self.filter_input_box.currentText()
+
+        try:
+            tmp =  "{:.0f}".format(float(self.high_corner_input.text()))
+            if tmp == "inf":
+                tmp_dict["Upper Corner"] = "99999999"
+            else:
+                tmp_dict["Upper Corner"] = tmp
+        except ValueError:
+            tmp_dict["Upper Corner"] = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.mid_corner_input_box.currentText()))
+            if tmp == "inf":
+                tmp_dict["Mid Corner"] = "99999999"
+            else:
+                tmp_dict["Mid Corner"] = tmp
+        except ValueError:
+            tmp_dict["Mid Corner"] = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.low_corner_input.text()))
+            if tmp == "inf":
+                tmp_dict["Low Corner"] = "99999999"
+            else:
+                tmp_dict["Low Corner"] = tmp
+        except ValueError:
+            tmp_dict["Low Corner"] = "0"
+
+        tmp_dict["Sampling Time"] = self.sampling_time_input.text() or 0
+
+        return tmp_dict
 
     def timeout(self):
         time.sleep(float(self.sampling_time_input.text()))
@@ -585,6 +637,26 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             else:
                 wrong_dict.get(i)()
 
+    def send_config_only(self):
+        if not self.mainWindow.connected or self.writing or self.sampling:
+            return
+
+        # validate input
+        wrong = self.validateInput()
+        self.updateWrongs(wrong)
+        s = ""
+        for title, message in wrong.items():
+            if message != "":
+                s += title + ": " + message + "\n"
+        if s != "":
+            self.showInfo(s)
+            return
+
+        # send config
+        self.wrapper.set_values(json.dumps(self.getData()))
+        self.wrapper.send_config_to_cydaq()
+        print(self.wrapper.get_config())
+
 
 class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget):
     # Balance Beam Input Values
@@ -667,6 +739,7 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
     in_thread = False
     window = None
     file_name = ""
+    came_from_basic = False
 
     def __init__(self, mainWindow: MainWindow):
         super(LiveStreamWidget, self).__init__()
@@ -762,7 +835,10 @@ class LiveStreamWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
         self.window.in_thread = False
         self.window.close()
         self.window = None
-        self.mainWindow.switchToModeSelector()
+        if self.came_from_basic:
+            self.mainWindow.switchToBasicOperation()
+        else:
+            self.mainWindow.switchToModeSelector()
 
     def finishedStartBtn(self):
         self.start_btn.setText("Start")
@@ -877,8 +953,8 @@ class LiveStreamGraph(QWidget):
                 self.low_connector.cb_append_data_point(self.low_sample, timestamp)
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
-                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep((self.speed / 1000))
+                #print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep((self.speed / CONVERT_SEC_TO_MS))
         self.running = False
         self.in_thread = False
         self.plotted = True
@@ -957,7 +1033,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
         # Home Button
         self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
 
-        # Widget Buttons
+        # Widget Buttons (Disabled for Lab Launch
         #self.write_btn.clicked.connect(self.writeData)
         #self.write2_btn.clicked.connect(self.writeDataV2)
         #self.read_btn.clicked.connect(self.readData)
@@ -965,7 +1041,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
 
         self.log_timer = QTimer()
         self.log_timer.timeout.connect(self.logUpdate)
-        self.log_timer.start(1000)
+        self.log_timer.start(LOG_TIMER_DELAY)
 
     # CyDAQ Connection Label
     def cyDaqConnected(self):
@@ -1065,8 +1141,8 @@ class Worker(QRunnable):
                 result = self.fn(self.args, **self.kwargs)  # Run the function
         except:
             # traceback.print_exc()
-            exctype, value = sys.exc_info()[:2]
-            self.signals.error.emit((exctype, value, traceback.format_exc()))
+            exectype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exectype, value, traceback.format_exc()))
         else:
             self.signals.result.emit(result)  # Return the result of the processing
         finally:
@@ -1078,12 +1154,10 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
-        onlyInt = QIntValidator()
-        onlyInt.setRange(0, 2147483647)
-        self.repetitions_input.setValidator(onlyInt)
-        onlyInt = QIntValidator()
-        onlyInt.setRange(100, 200000)
-        self.gen_rate_input.setValidator(onlyInt)
+        validator = QDoubleValidator(0, 2147483647, 9)
+        self.repetitions_input.setValidator(validator)
+        validator = QDoubleValidator(100, 200000, 5)
+        self.gen_rate_input.setValidator(validator)
 
         def onDropdownChanged():
 
@@ -1164,6 +1238,11 @@ class InvalidInputException(IOError):
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    main = MainWindow()
-    sys.exit(app.exec_())
+    app = None
+    currentExitCode = MainWindow.EXIT_CODE_REBOOT
+    while currentExitCode == MainWindow.EXIT_CODE_REBOOT:
+        app = QtWidgets.QApplication(sys.argv)
+        main = MainWindow()
+        currentExitCode = app.exec_()
+        app = None
+    # sys.exit(app.exec_())
