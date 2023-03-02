@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>452</width>
-    <height>733</height>
+    <height>734</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -114,14 +114,21 @@ QPushButton {
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
+         <widget class="QLineEdit" name="infile_line">
+          <property name="minimumSize">
+           <size>
+            <width>190</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="choose_file_btn">
           <property name="text">
            <string>Choose File</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="infile_line"/>
         </item>
        </layout>
       </item>
@@ -176,8 +183,14 @@ QPushButton {
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QComboBox" name="graph_type_dropdown">
+        <property name="minimumSize">
+         <size>
+          <width>190</width>
+          <height>30</height>
+         </size>
+        </property>
         <item>
          <property name="text">
           <string>Line</string>
