@@ -142,11 +142,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.updateWidgetConnectionStatus()
 
         # Upper Menu Buttons
-        pingAction = self.actionPing_CyDAQ
-        pingAction.triggered.connect(self.wrapper.ping)
+        # pingAction = self.actionPing_CyDAQ
+        # pingAction.triggered.connect(self.wrapper.ping)
 
-        plotterAction = self.actionLaunch_Plotter
-        plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
+        # TODO Disabled for CyDAQ Lab Testing
+        # plotterAction = self.actionLaunch_Plotter
+        # plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
 
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
@@ -226,6 +227,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(4)
 
     def restartWindow(self):
+        self.pingTimer.stop()
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     # Override of the closeEvent method to add a confirmation box 
@@ -260,14 +262,15 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         basicOperationButton.setCheckable(True)
         basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
 
-        # Disabled for CyDAQ Lab Testing
+        # TODO Disabled for CyDAQ Lab Testing
         # balanceBeamButton = self.balance_beam_btn
         # balanceBeamButton.setCheckable(True)
         # balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
 
-        liveStreamButton = self.livestream_btn
-        liveStreamButton.setCheckable(True)
-        liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
+        # TODO Disabled for CyDAQ Lab Testing
+        # liveStreamButton = self.livestream_btn
+        # liveStreamButton.setCheckable(True)
+        # liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
 
     # These do nothing since the mode selector window doesn't have a status
     # Necessary for app to function since the cydaq ping method is called on every window
@@ -667,14 +670,6 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
     # Still validates input, but just sends the config to the CyDAQ and implements it
     def send_config_only(self):
         # Changing the button
-        send_config = self.send_config_btn
-        send_config.setText("Config Sent")
-        send_config.setStyleSheet("#send_config_btn"
-                                       "{"
-                                       "background-color: #0ead69;"
-                                       "border-color: #0ead69;"
-                                       "color: #02324F;"
-                                       "}")
         if not self.mainWindow.connected or self.writing or self.sampling:
             return
 
@@ -689,10 +684,30 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
             self.showInfo(s)
             return
 
+        def resetSendConfigBtn():
+            print("Resetting Config Button!")
+            time.sleep(2)
+            self.send_config_btn.setText("Send Config")
+            self.send_config_btn.setStyleSheet("#send_config_btn"
+                                        "{"
+	                                    "color: #033f63;"
+	                                    "background-color: #d9d9d9;"
+	                                    "border: 1px solid #033f63;"
+                                        "}")
+
         # send config
         self.wrapper.set_values(json.dumps(self.getData()))
         self.wrapper.send_config_to_cydaq()
         print(self.wrapper.get_config())
+        send_config = self.send_config_btn
+        send_config.setText("Config Sent")
+        send_config.setStyleSheet("#send_config_btn"
+                                       "{"
+                                       "background-color: #0ead69;"
+                                       "border-color: #0ead69;"
+                                       "color: #02324F;"
+                                       "}")
+        Thread(target=resetSendConfigBtn).start()
         # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
 
 class BalanceBeamWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget):

@@ -159,7 +159,7 @@ QPushButton {
       </size>
      </property>
      <property name="text">
-      <string>Plotter</string>
+      <string>Disabled</string>
      </property>
     </widget>
    </item>

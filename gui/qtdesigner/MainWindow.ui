@@ -61,7 +61,6 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionPing_CyDAQ"/>
     <addaction name="actionDebug"/>
    </widget>
    <addaction name="menuFile"/>
@@ -89,6 +88,9 @@
    </property>
   </action>
   <action name="actionLaunch_Plotter">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Launch Plotter</string>
    </property>
