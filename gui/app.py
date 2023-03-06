@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import traceback
 import time
@@ -30,11 +31,22 @@ from Debug import Ui_debug
 from DacModeWidget import Ui_DAC_mode_widget
 from ModeSelectorWidget import Ui_ModeSelectorWidget
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 # This path must be appended because the CLI and GUI aren't in packages. 
 # If both were in python packages, this issue wouldn't be here.
-sys.path.insert(0, "../cli")
-sys.path.insert(0, "./cli")
+sys.path.insert(0, resource_path("../cli"))
+sys.path.insert(0, resource_path("./cli"))
 import CLIWrapper
+
 
 # Constants
 PING_TIMER_DELAY_MS = 1000
