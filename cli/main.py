@@ -434,4 +434,7 @@ class CyDAQ_CLI:
 		return (sample_volts - ADC_DC_OFFSET_V) * ADC_GAIN
 
 if __name__ == "__main__":
-	CyDAQ_CLI().start()
+	try:
+		CyDAQ_CLI().start()
+	except:
+		pass #TODO added to prevent logging of error on close of GUI. Should probably add logging here
