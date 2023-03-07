@@ -467,11 +467,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation, CyDAQM
         try:
             tmp = "{:.0f}".format(float(self.low_corner_input.text()))
             if tmp == "inf":
-                tmp_dict["Low Corner"] = "99999999"
+                tmp_dict["Lower Corner"] = "99999999"
             else:
-                tmp_dict["Low Corner"] = tmp
+                tmp_dict["Lower Corner"] = tmp
         except ValueError:
-            tmp_dict["Low Corner"] = "0"
+            tmp_dict["Lower Corner"] = "0"
 
         tmp_dict["Sampling Time"] = self.sampling_time_input.text() or 0
 
