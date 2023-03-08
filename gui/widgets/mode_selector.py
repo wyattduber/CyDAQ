@@ -1,9 +1,7 @@
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 
-# Stuff From Project
-import generated.ModeSelectorWidgetUI
-
+# Stuff From Project - May show as an error but it works
 from generated.ModeSelectorWidgetUI import Ui_ModeSelectorWidget
 
 
@@ -35,6 +33,7 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget):
         # TODO Disabled for CyDAQ Lab Testing
         # liveStreamButton = self.livestream_btn
         # liveStreamButton.setCheckable(True)
+        # liveStreamButton.setText("Plotter")
         # liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
 
     # These do nothing since the mode selector window doesn't have a status

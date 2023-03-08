@@ -16,7 +16,7 @@ from pglive.sources.live_plot import LiveLinePlot
 from pglive.sources.live_plot import LiveScatterPlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
-# Stuff From Project
+# Stuff From Project - May show as an error but it works
 from generated.LiveStreamUI import Ui_live_stream
 
 # Constants

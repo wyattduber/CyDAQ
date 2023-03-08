@@ -1,7 +1,7 @@
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 
-# Stuff From Project
+# Stuff From Project - May show as an error but it works
 from generated.BalanceBeamUI import Ui_balance_beam
 
 

@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QDoubleValidator
 
-# Stuff From Project
+# Stuff From Project - May show as an error but it works
 from generated.DacModeWidgetUI import Ui_DAC_mode_widget
 
 

@@ -2,7 +2,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
-# Stuff From Project
+# Stuff From Project - May show as an error but it works
 from generated.DebugUI import Ui_debug
 
 # Constants

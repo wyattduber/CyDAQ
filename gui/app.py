@@ -143,10 +143,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
-        # Upper Menu Buttons
-        # pingAction = self.actionPing_CyDAQ
-        # pingAction.triggered.connect(self.wrapper.ping)
-
         # TODO Disabled for CyDAQ Lab Testing
         # plotterAction = self.actionLaunch_Plotter
         # plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
