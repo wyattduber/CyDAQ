@@ -209,7 +209,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def stopPingTimer(self):
         self.pingTimer.stop()
 
-    ### The following are methods for switching to different widgets of the gui application.
+    ### The following are methods for switching to different widgets of the gui application. ###
 
     def switchToModeSelector(self):
         self.stack.setCurrentIndex(0)
@@ -230,6 +230,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def restartWindow(self):
         self.pingTimer.stop()
+        self.pingTimer.killTimer(0)
+        self.pingTimer = None
+        self.wrapper.close()
+        self.wrapper = None
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     # Override of the closeEvent method to add a confirmation box 
