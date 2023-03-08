@@ -132,5 +132,5 @@ class Ui_debug(object):
         self.actionRestart.setText(_translate("debug", "&Restart"))
         self.actionQuit.setText(_translate("debug", "&Quit"))
         self.actionPing_CyDAQ.setText(_translate("debug", "&Ping CyDAQ"))
-import balance_beam_rc
-import basic_operation_rc
+from . import balance_beam_rc
+from . import basic_operation_rc

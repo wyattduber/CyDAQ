@@ -199,4 +199,4 @@ class Ui_balance_beam(object):
         self.actionRestart.setText(_translate("balance_beam", "&Restart"))
         self.actionQuit.setText(_translate("balance_beam", "&Quit"))
         self.actionPing_CyDAQ.setText(_translate("balance_beam", "&Ping CyDAQ"))
-import basic_operation_rc
+from . import basic_operation_rc
