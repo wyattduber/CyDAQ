@@ -339,4 +339,4 @@ class Ui_basic_operation(object):
         self.actionRestart.setText(_translate("basic_operation", "&Restart"))
         self.actionQuit.setText(_translate("basic_operation", "&Quit"))
         self.actionPing_CyDAQ.setText(_translate("basic_operation", "&Ping CyDAQ"))
-import basic_operation_rc
+from . import basic_operation_rc

@@ -92,4 +92,4 @@ class Ui_ModeSelectorWidget(object):
         self.livestream_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.balance_beam_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.external_adc_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
-import main_window_rc
+from . import main_window_rc

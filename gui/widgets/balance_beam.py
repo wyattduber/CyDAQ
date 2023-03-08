@@ -2,11 +2,10 @@
 from PyQt5 import QtWidgets
 
 # Stuff From Project
-from gui.app import MainWindow
-from gui.app import CyDAQModeWidget
-from gui.generated.BalanceBeamUI import Ui_balance_beam
+from generated.BalanceBeamUI import Ui_balance_beam
 
-class BalanceBeamModeWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWidget):
+
+class BalanceBeamModeWidget(QtWidgets.QMainWindow, Ui_balance_beam):
     # Balance Beam Input Values
     kp = 0
     ki = 0
@@ -17,11 +16,12 @@ class BalanceBeamModeWidget(QtWidgets.QMainWindow, Ui_balance_beam, CyDAQModeWid
 
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
-    def __init__(self, mainWindow: MainWindow):
+    def __init__(self, mainWindow, cyDAQModeWidget):
         super(BalanceBeamModeWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
+        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool

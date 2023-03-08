@@ -77,4 +77,4 @@ class Ui_MainWindow(object):
         self.actionPing_CyDAQ.setText(_translate("MainWindow", "Ping CyDAQ"))
         self.actionDebug.setText(_translate("MainWindow", "Debug"))
         self.actionLaunch_Plotter.setText(_translate("MainWindow", "Launch Plotter"))
-import main_window_rc
+from . import main_window_rc

@@ -5,25 +5,25 @@ from threading import Thread
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QDoubleValidator
 
 # Stuff From Project
-#from gui.app import MainWindow
-#from gui.app import CyDAQModeWidget
-from gui.generated.BasicOperationUI import Ui_basic_operation
+from generated.BasicOperationUI import Ui_basic_operation
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 
+
 class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
     """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
 
-    def __init__(self, mainWindow):
+    def __init__(self, mainWindow, cyDAQModeWidget):
         super(BasicOperationModeWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
+        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
@@ -170,7 +170,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
         tmp_dict["Filter"] = self.filter_input_box.currentText()
 
         try:
-            tmp =  "{:.0f}".format(float(self.high_corner_input.text()))
+            tmp = "{:.0f}".format(float(self.high_corner_input.text()))
             if tmp == "inf":
                 tmp_dict["Upper Corner"] = "99999999"
             else:
@@ -216,7 +216,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
         self.sampling = False
         self.writingData()
         self.runInWorkerThread(
-        self.wrapper.stop_sampling,
+            self.wrapper.stop_sampling,
             func_args=self.filename,
             finished_func=self.writingDataFinished,
             error_func=lambda x: self.showError(x)
@@ -424,11 +424,11 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
             time.sleep(2)
             self.send_config_btn.setText("Send Config")
             self.send_config_btn.setStyleSheet("#send_config_btn"
-                                        "{"
-	                                    "color: #033f63;"
-	                                    "background-color: #d9d9d9;"
-	                                    "border: 1px solid #033f63;"
-                                        "}")
+                                               "{"
+                                               "color: #033f63;"
+                                               "background-color: #d9d9d9;"
+                                               "border: 1px solid #033f63;"
+                                               "}")
 
         # send config
         self.wrapper.set_values(json.dumps(self.getData()))
@@ -437,10 +437,10 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
         send_config = self.send_config_btn
         send_config.setText("Config Sent")
         send_config.setStyleSheet("#send_config_btn"
-                                       "{"
-                                       "background-color: #0ead69;"
-                                       "border-color: #0ead69;"
-                                       "color: #02324F;"
-                                       "}")
+                                  "{"
+                                  "background-color: #0ead69;"
+                                  "border-color: #0ead69;"
+                                  "color: #02324F;"
+                                  "}")
         Thread(target=resetSendConfigBtn).start()
         # TODO Eventual feedback from CyDAQ that config was received and successfully implemented

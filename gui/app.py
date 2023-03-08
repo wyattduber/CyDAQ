@@ -12,19 +12,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 # Stuff From Project
-import gui.widgets.mode_selector as ModeSelectorWidget
-import gui.widgets.basic_operation as BasicOperationModeWidget
-import gui.widgets.live_stream as LiveStreamModeWidget
-import gui.widgets.balance_beam as BalanceBeamModeWidget
-import gui.widgets.debug as DebugWidget
-from gui.generated.MainWindowUI import Ui_MainWindow
+from widgets import ModeSelectorWidget
+from widgets import BasicOperationModeWidget
+from widgets import LiveStreamModeWidget
+from widgets import BalanceBeamModeWidget
+from widgets import DebugWidget
+from generated.MainWindowUI import Ui_MainWindow
 
-#from gui.widgets.mode_selector import ModeSelectorWidget
-#from gui.widgets.basic_operation import BasicOperationModeWidget
-#from gui.widgets.live_stream import LiveStreamModeWidget
-#from gui.widgets.balance_beam import BalanceBeamModeWidget
-#from gui.widgets.debug import DebugWidget
-#from gui.generated.MainWindowUI import Ui_MainWindow
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -36,12 +30,12 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-# This path must be appended because the CLI and GUI aren't in packages. 
+
+# This path must be appended because the CLI and GUI aren't in packages.
 # If both were in python packages, this issue wouldn't be here.
 sys.path.insert(0, resource_path("../cli"))
 sys.path.insert(0, resource_path("./cli"))
 import CLIWrapper
-
 
 # Constants
 PING_TIMER_DELAY_MS = 1000
@@ -111,9 +105,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     Responsible for communicating with CyDAQ through wrapper. """
 
     EXIT_CODE_REBOOT = -123
+
     def __init__(self):
         if platform == "win32":
-            myappid = 'mycompany.myproduct.subproduct.version' # arbitrary string
+            myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         super(MainWindow, self).__init__()
         self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
@@ -129,11 +124,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = False
 
         # Widgets
-        self.livestream = LiveStreamModeWidget(self)
-        self.mode_selector = ModeSelectorWidget(self)
-        self.basic_operation = BasicOperationModeWidget(self)
-        self.balance_beam = BalanceBeamModeWidget(self)
-        self.debug = DebugWidget(self)
+        self.livestream = LiveStreamModeWidget(self, CyDAQModeWidget)
+        self.mode_selector = ModeSelectorWidget(self, CyDAQModeWidget)
+        self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
+        self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
+        self.debug = DebugWidget(self, CyDAQModeWidget)
         self.stack = QtWidgets.QStackedWidget(self)
         self.verticalLayout.addWidget(self.stack)
         self.widgets = []
@@ -249,6 +244,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                 main.widgets[3].window.close()
         else:
             event.ignore()
+
 
 class WorkerSignals(QObject):
     """

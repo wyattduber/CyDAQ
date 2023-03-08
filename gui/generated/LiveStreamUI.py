@@ -186,5 +186,5 @@ class Ui_live_stream(object):
         self.actionRestart.setText(_translate("live_stream", "&Restart"))
         self.actionQuit.setText(_translate("live_stream", "&Quit"))
         self.actionPing_CyDAQ.setText(_translate("live_stream", "&Ping CyDAQ"))
-import balance_beam_rc
-import basic_operation_rc
+from . import balance_beam_rc
+from . import basic_operation_rc

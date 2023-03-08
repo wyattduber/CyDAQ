@@ -3,20 +3,20 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
 # Stuff From Project
-from gui.app import MainWindow
-from gui.app import CyDAQModeWidget
-from gui.generated.DebugUI import Ui_debug
+from generated.DebugUI import Ui_debug
 
 # Constants
 LOG_TIMER_DELAY = 1000
 
-class DebugWidget(QtWidgets.QMainWindow, Ui_debug, CyDAQModeWidget):
 
-    def __init__(self, mainWindow: MainWindow):
+class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
+
+    def __init__(self, mainWindow, cyDAQModeWidget):
         super(DebugWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
+        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool

@@ -17,15 +17,14 @@ from pglive.sources.live_plot import LiveScatterPlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project
-from gui.app import MainWindow
-from gui.app import CyDAQModeWidget
-from gui.generated.LiveStreamUI import Ui_live_stream
+from generated.LiveStreamUI import Ui_live_stream
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 CONVERT_SEC_TO_MS = 1000
 
-class LiveStreamModeWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidget):
+
+class LiveStreamModeWidget(QtWidgets.QMainWindow, Ui_live_stream):
     running = False
     in_thread = False
     window = None
@@ -39,11 +38,12 @@ class LiveStreamModeWidget(QtWidgets.QMainWindow, Ui_live_stream, CyDAQModeWidge
     and then will have the option to save it in a file or discard it. 
     """
 
-    def __init__(self, mainWindow: MainWindow):
+    def __init__(self, mainWindow, cyDAQModeWidget):
         super(LiveStreamModeWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
+        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool

@@ -2,18 +2,20 @@
 from PyQt5 import QtWidgets
 
 # Stuff From Project
-from gui.app import MainWindow
-from gui.app import CyDAQModeWidget
-from gui.generated.ModeSelectorWidgetUI import Ui_ModeSelectorWidget
+import generated.ModeSelectorWidgetUI
 
-class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
+from generated.ModeSelectorWidgetUI import Ui_ModeSelectorWidget
+
+
+class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget):
     """Starter widget that allows the user to switch between all other generated"""
 
-    def __init__(self, mainWindow: MainWindow):
+    def __init__(self, mainWindow, cyDAQModeWidget):
         super(ModeSelectorWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
+        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool

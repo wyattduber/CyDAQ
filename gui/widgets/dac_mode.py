@@ -4,13 +4,12 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QDoubleValidator
 
 # Stuff From Project
-from gui.app import MainWindow
-from gui.app import CyDAQModeWidget
-from gui.generated.DacModeWidgetUI import Ui_DAC_mode_widget
+from generated.DacModeWidgetUI import Ui_DAC_mode_widget
+
 
 # TODO This will get used later
-class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget, CyDAQModeWidget):
-    def __init__(self, mainWindow: MainWindow):
+class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
+    def __init__(self, mainWindow, cyDAQModeWidget):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
         validator = QDoubleValidator(0, 2147483647, 9)
@@ -19,6 +18,7 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget, CyDAQModeWidget):
         self.gen_rate_input.setValidator(validator)
 
         self.mainWindow = mainWindow
+        self.cyDAQModeWidget = cyDAQModeWidget
 
         def onDropdownChanged():
 
