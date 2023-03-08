@@ -110,8 +110,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+            self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         super(MainWindow, self).__init__()
-        self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
         self.setupUi(self)
         self.threadpool = QThreadPool()
 
