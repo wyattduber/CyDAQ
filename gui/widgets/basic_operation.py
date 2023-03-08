@@ -215,8 +215,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
         self.shouldTimeout = False
         self.sampling = False
         self.writingData()
-        self.runInWorkerThread(
-            self.wrapper.stop_sampling,
+        self.cyDAQModeWidget.runInWorkerThread(
+            self,
+            func=self.wrapper.stop_sampling,
             func_args=self.filename,
             finished_func=self.writingDataFinished,
             error_func=lambda x: self.showError(x)
@@ -262,8 +263,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
             def step1():
                 if self.startSamplingError:
                     return
-                self.runInWorkerThread(
-                    self.wrapper.send_config_to_cydaq,
+                self.cyDAQModeWidget.runInWorkerThread(
+                    self,
+                    func=self.wrapper.send_config_to_cydaq,
                     finished_func=step2,
                     error_func=handleError
                 )
@@ -273,8 +275,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
                     return
                 self.sampling = True
                 self.mainWindow.stopPingTimer()
-                self.runInWorkerThread(
-                    self.wrapper.start_sampling,
+                self.cyDAQModeWidget.runInWorkerThread(
+                    self,
+                    func=self.wrapper.start_sampling,
                     finished_func=step3,
                     error_func=handleError
                 )
@@ -288,8 +291,9 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
 
             self.startSamplingError = False
 
-            self.runInWorkerThread(
-                self.wrapper.set_values,
+            self.cyDAQModeWidget.runInWorkerThread(
+                self,
+                func=self.wrapper.set_values,
                 func_args=json.dumps(self.getData()),
                 finished_func=step1,
                 error_func=handleError
