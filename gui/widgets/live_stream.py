@@ -125,8 +125,9 @@ class LiveStreamModeWidget(QtWidgets.QMainWindow, Ui_live_stream):
         self.start_btn.setCheckable(False)
         self.reload_btn.setCheckable(False)
         self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
-        self.runInWorkerThread(
-            self.updateSpeed,
+        self.cyDAQModeWidget.runInWorkerThread(
+            self,
+            func=self.updateSpeed,
             finished_func=self.finishedStartBtn,
             error_func=self.showError
         )

@@ -53,22 +53,25 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
     """
 
     def writeData(self):
-        self.runInWorkerThread(
-            self.wrapper.writeALotOfData,
+        self.cyDAQModeWidget.runInWorkerThread(
+            self,
+            func=self.wrapper.writeALotOfData,
             finished_func=lambda: print("Success!"),
             error_func=lambda x: self.showError(x)
         )
 
     def writeDataV2(self):
-        self.runInWorkerThread(
-            self.wrapper.writeALotOfDataV2,
+        self.cyDAQModeWidget.runInWorkerThread(
+            self,
+            func=self.wrapper.writeALotOfDataV2,
             finished_func=lambda: print("Success!"),
             error_func=lambda x: self.showError(x)
         )
 
     def readData(self):
-        self.runInWorkerThread(
-            self.wrapper.readALotOfData,
+        self.cyDAQModeWidget.runInWorkerThread(
+            self,
+            func=self.wrapper.readALotOfData,
             finished_func=lambda: print("Success"),
             error_func=lambda x: self.showError(x)
         )
