@@ -88,7 +88,7 @@ class Ui_ModeSelectorWidget(object):
         _translate = QtCore.QCoreApplication.translate
         ModeSelectorWidget.setWindowTitle(_translate("ModeSelectorWidget", "Form"))
         self.select_mode_header.setText(_translate("ModeSelectorWidget", "Select Mode"))
-        self.basic_operation_btn.setText(_translate("ModeSelectorWidget", "Basic Operation"))
+        self.basic_operation_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.livestream_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.balance_beam_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.external_adc_btn.setText(_translate("ModeSelectorWidget", "Disabled"))

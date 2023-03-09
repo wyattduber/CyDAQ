@@ -140,7 +140,7 @@ QPushButton {
       <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="text">
-      <string>Basic Operation</string>
+      <string>Disabled</string>
      </property>
     </widget>
    </item>
