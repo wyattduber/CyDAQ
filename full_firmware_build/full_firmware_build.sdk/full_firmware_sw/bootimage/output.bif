@@ -1,0 +1,6 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]X:\CyDAQ\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\full_firmware_FSBL\Debug\full_firmware_FSBL.elf
+	X:\CyDAQ\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\full_firmware_sw\Debug\full_firmware_sw.elf
+}

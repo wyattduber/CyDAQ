@@ -1,0 +1,20 @@
+#-----------------------------------------------------------
+# Vivado v2020.1 (64-bit)
+# SW Build 2902540 on Wed May 27 19:54:49 MDT 2020
+# IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
+# Start of session at: Mon Mar 13 16:12:14 2023
+# Process ID: 10888
+# Current directory: U:/sdmay23-47/full_firmware_build
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent20412 U:\sdmay23-47\full_firmware_build\full_firmware_build.xpr
+# Log file: U:/sdmay23-47/full_firmware_build/vivado.log
+# Journal file: U:/sdmay23-47/full_firmware_build\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project U:/sdmay23-47/full_firmware_build/full_firmware_build.xpr
+update_compile_order -fileset sources_1
+set_property pfm_name {} [get_files -all {U:/sdmay23-47/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/design_1.bd}]
+write_hw_platform -fixed -include_bit -force -file U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa
+launch_runs impl_1 -to_step write_bitstream -jobs 10
+wait_on_run impl_1
+set_property pfm_name {} [get_files -all {U:/sdmay23-47/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/design_1.bd}]
+write_hw_platform -fixed -include_bit -force -file U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa

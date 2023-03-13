@@ -1,0 +1,44 @@
+#-----------------------------------------------------------
+# Vivado v2020.1 (64-bit)
+# SW Build 2902540 on Wed May 27 19:54:49 MDT 2020
+# IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
+# Start of session at: Mon Mar 13 16:12:14 2023
+# Process ID: 10888
+# Current directory: U:/sdmay23-47/full_firmware_build
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent20412 U:\sdmay23-47\full_firmware_build\full_firmware_build.xpr
+# Log file: U:/sdmay23-47/full_firmware_build/vivado.log
+# Journal file: U:/sdmay23-47/full_firmware_build\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project U:/sdmay23-47/full_firmware_build/full_firmware_build.xpr
+Scanning sources...
+Finished scanning sources
+WARNING: [filemgmt 56-3] IP Repository Path: Could not find the directory 'U:/sdmay23-47/ip_repo/axi_pwm_1.0'.
+WARNING: [filemgmt 56-3] IP Repository Path: Could not find the directory 'U:/sdmay23-47/ip_repo/axi_pwm_1.0'.
+WARNING: [filemgmt 56-3] IP Repository Path: Could not find the directory 'U:/../../../../Xilinx/Vivado-Library-2019.1'.
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+WARNING: [IP_Flow 19-2248] Failed to load user IP repository 'u:/sdmay23-47/ip_repo/axi_pwm_1.0'; Can't find the specified path.
+If this directory should no longer be in your list of user repositories, go to the IP Settings dialog and remove it.
+WARNING: [IP_Flow 19-2207] Repository 'u:/sdmay23-47/ip_repo/axi_pwm_1.0' already exists; ignoring attempt to add it again.
+WARNING: [IP_Flow 19-2248] Failed to load user IP repository 'u:/sdmay23-47/ip_repo/axi_pwm_1.0'; Can't find the specified path.
+If this directory should no longer be in your list of user repositories, go to the IP Settings dialog and remove it.
+WARNING: [IP_Flow 19-2248] Failed to load user IP repository 'u:/Xilinx/Vivado-Library-2019.1'; Can't find the specified path.
+If this directory should no longer be in your list of user repositories, go to the IP Settings dialog and remove it.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'F:/Xilinx/Vivado/2020.1/data/ip'.
+open_project: Time (s): cpu = 00:00:25 ; elapsed = 00:00:41 . Memory (MB): peak = 1081.574 ; gain = 0.000
+update_compile_order -fileset sources_1
+set_property pfm_name {} [get_files -all {U:/sdmay23-47/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/design_1.bd}]
+write_hw_platform -fixed -include_bit -force -file U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa
+INFO: [Vivado 12-4895] Creating Hardware Platform: U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa ...
+INFO: [Hsi 55-2053] elapsed time for repository (F:/Xilinx/Vivado/2020.1/data\embeddedsw) loading 3 seconds
+ERROR: [Common 17-70] Application Exception: Unable to get BIT file from implementation run. Please ensure implementation has been run all the way through Bitstream generation. Aborting write_hw_platform..
+launch_runs impl_1 -to_step write_bitstream -jobs 10
+[Mon Mar 13 16:20:02 2023] Launched impl_1...
+Run output will be captured here: U:/sdmay23-47/full_firmware_build/full_firmware_build.runs/impl_1/runme.log
+set_property pfm_name {} [get_files -all {U:/sdmay23-47/full_firmware_build/full_firmware_build.srcs/sources_1/bd/design_1/design_1.bd}]
+write_hw_platform -fixed -include_bit -force -file U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa
+INFO: [Vivado 12-4895] Creating Hardware Platform: U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa ...
+INFO: [Vivado 12-4896] Successfully created Hardware Platform: U:/sdmay23-47/full_firmware_build/design_1_wrapper.xsa
+write_hw_platform: Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1119.129 ; gain = 31.676
+exit
+INFO: [Common 17-206] Exiting Vivado at Mon Mar 13 16:26:34 2023...
