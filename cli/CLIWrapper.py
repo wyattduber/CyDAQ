@@ -34,28 +34,29 @@ class CLI:
         self.log = ""
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
-        pythonCmd = "python "  # Default for windows
-        if platform == "linux":
-            pythonCmd = "python3 "
-        elif platform == "darwin":
-            pythonCmd = "python3 "
+        pythonCmd = "python3 "
 
         dirname = f"\"{os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME)}\""
 
-        try:
-            self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
-        except Exception as _:
-            print("1 Error with popen: ")
-            print(self.p.before)
+        # Create the pexpect shell
+        self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
 
+        # Enable the connection tracker
         self.connectionEnabled = True
 
         # Wait for cli to start up. It will NOT be in wrapper mode yet
+        # Also, check to make sure that the command shouldn't be another variation of the python command
         try:
-            self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
-        except Exception as _:
-            print("2 Error with popen: ")
-            print(self.p.before)
+            self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)  # Check with `python3` first
+        except pexpect.exceptions.EOF:
+            try:
+                pythonCmd = "python "  # Check for `python` next
+                self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
+                self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
+            except pexpect.exceptions.EOF:
+                pythonCmd = "py "  # Finally, check for `py` last
+                self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
+                self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
 
         # If the CyDAQ is not connected at this point the CLI will immedately say so
         try:
@@ -91,29 +92,30 @@ class CLI:
             self.running_command = False
             raise cyDAQNotConnectedException
 
-        # Wait for response
-        try:
-            self.p.expect(INPUT_CHAR)
-        except pexpect.exceptions.EOF:
-            raise CLICloseException(self.p.before)
-        except pexpect.exceptions.TIMEOUT:
-            raise CLITimeoutException
-        finally:
-            self.running_command = False
-        response = self.p.before
+        if command != "q":
+            # Wait for response
+            try:
+                self.p.expect(INPUT_CHAR)
+            except pexpect.exceptions.EOF:
+                raise CLICloseException(self.p.before)
+            except pexpect.exceptions.TIMEOUT:
+                raise CLITimeoutException
+            finally:
+                self.running_command = False
+            response = self.p.before
 
-        # Parse response
-        if response is None:
-            raise CLINoResponseException
-        response = response.decode()
-        response = response.strip()
-        self.log += response + "\n"
-        if wrapper_mode:
-            return self._parse_wrapper_mode_message(response)
-        else:
-            if response.strip() == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
-                raise cyDAQNotConnectedException
-            return response
+            # Parse response
+            if response is None:
+                raise CLINoResponseException
+            response = response.decode()
+            response = response.strip()
+            self.log += response + "\n"
+            if wrapper_mode:
+                return self._parse_wrapper_mode_message(response)
+            else:
+                if response.strip() == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
+                    raise cyDAQNotConnectedException
+                return response
 
     def _parse_wrapper_mode_message(self, line):
         """
@@ -159,6 +161,10 @@ class CLI:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:
             raise CLIException("Unable to parse ping response. Response was: {}".format(response))
+
+    def close(self, **_):
+        """Close the CLI tool"""
+        self._send_command("q")
 
     def clear_config(self, **_):
         """Clear the config to its default values"""
@@ -244,15 +250,15 @@ class CLI:
     def writeALotOfDataV2(self, **_):
         start = time.time()
         data = "junk data\n".encode()
-        with open('lotsOfData.csv','wb',100*(2**20)) as f:
-            for _ in range(1,100000000):
+        with open('lotsOfData.csv', 'wb', 100 * (2 ** 20)) as f:
+            for _ in range(1, 100000000):
                 # f.write("{}\n".format(time.time()).encode()) # this takes longer because time.time() and encode() use lots of cpu
                 f.write(data)
         delta = time.time() - start
         numLines = len(pandas.read_csv('lotsOfData.csv'))
         print("Total Lines: " + "{:,}".format(numLines))
         print("Time to write: ", delta)
-        print("Lines per second: {:,}".format(round(numLines/delta)))
+        print("Lines per second: {:,}".format(round(numLines / delta)))
 
     def readALotOfData(self, label, **_):
         with open('lotsOfData.csv', newline='') as csvfile:
