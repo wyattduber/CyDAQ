@@ -29,7 +29,7 @@
 };
 
 &usb0 {	
-	dr_mode = "host";
+	dr_mode = "peripheral";
 	usb-phy = <&usb_phy0>;
 };
 
