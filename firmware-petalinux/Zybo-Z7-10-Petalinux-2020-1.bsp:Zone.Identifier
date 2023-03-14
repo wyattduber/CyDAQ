@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/Digilent/Zybo-Z7/releases/tag/10%2FPetalinux%2F2020.1-1
+HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/286741809/adcd6762-972b-4e02-9bcc-767d7fb34ae7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230313%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230313T235415Z&X-Amz-Expires=300&X-Amz-Signature=4b4d2de0eb0956af7d33bc1ec3f67304f30d2f5e34395e3e56f27d69a58a5bce&X-Amz-SignedHeaders=host&actor_id=15672485&key_id=0&repo_id=286741809&response-content-disposition=attachment%3B%20filename%3DZybo-Z7-10-Petalinux-2020-1.bsp&response-content-type=application%2Foctet-stream
