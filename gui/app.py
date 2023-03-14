@@ -107,11 +107,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     EXIT_CODE_REBOOT = -123
 
     def __init__(self):
+        super(MainWindow, self).__init__()
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
             self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
-        super(MainWindow, self).__init__()
         self.setupUi(self)
         self.threadpool = QThreadPool()
 
