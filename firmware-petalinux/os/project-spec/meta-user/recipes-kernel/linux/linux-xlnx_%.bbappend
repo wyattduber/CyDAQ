@@ -9,5 +9,3 @@ SRC_URI_append = " \
         file://0001-media-ov5640-skip-first-few-frames-produced-by-the-s.patch \
         "
 
-SRC_URI += "file://devtool-fragment.cfg"
-
