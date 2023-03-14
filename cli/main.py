@@ -3,6 +3,7 @@ import datetime
 import os
 import json
 import time
+import traceback
 
 from check_params import ParameterConstructor
 
@@ -40,7 +41,7 @@ class CyDAQ_CLI:
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
-	mock, (enable/disable)\t\t Enable CyDAQ serial mocking mode
+	mock, (enable/disable/status)\t\t Enable CyDAQ serial mocking mode
 	q/quit\t\t\t\t Exit The Command-Line"""
 
 	def __init__(self):
@@ -137,6 +138,9 @@ class CyDAQ_CLI:
 							continue
 						self.cmd_obj = cmd(mock_mode=False)						
 						self.mock_mode = self.cmd_obj.is_mock_mode()
+						continue
+					elif command[1] == 'status' or command[1] == 's':
+						self._print_to_output(str(self.mock_mode), self.WRAPPER_INFO)
 						continue
 				self._print_to_output("Invalid syntax. Ex: mock, enable")
 				continue
@@ -435,6 +439,7 @@ class CyDAQ_CLI:
 
 if __name__ == "__main__":
 	try:
-		CyDAQ_CLI().start()
-	except:
-		pass #TODO added to prevent logging of error on close of GUI. Should probably add logging here
+		cli = CyDAQ_CLI()
+		cli.start()
+	except Exception as e: # Doesn't catch keyboard interrupt
+		cli._print_to_output("exceptinon uncaught in CLI: " + traceback.format_exc())

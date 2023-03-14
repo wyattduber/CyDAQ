@@ -232,6 +232,11 @@ class CLI:
         """Disable CyDAQ serial connection mocking"""
         self._send_command("mock, disable")
 
+    def isMocking(self, **_):
+        """Returns True if mocking a CyDAQ serial connection, False otherwise"""
+        response = self._send_command("mock, status")
+        return response == "True"
+
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")
         start = round(time.time())

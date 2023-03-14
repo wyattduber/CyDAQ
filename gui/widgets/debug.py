@@ -29,7 +29,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
         # self.write_btn.clicked.connect(self.writeData)
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
-        self.mock_checkBox.stateChanged.connect(self.mockToggle)
+        self.mock_checkBox.clicked.connect(self.mockClicked)
 
         self.log_timer = QTimer()
         self.log_timer.timeout.connect(self.logUpdate)
@@ -79,17 +79,19 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
         )
 
     # Enables mocking of the project
-    def mockToggle(self):
+    def mockClicked(self):
         if self.mock_checkBox.isChecked():
             self.wrapper.enable_mock()
         else:
             self.wrapper.disable_mock()
+        
+        self.mock_checkBox.setChecked(self.wrapper.isMocking())
 
     def logUpdate(self):
         old_pos = self.log_textBrowser.verticalScrollBar().value()
         old_max = self.log_textBrowser.verticalScrollBar().maximum()
         self.log_textBrowser.setText(self.wrapper.getLog())
-        if old_max - old_pos <= 10:
+        if old_max - old_pos <= 20:
             self.snapLogScrollToBottom()
         else:
             self.log_textBrowser.verticalScrollBar().setSliderPosition(old_pos)
