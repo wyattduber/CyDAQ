@@ -35,6 +35,8 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
         self.log_timer.timeout.connect(self.logUpdate)
         self.log_timer.start(LOG_TIMER_DELAY)
 
+        self.snapLogScrollToBottom()
+
     # CyDAQ Connection Label
     def cyDaqConnected(self):
         """When CyDAQ changes from disconnected to connected"""
@@ -88,7 +90,10 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
         old_max = self.log_textBrowser.verticalScrollBar().maximum()
         self.log_textBrowser.setText(self.wrapper.getLog())
         if old_max - old_pos <= 10:
-            self.log_textBrowser.verticalScrollBar().setSliderPosition(
-                self.log_textBrowser.verticalScrollBar().maximum())
+            self.snapLogScrollToBottom()
         else:
             self.log_textBrowser.verticalScrollBar().setSliderPosition(old_pos)
+
+    def snapLogScrollToBottom(self):
+        self.log_textBrowser.verticalScrollBar().setSliderPosition(
+                self.log_textBrowser.verticalScrollBar().maximum())
