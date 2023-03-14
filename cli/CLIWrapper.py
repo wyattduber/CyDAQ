@@ -282,6 +282,9 @@ class CLI:
     def getLog(self, **_):
         return self.log
 
+    def clearLog(self, **_):
+        self.log = ""
+
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""

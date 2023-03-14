@@ -30,6 +30,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
         self.mock_checkBox.clicked.connect(self.mockClicked)
+        self.clear_log_btn.clicked.connect(self.clearLog)
 
         self.log_timer = QTimer()
         self.log_timer.timeout.connect(self.logUpdate)
@@ -99,3 +100,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
     def snapLogScrollToBottom(self):
         self.log_textBrowser.verticalScrollBar().setSliderPosition(
                 self.log_textBrowser.verticalScrollBar().maximum())
+
+    def clearLog(self):
+        self.wrapper.clearLog()
+        self.logUpdate()
