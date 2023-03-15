@@ -14,7 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ModeSelectorWidget(object):
     def setupUi(self, ModeSelectorWidget):
         ModeSelectorWidget.setObjectName("ModeSelectorWidget")
-        ModeSelectorWidget.resize(389, 727)
+        ModeSelectorWidget.resize(645, 732)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(ModeSelectorWidget.sizePolicy().hasHeightForWidth())
+        ModeSelectorWidget.setSizePolicy(sizePolicy)
+        ModeSelectorWidget.setMinimumSize(QtCore.QSize(400, 590))
         ModeSelectorWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 20px;\n"
@@ -37,7 +43,6 @@ class Ui_ModeSelectorWidget(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.logo = QtWidgets.QLabel(ModeSelectorWidget)
         self.logo.setEnabled(True)
-        self.logo.setMinimumSize(QtCore.QSize(371, 205))
         self.logo.setText("")
         self.logo.setTextFormat(QtCore.Qt.RichText)
         self.logo.setPixmap(QtGui.QPixmap(":/assets/assets/CyDAQ_Logo_vector.png"))
@@ -57,8 +62,6 @@ class Ui_ModeSelectorWidget(object):
         self.select_mode_header.setWordWrap(False)
         self.select_mode_header.setObjectName("select_mode_header")
         self.verticalLayout.addWidget(self.select_mode_header, 0, QtCore.Qt.AlignHCenter)
-        spacerItem1 = QtWidgets.QSpacerItem(368, 37, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        self.verticalLayout.addItem(spacerItem1)
         self.basic_operation_btn = QtWidgets.QPushButton(ModeSelectorWidget)
         self.basic_operation_btn.setMinimumSize(QtCore.QSize(0, 0))
         self.basic_operation_btn.setMaximumSize(QtCore.QSize(16777215, 16777215))

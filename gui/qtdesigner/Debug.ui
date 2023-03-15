@@ -39,12 +39,6 @@
    <string notr="true">background-color: #d9d9d9;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="maximumSize">
-    <size>
-     <width>700</width>
-     <height>900</height>
-    </size>
-   </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
    </property>
@@ -70,140 +64,173 @@ QPushButton {
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::MinimumExpanding</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="wrapper">
       <item>
-       <widget class="QPushButton" name="home_btn">
-        <property name="maximumSize">
-         <size>
-          <width>69</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="basic_operation.qrc">
-          <normaloff>:/assets/assets/home_icon.png</normaloff>:/assets/assets/home_icon.png</iconset>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="home_btn">
+          <property name="maximumSize">
+           <size>
+            <width>69</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="basic_operation.qrc">
+            <normaloff>:/assets/assets/home_icon.png</normaloff>:/assets/assets/home_icon.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>104</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>-1</pointsize>
+           </font>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="text">
+           <string>Debug Menu</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="clear_log_btn">
+          <property name="maximumSize">
+           <size>
+            <width>69</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Clear</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>104</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>-1</pointsize>
-         </font>
-        </property>
-        <property name="lineWidth">
-         <number>1</number>
-        </property>
-        <property name="text">
-         <string>Debug Menu</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
+       <widget class="QTextBrowser" name="log_textBrowser"/>
       </item>
       <item>
-       <widget class="QPushButton" name="clear_log_btn">
-        <property name="maximumSize">
-         <size>
-          <width>69</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Clear</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="write_btn">
+          <property name="text">
+           <string>Write Speed Test</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="read_btn">
+          <property name="text">
+           <string>Read Speed Test</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="write2_btn">
+          <property name="text">
+           <string>Write Speed Test 2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="mock_checkBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Mock CyDAQ - Linux only</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>CyDAQ Status:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="connection_status_label">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>45</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Not Connected!</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3"/>
-    </item>
-    <item>
-     <widget class="QTextBrowser" name="log_textBrowser"/>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="write_btn">
-        <property name="text">
-         <string>Write Speed Test</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="read_btn">
-        <property name="text">
-         <string>Read Speed Test</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="write2_btn">
-        <property name="text">
-         <string>Write Speed Test 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="mock_checkBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Mock CyDAQ - Linux only</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>CyDAQ Status:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="connection_status_label">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>45</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Not Connected!</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::MinimumExpanding</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

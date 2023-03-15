@@ -131,7 +131,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
-        self.stack = QtWidgets.QStackedWidget(self)
+        # self.stack = QtWidgets.QStackedWidget(self)
         self.verticalLayout.addWidget(self.stack)
         self.widgets = []
         self.widgets.append(self.mode_selector)
