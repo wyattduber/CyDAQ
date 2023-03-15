@@ -1,7 +1,0 @@
-//arch = zynq; split = false; format = BIN
-the_ROM_image:
-{
-	[bootloader]U:\Senior_Design\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\full_firmware_FSBL\Debug\full_firmware_FSBL.elf
-	U:\Senior_Design\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\design_1_wrapper_hw_platform_0\design_1_wrapper.bit
-	U:\Senior_Design\firmware\zybo_z7_firmware\full_firmware_build\full_firmware_build.sdk\full_firmware_sw\Debug\full_firmware_sw.elf
-}
