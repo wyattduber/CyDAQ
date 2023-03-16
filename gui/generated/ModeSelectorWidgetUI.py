@@ -15,7 +15,7 @@ class Ui_ModeSelectorWidget(object):
     def setupUi(self, ModeSelectorWidget):
         ModeSelectorWidget.setObjectName("ModeSelectorWidget")
         ModeSelectorWidget.resize(645, 732)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ModeSelectorWidget.sizePolicy().hasHeightForWidth())

@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(400, 590)
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(16)
