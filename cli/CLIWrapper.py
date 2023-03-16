@@ -3,6 +3,7 @@ from pexpect import popen_spawn
 from waiting import wait
 import json
 import re
+import datetime
 from sys import platform
 import csv
 import time
@@ -84,13 +85,14 @@ class CLI:
         # Send command
         try:
             self.running_command = True
-            self.log += command + "\n"
             self.p.sendline(command)
         except OSError as e:
             print("OSError in wrapper _send_command for command: ", command)
             print("OsError: ", e)
             self.running_command = False
             raise cyDAQNotConnectedException
+
+        response = ""
 
         if command != "q":
             # Wait for response
@@ -109,7 +111,10 @@ class CLI:
                 raise CLINoResponseException
             response = response.decode()
             response = response.strip()
-            self.log += response + "\n"
+            seconds, minutes, hours = self.convertMillis(time.time())
+
+            self.log = response + "\n" + self.log
+            self.log = "Cmd: " + command + "\n" + self.log + "\n"
             if wrapper_mode:
                 return self._parse_wrapper_mode_message(response)
             else:
@@ -281,6 +286,12 @@ class CLI:
 
     def getLog(self, **_):
         return self.log
+
+    def convertMillis(self, millis, **_):
+        seconds = (millis / 1000) % 60
+        minutes = (millis / (1000 * 60)) % 60
+        hours = (millis / (1000 * 60 * 60)) % 24
+        return seconds, minutes, hours
 
 
 class CLIException(Exception):
