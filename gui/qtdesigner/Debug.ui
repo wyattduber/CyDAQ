@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>625</height>
+    <width>463</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -148,19 +148,29 @@ QPushButton {
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QCheckBox" name="mock_checkBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
+       <widget class="QPushButton" name="export_logs_btn">
         <property name="text">
-         <string>Mock CyDAQ - Linux only</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
+         <string>Export Logs --&gt;</string>
         </property>
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mock_checkBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Mock CyDAQ - Linux only</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">

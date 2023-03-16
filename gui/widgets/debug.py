@@ -1,13 +1,17 @@
+# Standard Python Packages
+from datetime import datetime
+
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QFileDialog
 
 # Stuff From Project - May show as an error but it works
 from generated.DebugUI import Ui_debug
 
 # Constants
 LOG_TIMER_DELAY = 1000
-
+DEFAULT_SAVE_LOCATION = "U:\\"
 
 class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
 
@@ -29,6 +33,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
         # self.write_btn.clicked.connect(self.writeData)
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
+        self.export_logs_btn.clicked.connect(self.exportLogs)
         self.mock_checkBox.clicked.connect(self.mockClicked)
 
         self.log_timer = QTimer()
@@ -78,6 +83,23 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
             finished_func=lambda: print("Success"),
             error_func=lambda x: self.showError(x)
         )
+
+    # Allows the user to export the debug logs for further inspection
+    def exportLogs(self):
+        options = QFileDialog.Options()
+        filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the logs!",
+                                                       DEFAULT_SAVE_LOCATION, "Text Files (*.txt);;",
+                                                       options=options)
+        # Default Filename
+        if filename.strip() == "":
+            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
+
+        # Save the logs to the file
+        with open(filename, 'w') as file:
+            logs = self.wrapper.getLog()
+            file.write(logs)
+
+
 
     # Enables mocking of the project
     def mockClicked(self):
