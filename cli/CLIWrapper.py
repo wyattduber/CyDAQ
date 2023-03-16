@@ -1,6 +1,7 @@
 import os
 from pexpect import popen_spawn
 from waiting import wait
+from scipy.io import savemat
 import json
 import re
 import datetime

@@ -65,7 +65,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
             self,
             func=self.wrapper.writeALotOfData,
             finished_func=lambda: print("Success!"),
-            error_func=lambda x: self.showError(x)
+            error_func=lambda x: self.mainWindow.showError(x)
         )
 
     def writeDataV2(self):
@@ -73,7 +73,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
             self,
             func=self.wrapper.writeALotOfDataV2,
             finished_func=lambda: print("Success!"),
-            error_func=lambda x: self.showError(x)
+            error_func=lambda x: self.mainWindow.showError(x)
         )
 
     def readData(self):
@@ -81,7 +81,7 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
             self,
             func=self.wrapper.readALotOfData,
             finished_func=lambda: print("Success"),
-            error_func=lambda x: self.showError(x)
+            error_func=lambda x: self.mainWindow.showError(x)
         )
 
     # Allows the user to export the debug logs for further inspection

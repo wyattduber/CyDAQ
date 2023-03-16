@@ -318,7 +318,6 @@ if __name__ == "__main__":
         currentExitCode = app.exec_()
 
         # If exit wasn't normal, save debug logs to location of executable
-        print(str(currentExitCode))
         if currentExitCode != 0:
             filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
             logs = main.wrapper.getLog()
