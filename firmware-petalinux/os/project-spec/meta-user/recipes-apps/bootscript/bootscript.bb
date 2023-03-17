@@ -20,4 +20,3 @@ do_install() {
             install -m 0755 ${S}/bootscript ${D}${sysconfdir}/init.d/bootscript
 }
 FILES_${PN} += "${sysconfdir}/*"
-

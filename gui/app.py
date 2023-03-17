@@ -4,6 +4,7 @@ import sys
 import traceback
 import ctypes
 from sys import platform
+from datetime import datetime
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
@@ -19,6 +20,7 @@ from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
 from generated.MainWindowUI import Ui_MainWindow
 
+DEBUG_LOGS = ""
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -316,5 +318,12 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         main = MainWindow()
         currentExitCode = app.exec_()
+
+        # If exit wasn't normal, save debug logs to location of executable
+        if currentExitCode != 0:
+            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
+            logs = main.wrapper.getLog()
+            with open(filename, 'w') as file:
+                file.write(logs)
+
         app = None
-    # sys.exit(app.exec_())
