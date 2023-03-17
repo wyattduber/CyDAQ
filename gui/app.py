@@ -133,8 +133,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
-        # self.stack = QtWidgets.QStackedWidget(self)
-        self.verticalLayout.addWidget(self.stack)
+        
+        self.centerWidget = QtWidgets.QWidget()
+        self.setCentralWidget(self.centerWidget)
+
+        self.stack = StackedLayout(self.centerWidget)        
         self.widgets = []
         self.widgets.append(self.mode_selector)
         self.widgets.append(self.basic_operation)
@@ -265,6 +268,15 @@ class WorkerSignals(QObject):
     result = pyqtSignal(object)
     progress = pyqtSignal(int)
 
+
+class StackedLayout(QtWidgets.QStackedLayout):
+    def minimumSize(self):
+        if self.currentWidget():
+            s = self.currentWidget().minimumSize()
+            if s.isEmpty():
+                s = self.currentWidget().minimumSizeHint()
+            return s
+        return super().minimumSize()
 
 class Worker(QRunnable):
     """

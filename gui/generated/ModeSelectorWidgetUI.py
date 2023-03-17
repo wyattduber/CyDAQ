@@ -14,13 +14,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ModeSelectorWidget(object):
     def setupUi(self, ModeSelectorWidget):
         ModeSelectorWidget.setObjectName("ModeSelectorWidget")
-        ModeSelectorWidget.resize(645, 732)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ModeSelectorWidget.sizePolicy().hasHeightForWidth())
         ModeSelectorWidget.setSizePolicy(sizePolicy)
-        ModeSelectorWidget.setMinimumSize(QtCore.QSize(400, 590))
         ModeSelectorWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 20px;\n"
@@ -43,6 +41,7 @@ class Ui_ModeSelectorWidget(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.logo = QtWidgets.QLabel(ModeSelectorWidget)
         self.logo.setEnabled(True)
+        self.logo.setMaximumSize(QtCore.QSize(418, 218))
         self.logo.setText("")
         self.logo.setTextFormat(QtCore.Qt.RichText)
         self.logo.setPixmap(QtGui.QPixmap(":/assets/assets/CyDAQ_Logo_vector.png"))
