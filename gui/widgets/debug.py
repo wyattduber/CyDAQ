@@ -113,8 +113,6 @@ class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
 
     def logUpdate(self):
         old_pos = self.log_textBrowser.verticalScrollBar().value()
-        old_min = self.log_textBrowser.verticalScrollBar().minimum()
-        print("old_pos: ", old_pos, " old_min: ", old_min)
         self.log_textBrowser.setText(self.wrapper.getLog())
         if(old_pos == 0):
             self.snapLogScrollToTop()
