@@ -6,6 +6,9 @@ from PyQt5 import QtWidgets
 from generated.MainWIndow import Ui_MainWindow
 from generated.WidgetA import Ui_WidgetA
 
+# command to get this compiled and ran easily (must be ran from within gui/layoutTesting dir)
+# python -m PyQt5.uic.pyuic --from-imports MainWindow.ui -o generated/MainWIndow.py && python -m PyQt5.uic.pyuic --from-imports WidgetA.ui -o generated/WidgetA.py && python app.py
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -26,13 +29,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.show()
 
 class StackedLayout(QtWidgets.QStackedLayout):
-    def minimumSize(self):
-        if self.currentWidget():
-            s = self.currentWidget().minimumSize()
-            if s.isEmpty():
-                s = self.currentWidget().minimumSizeHint()
-            return s
-        return super().minimumSize()
+    # def minimumSize(self):
+    #     if self.currentWidget():
+    #         s = self.currentWidget().minimumSize()
+    #         if s.isEmpty():
+    #             s = self.currentWidget().minimumSizeHint()
+    #         return s
+    #     return super().minimumSize()
+    pass
 
 class WidgetA(QtWidgets.QWidget, Ui_WidgetA):
     def __init__(self):
