@@ -2,7 +2,7 @@
 
 export PATH=$PATH://my.files.iastate.edu/Profiles/$(whoami)/AppData/Roaming/Python/Python38/Scripts
 
-python -m PyQt5.uic.pyuic --from-imports qtdesigner/BasicOperation.ui -o generated/BasicOperationUI.py
+python -m PyQt5.uic.pyuic --from-imports qtdesigner/BasicOperationWidget.ui -o generated/BasicOperationWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/BalanceBeam.ui -o generated/BalanceBeamUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/LiveStream.ui -o generated/LiveStreamUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/DebugWidget.ui -o generated/DebugWidgetUI.py
