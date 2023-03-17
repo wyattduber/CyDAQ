@@ -220,7 +220,7 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
             func=self.wrapper.stop_sampling,
             func_args=self.filename,
             finished_func=self.writingDataFinished,
-            error_func=lambda x: self.showError(x)
+            error_func=lambda: self.mainWindow.showError(x)
         )
 
     # Method that is run both to start and stop sampling
@@ -251,14 +251,14 @@ class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
                 # get file save location
                 options = QFileDialog.Options()
                 self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
-                                                               DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;",
+                                                               DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
                                                                options=options)
                 if self.filename.strip() == "":  # no file chosen
                     return
 
             def handleError(x):
                 self.startSamplingError = True
-                self.showError(x[2])
+                self.mainWindow.showError(x[2])
 
             def step1():
                 if self.startSamplingError:

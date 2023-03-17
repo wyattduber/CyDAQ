@@ -129,7 +129,7 @@ class LiveStreamModeWidget(QtWidgets.QMainWindow, Ui_live_stream):
             self,
             func=self.updateSpeed,
             finished_func=self.finishedStartBtn,
-            error_func=self.showError
+            error_func=self.mainWindow.showError
         )
 
     # Pause live plotting

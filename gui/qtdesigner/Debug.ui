@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>625</height>
+    <width>463</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -63,22 +63,6 @@ QPushButton {
 }</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::MinimumExpanding</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item>
      <layout class="QVBoxLayout" name="wrapper">
       <item>
@@ -146,91 +130,88 @@ QPushButton {
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="QTextBrowser" name="log_textBrowser"/>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3"/>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="log_textBrowser"/>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="write_btn">
+        <property name="text">
+         <string>Write Speed Test</string>
+        </property>
+       </widget>
       </item>
-      <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="write_btn">
-          <property name="text">
-           <string>Write Speed Test</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="read_btn">
-          <property name="text">
-           <string>Read Speed Test</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="write2_btn">
-          <property name="text">
-           <string>Write Speed Test 2</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="mock_checkBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Mock CyDAQ - Linux only</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="read_btn">
+        <property name="text">
+         <string>Read Speed Test</string>
+        </property>
+       </widget>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>CyDAQ Status:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="connection_status_label">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>45</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Not Connected!</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="write2_btn">
+        <property name="text">
+         <string>Write Speed Test 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="export_logs_btn">
+        <property name="text">
+         <string>Export Logs --&gt;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
     <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QCheckBox" name="mock_checkBox">
+      <property name="enabled">
+       <bool>true</bool>
       </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::MinimumExpanding</enum>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
+      <property name="text">
+       <string>Mock CyDAQ - Linux only</string>
       </property>
-     </spacer>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>CyDAQ Status:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="connection_status_label">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Not Connected!</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
