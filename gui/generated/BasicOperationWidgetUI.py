@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BasicOpetaionWidget(object):
     def setupUi(self, BasicOpetaionWidget):
         BasicOpetaionWidget.setObjectName("BasicOpetaionWidget")
+        BasicOpetaionWidget.resize(575, 593)
         BasicOpetaionWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -222,6 +223,8 @@ class Ui_BasicOpetaionWidget(object):
         spacerItem7 = QtWidgets.QSpacerItem(80, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.high_corner_bar_layout.addItem(spacerItem7)
         self.verticalLayout.addLayout(self.high_corner_bar_layout)
+        spacerItem8 = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem8)
         self.sampling_time_label = QtWidgets.QLabel(BasicOpetaionWidget)
         self.sampling_time_label.setMaximumSize(QtCore.QSize(16777215, 50))
         self.sampling_time_label.setObjectName("sampling_time_label")
@@ -230,11 +233,15 @@ class Ui_BasicOpetaionWidget(object):
         self.sampling_time_input.setMinimumSize(QtCore.QSize(190, 30))
         self.sampling_time_input.setObjectName("sampling_time_input")
         self.verticalLayout.addWidget(self.sampling_time_input, 0, QtCore.Qt.AlignHCenter)
+        spacerItem9 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem9)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.send_config_btn = QtWidgets.QPushButton(BasicOpetaionWidget)
         self.send_config_btn.setObjectName("send_config_btn")
         self.horizontalLayout_2.addWidget(self.send_config_btn)
+        spacerItem10 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem10)
         self.start_stop_sampling_btn = QtWidgets.QPushButton(BasicOpetaionWidget)
         self.start_stop_sampling_btn.setMinimumSize(QtCore.QSize(190, 0))
         self.start_stop_sampling_btn.setObjectName("start_stop_sampling_btn")
