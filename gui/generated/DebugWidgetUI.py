@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DebugWidget(object):
     def setupUi(self, DebugWidget):
         DebugWidget.setObjectName("DebugWidget")
-        DebugWidget.resize(400, 511)
+        DebugWidget.resize(418, 492)
         DebugWidget.setAutoFillBackground(True)
         DebugWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
@@ -69,6 +69,7 @@ class Ui_DebugWidget(object):
         self.horizontalLayout_1.addWidget(self.clear_log_btn)
         self.verticalLayout.addLayout(self.horizontalLayout_1)
         self.log_textBrowser = QtWidgets.QTextBrowser(DebugWidget)
+        self.log_textBrowser.setMinimumSize(QtCore.QSize(200, 200))
         self.log_textBrowser.setObjectName("log_textBrowser")
         self.verticalLayout.addWidget(self.log_textBrowser)
         self.gridLayout = QtWidgets.QGridLayout()
