@@ -4,7 +4,7 @@ export PATH=$PATH://my.files.iastate.edu/Profiles/$(whoami)/AppData/Roaming/Pyth
 
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/BasicOperationWidget.ui -o generated/BasicOperationWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/BalanceBeam.ui -o generated/BalanceBeamUI.py
-python -m PyQt5.uic.pyuic --from-imports qtdesigner/LiveStream.ui -o generated/LiveStreamUI.py
+python -m PyQt5.uic.pyuic --from-imports qtdesigner/LiveStreamWidget.ui -o generated/LiveStreamWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/DebugWidget.ui -o generated/DebugWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/MainWindow.ui -o generated/MainWindowUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/DacModeWidget.ui -o generated/DacModeWidgetUI.py

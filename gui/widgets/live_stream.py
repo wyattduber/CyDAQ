@@ -17,14 +17,14 @@ from pglive.sources.live_plot import LiveScatterPlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
-from generated.LiveStreamUI import Ui_live_stream
+from generated.LiveStreamWidgetUI import Ui_LiveStreamWidget
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 CONVERT_SEC_TO_MS = 1000
 
 
-class LiveStreamModeWidget(QtWidgets.QMainWindow, Ui_live_stream):
+class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget):
     running = False
     in_thread = False
     window = None
