@@ -5,7 +5,7 @@ import serial
 
 # NOT READY YET
 
-COMM_PORT = "COM7"
+COMM_PORT = "COM5"
 
 ser = serial.Serial(
     port=COMM_PORT, 
@@ -20,17 +20,17 @@ ser = serial.Serial(
 )
 print(ser)
 
-ser.write(b'@0!')
+# ser.write(b'@0!')
 res = b""
 count = 0
 size = 0
 t0 = time.time()
 with open('data.txt', 'bw') as datafile:
-    while not res.endswith(b"!"):
-        # time.sleep(1)
+    while True:
+        time.sleep(1)
         res = ser.read_all()
-        if res.endswith(b"!"):
-            break
+        # if res.endswith(b"!"):
+        #     break
         if res == b'': # no data
             continue
         # toWrite = res.decode("ascii")
@@ -39,7 +39,9 @@ with open('data.txt', 'bw') as datafile:
         print(toWrite)
         datafile.write(toWrite)
         count+=1
-        print("size: ", size, " count: ", count)
+        print("size: ", size, " count: ", count, "len: ", len(toWrite))
+        if b"!" in toWrite:
+            break
 t1 = time.time()
 print("Time: ", t1-t0)
 print("chunks: ", count)

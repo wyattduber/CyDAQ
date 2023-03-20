@@ -44,7 +44,6 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 set list_projs [get_projects -quiet]
 if { $list_projs eq "" } {
    create_project project_1 myproj -part xc7z010clg400-1
-   set_property BOARD_PART digilentinc.com:zybo-z7-10:part0:1.0 [current_project]
 }
 
 
@@ -166,8 +165,17 @@ proc create_root_design { parentCell } {
 
   set Vp_Vn_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_analog_io_rtl:1.0 Vp_Vn_0 ]
 
+  set ir_sensor [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 ir_sensor ]
+
+  set je [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 je ]
+
+  set spi_rtl_0 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:spi_rtl:1.0 spi_rtl_0 ]
+
 
   # Create ports
+  set btns_4bits [ create_bd_port -dir I -from 3 -to 0 btns_4bits ]
+  set ir_gpo [ create_bd_port -dir O -from 0 -to 0 ir_gpo ]
+  set servo_pwm [ create_bd_port -dir O servo_pwm ]
 
   # Create instance: axi_dma_0, and set properties
   set axi_dma_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_dma:7.1 axi_dma_0 ]
@@ -181,6 +189,19 @@ proc create_root_design { parentCell } {
    CONFIG.c_sg_length_width {16} \
  ] $axi_dma_0
 
+  # Create instance: axi_gpio_0, and set properties
+  set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
+  set_property -dict [ list \
+   CONFIG.C_ALL_INPUTS {1} \
+   CONFIG.C_ALL_OUTPUTS_2 {1} \
+   CONFIG.C_GPIO2_WIDTH {8} \
+   CONFIG.C_GPIO_WIDTH {4} \
+   CONFIG.C_IS_DUAL {1} \
+ ] $axi_gpio_0
+
+  # Create instance: axi_iic_0, and set properties
+  set axi_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 axi_iic_0 ]
+
   # Create instance: axi_mem_intercon, and set properties
   set axi_mem_intercon [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_mem_intercon ]
   set_property -dict [ list \
@@ -188,8 +209,20 @@ proc create_root_design { parentCell } {
    CONFIG.NUM_SI {2} \
  ] $axi_mem_intercon
 
+  # Create instance: axi_quad_spi_0, and set properties
+  set axi_quad_spi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_quad_spi:3.2 axi_quad_spi_0 ]
+  set_property -dict [ list \
+   CONFIG.C_NUM_SS_BITS {2} \
+   CONFIG.C_SCK_RATIO {4} \
+   CONFIG.C_USE_STARTUP {0} \
+   CONFIG.C_USE_STARTUP_INT {0} \
+ ] $axi_quad_spi_0
+
   # Create instance: axi_timer_0, and set properties
   set axi_timer_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_timer:2.0 axi_timer_0 ]
+
+  # Create instance: axi_timer_1, and set properties
+  set axi_timer_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_timer:2.0 axi_timer_1 ]
 
   # Create instance: axis_subset_converter_0, and set properties
   set axis_subset_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_subset_converter:1.1 axis_subset_converter_0 ]
@@ -216,6 +249,8 @@ proc create_root_design { parentCell } {
   set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
   set_property -dict [ list \
    CONFIG.PCW_ACT_APU_PERIPHERAL_FREQMHZ {666.666687} \
+   CONFIG.PCW_ACT_CAN0_PERIPHERAL_FREQMHZ {23.8095} \
+   CONFIG.PCW_ACT_CAN1_PERIPHERAL_FREQMHZ {23.8095} \
    CONFIG.PCW_ACT_CAN_PERIPHERAL_FREQMHZ {10.000000} \
    CONFIG.PCW_ACT_DCI_PERIPHERAL_FREQMHZ {10.158730} \
    CONFIG.PCW_ACT_ENET0_PERIPHERAL_FREQMHZ {125.000000} \
@@ -224,6 +259,7 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_ACT_FPGA1_PERIPHERAL_FREQMHZ {10.000000} \
    CONFIG.PCW_ACT_FPGA2_PERIPHERAL_FREQMHZ {10.000000} \
    CONFIG.PCW_ACT_FPGA3_PERIPHERAL_FREQMHZ {10.000000} \
+   CONFIG.PCW_ACT_I2C_PERIPHERAL_FREQMHZ {50} \
    CONFIG.PCW_ACT_PCAP_PERIPHERAL_FREQMHZ {200.000000} \
    CONFIG.PCW_ACT_QSPI_PERIPHERAL_FREQMHZ {200.000000} \
    CONFIG.PCW_ACT_SDIO_PERIPHERAL_FREQMHZ {50.000000} \
@@ -236,18 +272,29 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_ACT_TTC1_CLK0_PERIPHERAL_FREQMHZ {111.111115} \
    CONFIG.PCW_ACT_TTC1_CLK1_PERIPHERAL_FREQMHZ {111.111115} \
    CONFIG.PCW_ACT_TTC1_CLK2_PERIPHERAL_FREQMHZ {111.111115} \
+   CONFIG.PCW_ACT_TTC_PERIPHERAL_FREQMHZ {50} \
    CONFIG.PCW_ACT_UART_PERIPHERAL_FREQMHZ {100.000000} \
+   CONFIG.PCW_ACT_USB0_PERIPHERAL_FREQMHZ {60} \
+   CONFIG.PCW_ACT_USB1_PERIPHERAL_FREQMHZ {60} \
    CONFIG.PCW_ACT_WDT_PERIPHERAL_FREQMHZ {111.111115} \
    CONFIG.PCW_APU_CLK_RATIO_ENABLE {6:2:1} \
    CONFIG.PCW_APU_PERIPHERAL_FREQMHZ {667} \
    CONFIG.PCW_ARMPLL_CTRL_FBDIV {40} \
+   CONFIG.PCW_CAN0_PERIPHERAL_CLKSRC {External} \
+   CONFIG.PCW_CAN0_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_CAN1_PERIPHERAL_CLKSRC {External} \
+   CONFIG.PCW_CAN1_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_CAN_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_CAN_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_CAN_PERIPHERAL_DIVISOR1 {1} \
+   CONFIG.PCW_CAN_PERIPHERAL_VALID {0} \
    CONFIG.PCW_CLK0_FREQ {100000000} \
    CONFIG.PCW_CLK1_FREQ {10000000} \
    CONFIG.PCW_CLK2_FREQ {10000000} \
    CONFIG.PCW_CLK3_FREQ {10000000} \
+   CONFIG.PCW_CORE0_FIQ_INTR {0} \
    CONFIG.PCW_CORE0_IRQ_INTR {0} \
+   CONFIG.PCW_CORE1_FIQ_INTR {0} \
    CONFIG.PCW_CORE1_IRQ_INTR {1} \
    CONFIG.PCW_CPU_CPU_6X4X_MAX_RANGE {667} \
    CONFIG.PCW_CPU_CPU_PLL_FREQMHZ {1333.333} \
@@ -269,11 +316,17 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_DDR_PORT1_HPR_ENABLE {0} \
    CONFIG.PCW_DDR_PORT2_HPR_ENABLE {0} \
    CONFIG.PCW_DDR_PORT3_HPR_ENABLE {0} \
+   CONFIG.PCW_DDR_RAM_BASEADDR {0x00100000} \
    CONFIG.PCW_DDR_RAM_HIGHADDR {0x3FFFFFFF} \
    CONFIG.PCW_DDR_WRITE_TO_CRITICAL_PRIORITY_LEVEL {2} \
+   CONFIG.PCW_DM_WIDTH {4} \
+   CONFIG.PCW_DQS_WIDTH {4} \
+   CONFIG.PCW_DQ_WIDTH {32} \
+   CONFIG.PCW_ENET0_BASEADDR {0xE000B000} \
    CONFIG.PCW_ENET0_ENET0_IO {MIO 16 .. 27} \
    CONFIG.PCW_ENET0_GRP_MDIO_ENABLE {1} \
    CONFIG.PCW_ENET0_GRP_MDIO_IO {MIO 52 .. 53} \
+   CONFIG.PCW_ENET0_HIGHADDR {0xE000BFFF} \
    CONFIG.PCW_ENET0_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_ENET0_PERIPHERAL_DIVISOR0 {8} \
    CONFIG.PCW_ENET0_PERIPHERAL_DIVISOR1 {1} \
@@ -291,47 +344,119 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_ENET_RESET_POLARITY {Active Low} \
    CONFIG.PCW_ENET_RESET_SELECT {<Select>} \
    CONFIG.PCW_EN_4K_TIMER {0} \
+   CONFIG.PCW_EN_CAN0 {0} \
+   CONFIG.PCW_EN_CAN1 {0} \
+   CONFIG.PCW_EN_CLK0_PORT {1} \
+   CONFIG.PCW_EN_CLK1_PORT {0} \
+   CONFIG.PCW_EN_CLK2_PORT {0} \
+   CONFIG.PCW_EN_CLK3_PORT {0} \
+   CONFIG.PCW_EN_CLKTRIG0_PORT {0} \
+   CONFIG.PCW_EN_CLKTRIG1_PORT {0} \
+   CONFIG.PCW_EN_CLKTRIG2_PORT {0} \
+   CONFIG.PCW_EN_CLKTRIG3_PORT {0} \
+   CONFIG.PCW_EN_DDR {1} \
+   CONFIG.PCW_EN_EMIO_CAN0 {0} \
+   CONFIG.PCW_EN_EMIO_CAN1 {0} \
    CONFIG.PCW_EN_EMIO_CD_SDIO0 {0} \
+   CONFIG.PCW_EN_EMIO_CD_SDIO1 {0} \
    CONFIG.PCW_EN_EMIO_ENET0 {0} \
+   CONFIG.PCW_EN_EMIO_ENET1 {0} \
    CONFIG.PCW_EN_EMIO_GPIO {1} \
    CONFIG.PCW_EN_EMIO_I2C0 {0} \
+   CONFIG.PCW_EN_EMIO_I2C1 {0} \
+   CONFIG.PCW_EN_EMIO_MODEM_UART0 {0} \
+   CONFIG.PCW_EN_EMIO_MODEM_UART1 {0} \
+   CONFIG.PCW_EN_EMIO_PJTAG {0} \
+   CONFIG.PCW_EN_EMIO_SDIO0 {0} \
+   CONFIG.PCW_EN_EMIO_SDIO1 {0} \
+   CONFIG.PCW_EN_EMIO_SPI0 {0} \
+   CONFIG.PCW_EN_EMIO_SPI1 {0} \
+   CONFIG.PCW_EN_EMIO_SRAM_INT {0} \
+   CONFIG.PCW_EN_EMIO_TRACE {0} \
+   CONFIG.PCW_EN_EMIO_TTC0 {0} \
+   CONFIG.PCW_EN_EMIO_TTC1 {0} \
    CONFIG.PCW_EN_EMIO_UART0 {0} \
+   CONFIG.PCW_EN_EMIO_UART1 {0} \
+   CONFIG.PCW_EN_EMIO_WDT {0} \
+   CONFIG.PCW_EN_EMIO_WP_SDIO0 {0} \
+   CONFIG.PCW_EN_EMIO_WP_SDIO1 {0} \
    CONFIG.PCW_EN_ENET0 {1} \
+   CONFIG.PCW_EN_ENET1 {0} \
    CONFIG.PCW_EN_GPIO {0} \
    CONFIG.PCW_EN_I2C0 {1} \
+   CONFIG.PCW_EN_I2C1 {0} \
+   CONFIG.PCW_EN_MODEM_UART0 {0} \
+   CONFIG.PCW_EN_MODEM_UART1 {0} \
+   CONFIG.PCW_EN_PJTAG {0} \
+   CONFIG.PCW_EN_PTP_ENET0 {0} \
+   CONFIG.PCW_EN_PTP_ENET1 {0} \
    CONFIG.PCW_EN_QSPI {1} \
+   CONFIG.PCW_EN_RST0_PORT {1} \
+   CONFIG.PCW_EN_RST1_PORT {0} \
+   CONFIG.PCW_EN_RST2_PORT {0} \
+   CONFIG.PCW_EN_RST3_PORT {0} \
    CONFIG.PCW_EN_SDIO0 {1} \
+   CONFIG.PCW_EN_SDIO1 {0} \
+   CONFIG.PCW_EN_SMC {0} \
+   CONFIG.PCW_EN_SPI0 {0} \
+   CONFIG.PCW_EN_SPI1 {0} \
+   CONFIG.PCW_EN_TRACE {0} \
+   CONFIG.PCW_EN_TTC0 {0} \
+   CONFIG.PCW_EN_TTC1 {0} \
    CONFIG.PCW_EN_UART0 {0} \
    CONFIG.PCW_EN_UART1 {1} \
    CONFIG.PCW_EN_USB0 {1} \
+   CONFIG.PCW_EN_USB1 {0} \
+   CONFIG.PCW_EN_WDT {0} \
+   CONFIG.PCW_FCLK0_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_FCLK0_PERIPHERAL_DIVISOR0 {5} \
    CONFIG.PCW_FCLK0_PERIPHERAL_DIVISOR1 {2} \
+   CONFIG.PCW_FCLK1_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_FCLK1_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_FCLK1_PERIPHERAL_DIVISOR1 {1} \
+   CONFIG.PCW_FCLK2_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_FCLK2_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_FCLK2_PERIPHERAL_DIVISOR1 {1} \
+   CONFIG.PCW_FCLK3_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_FCLK3_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_FCLK3_PERIPHERAL_DIVISOR1 {1} \
+   CONFIG.PCW_FCLK_CLK0_BUF {TRUE} \
    CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {100} \
+   CONFIG.PCW_FPGA1_PERIPHERAL_FREQMHZ {50} \
+   CONFIG.PCW_FPGA2_PERIPHERAL_FREQMHZ {50} \
+   CONFIG.PCW_FPGA3_PERIPHERAL_FREQMHZ {50} \
    CONFIG.PCW_FPGA_FCLK0_ENABLE {1} \
    CONFIG.PCW_FPGA_FCLK1_ENABLE {0} \
    CONFIG.PCW_FPGA_FCLK2_ENABLE {0} \
    CONFIG.PCW_FPGA_FCLK3_ENABLE {0} \
+   CONFIG.PCW_GP0_EN_MODIFIABLE_TXN {1} \
+   CONFIG.PCW_GP0_NUM_READ_THREADS {4} \
+   CONFIG.PCW_GP0_NUM_WRITE_THREADS {4} \
+   CONFIG.PCW_GP1_EN_MODIFIABLE_TXN {1} \
+   CONFIG.PCW_GP1_NUM_READ_THREADS {4} \
+   CONFIG.PCW_GP1_NUM_WRITE_THREADS {4} \
    CONFIG.PCW_GPIO_EMIO_GPIO_ENABLE {1} \
    CONFIG.PCW_GPIO_EMIO_GPIO_IO {1} \
    CONFIG.PCW_GPIO_EMIO_GPIO_WIDTH {1} \
    CONFIG.PCW_GPIO_MIO_GPIO_ENABLE {0} \
    CONFIG.PCW_GPIO_MIO_GPIO_IO {<Select>} \
    CONFIG.PCW_GPIO_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_I2C0_BASEADDR {0xE0004000} \
    CONFIG.PCW_I2C0_GRP_INT_ENABLE {0} \
+   CONFIG.PCW_I2C0_HIGHADDR {0xE0004FFF} \
    CONFIG.PCW_I2C0_I2C0_IO {MIO 10 .. 11} \
    CONFIG.PCW_I2C0_PERIPHERAL_ENABLE {1} \
    CONFIG.PCW_I2C0_RESET_ENABLE {0} \
+   CONFIG.PCW_I2C1_PERIPHERAL_ENABLE {0} \
    CONFIG.PCW_I2C1_RESET_ENABLE {0} \
    CONFIG.PCW_I2C_PERIPHERAL_FREQMHZ {111.111115} \
    CONFIG.PCW_I2C_RESET_ENABLE {0} \
+   CONFIG.PCW_I2C_RESET_POLARITY {Active Low} \
+   CONFIG.PCW_IMPORT_BOARD_PRESET {None} \
+   CONFIG.PCW_INCLUDE_ACP_TRANS_CHECK {0} \
    CONFIG.PCW_IOPLL_CTRL_FBDIV {30} \
    CONFIG.PCW_IO_IO_PLL_FREQMHZ {1000.000} \
+   CONFIG.PCW_IRQ_F2P_INTR {0} \
    CONFIG.PCW_IRQ_F2P_MODE {DIRECT} \
    CONFIG.PCW_MIO_0_DIRECTION {<Select>} \
    CONFIG.PCW_MIO_0_IOTYPE {<Select>} \
@@ -549,10 +674,36 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_MIO_9_IOTYPE {<Select>} \
    CONFIG.PCW_MIO_9_PULLUP {<Select>} \
    CONFIG.PCW_MIO_9_SLEW {<Select>} \
+   CONFIG.PCW_MIO_PRIMITIVE {54} \
    CONFIG.PCW_MIO_TREE_PERIPHERALS {unassigned#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#unassigned#Quad SPI Flash#unassigned#I2C 0#I2C 0#unassigned#unassigned#unassigned#unassigned#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#unassigned#SD 0#UART 1#UART 1#unassigned#unassigned#Enet 0#Enet 0} \
    CONFIG.PCW_MIO_TREE_SIGNALS {unassigned#qspi0_ss_b#qspi0_io[0]#qspi0_io[1]#qspi0_io[2]#qspi0_io[3]/HOLD_B#qspi0_sclk#unassigned#qspi_fbclk#unassigned#scl#sda#unassigned#unassigned#unassigned#unassigned#tx_clk#txd[0]#txd[1]#txd[2]#txd[3]#tx_ctl#rx_clk#rxd[0]#rxd[1]#rxd[2]#rxd[3]#rx_ctl#data[4]#dir#stp#nxt#data[0]#data[1]#data[2]#data[3]#clk#data[5]#data[6]#data[7]#clk#cmd#data[0]#data[1]#data[2]#data[3]#unassigned#cd#tx#rx#unassigned#unassigned#mdc#mdio} \
+   CONFIG.PCW_M_AXI_GP0_ENABLE_STATIC_REMAP {0} \
+   CONFIG.PCW_M_AXI_GP0_ID_WIDTH {12} \
+   CONFIG.PCW_M_AXI_GP0_SUPPORT_NARROW_BURST {0} \
+   CONFIG.PCW_M_AXI_GP0_THREAD_ID_WIDTH {12} \
+   CONFIG.PCW_NAND_CYCLES_T_AR {1} \
+   CONFIG.PCW_NAND_CYCLES_T_CLR {1} \
+   CONFIG.PCW_NAND_CYCLES_T_RC {11} \
+   CONFIG.PCW_NAND_CYCLES_T_REA {1} \
+   CONFIG.PCW_NAND_CYCLES_T_RR {1} \
+   CONFIG.PCW_NAND_CYCLES_T_WC {11} \
+   CONFIG.PCW_NAND_CYCLES_T_WP {1} \
    CONFIG.PCW_NAND_GRP_D8_ENABLE {0} \
    CONFIG.PCW_NAND_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_NOR_CS0_T_CEOE {1} \
+   CONFIG.PCW_NOR_CS0_T_PC {1} \
+   CONFIG.PCW_NOR_CS0_T_RC {11} \
+   CONFIG.PCW_NOR_CS0_T_TR {1} \
+   CONFIG.PCW_NOR_CS0_T_WC {11} \
+   CONFIG.PCW_NOR_CS0_T_WP {1} \
+   CONFIG.PCW_NOR_CS0_WE_TIME {0} \
+   CONFIG.PCW_NOR_CS1_T_CEOE {1} \
+   CONFIG.PCW_NOR_CS1_T_PC {1} \
+   CONFIG.PCW_NOR_CS1_T_RC {11} \
+   CONFIG.PCW_NOR_CS1_T_TR {1} \
+   CONFIG.PCW_NOR_CS1_T_WC {11} \
+   CONFIG.PCW_NOR_CS1_T_WP {1} \
+   CONFIG.PCW_NOR_CS1_WE_TIME {0} \
    CONFIG.PCW_NOR_GRP_A25_ENABLE {0} \
    CONFIG.PCW_NOR_GRP_CS0_ENABLE {0} \
    CONFIG.PCW_NOR_GRP_CS1_ENABLE {0} \
@@ -560,7 +711,27 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_NOR_GRP_SRAM_CS1_ENABLE {0} \
    CONFIG.PCW_NOR_GRP_SRAM_INT_ENABLE {0} \
    CONFIG.PCW_NOR_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_NOR_SRAM_CS0_T_CEOE {1} \
+   CONFIG.PCW_NOR_SRAM_CS0_T_PC {1} \
+   CONFIG.PCW_NOR_SRAM_CS0_T_RC {11} \
+   CONFIG.PCW_NOR_SRAM_CS0_T_TR {1} \
+   CONFIG.PCW_NOR_SRAM_CS0_T_WC {11} \
+   CONFIG.PCW_NOR_SRAM_CS0_T_WP {1} \
+   CONFIG.PCW_NOR_SRAM_CS0_WE_TIME {0} \
+   CONFIG.PCW_NOR_SRAM_CS1_T_CEOE {1} \
+   CONFIG.PCW_NOR_SRAM_CS1_T_PC {1} \
+   CONFIG.PCW_NOR_SRAM_CS1_T_RC {11} \
+   CONFIG.PCW_NOR_SRAM_CS1_T_TR {1} \
+   CONFIG.PCW_NOR_SRAM_CS1_T_WC {11} \
+   CONFIG.PCW_NOR_SRAM_CS1_T_WP {1} \
+   CONFIG.PCW_NOR_SRAM_CS1_WE_TIME {0} \
    CONFIG.PCW_OVERRIDE_BASIC_CLOCK {0} \
+   CONFIG.PCW_P2F_ENET0_INTR {0} \
+   CONFIG.PCW_P2F_I2C0_INTR {0} \
+   CONFIG.PCW_P2F_QSPI_INTR {0} \
+   CONFIG.PCW_P2F_SDIO0_INTR {0} \
+   CONFIG.PCW_P2F_UART1_INTR {0} \
+   CONFIG.PCW_P2F_USB0_INTR {0} \
    CONFIG.PCW_PACKAGE_DDR_BOARD_DELAY0 {0.221} \
    CONFIG.PCW_PACKAGE_DDR_BOARD_DELAY1 {0.222} \
    CONFIG.PCW_PACKAGE_DDR_BOARD_DELAY2 {0.217} \
@@ -569,13 +740,16 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_PACKAGE_DDR_DQS_TO_CLK_DELAY_1 {-0.044} \
    CONFIG.PCW_PACKAGE_DDR_DQS_TO_CLK_DELAY_2 {-0.035} \
    CONFIG.PCW_PACKAGE_DDR_DQS_TO_CLK_DELAY_3 {-0.100} \
+   CONFIG.PCW_PACKAGE_NAME {clg400} \
    CONFIG.PCW_PCAP_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_PCAP_PERIPHERAL_DIVISOR0 {5} \
    CONFIG.PCW_PCAP_PERIPHERAL_FREQMHZ {200} \
+   CONFIG.PCW_PERIPHERAL_BOARD_PRESET {part0} \
    CONFIG.PCW_PJTAG_PERIPHERAL_ENABLE {0} \
    CONFIG.PCW_PLL_BYPASSMODE_ENABLE {0} \
    CONFIG.PCW_PRESET_BANK0_VOLTAGE {LVCMOS 3.3V} \
    CONFIG.PCW_PRESET_BANK1_VOLTAGE {LVCMOS 1.8V} \
+   CONFIG.PCW_PS7_SI_REV {PRODUCTION} \
    CONFIG.PCW_QSPI_GRP_FBCLK_ENABLE {1} \
    CONFIG.PCW_QSPI_GRP_FBCLK_IO {MIO 8} \
    CONFIG.PCW_QSPI_GRP_IO1_ENABLE {0} \
@@ -594,23 +768,61 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_SD0_GRP_WP_ENABLE {0} \
    CONFIG.PCW_SD0_PERIPHERAL_ENABLE {1} \
    CONFIG.PCW_SD0_SD0_IO {MIO 40 .. 45} \
+   CONFIG.PCW_SD1_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_SDIO0_BASEADDR {0xE0100000} \
+   CONFIG.PCW_SDIO0_HIGHADDR {0xE0100FFF} \
    CONFIG.PCW_SDIO_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_SDIO_PERIPHERAL_DIVISOR0 {20} \
    CONFIG.PCW_SDIO_PERIPHERAL_FREQMHZ {50} \
    CONFIG.PCW_SDIO_PERIPHERAL_VALID {1} \
    CONFIG.PCW_SINGLE_QSPI_DATA_MODE {x4} \
+   CONFIG.PCW_SMC_CYCLE_T0 {NA} \
+   CONFIG.PCW_SMC_CYCLE_T1 {NA} \
+   CONFIG.PCW_SMC_CYCLE_T2 {NA} \
+   CONFIG.PCW_SMC_CYCLE_T3 {NA} \
+   CONFIG.PCW_SMC_CYCLE_T4 {NA} \
+   CONFIG.PCW_SMC_CYCLE_T5 {NA} \
+   CONFIG.PCW_SMC_CYCLE_T6 {NA} \
    CONFIG.PCW_SMC_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_SMC_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_SMC_PERIPHERAL_FREQMHZ {100} \
+   CONFIG.PCW_SMC_PERIPHERAL_VALID {0} \
+   CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_SPI1_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_SPI_PERIPHERAL_CLKSRC {IO PLL} \
    CONFIG.PCW_SPI_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_SPI_PERIPHERAL_VALID {0} \
+   CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} \
+   CONFIG.PCW_S_AXI_HP0_ID_WIDTH {6} \
+   CONFIG.PCW_S_AXI_HP1_DATA_WIDTH {64} \
+   CONFIG.PCW_S_AXI_HP2_DATA_WIDTH {64} \
+   CONFIG.PCW_S_AXI_HP3_DATA_WIDTH {64} \
    CONFIG.PCW_TPIU_PERIPHERAL_CLKSRC {External} \
    CONFIG.PCW_TPIU_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_TPIU_PERIPHERAL_FREQMHZ {200} \
+   CONFIG.PCW_TRACE_INTERNAL_WIDTH {2} \
+   CONFIG.PCW_TRACE_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_TTC0_CLK0_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_TTC0_CLK0_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_TTC0_CLK1_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_TTC0_CLK1_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_TTC0_CLK2_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_TTC0_CLK2_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_TTC0_PERIPHERAL_ENABLE {0} \
+   CONFIG.PCW_TTC1_CLK0_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_TTC1_CLK0_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_TTC1_CLK1_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_TTC1_CLK1_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_TTC1_CLK2_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_TTC1_CLK2_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_TTC1_PERIPHERAL_ENABLE {0} \
    CONFIG.PCW_UART0_GRP_FULL_ENABLE {0} \
    CONFIG.PCW_UART0_PERIPHERAL_ENABLE {0} \
    CONFIG.PCW_UART0_UART0_IO {<Select>} \
+   CONFIG.PCW_UART1_BASEADDR {0xE0001000} \
    CONFIG.PCW_UART1_BAUD_RATE {115200} \
    CONFIG.PCW_UART1_GRP_FULL_ENABLE {0} \
+   CONFIG.PCW_UART1_HIGHADDR {0xE0001FFF} \
    CONFIG.PCW_UART1_PERIPHERAL_ENABLE {1} \
    CONFIG.PCW_UART1_UART1_IO {MIO 48 .. 49} \
    CONFIG.PCW_UART_PERIPHERAL_CLKSRC {IO PLL} \
@@ -690,26 +902,55 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_UIPARAM_DDR_T_RCD {7} \
    CONFIG.PCW_UIPARAM_DDR_T_RP {7} \
    CONFIG.PCW_UIPARAM_DDR_USE_INTERNAL_VREF {0} \
+   CONFIG.PCW_UIPARAM_GENERATE_SUMMARY {NA} \
+   CONFIG.PCW_USB0_BASEADDR {0xE0102000} \
+   CONFIG.PCW_USB0_HIGHADDR {0xE0102fff} \
    CONFIG.PCW_USB0_PERIPHERAL_ENABLE {1} \
    CONFIG.PCW_USB0_PERIPHERAL_FREQMHZ {60} \
    CONFIG.PCW_USB0_RESET_ENABLE {0} \
    CONFIG.PCW_USB0_RESET_IO {<Select>} \
    CONFIG.PCW_USB0_USB0_IO {MIO 28 .. 39} \
+   CONFIG.PCW_USB1_PERIPHERAL_ENABLE {0} \
    CONFIG.PCW_USB1_RESET_ENABLE {0} \
    CONFIG.PCW_USB_RESET_ENABLE {0} \
    CONFIG.PCW_USB_RESET_POLARITY {Active Low} \
    CONFIG.PCW_USB_RESET_SELECT {<Select>} \
+   CONFIG.PCW_USE_AXI_FABRIC_IDLE {0} \
    CONFIG.PCW_USE_AXI_NONSECURE {0} \
+   CONFIG.PCW_USE_CORESIGHT {0} \
    CONFIG.PCW_USE_CROSS_TRIGGER {0} \
+   CONFIG.PCW_USE_CR_FABRIC {1} \
+   CONFIG.PCW_USE_DDR_BYPASS {0} \
+   CONFIG.PCW_USE_DEBUG {0} \
+   CONFIG.PCW_USE_DMA0 {0} \
+   CONFIG.PCW_USE_DMA1 {0} \
+   CONFIG.PCW_USE_DMA2 {0} \
+   CONFIG.PCW_USE_DMA3 {0} \
+   CONFIG.PCW_USE_EXPANDED_IOP {0} \
    CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
+   CONFIG.PCW_USE_HIGH_OCM {0} \
    CONFIG.PCW_USE_M_AXI_GP0 {1} \
+   CONFIG.PCW_USE_M_AXI_GP1 {0} \
+   CONFIG.PCW_USE_PROC_EVENT_BUS {0} \
+   CONFIG.PCW_USE_PS_SLCR_REGISTERS {0} \
+   CONFIG.PCW_USE_S_AXI_ACP {0} \
+   CONFIG.PCW_USE_S_AXI_GP0 {0} \
+   CONFIG.PCW_USE_S_AXI_GP1 {0} \
    CONFIG.PCW_USE_S_AXI_HP0 {1} \
+   CONFIG.PCW_USE_S_AXI_HP1 {0} \
+   CONFIG.PCW_USE_S_AXI_HP2 {0} \
+   CONFIG.PCW_USE_S_AXI_HP3 {0} \
+   CONFIG.PCW_USE_TRACE {0} \
+   CONFIG.PCW_VALUE_SILVERSION {3} \
+   CONFIG.PCW_WDT_PERIPHERAL_CLKSRC {CPU_1X} \
+   CONFIG.PCW_WDT_PERIPHERAL_DIVISOR0 {1} \
+   CONFIG.PCW_WDT_PERIPHERAL_ENABLE {0} \
  ] $processing_system7_0
 
   # Create instance: ps7_0_axi_periph, and set properties
   set ps7_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 ps7_0_axi_periph ]
   set_property -dict [ list \
-   CONFIG.NUM_MI {3} \
+   CONFIG.NUM_MI {7} \
  ] $ps7_0_axi_periph
 
   # Create instance: rst_ps7_0_100M, and set properties
@@ -741,7 +982,10 @@ proc create_root_design { parentCell } {
   # Create interface connections
   connect_bd_intf_net -intf_net Vp_Vn_0_1 [get_bd_intf_ports Vp_Vn_0] [get_bd_intf_pins xadc_wiz_0/Vp_Vn]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_S2MM [get_bd_intf_pins axi_dma_0/M_AXI_S2MM] [get_bd_intf_pins axi_mem_intercon/S00_AXI]
+  connect_bd_intf_net -intf_net axi_gpio_0_GPIO2 [get_bd_intf_ports je] [get_bd_intf_pins axi_gpio_0/GPIO2]
+  connect_bd_intf_net -intf_net axi_iic_0_IIC [get_bd_intf_ports ir_sensor] [get_bd_intf_pins axi_iic_0/IIC]
   connect_bd_intf_net -intf_net axi_mem_intercon_M00_AXI [get_bd_intf_pins axi_mem_intercon/M00_AXI] [get_bd_intf_pins processing_system7_0/S_AXI_HP0]
+  connect_bd_intf_net -intf_net axi_quad_spi_0_SPI_0 [get_bd_intf_ports spi_rtl_0] [get_bd_intf_pins axi_quad_spi_0/SPI_0]
   connect_bd_intf_net -intf_net axis_subset_converter_0_M_AXIS [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM] [get_bd_intf_pins axis_subset_converter_0/M_AXIS]
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
@@ -749,20 +993,31 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net ps7_0_axi_periph_M00_AXI [get_bd_intf_pins axi_timer_0/S_AXI] [get_bd_intf_pins ps7_0_axi_periph/M00_AXI]
   connect_bd_intf_net -intf_net ps7_0_axi_periph_M01_AXI [get_bd_intf_pins ps7_0_axi_periph/M01_AXI] [get_bd_intf_pins xadc_wiz_0/s_axi_lite]
   connect_bd_intf_net -intf_net ps7_0_axi_periph_M02_AXI [get_bd_intf_pins axi_dma_0/S_AXI_LITE] [get_bd_intf_pins ps7_0_axi_periph/M02_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M03_AXI [get_bd_intf_pins axi_gpio_0/S_AXI] [get_bd_intf_pins ps7_0_axi_periph/M03_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M04_AXI [get_bd_intf_pins axi_iic_0/S_AXI] [get_bd_intf_pins ps7_0_axi_periph/M04_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M05_AXI [get_bd_intf_pins axi_quad_spi_0/AXI_LITE] [get_bd_intf_pins ps7_0_axi_periph/M05_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M06_AXI [get_bd_intf_pins axi_timer_1/S_AXI] [get_bd_intf_pins ps7_0_axi_periph/M06_AXI]
   connect_bd_intf_net -intf_net xadc_wiz_0_M_AXIS [get_bd_intf_pins axis_subset_converter_0/S_AXIS] [get_bd_intf_pins xadc_wiz_0/M_AXIS]
 
   # Create port connections
   connect_bd_net -net axi_dma_0_s2mm_introut [get_bd_pins axi_dma_0/s2mm_introut] [get_bd_pins processing_system7_0/Core1_nIRQ]
-  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_mem_intercon/ACLK] [get_bd_pins axi_mem_intercon/M00_ACLK] [get_bd_pins axi_mem_intercon/S00_ACLK] [get_bd_pins axi_mem_intercon/S01_ACLK] [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins axis_subset_converter_0/aclk] [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK] [get_bd_pins ps7_0_axi_periph/ACLK] [get_bd_pins ps7_0_axi_periph/M00_ACLK] [get_bd_pins ps7_0_axi_periph/M01_ACLK] [get_bd_pins ps7_0_axi_periph/M02_ACLK] [get_bd_pins ps7_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps7_0_100M/slowest_sync_clk] [get_bd_pins xadc_wiz_0/s_axi_aclk] [get_bd_pins xadc_wiz_0/s_axis_aclk]
-  connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins processing_system7_0/FCLK_CLK0]
+  connect_bd_net -net axi_iic_0_gpo [get_bd_ports ir_gpo] [get_bd_pins axi_iic_0/gpo]
+  connect_bd_net -net axi_timer_1_pwm0 [get_bd_ports servo_pwm] [get_bd_pins axi_timer_1/pwm0]
+  connect_bd_net -net btns_4bits_1 [get_bd_ports btns_4bits] [get_bd_pins axi_gpio_0/gpio_io_i]
+  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_iic_0/s_axi_aclk] [get_bd_pins axi_mem_intercon/ACLK] [get_bd_pins axi_mem_intercon/M00_ACLK] [get_bd_pins axi_mem_intercon/S00_ACLK] [get_bd_pins axi_mem_intercon/S01_ACLK] [get_bd_pins axi_quad_spi_0/s_axi_aclk] [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins axi_timer_1/s_axi_aclk] [get_bd_pins axis_subset_converter_0/aclk] [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK] [get_bd_pins ps7_0_axi_periph/ACLK] [get_bd_pins ps7_0_axi_periph/M00_ACLK] [get_bd_pins ps7_0_axi_periph/M01_ACLK] [get_bd_pins ps7_0_axi_periph/M02_ACLK] [get_bd_pins ps7_0_axi_periph/M03_ACLK] [get_bd_pins ps7_0_axi_periph/M04_ACLK] [get_bd_pins ps7_0_axi_periph/M05_ACLK] [get_bd_pins ps7_0_axi_periph/M06_ACLK] [get_bd_pins ps7_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps7_0_100M/slowest_sync_clk] [get_bd_pins xadc_wiz_0/s_axi_aclk] [get_bd_pins xadc_wiz_0/s_axis_aclk]
+  connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axi_quad_spi_0/ext_spi_clk] [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins processing_system7_0/FCLK_CLK0]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins clk_wiz_0/resetn] [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_ps7_0_100M/ext_reset_in]
   connect_bd_net -net processing_system7_0_GPIO_O [get_bd_pins axi_timer_0/freeze] [get_bd_pins processing_system7_0/GPIO_O]
-  connect_bd_net -net rst_ps7_0_100M_peripheral_aresetn [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_mem_intercon/ARESETN] [get_bd_pins axi_mem_intercon/M00_ARESETN] [get_bd_pins axi_mem_intercon/S00_ARESETN] [get_bd_pins axi_mem_intercon/S01_ARESETN] [get_bd_pins axi_timer_0/s_axi_aresetn] [get_bd_pins axis_subset_converter_0/aresetn] [get_bd_pins ps7_0_axi_periph/ARESETN] [get_bd_pins ps7_0_axi_periph/M00_ARESETN] [get_bd_pins ps7_0_axi_periph/M01_ARESETN] [get_bd_pins ps7_0_axi_periph/M02_ARESETN] [get_bd_pins ps7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_ps7_0_100M/peripheral_aresetn] [get_bd_pins xadc_wiz_0/s_axi_aresetn]
+  connect_bd_net -net rst_ps7_0_100M_peripheral_aresetn [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_iic_0/s_axi_aresetn] [get_bd_pins axi_mem_intercon/ARESETN] [get_bd_pins axi_mem_intercon/M00_ARESETN] [get_bd_pins axi_mem_intercon/S00_ARESETN] [get_bd_pins axi_mem_intercon/S01_ARESETN] [get_bd_pins axi_quad_spi_0/s_axi_aresetn] [get_bd_pins axi_timer_0/s_axi_aresetn] [get_bd_pins axi_timer_1/s_axi_aresetn] [get_bd_pins axis_subset_converter_0/aresetn] [get_bd_pins ps7_0_axi_periph/ARESETN] [get_bd_pins ps7_0_axi_periph/M00_ARESETN] [get_bd_pins ps7_0_axi_periph/M01_ARESETN] [get_bd_pins ps7_0_axi_periph/M02_ARESETN] [get_bd_pins ps7_0_axi_periph/M03_ARESETN] [get_bd_pins ps7_0_axi_periph/M04_ARESETN] [get_bd_pins ps7_0_axi_periph/M05_ARESETN] [get_bd_pins ps7_0_axi_periph/M06_ARESETN] [get_bd_pins ps7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_ps7_0_100M/peripheral_aresetn] [get_bd_pins xadc_wiz_0/s_axi_aresetn]
 
   # Create address segments
   assign_bd_address -offset 0x00000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] -force
   assign_bd_address -offset 0x40400000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_dma_0/S_AXI_LITE/Reg] -force
+  assign_bd_address -offset 0x41200000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
+  assign_bd_address -offset 0x41600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_iic_0/S_AXI/Reg] -force
+  assign_bd_address -offset 0x41E00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_quad_spi_0/AXI_LITE/Reg] -force
   assign_bd_address -offset 0x42800000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_timer_0/S_AXI/Reg] -force
+  assign_bd_address -offset 0x42810000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_timer_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x43C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs xadc_wiz_0/s_axi_lite/Reg] -force
 
 

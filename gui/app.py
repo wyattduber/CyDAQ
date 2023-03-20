@@ -4,6 +4,7 @@ import sys
 import traceback
 import ctypes
 from sys import platform
+from datetime import datetime
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
@@ -19,6 +20,7 @@ from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
 from generated.MainWindowUI import Ui_MainWindow
 
+DEBUG_LOGS = ""
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -107,11 +109,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     EXIT_CODE_REBOOT = -123
 
     def __init__(self):
+        super(MainWindow, self).__init__()
+
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
             self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
-        super(MainWindow, self).__init__()
+        
         self.setupUi(self)
         self.threadpool = QThreadPool()
 
@@ -144,8 +148,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.updateWidgetConnectionStatus()
 
         # TODO Disabled for CyDAQ Lab Testing
-        # plotterAction = self.actionLaunch_Plotter
-        # plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
+        plotterAction = self.actionLaunch_Plotter
+        plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
 
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
@@ -314,5 +318,13 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         main = MainWindow()
         currentExitCode = app.exec_()
+
+        # If exit wasn't normal, save debug logs to location of executable
+        if currentExitCode != 0:
+            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
+            if main.wrapper is not None:
+                logs = main.wrapper.getLog()
+                with open(filename, 'w') as file:
+                    file.write(logs)
+
         app = None
-    # sys.exit(app.exec_())
