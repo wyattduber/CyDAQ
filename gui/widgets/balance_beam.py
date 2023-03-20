@@ -2,10 +2,10 @@
 from PyQt5 import QtWidgets
 
 # Stuff From Project - May show as an error but it works
-from generated.BalanceBeamUI import Ui_balance_beam
+from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
 
-class BalanceBeamModeWidget(QtWidgets.QMainWindow, Ui_balance_beam):
+class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     # Balance Beam Input Values
     kp = 0
     ki = 0
