@@ -6,14 +6,6 @@ from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
 
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
-    # Balance Beam Input Values
-    kp = 0
-    ki = 0
-    kd = 0
-    n = 0
-    setcm = 0
-    offset = 0
-
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
     def __init__(self, mainWindow, cyDAQModeWidget):
@@ -26,6 +18,25 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+
+        # Balance Beam Input Values
+        self.kp = 0
+        self.ki = 0
+        self.kd = 0
+        self.N = 0
+        self.setcm = 0
+        self.offset = 0
+
+        # Input Validation
+        validator = QDoubleValidator(0, 3, 6)
+        self.kp_input.setValidator(validator)
+
+        validator = QDoubleValidator(0, 2, 6)
+        self.ki_input.setValidator(validator)
+        self.kd_input.setValidator(validator)
+
+        validator = QIntValidator(0, 1000)
+        self.n_input.setValidator(validator)
 
         ### Below are the methods called when buttons are pressed ###
 
@@ -53,11 +64,51 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         pass
 
     # Send in the user-defined constants
+    # Each try/catch statement is to determine if the input is in scientific notation
+    # If so, and the input is exceedingly high (returns "inf") then just set it to a num higher than the max
     def sendConstants(self):
-        self.kp = self.kp_input.currentText() or 0
+        self.kp =  or 0
         self.ki = self.ki_input.currentText() or 0
         self.kd = self.kd_input.currentText() or 0
         self.n = self.n_input.currentText() or 0
+
+        try:
+            tmp = "{:.0f}".format(float(self.kp_input.currentText()))
+            if tmp == "inf":
+                self.kp = "99999999"
+            else:
+                self.kp = tmp
+        except ValueError:
+            self.kp = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.ki_input.currentText()))
+            if tmp == "inf":
+                self.ki = "99999999"
+            else:
+                self.ki = tmp
+        except ValueError:
+            self.ki = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.kd_input.currentText()))
+            if tmp == "inf":
+                self.kd = "99999999"
+            else:
+                self.kd = tmp
+        except ValueError:
+            self.kd = "0"
+
+        try:
+            tmp = "{:.0f}".format(float(self.n_input.currentText()))
+            if tmp == "inf":
+                self.N = "99999999"
+            else:
+                self.N = tmp
+        except ValueError:
+            self.N = "0"
+
+        self.wrapper.set_constants(self.kp, self.ki, self.kd, self.N)
 
     # Send in the user-defined set point in cm
     def sendSetPoint(self):

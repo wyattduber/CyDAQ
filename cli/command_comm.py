@@ -539,6 +539,33 @@ class cmd:
     def is_mock_mode(self):
         return self.ctrl_comm_obj.is_mock_mode()
 
+    ### Balance Beam Commands ###
+
+    def update_constants(self, kp, ki, kd, N):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(f"kp {kp}!".encode('uint8'))
+            self.ctrl_comm_obj.write(f"kd {ki}!".encode('uint8'))
+            self.ctrl_comm_obj.write(f"ki {kd}!".encode('uint8'))
+            self.ctrl_comm_obj.write(f"n {N}!".encode('uint8'))
+        else:
+            self.__throw_exception('Updating constants failed')
+
+    def update_set(self, setv):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen is True:
+            self.ctrl_comm_obj.write(f"r {setv}!".encode('uint8'))
+        else:
+            self.__throw_exception('Updating set failed') 
+
     # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):
     #     bin_num = bin(int(number))
