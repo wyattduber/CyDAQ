@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
-    <height>614</height>
+    <width>400</width>
+    <height>590</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="font">
    <font>
@@ -29,6 +23,18 @@
    <string notr="true">background-color: #d9d9d9;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>400</width>
+     <height>0</height>
+    </size>
+   </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
@@ -39,7 +45,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>389</width>
+     <width>400</width>
      <height>19</height>
     </rect>
    </property>

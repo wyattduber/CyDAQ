@@ -9,13 +9,13 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QDoubleValidator
 
 # Stuff From Project - May show as an error but it works
-from generated.BasicOperationUI import Ui_basic_operation
+from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 
 
-class BasicOperationModeWidget(QtWidgets.QMainWindow, Ui_basic_operation):
+class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
 
     def __init__(self, mainWindow, cyDAQModeWidget):

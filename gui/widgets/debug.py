@@ -7,13 +7,13 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFileDialog
 
 # Stuff From Project - May show as an error but it works
-from generated.DebugUI import Ui_debug
+from generated.DebugWidgetUI import Ui_DebugWidget
 
 # Constants
 LOG_TIMER_DELAY = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-class DebugWidget(QtWidgets.QMainWindow, Ui_debug):
+class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
     def __init__(self, mainWindow, cyDAQModeWidget):
         super(DebugWidget, self).__init__()
