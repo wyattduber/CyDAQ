@@ -151,8 +151,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.updateWidgetConnectionStatus()
 
         # TODO Disabled for CyDAQ Lab Testing
-        # plotterAction = self.actionLaunch_Plotter
-        # plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
+        plotterAction = self.actionLaunch_Plotter
+        plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
 
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
@@ -334,8 +334,9 @@ if __name__ == "__main__":
         # If exit wasn't normal, save debug logs to location of executable
         if currentExitCode != 0:
             filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
-            logs = main.wrapper.getLog()
-            with open(filename, 'w') as file:
-                file.write(logs)
+            if main.wrapper is not None:
+                logs = main.wrapper.getLog()
+                with open(filename, 'w') as file:
+                    file.write(logs)
 
         app = None
