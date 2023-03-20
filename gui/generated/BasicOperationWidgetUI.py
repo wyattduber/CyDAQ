@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BasicOpetaionWidget(object):
     def setupUi(self, BasicOpetaionWidget):
         BasicOpetaionWidget.setObjectName("BasicOpetaionWidget")
-        BasicOpetaionWidget.resize(575, 593)
+        BasicOpetaionWidget.resize(575, 622)
         BasicOpetaionWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -309,7 +309,7 @@ class Ui_BasicOpetaionWidget(object):
         self.label_4.setText(_translate("BasicOpetaionWidget", "≤"))
         self.label_5.setText(_translate("BasicOpetaionWidget", "≤"))
         self.high_corner_max_btn.setText(_translate("BasicOpetaionWidget", "40,000"))
-        self.sampling_time_label.setText(_translate("BasicOpetaionWidget", "Sampling Time (seconds)"))
+        self.sampling_time_label.setText(_translate("BasicOpetaionWidget", "Sampling Duration (seconds)"))
         self.send_config_btn.setText(_translate("BasicOpetaionWidget", "Send Config"))
         self.start_stop_sampling_btn.setText(_translate("BasicOpetaionWidget", "Start"))
 from . import basic_operation_rc

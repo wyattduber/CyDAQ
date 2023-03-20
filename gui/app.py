@@ -150,7 +150,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
-        # TODO Disabled for CyDAQ Lab Testing
         plotterAction = self.actionLaunch_Plotter
         plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
 
