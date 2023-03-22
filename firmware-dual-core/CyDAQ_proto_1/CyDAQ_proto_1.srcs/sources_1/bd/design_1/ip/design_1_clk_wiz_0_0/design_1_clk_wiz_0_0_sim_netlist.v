@@ -1,10 +1,10 @@
 // Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
-// Date        : Thu Apr 14 10:38:10 2022
-// Host        : ETGTECH-01 running 64-bit major release  (build 9200)
+// Date        : Wed Mar 15 13:40:17 2023
+// Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
-//               u:/ETG/CyDAQ_Proto/CyDAQ_proto_1/CyDAQ_proto_1.srcs/sources_1/bd/design_1/ip/design_1_clk_wiz_0_0/design_1_clk_wiz_0_0_sim_netlist.v
+//               u:/sdmay23-47/firmware-dual-core/CyDAQ_proto_1/CyDAQ_proto_1.srcs/sources_1/bd/design_1/ip/design_1_clk_wiz_0_0/design_1_clk_wiz_0_0_sim_netlist.v
 // Design      : design_1_clk_wiz_0_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.

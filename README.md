@@ -11,9 +11,21 @@
 # Wiki
 To view all of our official documentation for this project, check out our [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home)!
 
-# Firmware
+# Hardware
+Hardware Design is using Vivado 2020.1, it is NOT backwards compatible.
 
-> TODO
+The Hardware Design folder is located under /firmware-dual-core/CyDAQ_proto_1/
+
+Open CyDAQ_proto_1.xpr in Vivado to view/modify to project.
+
+For more detail, check the [Hardware Design page](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/Hardware-Design-(Vivado)) on [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home).
+# Firmware
+The bare-metal firmware design is under /firmware-dual-core/workspace/ import this folder in Vitis as a workspace to view/modify.
+
+For the linux firmware, it is using petalinux tools, you need a linux environment to view.edit it. The petalinux project is under /firmware-petalinux/os/ the Vitis project for linux is under /firmware-petalinux/platform/
+
+For more detail, check the [petalinux pages](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/Petalinux-(Firmware)) on [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home).
+
 
 # CLI
 The Command Line Tool, or CLI for short, is a console-based application used to interface directly with the cyDAQ. 

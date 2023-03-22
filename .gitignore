@@ -11,3 +11,9 @@ dist
 
 # Testing script creates this. Not needed in repo
 data.txt
+
+# Matlab file extensions
+*.m
+
+# Generated qrc files
+*_rc.py

@@ -1,0 +1,21 @@
+[binaries]
+c = @CC
+cpp = @CXX
+ar = @AR
+nm = @NM
+ld = @LD
+strip = @STRIP
+pkgconfig = 'pkg-config'
+
+[properties]
+needs_exe_wrapper = true
+c_args = @CFLAGS
+c_link_args = @LDFLAGS
+cpp_args = @CPPFLAGS
+cpp_link_args = @LDFLAGS
+
+[host_machine]
+system = 'linux'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'

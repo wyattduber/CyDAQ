@@ -1,0 +1,5 @@
+#!/bin/bash
+realpath=`readlink -fn $0`
+realdir=`dirname $realpath`
+export OEPYTHON3HOME=$realdir/../../usr TERMINFO_DIRS=$realdir/../../etc/terminfo:/etc/terminfo:/usr/share/terminfo:/usr/share/misc/terminfo:/lib/terminfo PYTHONNOUSERSITE=1
+exec -a "$0" $realdir/python3.7.real "$@"

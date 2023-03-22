@@ -1,8 +1,10 @@
 from copy import deepcopy
+from scipy.io import savemat
 import datetime
 import os
 import json
 import time
+import traceback
 
 from check_params import ParameterConstructor
 
@@ -40,7 +42,7 @@ class CyDAQ_CLI:
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
-	mock, (enable/disable)\t\t Enable CyDAQ serial mocking mode
+	mock, (enable/disable/status)\t\t Enable CyDAQ serial mocking mode
 	q/quit\t\t\t\t Exit The Command-Line"""
 
 	def __init__(self):
@@ -137,6 +139,9 @@ class CyDAQ_CLI:
 							continue
 						self.cmd_obj = cmd(mock_mode=False)						
 						self.mock_mode = self.cmd_obj.is_mock_mode()
+						continue
+					elif command[1] == 'status' or command[1] == 's':
+						self._print_to_output(str(self.mock_mode), self.WRAPPER_INFO)
 						continue
 				self._print_to_output("Invalid syntax. Ex: mock, enable")
 				continue
@@ -288,57 +293,67 @@ class CyDAQ_CLI:
 		period = 1 / int(sampleRate)
 		if outFile is None or outFile == "":
 			outFile = self._generateFilename()
+		_, extension = os.path.splitext(outFile)
+		matDict = {} # Dictionary used to matlab file writing
 		writeFunction = self._writeCSV
 		f = None
-		with open(outFile, "w") as f:
-			self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
-			self.cmd_obj.send_fetch()
+		if extension == ".csv":
+			f = open(outFile, 'w')
+		self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
+		self.cmd_obj.send_fetch()
 
-			# open a new connection to get data
-			comm_obj = self.cmd_obj.ctrl_comm_obj
-			comm_obj.open(self.cmd_obj.port)
+		# open a new connection to get data
+		comm_obj = self.cmd_obj.ctrl_comm_obj
+		comm_obj.open(self.cmd_obj.port)
 
-			#wait for an @, which signals start of data
-			byte = b""
-			while byte != b"@":
-				byte = comm_obj.read()
+		#wait for an @, which signals start of data
+		byte = b""
+		while byte != b"@":
+			byte = comm_obj.read()
 
-			# read all from the buffer, writing it to file
-			res = bytearray(b"")
-			count = 0
-			listening = True
-			while listening:
-				res.extend(comm_obj.read_all())
-				if b"!" in res:
-					listening = False
-				# print(res)
-				if len(res) < 2:
+		# read all from the buffer, writing it to file
+		res = bytearray(b"")
+		count = 0
+		listening = True
+		while listening:
+			res.extend(comm_obj.read_all())
+			if b"!" in res:
+				listening = False
+			# print(res)
+			if len(res) < 2:
+				continue
+			while len(res) >= 2:
+				# for some reason @ACK is sent at the end of data. Filter it out...
+				if res[0:2] == b'@A' or res[0:2] == b'CK':
+					res.pop(0)
+					res.pop(0)
 					continue
-				while len(res) >= 2:
-					# for some reason @ACK is sent at the end of data. Filter it out...
-					if res[0:2] == b'@A' or res[0:2] == b'CK':
-						res.pop(0)
-						res.pop(0)
-						continue
-					
-					# grab next two bytes and convert to uint16
-					raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
-					res.pop(0)
-					res.pop(0)
-					volts = self._adc_raw_to_volts(raw_num)
-					
-					# hacky fix for bad data. Need firmware to fix though
-					if volts > 12:
-						continue
 
+				# grab next two bytes and convert to uint16
+				raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
+				res.pop(0)
+				res.pop(0)
+				volts = self._adc_raw_to_volts(raw_num)
+
+				# hacky fix for bad data. Need firmware to fix though
+				if volts > 12:
+					continue
+
+				if extension == ".csv":
 					writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time*period)
-					time+=1
-				count+=1
-			# print("Batch count: ", count)
-			
-			comm_obj.close()
-			self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+				elif extension == ".mat":
+					matDict[f"{str(time * period)}"] = self._adc_raw_to_volts(raw_num)
+				time+=1
+			count+=1
+		# print("Batch count: ", count)
+
+		comm_obj.close()
+		self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+		if extension == ".csv":
 			f.close()
+		elif extension == ".mat":
+			savemat(outFile, matDict)
+
 
 	def _construct(self):
 		pc = ParameterConstructor()
@@ -435,6 +450,7 @@ class CyDAQ_CLI:
 
 if __name__ == "__main__":
 	try:
-		CyDAQ_CLI().start()
-	except:
-		pass #TODO added to prevent logging of error on close of GUI. Should probably add logging here
+		cli = CyDAQ_CLI()
+		cli.start()
+	except Exception as e: # Doesn't catch keyboard interrupt
+		cli._print_to_output("exceptinon uncaught in CLI: " + traceback.format_exc())

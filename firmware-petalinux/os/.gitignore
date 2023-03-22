@@ -1,0 +1,12 @@
+*/*/config.old
+*/*/rootfs_config.old
+build/
+pre-built/linux/
+images/linux
+.petalinux/*
+!.petalinux/metadata
+*.o
+*.jou
+*.log
+/components/plnx_workspace
+/components/yocto

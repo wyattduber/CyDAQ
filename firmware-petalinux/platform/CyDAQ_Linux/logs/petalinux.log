@@ -1,0 +1,12 @@
+TRACE::2023-03-22.01:20:51::SCWLinux::Copying the qemu file from  /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt To /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/sw/CyDAQ_Linux/qemu/
+TRACE::2023-03-22.01:20:51::SCWLinux::Copying the qemu file from  /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt To /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/sw/CyDAQ_Linux/linux_domain/qemu/
+TRACE::2023-03-22.01:20:51::SCWLinux:: Copying the user libraries. 
+TRACE::2023-03-22.01:20:51::SCWLinux::Skipping the Petalinux build as image is already given.
+TRACE::2023-03-22.01:22:50::SCWLinux::Copying the qemu file from  /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt To /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/sw/CyDAQ_Linux/qemu/
+TRACE::2023-03-22.01:22:50::SCWLinux::Copying the qemu file from  /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt To /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/sw/CyDAQ_Linux/linux_domain/qemu/
+TRACE::2023-03-22.01:22:50::SCWLinux:: Copying the user libraries. 
+TRACE::2023-03-22.01:22:50::SCWLinux::Skipping the Petalinux build as image is already given.
+TRACE::2023-03-22.01:24:02::SCWLinux::Copying the qemu file from  /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt To /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/sw/CyDAQ_Linux/qemu/
+TRACE::2023-03-22.01:24:02::SCWLinux::Copying the qemu file from  /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt To /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/sw/CyDAQ_Linux/linux_domain/qemu/
+TRACE::2023-03-22.01:24:02::SCWLinux:: Copying the user libraries. 
+TRACE::2023-03-22.01:24:02::SCWLinux::Skipping the Petalinux build as image is already given.
