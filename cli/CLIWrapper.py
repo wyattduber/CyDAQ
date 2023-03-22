@@ -243,6 +243,12 @@ class CLI:
         response = self._send_command("mock, status")
         return response == "True"
 
+    def start_bb(self, **_):
+        self._send_command("bb_start")
+
+    def stop_bb(self, **_):
+        self._send_command("bb_stop")
+
     def set_constants(self, kp, ki, kd, N, **_):
         self._send_command(f"bb_const, {kp} {ki} {kd} {N}")
 

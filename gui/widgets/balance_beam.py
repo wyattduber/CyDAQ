@@ -1,5 +1,7 @@
 # PyQt5 Packages
 from PyQt5 import QtWidgets
+from PyQt5.Qt import QIntValidator
+from PyQt5.QtGui import QDoubleValidator
 
 # Stuff From Project - May show as an error but it works
 from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
@@ -18,6 +20,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+
+        # Start Balance Beam Mode
+        self.wrapper.start_bb()
 
         # Balance Beam Input Values
         self.kp = 0
@@ -41,7 +46,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         ### Below are the methods called when buttons are pressed ###
 
         # Home Button
-        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+        self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons
         self.send_constants_btn.clicked.connect(self.sendConstants)
@@ -63,15 +68,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         # self.connection_status_label.setText("Not Connected!")
         pass
 
+    def home(self):
+        self.wrapper.stop_bb()
+        self.mainWindow.switchToModeSelector()
+
     # Send in the user-defined constants
     # Each try/catch statement is to determine if the input is in scientific notation
     # If so, and the input is exceedingly high (returns "inf") then just set it to a num higher than the max
     def sendConstants(self):
-        self.kp =  or 0
-        self.ki = self.ki_input.currentText() or 0
-        self.kd = self.kd_input.currentText() or 0
-        self.n = self.n_input.currentText() or 0
-
         try:
             tmp = "{:.0f}".format(float(self.kp_input.currentText()))
             if tmp == "inf":
