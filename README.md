@@ -11,9 +11,11 @@
 # Wiki
 To view all of our official documentation for this project, check out our [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home)!
 
-# Firmware
+# Hardware
+Hardware Design is using Vivado 2020.1, it is NOT backwards compatible.
 
-> TODO
+# Firmware
+Firmware is using petalinux, you need a linux environment to setup or edit it. For more detail, check the petalinux page on wiki
 
 # CLI
 The Command Line Tool, or CLI for short, is a console-based application used to interface directly with the cyDAQ. 
