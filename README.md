@@ -13,13 +13,16 @@ To view all of our official documentation for this project, check out our [wiki]
 
 # Hardware
 Hardware Design is using Vivado 2020.1, it is NOT backwards compatible.
+
 The Hardware Design folder is located under /firmware-dual-core/CyDAQ_proto_1/
+
 Open CyDAQ_proto_1.xpr in Vivado to view/modify to project.
 
 # Firmware
 The bare-metal firmware design is under /firmware-dual-core/workspace/ import this folder in Vitis as a workspace to view/modify.
 
 For the linux firmware, it is using petalinux tools, you need a linux environment to view.edit it. The petalinux project is under /firmware-petalinux/os/ the Vitis project for linux is under /firmware-petalinux/platform/
+
 For more detail, check the petalinux pages on wiki
 
 
