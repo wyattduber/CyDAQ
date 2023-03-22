@@ -2,7 +2,7 @@
 */*/rootfs_config.old
 build/
 pre-built/linux/
-images/linux
+images/linux/
 .petalinux/*
 !.petalinux/metadata
 *.o
