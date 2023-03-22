@@ -243,6 +243,12 @@ class CLI:
         response = self._send_command("mock, status")
         return response == "True"
 
+    def set_constants(self, kp, ki, kd, N, **_):
+        self._send_command(f"bb_const, {kp} {ki} {kd} {N}")
+
+    def send_set_point(self, setv):
+        self._send_command(f"bb_set, {setv}")
+
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")
         start = round(time.time())

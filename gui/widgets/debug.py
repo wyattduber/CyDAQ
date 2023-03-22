@@ -93,7 +93,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
                                                        options=options)
         # Default Filename
         if filename.strip() == "":
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
+            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt"
 
         # Save the logs to the file
         with open(filename, 'w') as file:

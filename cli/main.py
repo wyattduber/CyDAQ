@@ -43,6 +43,8 @@ class CyDAQ_CLI:
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
 	mock, (enable/disable/status)\t\t Enable CyDAQ serial mocking mode
+	bb_const, (kp) (ki) (kd) (N)\t\t Send updated constants for bb calc
+	bb_set, (value)\t\t Send updated set value for bb calc
 	q/quit\t\t\t\t Exit The Command-Line"""
 
 	def __init__(self):
@@ -182,6 +184,10 @@ class CyDAQ_CLI:
 					generating = not generating
 					self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
+			elif command[0] == 'bb_const':
+				self._update_constants(command[1], command[2], command[3], command[4])
+			elif command[0] == 'bb_set':
+				self._update_set(command[1])
 
 			# Otherwise command not found
 			self._print_help(True)
@@ -283,6 +289,8 @@ class CyDAQ_CLI:
 
 		for key in jsonList:
 			self.config[key] = jsonList[key]
+
+	### Sampling Methods ###
 
 	def _start_sampling(self):
 		self.cmd_obj.send_start_cmd()
@@ -447,6 +455,14 @@ class CyDAQ_CLI:
 		ADC_GAIN = 10  # Gain needed to rescale ADC measured voltage back (CyDAQ uses 5:1 divider)
 		sample_volts = sample / (2 ** ADC_N_BITS - 1) * ADC_MAX_V
 		return (sample_volts - ADC_DC_OFFSET_V) * ADC_GAIN
+
+	### Balance Beam Methods ###
+
+	def _update_constants(self, kp, ki, kd, N):
+		self.comm_obj.update_constants(kp, ki, kd, N)
+
+	def _update_set(self, setv):
+		self.comm_obj.update_set(setv)
 
 if __name__ == "__main__":
 	try:
