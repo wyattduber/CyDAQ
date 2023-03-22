@@ -1,0 +1,13 @@
+prefix=/home/longz/sdmay23-47/firmware-petalinux/os/sysroot_dir/sysroots/x86_64-petalinux-linux/usr
+exec_prefix=/home/longz/sdmay23-47/firmware-petalinux/os/sysroot_dir/sysroots/x86_64-petalinux-linux/usr
+libdir=/home/longz/sdmay23-47/firmware-petalinux/os/sysroot_dir/sysroots/x86_64-petalinux-linux/usr/lib
+sharedlibdir=${libdir}
+includedir=/home/longz/sdmay23-47/firmware-petalinux/os/sysroot_dir/sysroots/x86_64-petalinux-linux/usr/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.11
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
