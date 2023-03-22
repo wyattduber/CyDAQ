@@ -1,0 +1,13 @@
+prefix=/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/usr
+exec_prefix=/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/usr
+libdir=/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/usr/lib
+includedir=/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/usr/include
+
+Name: Protocol Buffers
+Description: Google's Data Interchange Format
+Version: 3.9.2
+Libs: -L${libdir} -lprotobuf 
+Libs.private: -lz 
+
+Cflags: -I${includedir} -pthread
+Conflicts: protobuf-lite

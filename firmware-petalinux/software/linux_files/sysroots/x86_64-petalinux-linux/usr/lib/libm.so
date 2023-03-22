@@ -1,0 +1,4 @@
+/* GNU ld script
+*/
+OUTPUT_FORMAT(elf64-x86-64)
+GROUP ( /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/lib/libm.so.6  AS_NEEDED ( /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/usr/lib/libmvec_nonshared.a /home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/x86_64-petalinux-linux/lib/libmvec.so.1 ) )

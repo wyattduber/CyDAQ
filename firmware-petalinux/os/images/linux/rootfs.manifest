@@ -109,14 +109,9 @@ kernel-module-rng-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-rpmsg-char-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-rpmsg-core-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-stp-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
-kernel-module-u-ether-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
-kernel-module-u-serial-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-udp-tunnel-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-uio-pdrv-genirq-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
-kernel-module-usb-f-acm-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
-kernel-module-usb-f-ecm-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-usb-f-mass-storage-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
-kernel-module-usb-f-rndis-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-usb-f-ss-lb-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-virtio-crypto-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
 kernel-module-virtio-rpmsg-bus-5.4.0-xilinx-v2020.1 zynq_generic 5.4+git999
