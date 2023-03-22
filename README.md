@@ -23,7 +23,7 @@ The bare-metal firmware design is under /firmware-dual-core/workspace/ import th
 
 For the linux firmware, it is using petalinux tools, you need a linux environment to view.edit it. The petalinux project is under /firmware-petalinux/os/ the Vitis project for linux is under /firmware-petalinux/platform/
 
-For more detail, check the petalinux pages on wiki
+For more detail, check the [petalinux pages](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/Petalinux-(Firmware))! on [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home)!
 
 
 # CLI
