@@ -18,6 +18,7 @@ The Hardware Design folder is located under /firmware-dual-core/CyDAQ_proto_1/
 
 Open CyDAQ_proto_1.xpr in Vivado to view/modify to project.
 
+For more detail, check the [Hardware Design page](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/Hardware-Design-(Vivado)) on [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home).
 # Firmware
 The bare-metal firmware design is under /firmware-dual-core/workspace/ import this folder in Vitis as a workspace to view/modify.
 
