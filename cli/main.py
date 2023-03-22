@@ -43,6 +43,8 @@ class CyDAQ_CLI:
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
 	mock, (enable/disable/status)\t\t Enable CyDAQ serial mocking mode
+	bb_start\t\t\t Start Balance Beam Mode
+	bb_stop\t\t\t Stop Balance Beam Mode
 	bb_const, (kp) (ki) (kd) (N)\t\t Send updated constants for bb calc
 	bb_set, (value)\t\t Send updated set value for bb calc
 	q/quit\t\t\t\t Exit The Command-Line"""
@@ -184,6 +186,10 @@ class CyDAQ_CLI:
 					generating = not generating
 					self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
+			elif command[0] == 'bb_start':
+				self._start_beam_mode()
+			elif command[0] == 'bb_stop':
+				self._stop_beam_mode()
 			elif command[0] == 'bb_const':
 				self._update_constants(command[1], command[2], command[3], command[4])
 			elif command[0] == 'bb_set':
@@ -457,6 +463,12 @@ class CyDAQ_CLI:
 		return (sample_volts - ADC_DC_OFFSET_V) * ADC_GAIN
 
 	### Balance Beam Methods ###
+
+	def _start_beam_mode(self):
+		self.comm_obj.start_bb()
+
+	def _stop_beam_mode(self):
+		self.comm_obj.stop_bb()
 
 	def _update_constants(self, kp, ki, kd, N):
 		self.comm_obj.update_constants(kp, ki, kd, N)

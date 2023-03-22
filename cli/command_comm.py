@@ -541,6 +541,32 @@ class cmd:
 
     ### Balance Beam Commands ###
 
+    def start_bb(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_BALANCE_BEAM.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        else:
+            self.__throw_exception('Starting balance beam mode failed')
+
+    def stop_bb(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_BALANCE_BEAM.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        else:
+            self.__throw_exception('Stopping balance beam mode failed')
+
     def update_constants(self, kp, ki, kd, N):
         try:
             self.ctrl_comm_obj.open(self.port)
