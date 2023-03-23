@@ -220,6 +220,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(1)
 
     def switchToBalanceBeam(self):
+        self.wrapper.start_bb()
+        self.wrapper.set_constants("0.3", "0.3", "0.3", "50")
+        self.wrapper.send_set_point("0")
         self.stack.setCurrentIndex(2)
 
     def switchToLiveStream(self, came_from_basic):
@@ -234,6 +237,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer.stop()
         self.pingTimer.killTimer(0)
         self.pingTimer = None
+        self.wrapper.stop_bb()
         self.wrapper.close()
         self.wrapper = None
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
@@ -245,6 +249,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
+            self.wrapper.stop_bb()
             event.accept()
             if main.widgets[3].window is not None:
                 main.widgets[3].window.close()

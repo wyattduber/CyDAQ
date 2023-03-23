@@ -21,16 +21,15 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
 
-        # Start Balance Beam Mode
-        self.wrapper.start_bb()
+        # Start Balance Beam Mode w/ Default Values
+        self.paused = False
 
-        # Balance Beam Input Values
-        self.kp = 0
-        self.ki = 0
-        self.kd = 0
-        self.N = 0
+        # Balance Beam Input Values (Default)
+        self.kp = 0.3
+        self.ki = 0.3
+        self.kd = 0.3
+        self.N = 50
         self.setcm = 0
-        self.offset = 0
 
         # Input Validation
         validator = QDoubleValidator(0, 3, 6)
@@ -42,6 +41,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
         validator = QIntValidator(0, 1000)
         self.n_input.setValidator(validator)
+
+        validator = QIntValidator(-15, 15)
+        self.set_cm_input.setValidator(validator)
 
         ### Below are the methods called when buttons are pressed ###
 
@@ -76,47 +78,17 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     # Each try/catch statement is to determine if the input is in scientific notation
     # If so, and the input is exceedingly high (returns "inf") then just set it to a num higher than the max
     def sendConstants(self):
-        try:
-            tmp = "{:.0f}".format(float(self.kp_input.currentText()))
-            if tmp == "inf":
-                self.kp = "99999999"
-            else:
-                self.kp = tmp
-        except ValueError:
-            self.kp = "0"
-
-        try:
-            tmp = "{:.0f}".format(float(self.ki_input.currentText()))
-            if tmp == "inf":
-                self.ki = "99999999"
-            else:
-                self.ki = tmp
-        except ValueError:
-            self.ki = "0"
-
-        try:
-            tmp = "{:.0f}".format(float(self.kd_input.currentText()))
-            if tmp == "inf":
-                self.kd = "99999999"
-            else:
-                self.kd = tmp
-        except ValueError:
-            self.kd = "0"
-
-        try:
-            tmp = "{:.0f}".format(float(self.n_input.currentText()))
-            if tmp == "inf":
-                self.N = "99999999"
-            else:
-                self.N = tmp
-        except ValueError:
-            self.N = "0"
+        self.kp = float(self.kp_input.text()) or 0
+        self.ki = float(self.ki_input.text()) or 0
+        self.kd = float(self.kd_input.text()) or 0
+        self.N = int(self.n_input.text()) or 0
 
         self.wrapper.set_constants(self.kp, self.ki, self.kd, self.N)
 
     # Send in the user-defined set point in cm
     def sendSetPoint(self):
-        self.setcm = self.set_cm_input.currentText() or 0
+        self.setcm = int(self.set_cm_input.text()) or 0
+        self.wrapper.send_set_point(self.setcm)
 
     # Save the step (?)
     def saveStep(self):
@@ -128,12 +100,17 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
     # Increase the offset
     def offsetInc(self):
-        self.offset += 1
+        self.wrapper.offset_inc()
 
     # Decrease the offset
     def offsetDec(self):
-        self.offset -= 1
+        self.wrapper.offset_dec()
 
     # Pause the plotting / balancing
     def pause(self):
-        pass
+        if self.paused:
+            self.wrapper.resume_bb()
+            self.paused = False
+        else:
+            self.wrapper.pause_bb()
+            self.paused = True
