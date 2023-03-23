@@ -3,6 +3,8 @@ from master_enum import enum_filter, enum_commands, sig_serial
 import struct
 import time as t
 
+CMD_SERVO_OFFSET = "SOI"  # TODO Also might not be right
+
 class cmd:
 
     def __init__(self, mock_mode=False):
@@ -590,7 +592,35 @@ class cmd:
         if self.ctrl_comm_obj.isOpen is True:
             self.ctrl_comm_obj.write(f"r {setv}!".encode('uint8'))
         else:
-            self.__throw_exception('Updating set failed') 
+            self.__throw_exception('Updating set failed')
+
+    def offset_inc(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('uint8'))
+            self.ctrl_comm_obj.write(CMD_SERVO_OFFSET.encode('uint8'))
+            self.ctrl_comm_obj.write("1".encode('uint8'))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('uint8'))
+        else:
+            self.__throw_exception('Increasing offset failed')
+
+    def offset_dec(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('uint8'))
+            self.ctrl_comm_obj.write(CMD_SERVO_OFFSET.encode('uint8'))
+            self.ctrl_comm_obj.write("-1".encode('uint8'))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('uint8'))
+        else:
+            self.__throw_exception('Decreasing offset failed')
 
     # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):

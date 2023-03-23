@@ -47,6 +47,8 @@ class CyDAQ_CLI:
 	bb_stop\t\t\t Stop Balance Beam Mode
 	bb_const, (kp) (ki) (kd) (N)\t\t Send updated constants for bb calc
 	bb_set, (value)\t\t Send updated set value for bb calc
+	bb_offset_inc\t\t\t Increase the balance beam offset
+	bb_offset_dec\t\t\t Decrease the balance beam offset
 	q/quit\t\t\t\t Exit The Command-Line"""
 
 	def __init__(self):
@@ -194,6 +196,10 @@ class CyDAQ_CLI:
 				self._update_constants(command[1], command[2], command[3], command[4])
 			elif command[0] == 'bb_set':
 				self._update_set(command[1])
+			elif command[0] == 'bb_offset_inc':
+				self._offset_inc()
+			elif command[0] == 'bb_offset_dec':
+				self._offset_dec()
 
 			# Otherwise command not found
 			self._print_help(True)
@@ -475,6 +481,12 @@ class CyDAQ_CLI:
 
 	def _update_set(self, setv):
 		self.comm_obj.update_set(setv)
+
+	def _offset_inc(self):
+		self.comm_obj.offset_inc()
+
+	def _offset_dec(self):
+		self.comm_obj.offset_dec()
 
 if __name__ == "__main__":
 	try:

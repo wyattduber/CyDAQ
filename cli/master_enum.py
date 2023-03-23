@@ -33,7 +33,7 @@ class enum_commands(IntEnum):
     START_GENERATION = 14
     STOP_GENERATION = 15
     START_BALANCE_BEAM = 16
-    STOP_BALANCE_BEAM = 17 #TODO Might not be right
+    STOP_BALANCE_BEAM = 17 # TODO Might not be right
 
 
 class enum_dac_mode(IntEnum):

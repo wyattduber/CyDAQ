@@ -255,6 +255,12 @@ class CLI:
     def send_set_point(self, setv):
         self._send_command(f"bb_set, {setv}")
 
+    def offset_inc(self):
+        self._send_command("bb_offset_inc")
+
+    def offset_dec(self):
+        self._send_command("bb_offset_dec")
+
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")
         start = round(time.time())

@@ -53,8 +53,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
         self.save_plot_data_btn.clicked.connect(self.savePlotData)
-        self.offset_inc_btn.clicked.connect(self.offsetInc)
-        self.offset_dec_btn.clicked.connect(self.offsetDec)
+        self.offset_inc_btn.clicked.connect(self.wrapper.offset_inc)
+        self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
 
     # CyDAQ Connection Label (disabled until re-layout)
