@@ -71,7 +71,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         pass
 
     def home(self):
-        self.wrapper.stop_bb()
+        if self.mainWindow.connected:
+            self.wrapper.stop_bb()
         self.mainWindow.switchToModeSelector()
 
     # Send in the user-defined constants

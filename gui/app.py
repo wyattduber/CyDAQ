@@ -220,9 +220,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(1)
 
     def switchToBalanceBeam(self):
-        self.wrapper.start_bb()
-        self.wrapper.set_constants("0.3", "0.3", "0.3", "50")
-        self.wrapper.send_set_point("0")
+        if self.connected:
+            self.wrapper.start_bb()
+            self.wrapper.set_constants("0.3", "0.3", "0.3", "50")
+            self.wrapper.send_set_point("0")
         self.stack.setCurrentIndex(2)
 
     def switchToLiveStream(self, came_from_basic):
