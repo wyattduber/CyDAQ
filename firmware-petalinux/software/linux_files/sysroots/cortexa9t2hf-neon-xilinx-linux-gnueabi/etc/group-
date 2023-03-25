@@ -20,7 +20,7 @@ cdrom:x:24:
 floppy:x:25:
 tape:x:26:
 sudo:x:27:
-audio:x:29:pulse
+audio:x:29:
 dip:x:30:
 www-data:x:33:
 backup:x:34:
@@ -41,5 +41,3 @@ shutdown:x:70:
 users:x:100:
 nogroup:x:65534:
 netdev:x:999:
-messagebus:x:998:
-pulse:x:997:pulse

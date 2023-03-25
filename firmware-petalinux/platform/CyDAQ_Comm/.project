@@ -3,7 +3,6 @@
 	<name>CyDAQ_Comm</name>
 	<comment>Created by Vitis v2020.1</comment>
 	<projects>
-		<project>CyDAQ_Linux</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

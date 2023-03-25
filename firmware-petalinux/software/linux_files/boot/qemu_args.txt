@@ -22,3 +22,4 @@ mode=5
 <system/qemu/u-boot.elf>
 -machine
 linux=on
+
