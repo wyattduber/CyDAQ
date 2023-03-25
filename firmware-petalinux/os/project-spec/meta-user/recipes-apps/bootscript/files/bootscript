@@ -4,14 +4,23 @@
 # Ensures configfs is enabled
 mount -t configfs none /sys/kernel/config 
 
+modprobe libcomposite
+
 cd /sys/kernel/config/usb_gadget/
 mkdir g && cd g
 
 echo 0x1d6b > idVendor  # Linux Foundation
 echo 0x0104 > idProduct # Multifunction Composite Gadget
-echo 0x0100 > bcdDevice # v1.0.0
+echo 0x0101 > bcdDevice # v1.0.1 - increment when changes are made
 echo 0x0200 > bcdUSB    # USB 2.0
+
 ehco "64" > bMaxPacketSize0
+
+# required for windows to use it's correct RNDIS driver
+# https://irq5.io/2016/12/22/raspberry-pi-zero-as-multiple-usb-gadgets/
+echo 0xEF > bDeviceClass
+echo 0x02 > bDeviceSubClass
+echo 0x01 > bDeviceProtocol
 
 mkdir -p strings/0x409
 echo "xxxxxxxxxxxx" > strings/0x409/serialnumber
@@ -30,6 +39,14 @@ echo 0xE0 > configs/c.1/bmAttributes
 ln -s functions/rndis.usb0 configs/c.1/
 ln -s functions/acm.usb0   configs/c.1/
 
+# OS descriptors - again for Windows to use the correct drivers
+echo 1       > os_desc/use
+echo 0xcd    > os_desc/b_vendor_code
+echo MSFT100 > os_desc/qw_sign
+echo RNDIS   > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
+echo 5162001 > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
+ln -s configs/c.1 os_desc
+
 # Start the drivers
 ls /sys/class/udc/ > UDC
 
@@ -38,3 +55,4 @@ ifconfig usb0 169.254.7.2 up
 # ========================================================================================================
 
 # Add any new startup commands below
+
