@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BalanceBeamWidget(object):
     def setupUi(self, BalanceBeamWidget):
         BalanceBeamWidget.setObjectName("BalanceBeamWidget")
-        BalanceBeamWidget.resize(493, 561)
+        BalanceBeamWidget.resize(462, 649)
         BalanceBeamWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -135,13 +135,13 @@ class Ui_BalanceBeamWidget(object):
         _translate = QtCore.QCoreApplication.translate
         BalanceBeamWidget.setWindowTitle(_translate("BalanceBeamWidget", "Form"))
         self.graph_label.setText(_translate("BalanceBeamWidget", "Ball Position Vs. Time"))
-        self.kp_input.setText(_translate("BalanceBeamWidget", "0.3"))
+        self.kp_input.setText(_translate("BalanceBeamWidget", "0.8"))
         self.kp_output.setText(_translate("BalanceBeamWidget", "0"))
-        self.ki_input.setText(_translate("BalanceBeamWidget", "0.3"))
+        self.ki_input.setText(_translate("BalanceBeamWidget", "0.2"))
         self.ki_output.setText(_translate("BalanceBeamWidget", "0"))
-        self.kd_input.setText(_translate("BalanceBeamWidget", "0.3"))
+        self.kd_input.setText(_translate("BalanceBeamWidget", "0.4"))
         self.kd_output.setText(_translate("BalanceBeamWidget", "0"))
-        self.n_input.setText(_translate("BalanceBeamWidget", "50"))
+        self.n_input.setText(_translate("BalanceBeamWidget", "16"))
         self.n_output.setText(_translate("BalanceBeamWidget", "0"))
         self.send_constants_btn.setText(_translate("BalanceBeamWidget", "Send Constants"))
         self.set_cm_input.setText(_translate("BalanceBeamWidget", "0"))

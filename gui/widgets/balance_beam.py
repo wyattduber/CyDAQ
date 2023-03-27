@@ -23,7 +23,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
-        self.connected = False
+        self.running = False
 
         # Balance Beam Input Values (Default)
         self.kp = 0.8
@@ -32,6 +32,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.N = 16
         self.setcm = 0
 
+        # Set current values for reference
         self.kp_output.setText(str(self.kp))
         self.ki_output.setText(str(self.ki))
         self.kd_output.setText(str(self.kd))
@@ -58,7 +59,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons
-        self.send_constants_btn.clicked.connect(lambda: self.cyDAQModeWidget.runInWorkerThread(self.sendConstants))
+        self.send_constants_btn.clicked.connect(self.sendConstants)
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
         self.save_plot_data_btn.clicked.connect(self.savePlotData)
@@ -78,17 +79,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         pass
 
     def home(self):
-        if self.mainWindow.connected:
-            print('flag1')
+        if self.running:
             self.wrapper.stop_bb()
-            print('flag2')
+            self.mainWindow.startPingTimer()
         self.mainWindow.switchToModeSelector()
 
     # Start the balance beam with default values
     def start(self):
-        print('flag1-2')
+        self.running = True
+        self.mainWindow.stopPingTimer()
         self.wrapper.start_bb()
-        print('flag2-2')
 
     # Send in the user-defined constants
     def sendConstants(self):
@@ -134,3 +134,5 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         else:
             self.wrapper.pause_bb()
             self.paused = True
+
+    ### TODO Live Graph Widget Below This Line ###

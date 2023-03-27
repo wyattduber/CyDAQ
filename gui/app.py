@@ -224,7 +224,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToBalanceBeam(self):
         # Check that the cydaq is connected and that balance beam mode isn't already on
-        if self.connected and not self.balance_beam.connected:
+        if self.connected and not self.balance_beam.running:
             self.balance_beam.start()
         self.stack.setCurrentIndex(2)
         self.current_index = 2

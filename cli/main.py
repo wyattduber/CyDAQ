@@ -42,11 +42,11 @@ class CyDAQ_CLI:
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
-	mock, (enable/disable/status)\t\t Enable CyDAQ serial mocking mode
+	mock, (enable/disable/status)\t Enable CyDAQ serial mocking mode
 	bb_start\t\t\t Start Balance Beam Mode
-	bb_stop\t\t\t Stop Balance Beam Mode
-	bb_const, (kp) (ki) (kd) (N)\t\t Send updated constants for bb calc
-	bb_set, (value)\t\t Send updated set value for bb calc
+	bb_stop\t\t\t\t Stop Balance Beam Mode
+	bb_const, (kp) (ki) (kd) (N)\t Send updated constants for bb calc
+	bb_set, (value)\t\t\t Send updated set value for bb calc
 	bb_offset_inc\t\t\t Increase the balance beam offset
 	bb_offset_dec\t\t\t Decrease the balance beam offset
 	bb_pause\t\t\t Pause the Balance Beam
@@ -235,13 +235,13 @@ class CyDAQ_CLI:
 				if not self.balance_beam_enabled:
 					self._print_to_output("Balance Beam Mode is not enabled!")
 					continue
-				self.pause_bb()
+				self._pause_bb()
 				continue
 			elif command[0] == 'bb_resume':
 				if not self.balance_beam_enabled:
 					self._print_to_output("Balance Beam Mode is not enabled!")
 					continue
-				self.resume_bb()
+				self._resume_bb()
 				continue
 
 			# Otherwise command not found
@@ -531,6 +531,12 @@ class CyDAQ_CLI:
 
 	def _offset_dec(self):
 		self.cmd_obj.offset_dec()
+
+	def _pause_bb(self):
+		self.cmd_obj.pause_bb()
+
+	def _resume_bb(self):
+		self.cmd_obj.resume_bb()
 
 if __name__ == "__main__":
 	try:

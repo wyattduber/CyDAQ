@@ -99,7 +99,7 @@ background-color: #d9d9d9;</string>
      <item>
       <widget class="QLineEdit" name="ki_input">
        <property name="text">
-        <string>0.4</string>
+        <string>0.2</string>
        </property>
       </widget>
      </item>
@@ -120,7 +120,7 @@ background-color: #d9d9d9;</string>
      <item>
       <widget class="QLineEdit" name="kd_input">
        <property name="text">
-        <string>0.2</string>
+        <string>0.4</string>
        </property>
       </widget>
      </item>

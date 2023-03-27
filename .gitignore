@@ -14,6 +14,3 @@ data.txt
 
 # Matlab file extensions
 *.m
-
-# Generated qrc files
-*_rc.py
