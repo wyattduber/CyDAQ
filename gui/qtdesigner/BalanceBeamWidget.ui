@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
-    <height>649</height>
+    <width>1076</width>
+    <height>743</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,32 +45,6 @@ background-color: #d9d9d9;</string>
       <iconset resource="basic_operation.qrc">
        <normaloff>:/assets/assets/home_icon.png</normaloff>:/assets/assets/home_icon.png</iconset>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QWidget" name="graph" native="true">
-     <widget class="QLabel" name="graph_label">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>-10</y>
-        <width>682</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>ArrowCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string>Ball Position Vs. Time</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
     </widget>
    </item>
    <item>

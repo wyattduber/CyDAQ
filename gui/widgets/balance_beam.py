@@ -4,10 +4,10 @@ from PyQt5.Qt import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
 
 # Stuff From Project - May show as an error but it works
-from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
+from generated.NewBalanceBeamWidgetUI import Ui_NewBalanceBeamWidget
 
 
-class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
+class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
     def __init__(self, mainWindow, cyDAQModeWidget):

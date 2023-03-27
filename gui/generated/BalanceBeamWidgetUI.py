@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BalanceBeamWidget(object):
     def setupUi(self, BalanceBeamWidget):
         BalanceBeamWidget.setObjectName("BalanceBeamWidget")
-        BalanceBeamWidget.resize(462, 649)
+        BalanceBeamWidget.resize(1076, 743)
         BalanceBeamWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -44,15 +44,6 @@ class Ui_BalanceBeamWidget(object):
         self.home_btn.setIcon(icon)
         self.home_btn.setObjectName("home_btn")
         self.verticalLayout.addWidget(self.home_btn)
-        self.graph = QtWidgets.QWidget(BalanceBeamWidget)
-        self.graph.setObjectName("graph")
-        self.graph_label = QtWidgets.QLabel(self.graph)
-        self.graph_label.setEnabled(True)
-        self.graph_label.setGeometry(QtCore.QRect(0, -10, 682, 31))
-        self.graph_label.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.graph_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.graph_label.setObjectName("graph_label")
-        self.verticalLayout.addWidget(self.graph)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.kp_input = QtWidgets.QLineEdit(BalanceBeamWidget)
@@ -134,7 +125,6 @@ class Ui_BalanceBeamWidget(object):
     def retranslateUi(self, BalanceBeamWidget):
         _translate = QtCore.QCoreApplication.translate
         BalanceBeamWidget.setWindowTitle(_translate("BalanceBeamWidget", "Form"))
-        self.graph_label.setText(_translate("BalanceBeamWidget", "Ball Position Vs. Time"))
         self.kp_input.setText(_translate("BalanceBeamWidget", "0.8"))
         self.kp_output.setText(_translate("BalanceBeamWidget", "0"))
         self.ki_input.setText(_translate("BalanceBeamWidget", "0.2"))
