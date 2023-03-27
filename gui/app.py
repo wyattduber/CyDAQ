@@ -150,6 +150,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
+        self.current_index = 0
+
         plotterAction = self.actionLaunch_Plotter
         plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
 
@@ -218,27 +220,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
+        self.current_index = 1
 
     def switchToBalanceBeam(self):
-        if self.connected:
-            self.wrapper.start_bb()
-            self.wrapper.set_constants("0.3", "0.3", "0.3", "50")
-            self.wrapper.send_set_point("0")
+        # Check that the cydaq is connected and that balance beam mode isn't already on
+        if self.connected and not self.balance_beam.connected:
+            self.balance_beam.start()
         self.stack.setCurrentIndex(2)
+        self.current_index = 2
 
     def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
+        self.current_index = 3
         self.livestream.show_window(self.livestream)
         self.livestream.came_from_basic = came_from_basic
 
     def switchToDebug(self):
+        self.debug.prev_index = self.current_index
         self.stack.setCurrentIndex(4)
 
     def restartWindow(self):
         self.pingTimer.stop()
         self.pingTimer.killTimer(0)
         self.pingTimer = None
-        self.wrapper.stop_bb()
         self.wrapper.close()
         self.wrapper = None
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)

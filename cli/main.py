@@ -71,6 +71,7 @@ class CyDAQ_CLI:
 		self.config = self.default_config.copy()
 		self.wrapper_mode = False
 		self.mock_mode = False
+		self.balance_beam_enabled = False
 
 	def start(self):
 		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
@@ -96,6 +97,8 @@ class CyDAQ_CLI:
 			# First process commands that don't require direct connection to the CyDAQ
 			if command[0] == 'q' or command[0] == 'quit':
 				self._print_to_output("Terminating...\n")
+				if self.balance_beam_enabled:
+					self._stop_beam_mode() # Stop Balance Beam mode if running
 				break
 			elif command[0] == "" or command[0] == "\n":
 				continue
@@ -191,28 +194,53 @@ class CyDAQ_CLI:
 					self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
 			elif command[0] == 'bb_start':
+				if self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is already enabled!")
+					continue
 				self._start_beam_mode()
+				self.balance_beam_enabled = True
 				continue
 			elif command[0] == 'bb_stop':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self._stop_beam_mode()
 				continue
 			elif command[0] == 'bb_const':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				args = command[1].split(' ')
 				self._update_constants(args[0], args[1], args[2], args[3])
 				continue
 			elif command[0] == 'bb_set':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self._update_set(command[1])
 				continue
 			elif command[0] == 'bb_offset_inc':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self._offset_inc()
 				continue
 			elif command[0] == 'bb_offset_dec':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self._offset_dec()
 				continue
 			elif command[0] == 'bb_pause':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self.pause_bb()
 				continue
 			elif command[0] == 'bb_resume':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self.resume_bb()
 				continue
 
@@ -490,6 +518,7 @@ class CyDAQ_CLI:
 
 	def _stop_beam_mode(self):
 		self.cmd_obj.stop_bb()
+		self.balance_beam_enabled = False
 
 	def _update_constants(self, kp, ki, kd, N):
 		self.cmd_obj.update_constants(kp, ki, kd, N)

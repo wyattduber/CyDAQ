@@ -23,13 +23,20 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
+        self.connected = False
 
         # Balance Beam Input Values (Default)
-        self.kp = 0.3
-        self.ki = 0.3
-        self.kd = 0.3
-        self.N = 50
+        self.kp = 0.8
+        self.ki = 0.2
+        self.kd = 0.4
+        self.N = 16
         self.setcm = 0
+
+        self.kp_output.setText(str(self.kp))
+        self.ki_output.setText(str(self.ki))
+        self.kd_output.setText(str(self.kd))
+        self.n_output.setText(str(self.N))
+        self.set_cm_output.setText(str(self.setcm))
 
         # Input Validation
         validator = QDoubleValidator(0, 3, 6)
@@ -51,7 +58,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons
-        self.send_constants_btn.clicked.connect(self.sendConstants)
+        self.send_constants_btn.clicked.connect(lambda: self.cyDAQModeWidget.runInWorkerThread(self.sendConstants))
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
         self.save_plot_data_btn.clicked.connect(self.savePlotData)
@@ -72,12 +79,18 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
     def home(self):
         if self.mainWindow.connected:
+            print('flag1')
             self.wrapper.stop_bb()
+            print('flag2')
         self.mainWindow.switchToModeSelector()
 
+    # Start the balance beam with default values
+    def start(self):
+        print('flag1-2')
+        self.wrapper.start_bb()
+        print('flag2-2')
+
     # Send in the user-defined constants
-    # Each try/catch statement is to determine if the input is in scientific notation
-    # If so, and the input is exceedingly high (returns "inf") then just set it to a num higher than the max
     def sendConstants(self):
         self.kp = float(self.kp_input.text()) or 0
         self.ki = float(self.ki_input.text()) or 0
@@ -86,10 +99,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
         self.wrapper.set_constants(self.kp, self.ki, self.kd, self.N)
 
+        self.kp_output.setText(str(self.kp))
+        self.ki_output.setText(str(self.ki))
+        self.kd_output.setText(str(self.kd))
+        self.n_output.setText(str(self.N))
+
     # Send in the user-defined set point in cm
     def sendSetPoint(self):
         self.setcm = int(self.set_cm_input.text()) or 0
         self.wrapper.send_set_point(self.setcm)
+        self.set_cm_output.setText(str(self.setcm))
 
     # Save the step (?)
     def saveStep(self):

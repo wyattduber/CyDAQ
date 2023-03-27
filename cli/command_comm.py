@@ -8,6 +8,13 @@ CMD_STOP_BB = '!q'
 CMD_PAUSE = "pause on!"
 CMD_RESUME = "pause off!"
 
+# Balance Beam Default Values
+DEFAULT_KP = 0.8
+DEFAULT_KI = 0.2
+DEFAULT_KD = 0.4
+DEFAULT_N = 16
+DEFAULT_SET = 0
+
 class cmd:
 
     def __init__(self, mock_mode=False):
@@ -552,12 +559,17 @@ class cmd:
         except ValueError:
             return False
 
+        # Send Start Command
         if self.ctrl_comm_obj.isOpen():
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_BALANCE_BEAM.value))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
         else:
             self.__throw_exception('Starting balance beam mode failed')
+
+        # Set Default Values on Startup
+        self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
+        self.update_set(DEFAULT_SET)
 
     def stop_bb(self):
         try:

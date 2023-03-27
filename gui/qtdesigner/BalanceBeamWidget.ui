@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>561</height>
+    <width>462</width>
+    <height>649</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,7 +78,7 @@ background-color: #d9d9d9;</string>
      <item>
       <widget class="QLineEdit" name="kp_input">
        <property name="text">
-        <string>0.3</string>
+        <string>0.8</string>
        </property>
       </widget>
      </item>
@@ -99,7 +99,7 @@ background-color: #d9d9d9;</string>
      <item>
       <widget class="QLineEdit" name="ki_input">
        <property name="text">
-        <string>0.3</string>
+        <string>0.4</string>
        </property>
       </widget>
      </item>
@@ -120,7 +120,7 @@ background-color: #d9d9d9;</string>
      <item>
       <widget class="QLineEdit" name="kd_input">
        <property name="text">
-        <string>0.3</string>
+        <string>0.2</string>
        </property>
       </widget>
      </item>
@@ -141,7 +141,7 @@ background-color: #d9d9d9;</string>
      <item>
       <widget class="QLineEdit" name="n_input">
        <property name="text">
-        <string>50</string>
+        <string>16</string>
        </property>
       </widget>
      </item>
