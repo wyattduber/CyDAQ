@@ -16,5 +16,3 @@ list:x:38:38:Mailing List Manager:/var/list:/bin/sh
 irc:x:39:39:ircd:/var/run/ircd:/bin/sh
 gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
 nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
-messagebus:x:999:998::/var/lib/dbus:/bin/false
-pulse:x:998:997::/var/run/pulse:/bin/false

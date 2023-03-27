@@ -1,0 +1,229 @@
+/include/ "system-conf.dtsi"
+/ {
+	model = "Zynq Zybo Z7 Development Board";
+	compatible = "digilent,zynq-zyboz7", "xlnx,zynq-7000";
+
+	chosen {
+		bootargs = "console=ttyPS0,115200 earlyprintk uio_pdrv_genirq.of_id=generic-uio";
+	};
+
+	usb_phy0: phy0 {
+		compatible = "ulpi-phy";
+		#phy-cells = <0>;
+		reg = <0xe0002000 0x1000>;
+		view-port = <0x0170>;
+		drv-vbus;
+	};
+
+};
+&amba_pl {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "simple-bus";
+	ranges ;
+	axi_dma_0: dma@40400000 {
+		#dma-cells = <1>;
+		clock-names = "s_axi_lite_aclk", "m_axi_s2mm_aclk";
+		clocks = <&misc_clk_0>, <&misc_clk_0>;
+		compatible = "xlnx,axi-dma-7.1", "xlnx,axi-dma-1.00.a";
+		interrupt-names = "s2mm_introut";
+		interrupt-parent = <&intc>;
+		interrupts = <0 31 4>;
+		reg = <0x40400000 0x10000>;
+		xlnx,addrwidth = <0x20>;
+		xlnx,sg-length-width = <0x10>;
+		dma-channel@40400030 {
+			compatible = "xlnx,axi-dma-s2mm-channel";
+			dma-channels = <0x1>;
+			interrupts = <0 31 4>;
+			xlnx,datawidth = <0x10>;
+			xlnx,device-id = <0x0>;
+			xlnx,include-dre ;
+		};
+	};
+	misc_clk_0: misc_clk_0 {
+		#clock-cells = <0>;
+		clock-frequency = <104000000>;
+		compatible = "fixed-clock";
+	};
+	axi_gpio_0: gpio@41200000 {
+		#gpio-cells = <3>;
+		clock-names = "s_axi_aclk";
+		clocks = <&misc_clk_0>;
+		compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+		gpio-controller ;
+		reg = <0x41200000 0x10000>;
+		xlnx,all-inputs = <0x1>;
+		xlnx,all-inputs-2 = <0x0>;
+		xlnx,all-outputs = <0x0>;
+		xlnx,all-outputs-2 = <0x1>;
+		xlnx,dout-default = <0x00000000>;
+		xlnx,dout-default-2 = <0x00000000>;
+		xlnx,gpio-width = <0x4>;
+		xlnx,gpio2-width = <0x8>;
+		xlnx,interrupt-present = <0x0>;
+		xlnx,is-dual = <0x1>;
+		xlnx,tri-default = <0xFFFFFFFF>;
+		xlnx,tri-default-2 = <0xFFFFFFFF>;
+	};
+	axi_iic_0: i2c@41600000 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		clock-names = "s_axi_aclk";
+		clocks = <&misc_clk_0>;
+		compatible = "xlnx,axi-iic-2.0", "xlnx,xps-iic-2.00.a";
+		reg = <0x41600000 0x10000>;
+	};
+	axi_quad_spi_0: axi_quad_spi@41e00000 {
+		bits-per-word = <8>;
+		clock-names = "ext_spi_clk", "s_axi_aclk";
+		clocks = <&clkc 15>, <&misc_clk_0>;
+		compatible = "xlnx,axi-quad-spi-3.2", "xlnx,xps-spi-2.00.a";
+		fifo-size = <16>;
+		num-cs = <0x2>;
+		reg = <0x41e00000 0x10000>;
+		xlnx,num-ss-bits = <0x2>;
+		xlnx,spi-mode = <0>;
+	};
+	axi_timer_0: timer@42800000 {
+		clock-frequency = <104000000>;
+		clock-names = "s_axi_aclk";
+		clocks = <&misc_clk_0>;
+		compatible = "xlnx,axi-timer-2.0", "xlnx,xps-timer-1.00.a";
+		reg = <0x42800000 0x10000>;
+		xlnx,count-width = <0x20>;
+		xlnx,gen0-assert = <0x1>;
+		xlnx,gen1-assert = <0x1>;
+		xlnx,one-timer-only = <0x0>;
+		xlnx,trig0-assert = <0x1>;
+		xlnx,trig1-assert = <0x1>;
+	};
+	axi_timer_1: timer@42810000 {
+		clock-frequency = <104000000>;
+		clock-names = "s_axi_aclk";
+		clocks = <&misc_clk_0>;
+		compatible = "xlnx,axi-timer-2.0", "xlnx,xps-timer-1.00.a";
+		reg = <0x42810000 0x10000>;
+		xlnx,count-width = <0x20>;
+		xlnx,gen0-assert = <0x1>;
+		xlnx,gen1-assert = <0x1>;
+		xlnx,one-timer-only = <0x0>;
+		xlnx,trig0-assert = <0x1>;
+		xlnx,trig1-assert = <0x1>;
+	};
+	xadc_wiz_0: xadc_wiz@43c00000 {
+		clock-names = "s_axis_aclk", "s_axi_aclk";
+		clocks = <&misc_clk_0>, <&misc_clk_0>;
+		compatible = "xlnx,xadc-wiz-3.3", "xlnx,axi-xadc-1.00.a";
+		reg = <0x43c00000 0x10000>;
+		xlnx,alarm-limit-r0 = <0xb5ed>;
+		xlnx,alarm-limit-r1 = <0x57e4>;
+		xlnx,alarm-limit-r10 = <0x5555>;
+		xlnx,alarm-limit-r11 = <0x5111>;
+		xlnx,alarm-limit-r12 = <0x9999>;
+		xlnx,alarm-limit-r13 = <0x91eb>;
+		xlnx,alarm-limit-r14 = <0x6aaa>;
+		xlnx,alarm-limit-r15 = <0x6666>;
+		xlnx,alarm-limit-r2 = <0xa147>;
+		xlnx,alarm-limit-r3 = <0xca33>;
+		xlnx,alarm-limit-r4 = <0xa93a>;
+		xlnx,alarm-limit-r5 = <0x52c6>;
+		xlnx,alarm-limit-r6 = <0x9555>;
+		xlnx,alarm-limit-r7 = <0xae4e>;
+		xlnx,alarm-limit-r8 = <0x5999>;
+		xlnx,alarm-limit-r9 = <0x5111>;
+		xlnx,configuration-r0 = <0x3>;
+		xlnx,configuration-r1 = <0x31af>;
+		xlnx,configuration-r2 = <0x400>;
+		xlnx,dclk-frequency = <0x68>;
+		xlnx,external-mux = "none";
+		xlnx,external-mux-channel = "VP_VN";
+		xlnx,external-muxaddr-enable = <0x0>;
+		xlnx,fifo-depth = <0x7>;
+		xlnx,has-axi = <0x1>;
+		xlnx,has-axi4stream = <0x1>;
+		xlnx,has-busy = <0x1>;
+		xlnx,has-channel = <0x1>;
+		xlnx,has-convst = <0x0>;
+		xlnx,has-convstclk = <0x0>;
+		xlnx,has-dclk = <0x1>;
+		xlnx,has-drp = <0x0>;
+		xlnx,has-eoc = <0x1>;
+		xlnx,has-eos = <0x1>;
+		xlnx,has-external-mux = <0x0>;
+		xlnx,has-jtagbusy = <0x0>;
+		xlnx,has-jtaglocked = <0x0>;
+		xlnx,has-jtagmodified = <0x0>;
+		xlnx,has-ot-alarm = <0x0>;
+		xlnx,has-reset = <0x0>;
+		xlnx,has-temp-bus = <0x0>;
+		xlnx,has-user-temp-alarm = <0x0>;
+		xlnx,has-vbram-alarm = <0x0>;
+		xlnx,has-vccaux-alarm = <0x0>;
+		xlnx,has-vccddro-alarm = <0x0>;
+		xlnx,has-vccint-alarm = <0x0>;
+		xlnx,has-vccpaux-alarm = <0x0>;
+		xlnx,has-vccpint-alarm = <0x0>;
+		xlnx,has-vn = <0x1>;
+		xlnx,has-vp = <0x1>;
+		xlnx,include-intr = <0x1>;
+		xlnx,sampling-rate = "1000000.0";
+		xlnx,sequence-r0 = <0x100>;
+		xlnx,sequence-r1 = <0x0>;
+		xlnx,sequence-r2 = <0x0>;
+		xlnx,sequence-r3 = <0x0>;
+		xlnx,sequence-r4 = <0x0>;
+		xlnx,sequence-r5 = <0x0>;
+		xlnx,sequence-r6 = <0x0>;
+		xlnx,sequence-r7 = <0x0>;
+		xlnx,sim-file-name = "design";
+		xlnx,sim-file-rel-path = "./";
+		xlnx,sim-file-sel = "Default";
+		xlnx,vaux0 = <0x0>;
+		xlnx,vaux1 = <0x0>;
+		xlnx,vaux10 = <0x0>;
+		xlnx,vaux11 = <0x0>;
+		xlnx,vaux12 = <0x0>;
+		xlnx,vaux13 = <0x0>;
+		xlnx,vaux14 = <0x0>;
+		xlnx,vaux15 = <0x0>;
+		xlnx,vaux2 = <0x0>;
+		xlnx,vaux3 = <0x0>;
+		xlnx,vaux4 = <0x0>;
+		xlnx,vaux5 = <0x0>;
+		xlnx,vaux6 = <0x0>;
+		xlnx,vaux7 = <0x0>;
+		xlnx,vaux8 = <0x0>;
+		xlnx,vaux9 = <0x0>;
+	};
+};
+&gem0 {
+	phy-handle = <&ethernet_phy>;
+
+	ethernet_phy: ethernet-phy@1 { /* rtl8211e-vl */
+		reg = <1>;
+		device_type = "ethernet-phy";
+	};
+};
+
+&usb0 {	
+	dr_mode = "peripheral";
+	usb-phy = <&usb_phy0>;
+};
+
+&sdhci0 {
+	u-boot,dm-pre-reloc;
+};
+
+&uart1 {
+	u-boot,dm-pre-reloc;
+};
+
+&qspi {
+	u-boot,dm-pre-reloc;
+};
+
+&flash0 {
+	compatible = "micron,m25p80", "s25fl128s", "spi-flash";
+};
+
