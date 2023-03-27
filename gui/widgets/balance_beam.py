@@ -1,7 +1,19 @@
+# Standard Python Packages
+from typing import Union
+
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import QGridLayout
+
+# pglive Packages
+from pglive.kwargs import Axis
+from pglive.sources.data_connector import DataConnector
+from pglive.sources.live_axis import LiveAxis
+from pglive.sources.live_plot import LiveLinePlot
+from pglive.sources.live_plot import LiveScatterPlot
+from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
 from generated.NewBalanceBeamWidgetUI import Ui_NewBalanceBeamWidget
@@ -66,6 +78,38 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.offset_inc_btn.clicked.connect(self.wrapper.offset_inc)
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
+
+        # Graph Initialization
+        self.graph = LivePlotWidget()
+
+        self.mid_connector = None
+        self.low_connector = None
+        self.high_connector = None
+        self.low_plot = None
+        self.high_plot = None
+        self.mid_plot = None
+        layout = QGridLayout(self)
+        self.low_sample: Union[float, None] = 0.2
+        self.high_sample: Union[float, None] = 0.3
+
+        # Setup bottom axis with TIME tick format
+        bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
+
+        # Create plot itself
+        self.chart_view = LivePlotWidget(title="Line Plot - CyDAQ Data Sample", axisItems={'bottom': bottom_axis})
+
+        # Create one curve per dataset & add them to the view
+        # self.gen_plots()
+
+        # Show grid
+        self.chart_view.showGrid(x=True, y=True, alpha=0.3)
+
+        # Set labels
+        self.chart_view.setLabel('bottom', 'Time', units="s")
+        self.chart_view.setLabel('left', 'Samples')
+
+        # Using -1 to span through all rows available in the window
+        layout.addWidget(self.chart_view)
 
     # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):
@@ -136,3 +180,4 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
             self.paused = True
 
     ### TODO Live Graph Widget Below This Line ###
+

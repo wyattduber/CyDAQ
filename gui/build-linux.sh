@@ -8,6 +8,7 @@ pyuic5 --from-imports qtdesigner/MainWindow.ui -o generated/MainWindowUI.py
 pyuic5 --from-imports qtdesigner/DacModeWidget.ui -o generated/DacModeWidgetUI.py
 pyuic5 --from-imports qtdesigner/SamplingGenerationStart.ui -o generated/SamplingGenerationStartUI.py
 pyuic5 --from-imports qtdesigner/ModeSelectorWidget.ui -o generated/ModeSelectorWidgetUI.py
+pyuic5 --from-imports qtdesigner/NewBalanceBeamWidget.ui -o generated/BalanceBeamWidgetUI.py
 
 pyrcc5 qtdesigner/main_window.qrc -o generated/main_window_rc.py
 pyrcc5 qtdesigner/basic_operation.qrc -o generated/basic_operation_rc.py
