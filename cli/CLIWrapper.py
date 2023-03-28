@@ -88,7 +88,7 @@ class CLI:
             self.running_command = True
             self.p.sendline(command)
         except OSError as e:
-            print("OSError in wrapper _send_command for command: ", command)
+            print("OSError in wrapper _send_command for command:", command)
             print("OsError: ", e)
             self.running_command = False
             raise cyDAQNotConnectedException
@@ -135,6 +135,7 @@ class CLI:
         INFO: Message is simply returned
         ERROR: Error message is parsed and the proper exception is thrown, or a generic one is thrown instead.
         IGNORE: Returns an empty string
+        BB_LIVE: Data being sent to be graphed in balance beam mode
         """
 
         pattern = re.compile("%(.+)% (.*)")
@@ -148,6 +149,8 @@ class CLI:
                 self._error_parser(message)
             elif level == CyDAQ_CLI.WRAPPER_IGNORE:
                 return ""
+            elif level == CyDAQ_CLI.WRAPPER_BB_LIVE:
+                return message
             else:
                 raise CLIUnknownLogLevelException
         print(line)
@@ -243,11 +246,29 @@ class CLI:
         response = self._send_command("mock, status")
         return response == "True"
 
+    def start_bb(self, **_):
+        self._send_command("bb_start")
+
+    def stop_bb(self, **_):
+        self._send_command("bb_stop")
+
     def set_constants(self, kp, ki, kd, N, **_):
         self._send_command(f"bb_const, {kp} {ki} {kd} {N}")
 
-    def send_set_point(self, setv):
+    def send_set_point(self, setv, **_):
         self._send_command(f"bb_set, {setv}")
+
+    def offset_inc(self, **_):
+        self._send_command("bb_offset_inc")
+
+    def offset_dec(self, **_):
+        self._send_command("bb_offset_dec")
+
+    def pause_bb(self, **_):
+        self._send_command("bb_pause")
+
+    def resume_bb(self, **_):
+        self._send_command("bb_resume")
 
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")

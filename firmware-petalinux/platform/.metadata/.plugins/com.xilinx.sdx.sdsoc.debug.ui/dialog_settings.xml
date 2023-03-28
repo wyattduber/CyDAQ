@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="false" key="enabletrace_CyDAQ_Comm_Debug"/>
+	<item value="" key="emulatorarguments_CyDAQ_Comm_Debug"/>
+	<item value="false" key="waveform_CyDAQ_Comm_Debug"/>
+	<item value="1440" key="pref_linux_agent_emulation_port"/>
+</section>

@@ -1,0 +1,60 @@
+01:02:25 INFO  : Launching XSCT server: xsct -n  -interactive /home/longz/sdmay23-47/firmware-petalinux/platform/temp_xsdb_launch_script.tcl
+01:02:35 INFO  : Registering command handlers for Vitis TCF services
+01:02:51 INFO  : Platform repository initialization has completed.
+01:09:58 INFO  : Launching XSCT server: xsct -n  -interactive /home/longz/sdmay23-47/firmware-petalinux/platform/temp_xsdb_launch_script.tcl
+01:10:00 INFO  : Registering command handlers for Vitis TCF services
+01:10:03 INFO  : XSCT server has started successfully.
+01:10:03 INFO  : Successfully done setting XSCT server connection channel  
+01:10:03 INFO  : Platform repository initialization has completed.
+01:10:05 INFO  : plnx-install-location is set to ''
+01:10:05 INFO  : Successfully done setting workspace for the tool. 
+01:10:05 INFO  : Successfully done query RDI_DATADIR 
+01:20:54 INFO  : Result from executing command 'getProjects': CyDAQ_Linux
+01:20:54 INFO  : Result from executing command 'getPlatforms': 
+01:22:50 INFO  : Result from executing command 'getProjects': CyDAQ_Linux
+01:22:50 INFO  : Result from executing command 'getPlatforms': CyDAQ_Linux|/home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/CyDAQ_Linux.xpfm
+01:24:03 INFO  : Result from executing command 'getProjects': CyDAQ_Linux
+01:24:03 INFO  : Result from executing command 'getPlatforms': CyDAQ_Linux|/home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Linux/export/CyDAQ_Linux/CyDAQ_Linux.xpfm
+01:32:04 ERROR : Could not connect to host '192.168.0.1' specified in the target 'Linux Agent'
+01:32:24 INFO  : Launching the emulator on project 'CyDAQ_Comm' for configuration 'Debug'
+01:32:24 INFO  : Launching QEMU with command 'launch_emulator -device-family 7series -pid-file emulation.pid -t sw_emu -no-reboot -forward-port 1440 1534'
+01:32:30 ERROR : [QEMU Process]: qemu-system-aarch64: info: QEMU waiting for connection on: disconnected:tcp:127.0.0.1:8765,server
+
+01:32:37 ERROR : [QEMU Process]: qemu-system-aarch64: warning: nic ethernet@e000c000 has no peer
+
+01:33:58 INFO  : Stopping the emulator on project 'CyDAQ_Comm' for configuration 'Debug'
+01:33:58 INFO  : Stopping QEMU with command 'launch_emulator -kill-pid-file /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Comm/Debug/emulation.pid'
+01:34:00 ERROR : [QEMU Process]: qemu-system-aarch64: terminating on signal 15 from pid 4028 (<unknown process>)
+
+01:34:01 INFO  : Emulator has terminated.
+01:35:21 INFO  : Launching the emulator on project 'CyDAQ_Comm' for configuration 'Debug'
+01:35:22 INFO  : Launching QEMU with command 'launch_emulator -device-family 7series -pid-file emulation.pid -t sw_emu -no-reboot -forward-port 1440 1534'
+01:35:25 ERROR : [QEMU Process]: qemu-system-aarch64: info: QEMU waiting for connection on: disconnected:tcp:127.0.0.1:7838,server
+
+01:35:31 ERROR : [QEMU Process]: qemu-system-aarch64: warning: nic ethernet@e000c000 has no peer
+
+01:46:43 INFO  : Stopping the emulator on project 'CyDAQ_Comm' for configuration 'Debug'
+01:46:44 INFO  : Stopping QEMU with command 'launch_emulator -kill-pid-file /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Comm/Debug/emulation.pid'
+01:46:44 ERROR : [QEMU Process]: qemu-system-aarch64: terminating on signal 15 from pid 29225 (<unknown process>)
+
+01:46:44 INFO  : Emulator has terminated.
+01:46:44 INFO  : The emulator is not running, terminating debug launch configuration
+16:56:43 INFO  : Launching XSCT server: xsct -n  -interactive /home/longz/sdmay23-47/firmware-petalinux/platform/temp_xsdb_launch_script.tcl
+16:56:54 INFO  : XSCT server has started successfully.
+16:56:54 INFO  : plnx-install-location is set to ''
+16:56:54 INFO  : Successfully done setting XSCT server connection channel  
+16:56:54 INFO  : Successfully done setting workspace for the tool. 
+16:56:56 INFO  : Platform repository initialization has completed.
+16:56:59 INFO  : Registering command handlers for Vitis TCF services
+16:57:06 INFO  : Successfully done query RDI_DATADIR 
+16:59:40 INFO  : Invoking Bootgen: bootgen -image system.bif -arch zynq -o /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Comm_system/Debug/BOOT.bin
+16:59:40 INFO  : Overwriting existing bif file /home/longz/sdmay23-47/firmware-petalinux/platform/CyDAQ_Comm_system/Debug/system.bif
+16:59:44 INFO  : Bootgen command execution is done.
+15:25:20 INFO  : Launching XSCT server: xsct -n  -interactive /home/longz/sdmay23-47/firmware-petalinux/platform/temp_xsdb_launch_script.tcl
+15:25:26 INFO  : XSCT server has started successfully.
+15:25:26 INFO  : plnx-install-location is set to ''
+15:25:26 INFO  : Successfully done setting XSCT server connection channel  
+15:25:26 INFO  : Successfully done setting workspace for the tool. 
+15:25:29 INFO  : Platform repository initialization has completed.
+15:25:31 INFO  : Registering command handlers for Vitis TCF services
+15:25:38 INFO  : Successfully done query RDI_DATADIR 

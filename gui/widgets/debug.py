@@ -26,8 +26,10 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
 
+        self.prev_index = 0
+
         # Home Button
-        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+        self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons (Disabled for Lab Launch
         # self.write_btn.clicked.connect(self.writeData)
@@ -54,6 +56,20 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         """When CyDAQ changes from connected to disconnected"""
         self.connection_status_label.setText("Not Connected!")
         pass
+
+    def home(self):
+        tmp = self.prev_index
+        if self.prev_index == 0:
+            self.mainWindow.switchToModeSelector()
+        elif self.prev_index == 1:
+            self.mainWindow.switchToBasicOperation()
+        elif self.prev_index == 2:
+            self.mainWindow.switchToBalanceBeam()
+        elif self.prev_index == 3:
+            self.mainWindow.switchToLiveStream()
+        elif self.prev_index == 4:
+            self.prev_index = tmp
+            self.home()
 
     """ 
     Below are some tests that we came up with to test the reading/writing

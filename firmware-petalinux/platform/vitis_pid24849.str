@@ -1,0 +1,188 @@
+/*
+
+Xilinx Vitis v2020.1.0 (64-bit) [Major: 2020, Minor: 1]
+SW Build 2902540 on Wed May 27 19:55:13 MDT 2020
+
+Process ID (PID): 24849
+License: Customer
+
+Current time: 	Wed Mar 22 01:10:00 CDT 2023
+Time zone: 	Central Standard Time (America/Chicago)
+
+OS: Ubuntu
+OS Version: 5.3.0-28-generic
+OS Architecture: amd64
+Available processors (cores): 6
+
+Display: :0
+Screen size: 1360x768
+Available screens: 1
+Available disk space: 75 GB
+
+Java version: 	9.0.4 64-bit
+Java home: 	/tools/Xilinx/Vitis/2020.1/tps/lnx64/jre9.0.4
+Java executable location: 	/tools/Xilinx/Vitis/2020.1/tps/lnx64/jre9.0.4/bin/java
+Java initial memory (-Xms): 	64 MB
+Java maximum memory (-Xmx):	 4 GB
+
+Java library paths: /tools/Xilinx/Vitis/2020.1/lib/lnx64.o/Ubuntu/18:/tools/Xilinx/Vitis/2020.1/lib/lnx64.o/Ubuntu:/tools/Xilinx/Vitis/2020.1/lib/lnx64.o:/tools/Xilinx/Vitis/2020.1/tps/lnx64/jre9.0.4/lib/:/tools/Xilinx/Vitis/2020.1/tps/lnx64/jre9.0.4/lib//server:/tools/Xilinx/Vitis/2020.1/lib/lnx64.o:/tools/Xilinx/Vitis/2020.1/lib/lnx64.o/Ubuntu/18:/tools/Xilinx/Vitis/2020.1/lib/lnx64.o/Ubuntu:/tools/Xilinx/Vitis/2020.1/lib/lnx64.o:/tools/Xilinx/Vitis/2020.1/bin/../lnx64/tools/dot/lib:/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib
+
+Java class paths: /tools/Xilinx/Vitis/2020.1/eclipse/lnx64.o//plugins/org.eclipse.equinox.launcher_1.5.0.v20180512-1130.jar
+LD_LIBRARY_PATH: /tools/Xilinx/Vitis
+
+User name: 	longz
+User home directory: /home/longz
+User working directory: /home/longz/sdmay23-47/firmware-petalinux/platform
+User country: 	US
+User language: 	en
+User locale: 	en_US
+
+RDI_BASEROOT: /tools/Xilinx/Vitis
+HDI_APPROOT: /tools/Xilinx/Vitis/2020.1
+RDI_DATADIR: /tools/Xilinx/Vitis/2020.1/data
+RDI_BINDIR: /tools/Xilinx/Vitis/2020.1/bin
+
+Vitis preferences directory: /home/longz/.Xilinx/Vitis/2020.1/
+Vitis workspace directory: /home/longz/sdmay23-47/firmware-petalinux/platform
+Vitis workspace log file location: /home/longz/sdmay23-47/firmware-petalinux/platform/.metadata/.log
+Engine tmp dir: 	
+
+Xilinx Environment Variables
+----------------------------
+XILINX_DSP: 
+XILINX_HLS: /tools/Xilinx/Vitis/2020.1
+XILINX_PLANAHEAD: /tools/Xilinx/Vitis/2020.1
+XILINX_SDK: /tools/Xilinx/Vitis/2020.1
+XILINX_VITIS: /tools/Xilinx/Vitis/2020.1
+XILINX_VIVADO: /tools/Xilinx/Vivado/2020.1
+XILINX_VIVADO_HLS: /tools/Xilinx/Vivado/2020.1
+_RDI_DONT_SET_XILINX_AS_PATH: True
+
+
+Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+*/
+
+closeView("Welcome", "ViewIntroAdapterPart", "CTabItem.WELCOME");
+selectMenuItem("File", "WorkbenchWindow", "MenuItem.FILE");
+selectMenuItem("New", "WorkbenchWindow", "MenuItem.NEW");
+selectMenuItem("Platform Project", "WorkbenchWindow", "MenuItem.PLATFORM_PROJECT");
+setTextField("CyDAQ_Linux", "New Platform Project (Create new platform project)", "NewPlatformProjectWizard", "Text.PLATFORM_PROJECT_NAME");
+selectButton("Next", "New Platform Project (Create new platform project)", "NewPlatformProjectWizard", "Button.NEXT");
+selectButton("Back", "New Platform Project (Platform)", "NewPlatformProjectWizard", "Button.BACK");
+selectButton("Next", "New Platform Project (Create new platform project)", "NewPlatformProjectWizard", "Button.NEXT");
+selectButton("Browse", "New Platform Project (Platform)", "NewPlatformProjectWizard", "Button.BROWSE");
+setFileDialog("/home/longz/sdmay23-47/firmware-petalinux/os/project-spec/hw-description/system.xsa", "Create Platform from XSA", "SDXFileDialog", "Button.OK");
+selectCombo("linux", "New Platform Project (Platform)", "NewPlatformProjectWizard", "Combo.OPERATING_SYSTEM");
+selectButton("Finish", "New Platform Project (Platform)", "NewPlatformProjectWizard", "Button.FINISH");
+selectTree("Libraries", "CyDAQ_Linux > ps7_cortexa9 > linux on ps7_cortexa9", "CyDAQ_Linux", "ScwEditor", "Tree");
+selectTree("linux on ps7_cortexa9", "CyDAQ_Linux > ps7_cortexa9", "CyDAQ_Linux", "ScwEditor", "Tree");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setFileDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/linux.bif", "Select file for 'Bif File'", "SDXFileDialog", "Button.OK");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setDirectoryDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot", "Select directory for 'Boot Components Directory'", "SDXDirectoryDialog", "Button.OK");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setDirectoryDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/image", "Select directory for 'Linux Image Directory'", "SDXDirectoryDialog", "Button.OK");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+cancelFileDialog("Select file for 'Linux Rootfs'", "SDXFileDialog", "Button.CANCEL");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setFileDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/image/rootfs.cpio", "Select file for 'Linux Rootfs'", "SDXFileDialog", "Button.OK");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setDirectoryDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/cortexa9t2hf-neon-xilinx-linux-gnueabi", "Select directory for 'Sysroot Directory'", "SDXDirectoryDialog", "Button.OK");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+cancelDirectoryDialog("Select directory for 'QEMU Data'", "SDXDirectoryDialog", "Button.CANCEL");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setDirectoryDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot", "Select directory for 'QEMU Data'", "SDXDirectoryDialog", "Button.OK");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setFileDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/boot/qemu_args.txt", "Select file for 'QEMU Arguments'", "SDXFileDialog", "Button.OK");
+selectTree("CyDAQ_Linux", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectToolBarButton("Build Configuration for project CyDAQ_Linux", "CyDAQ_Linux", "WorkbenchWindow", "ToolItem.BUILD_CONFIGURATION");
+selectTree("CyDAQ_Linux", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectMenuItem("Build Project", "Explorer", "ProjectExplorer", "MenuItem.BUILD_PROJECT");
+selectTree("CyDAQ_Linux", "CyDAQ_Linux > export > CyDAQ_Linux > sw", "Explorer", "ProjectExplorer", "Tree");
+selectTree("linux_domain", "CyDAQ_Linux > export > CyDAQ_Linux > sw > CyDAQ_Linux", "Explorer", "ProjectExplorer", "Tree");
+selectTree("sw", "CyDAQ_Linux > export > CyDAQ_Linux", "Explorer", "ProjectExplorer", "Tree");
+selectTree("export", "CyDAQ_Linux", "Explorer", "ProjectExplorer", "Tree");
+selectTree("CyDAQ_Linux", "CyDAQ_Linux", "Explorer", "ProjectExplorer", "Tree");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+cancelFileDialog("Select file for 'Linux Rootfs'", "SDXFileDialog", "Button.CANCEL");
+selectTree("CyDAQ_Linux", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectButton("Browse", "CyDAQ_Linux", "ScwEditor", "Button.BROWSE");
+setDirectoryDialog("/home/longz/sdmay23-47/firmware-petalinux/software/linux_files/sysroots/cortexa9t2hf-neon-xilinx-linux-gnueabi", "Select directory for 'Sysroot Directory'", "SDXDirectoryDialog", "Button.OK");
+selectTree("CyDAQ_Linux", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectMenuItem("Build Project", "Explorer", "ProjectExplorer", "MenuItem.BUILD_PROJECT");
+selectTree("platform.spr", "CyDAQ_Linux", EventType.DOUBLE_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectMenuItem("File", "CyDAQ_Linux", "WorkbenchWindow", "MenuItem.FILE");
+selectMenuItem("New", "CyDAQ_Linux", "WorkbenchWindow", "MenuItem.NEW");
+selectMenuItem("Application Project", "CyDAQ_Linux", "WorkbenchWindow", "MenuItem.APPLICATION_PROJECT");
+selectCheckBox("Skip welcome page next time", Boolean.TRUE, "New Application Project (Create a New Application Project)", "NewAppProjectWizard", "Button.SKIP_WELCOME_PAGE");
+selectButton("Next", "New Application Project (Create a New Application Project)", "NewAppProjectWizard", "Button.NEXT");
+selectTreeTable("CyDAQ_Linux", "New Application Project (Platform)", "NewAppProjectWizard", "TreeViewer.ArrayTreeContentProvider");
+selectButton("Next", "New Application Project (Platform)", "NewAppProjectWizard", "Button.NEXT");
+selectButton("Back", "New Application Project (Application Project Details)", "NewAppProjectWizard", "Button.BACK");
+selectButton("Next", "New Application Project (Platform)", "NewAppProjectWizard", "Button.NEXT");
+setTextField("CyDAQ_Comm", "New Application Project (Application Project Details)", "NewAppProjectWizard", "Text.APPLICATION_PROJECT_NAME");
+selectButton("Next", "New Application Project (Application Project Details)", "NewAppProjectWizard", "Button.NEXT");
+selectButton("Next", "New Application Project (Domain)", "NewAppProjectWizard", "Button.NEXT");
+selectTreeTable("Empty Application", "SW development templates", "New Application Project (Templates)", "NewAppProjectWizard", "TreeViewer.TemplateContentProvider");
+selectTreeTable("Linux Hello World", "SW development templates", "New Application Project (Templates)", "NewAppProjectWizard", "TreeViewer.TemplateContentProvider");
+selectButton("Finish", "New Application Project (Templates)", "NewAppProjectWizard", "Button.FINISH");
+selectTree("CyDAQ_Comm_system", "CyDAQ_Comm_system", "SystemSettingsEditor", "Tree");
+selectTree("src", "CyDAQ_Comm_system > CyDAQ_Comm", EventType.DOUBLE_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectTree("helloworld.c", "CyDAQ_Comm_system > CyDAQ_Comm > src", EventType.DOUBLE_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectMenuItem("Window", "CyDAQ_Comm", "WorkbenchWindow", "MenuItem.WINDOW");
+selectMenuItem("Preferences", "CyDAQ_Comm", "WorkbenchWindow", "MenuItem.PREFERENCES");
+selectTree("Appearance", "Additional > General", "Preferences", "CustomPreferenceDialog", "Tree.WorkbenchPreferenceManager");
+selectCombo("Dark", "Preferences", "CustomPreferenceDialog", "Combo.THEME");
+selectButton("Apply", "Preferences", "CustomPreferenceDialog", "Button.APPLY");
+selectButton("OK", "Theme change", "MessageDialog", "Button.OK");
+selectButton("Apply and Close", "Preferences", "CustomPreferenceDialog", "Button.APPLY_AND_CLOSE");
+selectTree("CyDAQ_Comm_system", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectToolBarButton("Build Debug for project CyDAQ_Comm_system", "CyDAQ_Comm_system", "WorkbenchWindow", "ToolItem.BUILD_DEBUG_FOR");
+selectToolBarButton("Run", "CyDAQ_Comm", "WorkbenchWindow", "ToolItem.RUN");
+selectButton("OK", "Unable To Launch", "MessageDialog", "Button.OK");
+selectToolBarMenuButton("Run", "CyDAQ_Comm", "WorkbenchWindow", "ToolItem.RUN");
+selectMenuItem("Run Configurations", "Console", "WorkbenchWindow", "MenuItem.RUN_CONFIGURATIONS");
+selectTree("AI Engine Emulator", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("AI Engine SW Emulator", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("AI Engine Emulator", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("AI Engine SW Emulator", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("AI Engine Emulator", EventType.POPUP_TRIGGER_CLICK, "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("AI Engine SW Emulator", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("AI Engine Emulator", EventType.POPUP_TRIGGER_CLICK, "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectMenuItem("New Configuration", "Run Configurations", "LaunchConfigurationsDialog", "MenuItem.NEW_CONFIGURATION");
+selectTree("New_configuration", "AI Engine Emulator", EventType.POPUP_TRIGGER_CLICK, "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectMenuItem("Delete", "Run Configurations", "LaunchConfigurationsDialog", "MenuItem.DELETE");
+selectButton("Delete", "Confirm Launch Configuration Deletion", "MessageDialog", "Button.DELETE");
+selectTree("AI Engine SW Emulator", EventType.POPUP_TRIGGER_CLICK, "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectMenuItem("New Configuration", "Run Configurations", "LaunchConfigurationsDialog", "MenuItem.NEW_CONFIGURATION");
+selectTab("Arguments", "Run Configurations", "LaunchConfigurationsDialog", "CTabItem.ARGUMENTS");
+selectTab("Main", "Run Configurations", "LaunchConfigurationsDialog", "CTabItem.MAIN");
+selectTab("Arguments", "Run Configurations", "LaunchConfigurationsDialog", "CTabItem.ARGUMENTS");
+selectTab("Main", "Run Configurations", "LaunchConfigurationsDialog", "CTabItem.MAIN");
+selectTree("New_configuration", "AI Engine SW Emulator", EventType.POPUP_TRIGGER_CLICK, "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectMenuItem("Delete", "Run Configurations", "LaunchConfigurationsDialog", "MenuItem.DELETE");
+selectButton("Delete", "Confirm Launch Configuration Deletion", "MessageDialog", "Button.DELETE");
+selectTree("Single Application Debug", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("System Project Debug", "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectTree("Single Application Debug", EventType.POPUP_TRIGGER_CLICK, "Run Configurations", "LaunchConfigurationsDialog", "Tree");
+selectMenuItem("New Configuration", "Run Configurations", "LaunchConfigurationsDialog", "MenuItem.NEW_CONFIGURATION");
+selectTab("Application", "Run Configurations", "LaunchConfigurationsDialog", "CTabItem.APPLICATION");
+selectButton("Run", "Run Configurations", "LaunchConfigurationsDialog", "Button.RUN");
+selectButton("OK", "Error Launching Program", "ErrorDialog", "Button.OK");
+selectMenuItem("Xilinx", "CyDAQ_Comm_system", "WorkbenchWindow", "MenuItem.XILINX");
+selectMenuItem("Start/Stop Emulator", "CyDAQ_Comm_system", "WorkbenchWindow", "MenuItem.START_STOP_EMULATOR");
+selectButton("Start", "Emulation", "AIEEmulationDialog", "Button.START");
+selectButton("Cancel", "Progress Information", "ProgressMonitorJobsDialog", "Button.CANCEL");
+selectToolBarMenuButton("Manage configurations for the current project", "CyDAQ_Comm", "WorkbenchWindow", "ToolItem.MANAGE_CONFIGURATIONS");
+selectToolBarMenuButton("Run", "CyDAQ_Comm", "WorkbenchWindow", "ToolItem.RUN");
+selectTree("helloworld.c", "CyDAQ_Comm_system > CyDAQ_Comm > src", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectTree("CyDAQ_Comm", "CyDAQ_Comm_system", EventType.POPUP_TRIGGER_CLICK, "Explorer", "ProjectExplorer", "Tree");
+selectMenuItem("Run As", "Explorer", "ProjectExplorer", "MenuItem.RUN_AS");
+selectMenuItem("2 Launch on Emulator", "CyDAQ_Comm", "WorkbenchWindow", "MenuItem.2_LAUNCH_ON_EMULATOR");
+selectButton("Start Emulator and Run", "Launch On Emulator", "MessageDialog", "Button.START_EMULATOR_AND");
+selectButton("Cancel", "Progress Information", "ProgressMonitorJobsDialog", "Button.CANCEL");
+selectButton("Exit", "Confirm Exit", "MessageDialogWithToggle", "Button.EXIT");
+// Exiting Xilinx Vitis with a status code '0' at 3/22/23, 1:48:46 AM CDT
+// Elapsed time: 00:38:46
+

@@ -1,7 +1,20 @@
 from serial_comm import ctrl_comm
 from master_enum import enum_filter, enum_commands, sig_serial
+from threading import Thread
 import struct
 import time as t
+
+CMD_SERVO_OFFSET = "SOI"  # TODO Also might not be right
+CMD_STOP_BB = '!q'
+CMD_PAUSE = "pause on!"
+CMD_RESUME = "pause off!"
+
+# Balance Beam Default Values
+DEFAULT_KP = 0.8
+DEFAULT_KI = 0.2
+DEFAULT_KD = 0.4
+DEFAULT_N = 16
+DEFAULT_SET = 0
 
 class cmd:
 
@@ -541,17 +554,48 @@ class cmd:
 
     ### Balance Beam Commands ###
 
+    def start_bb(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        # Send Start Command
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_BALANCE_BEAM.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        else:
+            self.__throw_exception('Starting balance beam mode failed')
+
+        # Set Default Values on Startup
+        self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
+        self.update_set(DEFAULT_SET)
+
+        self.read_bb_buffer_print()
+
+    def stop_bb(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write('q!'.encode())
+        else:
+            self.__throw_exception('Stopping balance beam mode failed')
+
     def update_constants(self, kp, ki, kd, N):
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
             return False
 
-        if self.ctrl_comm_obj.isOpen() is True:
-            self.ctrl_comm_obj.write(f"kp {kp}!".encode('uint8'))
-            self.ctrl_comm_obj.write(f"kd {ki}!".encode('uint8'))
-            self.ctrl_comm_obj.write(f"ki {kd}!".encode('uint8'))
-            self.ctrl_comm_obj.write(f"n {N}!".encode('uint8'))
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"kp {kp}!".encode())
+            self.ctrl_comm_obj.write(f"ki {ki}!".encode())
+            self.ctrl_comm_obj.write(f"kd {kd}!".encode())
+            self.ctrl_comm_obj.write(f"n {N}!".encode())
         else:
             self.__throw_exception('Updating constants failed')
 
@@ -561,10 +605,73 @@ class cmd:
         except ValueError:
             return False
 
-        if self.ctrl_comm_obj.isOpen is True:
-            self.ctrl_comm_obj.write(f"r {setv}!".encode('uint8'))
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"r {setv}!".encode())
         else:
-            self.__throw_exception('Updating set failed') 
+            self.__throw_exception('Updating set failed')
+
+    def offset_inc(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET} 1!".encode())
+        else:
+            self.__throw_exception('Increasing offset failed')
+
+    def offset_dec(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET} -1!".encode())
+        else:
+            self.__throw_exception('Decreasing offset failed')
+
+    def pause_bb(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+        
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(CMD_PAUSE.encode())
+        else:
+            self.__throw_exception('Error pausing')
+
+    def resume_bb(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+        
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(CMD_RESUME.encode())
+        else:
+            self.__throw_exception('Error pausing')
+
+    def read_bb_buffer_print(self):
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+        
+        if self.ctrl_comm_obj.isOpen() is True:
+            while True:
+                cnt = 0
+                if self.ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
+                    buffer = ""
+                    byte_value = ""
+                    if len(buffer) < 6:
+                        while byte_value != sig_serial.END_BYTE.value:
+                            byte_value = self.ctrl_comm_obj.read_byte()
+                            if byte_value != sig_serial.END_BYTE.value:
+                                #buffer += byte_value
+                                print(str(byte_value))
 
     # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):

@@ -1,5 +1,6 @@
 from copy import deepcopy
 from scipy.io import savemat
+from threading import Thread
 import datetime
 import os
 import json
@@ -28,23 +29,30 @@ class CyDAQ_CLI:
 	WRAPPER_INFO = "INFO"
 	WRAPPER_ERROR = "ERROR"
 	WRAPPER_IGNORE = "IGNORE"
+	WRAPPER_BB_LIVE = "BB_LIVE"
 
 	HELP_MSG = """	h/help\t\t\t\t Print This Help Menu
-	ping\t\t\t\t Ping the Zybo
+	p/ping\t\t\t\t Ping the Zybo
 	configure\t\t\t Configure Parameters (Guided)
 	clear\t\t\t\t Clear config to default
 	print\t\t\t\t Print Current Config
 	send\t\t\t\t Send config to cyDAQ
-	set (key) (value)\t\t Set one config value
-	setm (json list)\t\t Set multiple config values as a json object
-	wrapper (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
+	set, (key) (value)\t\t Set one config value
+	setm, (json list)\t\t Set multiple config values as a json object
+	wrapper, (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
 	flush\t\t\t\t Flush 
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
 	generate\t\t\t Start/Stop DAC Generation
-	mock, (enable/disable/status)\t\t Enable CyDAQ serial mocking mode
-	bb_const, (kp) (ki) (kd) (N)\t\t Send updated constants for bb calc
-	bb_set, (value)\t\t Send updated set value for bb calc
+	mock, (enable/disable/status)\t Enable CyDAQ serial mocking mode
+	bb_start\t\t\t Start Balance Beam Mode
+	bb_stop\t\t\t\t Stop Balance Beam Mode
+	bb_const, (kp) (ki) (kd) (N)\t Send updated constants for bb calc
+	bb_set, (value)\t\t\t Send updated set value for bb calc
+	bb_offset_inc\t\t\t Increase the balance beam offset
+	bb_offset_dec\t\t\t Decrease the balance beam offset
+	bb_pause\t\t\t Pause the Balance Beam
+	bb_resume\t\t\t Resume the Balance Beam
 	q/quit\t\t\t\t Exit The Command-Line"""
 
 	def __init__(self):
@@ -65,6 +73,8 @@ class CyDAQ_CLI:
 		self.config = self.default_config.copy()
 		self.wrapper_mode = False
 		self.mock_mode = False
+		self.balance_beam_enabled = False
+		self.generating = False
 
 	def start(self):
 		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
@@ -90,6 +100,8 @@ class CyDAQ_CLI:
 			# First process commands that don't require direct connection to the CyDAQ
 			if command[0] == 'q' or command[0] == 'quit':
 				self._print_to_output("Terminating...\n")
+				if self.balance_beam_enabled:
+					self._stop_beam_mode() # Stop Balance Beam mode if running
 				break
 			elif command[0] == "" or command[0] == "\n":
 				continue
@@ -156,7 +168,7 @@ class CyDAQ_CLI:
 				continue
 
 			# Next check for commands that require direct connection to CyDAQ. 
-			if command[0] == 'ping':
+			if command[0] == 'ping' or command[0] == 'p':
 				self._ping()
 				continue
 			elif command[0] == 'send':
@@ -175,22 +187,73 @@ class CyDAQ_CLI:
 					self._stop_sampling(outFile=command[1])
 				continue
 			elif command[0] == 'generate':
-				if not generating:
+				if not self.generating:
 					self.cmd_obj.send_start_gen()
-					generating = True
+					self.generating = True
 					self._print_to_output("Generating Started", self.WRAPPER_INFO)
 				else:
 					self.cmd_obj.send_stop_gen()
-					generating = not generating
+					self.generating = not self.generating
 					self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
+			elif command[0] == 'bb_start':
+				if self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is already enabled!")
+					continue
+				self._start_beam_mode()
+				Thread(target=self._temp_print_stuff)
+				self.balance_beam_enabled = True
+				continue
+			elif command[0] == 'bb_stop':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				self._stop_beam_mode()
+				continue
 			elif command[0] == 'bb_const':
-				self._update_constants(command[1], command[2], command[3], command[4])
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				args = command[1].split(' ')
+				self._update_constants(args[0], args[1], args[2], args[3])
+				continue
 			elif command[0] == 'bb_set':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
 				self._update_set(command[1])
+				continue
+			elif command[0] == 'bb_offset_inc':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				self._offset_inc()
+				continue
+			elif command[0] == 'bb_offset_dec':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				self._offset_dec()
+				continue
+			elif command[0] == 'bb_pause':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				self._pause_bb()
+				continue
+			elif command[0] == 'bb_resume':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				self._resume_bb()
+				continue
 
 			# Otherwise command not found
 			self._print_help(True)
+
+	def _temp_print_stuff(self):
+		while True:
+			print("Test")
 
 	def _print_to_output(self, message, log_level=WRAPPER_IGNORE):
 		for line in message.split("\n"):
@@ -458,11 +521,30 @@ class CyDAQ_CLI:
 
 	### Balance Beam Methods ###
 
+	def _start_beam_mode(self):
+		self.cmd_obj.start_bb()
+
+	def _stop_beam_mode(self):
+		self.cmd_obj.stop_bb()
+		self.balance_beam_enabled = False
+
 	def _update_constants(self, kp, ki, kd, N):
-		self.comm_obj.update_constants(kp, ki, kd, N)
+		self.cmd_obj.update_constants(kp, ki, kd, N)
 
 	def _update_set(self, setv):
-		self.comm_obj.update_set(setv)
+		self.cmd_obj.update_set(setv)
+
+	def _offset_inc(self):
+		self.cmd_obj.offset_inc()
+
+	def _offset_dec(self):
+		self.cmd_obj.offset_dec()
+
+	def _pause_bb(self):
+		self.cmd_obj.pause_bb()
+
+	def _resume_bb(self):
+		self.cmd_obj.resume_bb()
 
 if __name__ == "__main__":
 	try:

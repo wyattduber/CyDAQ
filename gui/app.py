@@ -20,7 +20,10 @@ from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEBUG_LOGS = ""
+DEFAULT_WINDOW_WIDTH = 400
+DEFAULT_WINDOW_HEIGHT = 590
+BB_WINDOW_WIDTH = 1195
+BB_WINDOW_HEIGHT = 739
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -150,6 +153,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.updateWidgetConnectionStatus()
 
+        self.current_index = 0
+
         plotterAction = self.actionLaunch_Plotter
         plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
 
@@ -218,16 +223,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
+        self.current_index = 1
 
     def switchToBalanceBeam(self):
+        # Check that the cydaq is connected and that balance beam mode isn't already on
+        if self.connected and not self.balance_beam.running:
+            self.balance_beam.start()
+        self.balance_beam.prev_width = self.frameGeometry().width()
+        self.balance_beam.prev_height = self.frameGeometry().height()
+        self.resize(BB_WINDOW_WIDTH, BB_WINDOW_HEIGHT)
         self.stack.setCurrentIndex(2)
+        self.current_index = 2
 
     def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
+        self.current_index = 3
         self.livestream.show_window(self.livestream)
         self.livestream.came_from_basic = came_from_basic
 
     def switchToDebug(self):
+        self.debug.prev_index = self.current_index
         self.stack.setCurrentIndex(4)
 
     def restartWindow(self):
@@ -245,6 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
+            self.wrapper.stop_bb()
             event.accept()
             if main.widgets[3].window is not None:
                 main.widgets[3].window.close()
