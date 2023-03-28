@@ -1,5 +1,6 @@
 from copy import deepcopy
 from scipy.io import savemat
+from threading import Thread
 import datetime
 import os
 import json
@@ -30,14 +31,14 @@ class CyDAQ_CLI:
 	WRAPPER_IGNORE = "IGNORE"
 
 	HELP_MSG = """	h/help\t\t\t\t Print This Help Menu
-	ping\t\t\t\t Ping the Zybo
+	p/ping\t\t\t\t Ping the Zybo
 	configure\t\t\t Configure Parameters (Guided)
 	clear\t\t\t\t Clear config to default
 	print\t\t\t\t Print Current Config
 	send\t\t\t\t Send config to cyDAQ
-	set (key) (value)\t\t Set one config value
-	setm (json list)\t\t Set multiple config values as a json object
-	wrapper (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
+	set, (key) (value)\t\t Set one config value
+	setm, (json list)\t\t Set multiple config values as a json object
+	wrapper, (enable/disable)\t Enable Wrapper Mode for CLIWrapper library
 	flush\t\t\t\t Flush 
 	start\t\t\t\t Start sampling
 	stop, [filename]\t\t Stop Sampling
@@ -72,6 +73,7 @@ class CyDAQ_CLI:
 		self.wrapper_mode = False
 		self.mock_mode = False
 		self.balance_beam_enabled = False
+		self.generating = False
 
 	def start(self):
 		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
@@ -165,7 +167,7 @@ class CyDAQ_CLI:
 				continue
 
 			# Next check for commands that require direct connection to CyDAQ. 
-			if command[0] == 'ping':
+			if command[0] == 'ping' or command[0] == 'p':
 				self._ping()
 				continue
 			elif command[0] == 'send':
@@ -184,13 +186,13 @@ class CyDAQ_CLI:
 					self._stop_sampling(outFile=command[1])
 				continue
 			elif command[0] == 'generate':
-				if not generating:
+				if not self.generating:
 					self.cmd_obj.send_start_gen()
-					generating = True
+					self.generating = True
 					self._print_to_output("Generating Started", self.WRAPPER_INFO)
 				else:
 					self.cmd_obj.send_stop_gen()
-					generating = not generating
+					self.generating = not self.generating
 					self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
 				continue
 			elif command[0] == 'bb_start':
@@ -198,6 +200,7 @@ class CyDAQ_CLI:
 					self._print_to_output("Balance Beam Mode is already enabled!")
 					continue
 				self._start_beam_mode()
+				Thread(target=self._temp_print_stuff)
 				self.balance_beam_enabled = True
 				continue
 			elif command[0] == 'bb_stop':
@@ -246,6 +249,10 @@ class CyDAQ_CLI:
 
 			# Otherwise command not found
 			self._print_help(True)
+
+	def _temp_print_stuff(self):
+		while True:
+			print("Test")
 
 	def _print_to_output(self, message, log_level=WRAPPER_IGNORE):
 		for line in message.split("\n"):
