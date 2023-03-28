@@ -135,6 +135,7 @@ class CLI:
         INFO: Message is simply returned
         ERROR: Error message is parsed and the proper exception is thrown, or a generic one is thrown instead.
         IGNORE: Returns an empty string
+        BB_LIVE: Data being sent to be graphed in balance beam mode
         """
 
         pattern = re.compile("%(.+)% (.*)")
@@ -148,6 +149,8 @@ class CLI:
                 self._error_parser(message)
             elif level == CyDAQ_CLI.WRAPPER_IGNORE:
                 return ""
+            elif level == CyDAQ_CLI.WRAPPER_BB_LIVE:
+                return message
             else:
                 raise CLIUnknownLogLevelException
         print(line)

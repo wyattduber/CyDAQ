@@ -29,6 +29,7 @@ class CyDAQ_CLI:
 	WRAPPER_INFO = "INFO"
 	WRAPPER_ERROR = "ERROR"
 	WRAPPER_IGNORE = "IGNORE"
+	WRAPPER_BB_LIVE = "BB_LIVE"
 
 	HELP_MSG = """	h/help\t\t\t\t Print This Help Menu
 	p/ping\t\t\t\t Ping the Zybo
