@@ -96,20 +96,24 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
 
         # Create plot itself
-        self.chart_view = LivePlotWidget(title="Line Plot - CyDAQ Data Sample", axisItems={'bottom': bottom_axis})
+        self.graph = LivePlotWidget(title="Ball Position Vs. Time", axisItems={'bottom': bottom_axis})
 
         # Create one curve per dataset & add them to the view
-        # self.gen_plots()
+        #self.gen_plots()
 
         # Show grid
-        self.chart_view.showGrid(x=True, y=True, alpha=0.3)
+        self.graph.showGrid(x=True, y=True, alpha=0.3)
 
         # Set labels
-        self.chart_view.setLabel('bottom', 'Time', units="s")
-        self.chart_view.setLabel('left', 'Samples')
+        self.graph.setLabel('bottom', 'Time', units="s")
+        self.graph.setLabel('left', 'Distance', units="cm")
 
         # Using -1 to span through all rows available in the window
-        layout.addWidget(self.chart_view)
+        #layout.addWidget(self.graph)
+
+        #self.plot_curve = LiveLinePlot()
+        #self.graph.addItem(self.plot_curve)
+        
 
     # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):
@@ -126,6 +130,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         if self.running:
             self.wrapper.stop_bb()
             self.mainWindow.startPingTimer()
+        self.mainWindow.resize(400, 590)
         self.mainWindow.switchToModeSelector()
 
     # Start the balance beam with default values

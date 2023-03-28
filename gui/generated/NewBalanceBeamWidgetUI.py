@@ -14,7 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_NewBalanceBeamWidget(object):
     def setupUi(self, NewBalanceBeamWidget):
         NewBalanceBeamWidget.setObjectName("NewBalanceBeamWidget")
-        NewBalanceBeamWidget.resize(1164, 717)
+        NewBalanceBeamWidget.resize(1165, 709)
+        NewBalanceBeamWidget.setMinimumSize(QtCore.QSize(1165, 709))
         NewBalanceBeamWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 16px;\n"
@@ -61,6 +62,7 @@ class Ui_NewBalanceBeamWidget(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.kp_output = QtWidgets.QLineEdit(self.gridLayoutWidget)
+        self.kp_output.setReadOnly(True)
         self.kp_output.setObjectName("kp_output")
         self.gridLayout.addWidget(self.kp_output, 0, 2, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.gridLayoutWidget)
@@ -76,12 +78,15 @@ class Ui_NewBalanceBeamWidget(object):
         self.n_input.setObjectName("n_input")
         self.gridLayout.addWidget(self.n_input, 3, 1, 1, 1)
         self.ki_output = QtWidgets.QLineEdit(self.gridLayoutWidget)
+        self.ki_output.setReadOnly(True)
         self.ki_output.setObjectName("ki_output")
         self.gridLayout.addWidget(self.ki_output, 1, 2, 1, 1)
         self.kd_output = QtWidgets.QLineEdit(self.gridLayoutWidget)
+        self.kd_output.setReadOnly(True)
         self.kd_output.setObjectName("kd_output")
         self.gridLayout.addWidget(self.kd_output, 2, 2, 1, 1)
         self.n_output = QtWidgets.QLineEdit(self.gridLayoutWidget)
+        self.n_output.setReadOnly(True)
         self.n_output.setObjectName("n_output")
         self.gridLayout.addWidget(self.n_output, 3, 2, 1, 1)
         self.line = QtWidgets.QFrame(NewBalanceBeamWidget)
@@ -105,6 +110,7 @@ class Ui_NewBalanceBeamWidget(object):
         self.set_cm_input.setObjectName("set_cm_input")
         self.horizontalLayout.addWidget(self.set_cm_input)
         self.set_cm_output = QtWidgets.QLineEdit(self.horizontalLayoutWidget)
+        self.set_cm_output.setReadOnly(True)
         self.set_cm_output.setObjectName("set_cm_output")
         self.horizontalLayout.addWidget(self.set_cm_output)
         self.send_set_point_btn = QtWidgets.QPushButton(NewBalanceBeamWidget)
@@ -131,9 +137,10 @@ class Ui_NewBalanceBeamWidget(object):
         self.pause_btn = QtWidgets.QPushButton(NewBalanceBeamWidget)
         self.pause_btn.setGeometry(QtCore.QRect(50, 650, 191, 41))
         self.pause_btn.setObjectName("pause_btn")
-        self.widget = QtWidgets.QWidget(NewBalanceBeamWidget)
-        self.widget.setGeometry(QtCore.QRect(340, 60, 801, 561))
-        self.widget.setObjectName("widget")
+        self.graph = LivePlotWidget(NewBalanceBeamWidget)
+        self.graph.setGeometry(QtCore.QRect(340, 60, 801, 561))
+        self.graph.setMaximumSize(QtCore.QSize(801, 561))
+        self.graph.setObjectName("graph")
         self.label_6 = QtWidgets.QLabel(NewBalanceBeamWidget)
         self.label_6.setGeometry(QtCore.QRect(590, 20, 241, 41))
         font = QtGui.QFont()
@@ -184,4 +191,5 @@ class Ui_NewBalanceBeamWidget(object):
         self.pause_btn.setText(_translate("NewBalanceBeamWidget", "Pause"))
         self.label_6.setText(_translate("NewBalanceBeamWidget", "Ball Position Vs. Time"))
         self.label_7.setText(_translate("NewBalanceBeamWidget", "Time (sec)"))
+from pglive.sources.live_plot_widget import LivePlotWidget
 from . import basic_operation_rc
