@@ -180,6 +180,7 @@ class ctrl_comm:
                 self.__s_comm.write(data)
             except serial.serialutil.SerialException:
                 print("Serial exception while writing. Assuming bad connection.")
+                traceback.print_exc()
                 return False
             return True
         else:

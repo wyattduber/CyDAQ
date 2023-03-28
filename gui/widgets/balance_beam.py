@@ -32,6 +32,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+        self.prev_width = 0
+        self.prev_height = 0
 
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
@@ -130,7 +132,23 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         if self.running:
             self.wrapper.stop_bb()
             self.mainWindow.startPingTimer()
-        self.mainWindow.resize(400, 590)
+        
+        # If previous height was changed from default, change to that one instead of default
+        # Otherwise just go back to default window size
+        height = 0
+        weidth = 0
+
+        if self.prev_width != 400:
+            width = self.prev_width
+        else:
+            width = 400
+        
+        if self.prev_height != 590:
+            height = self.prev_height
+        else:
+            height = 590
+
+        self.mainWindow.resize(width, height)
         self.mainWindow.switchToModeSelector()
 
     # Start the balance beam with default values

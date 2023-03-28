@@ -614,7 +614,7 @@ class cmd:
             return False
 
         if self.ctrl_comm_obj.isOpen():
-            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET}1!".encode())
+            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET} 1!".encode())
         else:
             self.__throw_exception('Increasing offset failed')
 
@@ -625,7 +625,7 @@ class cmd:
             return False
 
         if self.ctrl_comm_obj.isOpen():
-            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET}-1!".encode())
+            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET} -1!".encode())
         else:
             self.__throw_exception('Decreasing offset failed')
 
