@@ -22,8 +22,6 @@ from generated.MainWindowUI import Ui_MainWindow
 
 DEFAULT_WINDOW_WIDTH = 400
 DEFAULT_WINDOW_HEIGHT = 590
-BB_WINDOW_WIDTH = 1195
-BB_WINDOW_HEIGHT = 739
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -173,8 +171,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
 
-        print(str(self.geometry().x()))
-
         self.show()
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
@@ -220,7 +216,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     ### The following are methods for switching to different widgets of the gui application. ###
 
-    def switchToModeSelector(self):
+    def switchToModeSelector(self, prev_geometry=None):
+        if prev_geometry is not None:
+            self.setMaximumSize(16777215, 16777215) # Reset maximum size
+            self.setMinimumSize(0, 0) # Reset minimum size
+            self.setGeometry(prev_geometry)
         self.stack.setCurrentIndex(0)
         self.current_index = 0
 
@@ -232,9 +232,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         # Check that the cydaq is connected and that balance beam mode isn't already on
         if self.connected and not self.balance_beam.running:
             self.balance_beam.start()
-        self.balance_beam.prev_width = self.frameGeometry().width()
-        self.balance_beam.prev_height = self.frameGeometry().height()
-        self.resize(BB_WINDOW_WIDTH, BB_WINDOW_HEIGHT)
+        self.balance_beam.prev_geometry = self.geometry()
+        #self.setGeometry(self.x(), self.y(), self.balance_beam.minimumWidth(), self.balance_beam.minimumHeight())
         self.stack.setCurrentIndex(2)
         self.current_index = 2
 
