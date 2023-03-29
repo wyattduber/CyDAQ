@@ -2,7 +2,7 @@
 
 import serial
 
-com_port = "COM7"
+com_port = "COM4"
 
 s = serial.Serial(port=com_port, baudrate=921600)
 

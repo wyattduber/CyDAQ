@@ -100,8 +100,8 @@ class CyDAQ_CLI:
 			# First process commands that don't require direct connection to the CyDAQ
 			if command[0] == 'q' or command[0] == 'quit':
 				self._print_to_output("Terminating...\n")
-				if self.balance_beam_enabled:
-					self._stop_beam_mode() # Stop Balance Beam mode if running
+				#if self.balance_beam_enabled:
+				#	self._stop_beam_mode() # Stop Balance Beam mode if running
 				break
 			elif command[0] == "" or command[0] == "\n":
 				continue
@@ -201,7 +201,7 @@ class CyDAQ_CLI:
 					self._print_to_output("Balance Beam Mode is already enabled!")
 					continue
 				self._start_beam_mode()
-				Thread(target=self._temp_print_stuff)
+				#Thread(target=self._temp_print_stuff)
 				self.balance_beam_enabled = True
 				continue
 			elif command[0] == 'bb_stop':

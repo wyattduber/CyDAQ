@@ -4,6 +4,7 @@ import time
 import serial
 import serial.tools.list_ports
 
+
 class ctrl_comm:
     """
     This class creates an abstraction for a connection to a device over a Serial connection. 
@@ -23,12 +24,12 @@ class ctrl_comm:
                 print("Mock mode not supported! Reverting to normal mode.")
                 self.mock_mode = False
                 return
-            
-            master,slave = pty.openpty() #open the pseudoterminal
-            self.__s_comm.port = os.ttyname(slave) #translate the slave fd to a filename
+
+            master, slave = pty.openpty()  # open the pseudoterminal
+            self.__s_comm.port = os.ttyname(slave)  # translate the slave fd to a filename
             self._mock_thread_running = True
 
-            #create a separate thread that listens on the master device for commands
+            # create a separate thread that listens on the master device for commands
             thread = threading.Thread(target=self._mock_listener, args=[master])
             self.mock_thread = thread
             thread.start()
@@ -42,29 +43,57 @@ class ctrl_comm:
             res = b""
             while not res.endswith(b"!"):
                 res += os.read(port, 1)
-            
-            print("Command recieved in mock listener: ", res) 
+
+            print("Command recieved in mock listener: ", res)
 
             if res == b'stop!':
                 break
-            if res == b'@\x07!': # ping
+            if res == b'@\x07!':  # ping
                 os.write(port, b'@')
-                os.write(port, b'ACK') 
-                os.write(port, b'!') 
-            elif res == b'@\x08\x08!': # start sampling
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x08\x08!':  # start sampling
                 os.write(port, b'@')
-                os.write(port, b'ACK') 
-                os.write(port, b'!') 
-            elif res == b'@\x04!': # stop sampling
-                time.sleep(.01) # must sleep or input in main thread flushes data below
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x04!':  # stop sampling
+                time.sleep(.01)  # must sleep or input in main thread flushes data below
                 os.write(port, b'@')
-                os.write(port, b'\xd5\x07'*10_000_000)
+                os.write(port, b'\xd5\x07' * 10_000_000)
 
                 # current CyDAQ firmware throws an @ACK in here.. not needed....
-                os.write(port, b'@ACK') 
+                os.write(port, b'@ACK')
 
-                os.write(port, b'!') 
-            #TODO implement other commands that need to be mocked here
+                os.write(port, b'!')
+            # Below are Balance Beam Mock Commands
+            elif res == b'@\x16!':  # bb_start
+                time.sleep(0.01)
+                os.write(port, b'@')
+                os.write(port, b'\xd5\x07' * 10_000_000)
+                os.write(port, b'@ACK')
+                os.write(port, b'!')
+            elif res == b'!q':  # bb_stop
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'pause on!':  # bb_pause
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'pause off!':  # bb_resume
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'SOI 1!':  # bb_offset_inc
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'SOI -1!':  # bb_offset_dec
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            # TODO implement bb_const and bb_set as both of them will always have different values for commands
+            # TODO implement other commands that need to be mocked here
             else:
                 print("Unknown command sent to mock CyDAQ serial connection! Command: ", res)
                 os.write(port, b'@')

@@ -4,7 +4,7 @@ from threading import Thread
 import struct
 import time as t
 
-CMD_SERVO_OFFSET = "SOI"  # TODO Also might not be right
+CMD_SERVO_OFFSET = "SOI"
 CMD_STOP_BB = '!q'
 CMD_PAUSE = "pause on!"
 CMD_RESUME = "pause off!"
@@ -571,8 +571,6 @@ class cmd:
         # Set Default Values on Startup
         self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
         self.update_set(DEFAULT_SET)
-
-        self.read_bb_buffer_print()
 
     def stop_bb(self):
         try:
