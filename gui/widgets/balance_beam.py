@@ -165,7 +165,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         else:
             height = 590
 
-        self.mainWindow.resize(width, height)
+        self.mainWindow.setGeometry(self.mainWindow.x(), self.mainWindow.y(), width, height)
         self.mainWindow.switchToModeSelector()
 
     # Start the balance beam with default values

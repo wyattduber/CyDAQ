@@ -173,6 +173,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
 
+        print(str(self.geometry().x()))
+
         self.show()
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
@@ -220,6 +222,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToModeSelector(self):
         self.stack.setCurrentIndex(0)
+        self.current_index = 0
 
     def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
