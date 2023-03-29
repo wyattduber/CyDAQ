@@ -169,7 +169,12 @@ class CLI:
         try:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:
-            raise CLIException("Unable to parse ping response. Response was: {}".format(response))
+            if response == "":
+                raise CLIException("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? "
+                                   "Is there another instance running/connected to the CyDAQ? "
+                                   "Is there another program using that com port?")
+            else:
+                raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
     def close(self, **_):
         """Close the CLI tool"""

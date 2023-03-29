@@ -1,5 +1,8 @@
 # Standard Python Packages
+import csv
+import time
 from typing import Union
+from threading import Thread
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
@@ -18,6 +21,7 @@ from pglive.sources.live_plot_widget import LivePlotWidget
 # Stuff From Project - May show as an error but it works
 from generated.NewBalanceBeamWidgetUI import Ui_NewBalanceBeamWidget
 
+CONVERT_SEC_TO_MS = 1000
 
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
@@ -76,7 +80,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.send_constants_btn.clicked.connect(self.sendConstants)
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
-        self.save_plot_data_btn.clicked.connect(self.savePlotData)
+        self.save_plot_data_btn.clicked.connect(lambda: Thread(target=self.savePlotData).start())
         self.offset_inc_btn.clicked.connect(self.wrapper.offset_inc)
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
@@ -91,8 +95,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.high_plot = None
         self.mid_plot = None
         layout = QGridLayout(self)
-        self.low_sample: Union[float, None] = 0.2
-        self.high_sample: Union[float, None] = 0.3
+        self.low_sample: Union[float, None] = -0.001
+        self.high_sample: Union[float, None] = 0.001
 
         # Setup bottom axis with TIME tick format
         bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
@@ -115,6 +119,19 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
 
         #self.plot_curve = LiveLinePlot()
         #self.graph.addItem(self.plot_curve)
+
+        # Init Connectors
+        self.mid_plot = LiveLinePlot(pen="green")
+        self.low_plot = LiveLinePlot(pen="orange")
+        self.high_plot = LiveLinePlot(pen="blue")
+
+        self.mid_connector = DataConnector(self.mid_plot)
+        self.low_connector = DataConnector(self.low_plot)
+        self.high_connector = DataConnector(self.high_plot)
+
+        self.graph.addItem(self.mid_plot)
+        self.graph.addItem(self.low_plot)
+        self.graph.addItem(self.high_plot)
         
 
     # CyDAQ Connection Label (disabled until re-layout)
@@ -183,7 +200,26 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
 
     # Save the plot data to a file (?)
     def savePlotData(self):
-        pass
+        with open("sin.csv", 'r') as file:
+            csvreader = csv.reader(file)
+
+            for row in csvreader:
+                if self.running is False:
+                    return
+
+                # If paused, just spin in a loop and do nothing until un-paused
+                while self.pause is True:
+                    pass
+
+                timestamp = float(row[0])
+                mid_px = float(row[1])
+
+                self.mid_connector.cb_append_data_point(mid_px, timestamp)
+                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
+                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
+
+                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep((1 / CONVERT_SEC_TO_MS))
 
     # Increase the offset
     def offsetInc(self):
