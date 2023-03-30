@@ -262,7 +262,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
-            self.wrapper.stop_bb()
+            if self.connected:
+                self.wrapper.stop_bb()
             event.accept()
             if main.widgets[3].window is not None:
                 main.widgets[3].window.close()

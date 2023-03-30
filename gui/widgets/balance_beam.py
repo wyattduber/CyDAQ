@@ -10,6 +10,7 @@ from PyQt5.Qt import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
 
 # pglive Packages
+from pyqtgraph import mkPen
 from pglive.sources.data_connector import DataConnector
 from pglive.sources.live_axis_range import LiveAxisRange
 from pglive.sources.live_plot import LiveLinePlot
@@ -98,15 +99,17 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.axis_limit = LiveAxisRange(fixed_range=[1, 10, 1, 10])
 
         # Create plot itself
-        self.graph = LivePlotWidget(title="Ball Position Vs. Time", background="#F2F2F2")
+        self.graph_view = LivePlotWidget(title="Ball Position Vs. Time", background="#F2F2F2")
 
-        # Show grid
-        self.graph.showGrid(x=True, y=True, alpha=0.3)
-        self.graph.setRange(xRange=[-10, 0], yRange=[-15, 15])
+        # Show grid and make it look nice
+        self.graph_view.showGrid(x=True, y=True, alpha=0.3)
+        self.graph_view.setRange(xRange=[-10, 0], yRange=[-15, 15])
+        self.graph_view.getPlotItem().invertX()
+        #self.graph_view.getPlotItem().getViewBox().setBorder(mkPen("black", width=2))
 
         # Set labels
-        self.graph.setLabel('bottom', 'Time', units="s")
-        self.graph.setLabel('left', 'Distance', units="cm")
+        self.graph_view.setLabel('bottom', 'Time', units="s")
+        self.graph_view.setLabel('left', 'Distance', units="cm")
 
         # Using -1 to span through all rows available in the window
         #layout.addWidget(self.graph)
@@ -115,18 +118,23 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         #self.graph.addItem(self.plot_curve)
 
         # Init Connectors
-        self.mid_plot = LiveLinePlot(pen="green")
-        self.low_plot = LiveLinePlot(pen="orange")
-        self.high_plot = LiveLinePlot(pen="blue")
+        self.mid_plot = LiveLinePlot(pen="green", width=2)
+        self.low_plot = LiveLinePlot(pen="orange", width=2)
+        self.high_plot = LiveLinePlot(pen="blue", width=2)
 
-        self.mid_connector = DataConnector(self.mid_plot)
-        self.low_connector = DataConnector(self.low_plot)
-        self.high_connector = DataConnector(self.high_plot)
+        self.mid_connector = DataConnector(self.mid_plot, max_points=5)
+        self.low_connector = DataConnector(self.low_plot, max_points=5)
+        self.high_connector = DataConnector(self.high_plot, max_points=5)
 
         # Add the plots and the graph view
-        self.graph.addItem(self.mid_plot)
-        self.graph.addItem(self.low_plot)
-        self.graph.addItem(self.high_plot)
+        self.graph_view.addItem(self.mid_plot)
+        self.graph_view.addItem(self.low_plot)
+        self.graph_view.addItem(self.high_plot)
+
+        self.graph_view.setParent(self.graph)
+        self.graph_view.setGeometry(0, 0, 801, 641)
+
+        #self.graph_view.setGeometry(self.graph.geometry())
 
     # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):

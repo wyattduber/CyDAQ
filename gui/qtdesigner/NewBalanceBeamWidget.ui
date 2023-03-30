@@ -63,7 +63,7 @@ background-color: #d9d9d9;</string>
     <rect>
      <x>90</x>
      <y>70</y>
-     <width>121</width>
+     <width>168</width>
      <height>151</height>
     </rect>
    </property>
@@ -185,7 +185,7 @@ background-color: #d9d9d9;</string>
     <rect>
      <x>60</x>
      <y>300</y>
-     <width>171</width>
+     <width>203</width>
      <height>80</height>
     </rect>
    </property>
@@ -291,13 +291,13 @@ background-color: #d9d9d9;</string>
     <string>Pause</string>
    </property>
   </widget>
-  <widget class="LivePlotWidget" name="graph" native="true">
+  <widget class="QWidget" name="graph" native="true">
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>60</y>
+     <y>30</y>
      <width>801</width>
-     <height>561</height>
+     <height>641</height>
     </rect>
    </property>
    <property name="maximumSize">
@@ -308,14 +308,6 @@ background-color: #d9d9d9;</string>
    </property>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>LivePlotWidget</class>
-   <extends>QWidget</extends>
-   <header>pglive.sources.live_plot_widget</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="basic_operation.qrc"/>
  </resources>
