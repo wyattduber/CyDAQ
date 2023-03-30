@@ -3996,12 +3996,11 @@ CONFIG_imagefeature-ssh-server-dropbear=y
 CONFIG_imagefeature-hwcodecs=y
 # CONFIG_imagefeature-package-management is not set
 CONFIG_imagefeature-debug-tweaks=y
-# CONFIG_auto-login is not set
+CONFIG_auto-login=y
 
 #
 # apps 
 #
-CONFIG_bootscript=y
 # CONFIG_gpio-demo is not set
 # CONFIG_peekpoke is not set
 
