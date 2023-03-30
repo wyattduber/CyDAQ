@@ -39,6 +39,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
         self.running = False
+        self.graph_thread = None
 
         # Balance Beam Input Values (Default)
         self.kp = 0.8
@@ -82,8 +83,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
 
-        # Graph Initialization
-        #self.graph = LivePlotWidget()
 
         self.mid_connector = None
         self.low_connector = None
@@ -95,7 +94,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.high_sample: Union[float, None] = 5
 
         # Setup bottom axis with TIME tick format
-        #bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
         self.axis_limit = LiveAxisRange(fixed_range=[1, 10, 1, 10])
 
         # Create plot itself
@@ -105,17 +103,10 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.graph_view.showGrid(x=True, y=True, alpha=0.3)
         self.graph_view.setRange(xRange=[-10, 0], yRange=[-15, 15])
         self.graph_view.getPlotItem().invertX()
-        #self.graph_view.getPlotItem().getViewBox().setBorder(mkPen("black", width=2))
 
         # Set labels
         self.graph_view.setLabel('bottom', 'Time', units="s")
         self.graph_view.setLabel('left', 'Distance', units="cm")
-
-        # Using -1 to span through all rows available in the window
-        #layout.addWidget(self.graph)
-
-        #self.plot_curve = LiveLinePlot()
-        #self.graph.addItem(self.plot_curve)
 
         # Init Connectors
         self.mid_plot = LiveLinePlot(pen="green", width=2)
@@ -131,10 +122,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.graph_view.addItem(self.low_plot)
         self.graph_view.addItem(self.high_plot)
 
+        # Attach graph_view to the widget on the page, then resize it properly
         self.graph_view.setParent(self.graph)
         self.graph_view.setGeometry(0, 0, 801, 641)
-
-        #self.graph_view.setGeometry(self.graph.geometry())
 
     # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):
@@ -157,7 +147,13 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
     def start(self):
         self.running = True
         self.mainWindow.stopPingTimer()
+        self.mainWindow.debug.log_timer.setInterval(0)
+        #self.wrapper.bb_log_mode = True
         self.wrapper.start_bb()
+
+        #Start Graphing of Data
+        #self.graph_thread = Thread(target=self.graph_data)
+        #self.graph_thread.start()
 
     # Send in the user-defined constants
     def sendConstants(self):
@@ -203,11 +199,11 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
                 time.sleep((100 / CONVERT_SEC_TO_MS))
 
-    # Increase the offset
+    # Increase the offset for calibration
     def offsetInc(self):
         self.wrapper.offset_inc()
 
-    # Decrease the offset
+    # Decrease the offset for calibration
     def offsetDec(self):
         self.wrapper.offset_dec()
 
@@ -222,3 +218,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
 
     ### TODO Live Graph Widget Below This Line ###
 
+    def graph_data(self):
+        log = self.wrapper.getLog()
+
+        data = log.split('\n', 1)[0]
+        print(data)

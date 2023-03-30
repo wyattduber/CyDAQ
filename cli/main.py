@@ -524,15 +524,13 @@ class CyDAQ_CLI:
 	### Balance Beam Methods ###
 
 	def _start_beam_mode(self):
+		# Start Balance Beam Mode (Send Start Command)
 		self.cmd_obj.start_bb()
 
 		# Start thread to get buffer and print it
-		print("flag1")
 		self.stop_thread = False
 		self.bb_thread = Thread(target=self._read_bb_buffer)
-		print("flag2")
 		self.bb_thread.start()
-		print("flag3")
 
 	def _stop_beam_mode(self):
 		self.cmd_obj.stop_bb()
@@ -559,13 +557,9 @@ class CyDAQ_CLI:
 		self.cmd_obj.resume_bb()
 
 	def _read_bb_buffer(self):
-		print("flag4")
 		while not self.stop_thread:
-			#print("flag5")
 			buffer = self.cmd_obj.read_bb_buffer()
-			#print(f"Proof {buffer}")
 			self._print_to_output(buffer, log_level="BB_LIVE")
-			#print("flag6")
 
 if __name__ == "__main__":
 	try:

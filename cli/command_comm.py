@@ -664,48 +664,23 @@ class cmd:
             return False
         
         if self.ctrl_comm_obj.isOpen():
-
             byte_value = ""
             buffer = ""
 
-            while byte_value != ' ':
+            while byte_value != ' ': # Check for each number
                 byte_value = self.ctrl_comm_obj.read_byte()
                 if byte_value == False:
                     continue
-                if byte_value == '-':
+                if byte_value == '-': # If value is negative
                     for i in range(0, 5):
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer
-                elif byte_value.isnumeric():
+                elif byte_value.isnumeric(): # If value is positive
                     for i in range(0, 4):
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer
-
-
-            #buffer = ""
-            #old_buffer = ""
-            # Read current byte value
-            #byte_value = self.ctrl_comm_obj.read_byte()
-            #print(f"flag6: {buffer}")
-
-            #if byte_value == False:
-            #    raise Exception("CyDAQ is returning false in balance beam read buffer method for some reason!")
-
-            # If byte value is '-' or a number, read rest of number
-            #while byte_value != ' ':
-            #    print(f"flag7: {buffer}")
-            #    buffer += byte_value
-            #    byte_value = self.ctrl_comm_obj.read_byte()
-
-            #print(f"flag8: {buffer}")
-
-            #if buffer != "" and old_buffer != buffer:
-            #    print(f"flag9: {buffer}")
-            #    return buffer
-            #    old_buffer = buffer
-            #buffer = ""
                 
 
     # not needed since struct library takes care of byte convertions for us

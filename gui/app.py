@@ -233,7 +233,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         if self.connected and not self.balance_beam.running:
             self.balance_beam.start()
         self.balance_beam.prev_geometry = self.geometry()
-        #self.setGeometry(self.x(), self.y(), self.balance_beam.minimumWidth(), self.balance_beam.minimumHeight())
         self.stack.setCurrentIndex(2)
         self.current_index = 2
 
