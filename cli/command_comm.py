@@ -672,12 +672,12 @@ class cmd:
                 if byte_value == False:
                     continue
                 if byte_value == '-': # If value is negative
-                    for i in range(0, 5):
+                    for i in range(0, 6):
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer
                 elif byte_value.isnumeric(): # If value is positive
-                    for i in range(0, 4):
+                    for i in range(0, 5):
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer
