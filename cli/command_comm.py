@@ -21,6 +21,8 @@ class cmd:
     def __init__(self, mock_mode=False):
         self.ctrl_comm_obj = ctrl_comm(mock_mode=mock_mode)
         self.port = self.ctrl_comm_obj.get_port()
+        self.bb_thread = None
+        self.stop_thread = True
 
     def __del__(self):
         self.ctrl_comm_obj.kill_mock()
@@ -572,6 +574,11 @@ class cmd:
         self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
         self.update_set(DEFAULT_SET)
 
+        # Start reading data from buffer and print it
+        self.stop_thread = False
+        self.bb_thread = Thread(target=self.read_bb_buffer_print)
+        self.bb_thread.start()
+
     def stop_bb(self):
         try:
             self.ctrl_comm_obj.open(self.port)
@@ -579,6 +586,11 @@ class cmd:
             return False
 
         if self.ctrl_comm_obj.isOpen():
+            # First, stop the thread
+            self.stop_thread = True
+            self.bb_thread = None
+
+            # Then, send stop command
             self.ctrl_comm_obj.write('q!'.encode())
         else:
             self.__throw_exception('Stopping balance beam mode failed')
@@ -658,18 +670,14 @@ class cmd:
         except ValueError:
             return False
         
-        if self.ctrl_comm_obj.isOpen() is True:
-            while True:
-                cnt = 0
-                if self.ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
-                    buffer = ""
-                    byte_value = ""
-                    if len(buffer) < 6:
-                        while byte_value != sig_serial.END_BYTE.value:
-                            byte_value = self.ctrl_comm_obj.read_byte()
-                            if byte_value != sig_serial.END_BYTE.value:
-                                #buffer += byte_value
-                                print(str(byte_value))
+        if self.ctrl_comm_obj.isOpen():
+            buffer = ""
+            byte_value = ""
+            while byte_value != sig_serial.END_BYTE.value and self.ctrl_comm_obj.isOpen() and not self.stop_thread:
+                byte_value = self.ctrl_comm_obj.read_byte()
+                if byte_value != sig_serial.END_BYTE.value:
+                    #buffer += byte_value
+                    print(str(byte_value))
 
     # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):
