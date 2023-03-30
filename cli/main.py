@@ -75,6 +75,8 @@ class CyDAQ_CLI:
 		self.mock_mode = False
 		self.balance_beam_enabled = False
 		self.generating = False
+		self.bb_thread = None
+		self.stop_thread = True
 
 	def start(self):
 		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
@@ -100,8 +102,8 @@ class CyDAQ_CLI:
 			# First process commands that don't require direct connection to the CyDAQ
 			if command[0] == 'q' or command[0] == 'quit':
 				self._print_to_output("Terminating...\n")
-				#if self.balance_beam_enabled:
-				#	self._stop_beam_mode() # Stop Balance Beam mode if running
+				if self.balance_beam_enabled:
+					self._stop_beam_mode() # Stop Balance Beam mode if running
 				break
 			elif command[0] == "" or command[0] == "\n":
 				continue
@@ -524,9 +526,19 @@ class CyDAQ_CLI:
 	def _start_beam_mode(self):
 		self.cmd_obj.start_bb()
 
+		# Start thread to get buffer and print it
+		print("flag1")
+		self.stop_thread = False
+		self.bb_thread = Thread(target=self._read_bb_buffer)
+		print("flag2")
+		self.bb_thread.start()
+		print("flag3")
+
 	def _stop_beam_mode(self):
 		self.cmd_obj.stop_bb()
 		self.balance_beam_enabled = False
+		self.stop_thread = True
+		self.bb_thread = None
 
 	def _update_constants(self, kp, ki, kd, N):
 		self.cmd_obj.update_constants(kp, ki, kd, N)
@@ -545,6 +557,15 @@ class CyDAQ_CLI:
 
 	def _resume_bb(self):
 		self.cmd_obj.resume_bb()
+
+	def _read_bb_buffer(self):
+		print("flag4")
+		while not self.stop_thread:
+			#print("flag5")
+			buffer = self.cmd_obj.read_bb_buffer()
+			#print(f"Proof {buffer}")
+			self._print_to_output(buffer, log_level="BB_LIVE")
+			#print("flag6")
 
 if __name__ == "__main__":
 	try:
