@@ -347,7 +347,10 @@ class CLI:
                 self.running_command = False
             response = self.p.before
 
-            self.log = response + "\n" + self.log
+            currentData = CyDAQ_CLI.get_bb_data()
+            print(currentData)
+
+            self.log = self.log + '\n' + currentData
 
 
 class CLIException(Exception):

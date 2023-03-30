@@ -77,9 +77,10 @@ class CyDAQ_CLI:
 		self.generating = False
 		self.bb_thread = None
 		self.stop_thread = True
+		self.bb_data = ""
 
 	def start(self):
-		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
+		"""Start the CLI tool. Blocks indefinitely for user input until the quit command is issued."""
 
 		self._print_to_output(self.CLI_START_MESSAGE)
 	
@@ -559,11 +560,18 @@ class CyDAQ_CLI:
 	def _read_bb_buffer(self):
 		while not self.stop_thread:
 			buffer = self.cmd_obj.read_bb_buffer()
-			self._print_to_output(buffer, log_level="BB_LIVE")
+			if self.wrapper_mode:
+				self.bb_data = self.bb_data + '\n' + buffer
+			else:
+				self._print_to_output(buffer, log_level="BB_LIVE")
+
+	# Public method to retrieve the current balance beam data when in wrapper mode
+	def get_bb_data(self):
+		return self.bb_data
 
 if __name__ == "__main__":
 	try:
 		cli = CyDAQ_CLI()
 		cli.start()
 	except Exception as e: # Doesn't catch keyboard interrupt
-		cli._print_to_output("exceptinon uncaught in CLI: " + traceback.format_exc())
+		cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
