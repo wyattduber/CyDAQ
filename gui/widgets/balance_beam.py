@@ -8,14 +8,11 @@ from threading import Thread
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
-from PyQt5.QtWidgets import QGridLayout
 
 # pglive Packages
-from pglive.kwargs import Axis
 from pglive.sources.data_connector import DataConnector
-from pglive.sources.live_axis import LiveAxis
+from pglive.sources.live_axis_range import LiveAxisRange
 from pglive.sources.live_plot import LiveLinePlot
-from pglive.sources.live_plot import LiveScatterPlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
@@ -85,7 +82,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.pause_btn.clicked.connect(self.pause)
 
         # Graph Initialization
-        self.graph = LivePlotWidget()
+        #self.graph = LivePlotWidget()
 
         self.mid_connector = None
         self.low_connector = None
@@ -93,20 +90,19 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.low_plot = None
         self.high_plot = None
         self.mid_plot = None
-        self.low_sample: Union[float, None] = -0.001
-        self.high_sample: Union[float, None] = 0.001
+        self.low_sample: Union[float, None] = -5
+        self.high_sample: Union[float, None] = 5
 
         # Setup bottom axis with TIME tick format
-        bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
+        #bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
+        self.axis_limit = LiveAxisRange(fixed_range=[1, 10, 1, 10])
 
         # Create plot itself
-        self.graph = LivePlotWidget(title="Ball Position Vs. Time", axisItems={'bottom': bottom_axis})
-
-        # Create one curve per dataset & add them to the view
-        #self.gen_plots()
+        self.graph = LivePlotWidget(title="Ball Position Vs. Time", background="#F2F2F2")
 
         # Show grid
         self.graph.showGrid(x=True, y=True, alpha=0.3)
+        self.graph.setRange(xRange=[-10, 0], yRange=[-15, 15])
 
         # Set labels
         self.graph.setLabel('bottom', 'Time', units="s")
@@ -127,10 +123,10 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.low_connector = DataConnector(self.low_plot)
         self.high_connector = DataConnector(self.high_plot)
 
+        # Add the plots and the graph view
         self.graph.addItem(self.mid_plot)
         self.graph.addItem(self.low_plot)
         self.graph.addItem(self.high_plot)
-        
 
     # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):
@@ -147,7 +143,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         if self.running:
             self.wrapper.stop_bb()
             self.mainWindow.startPingTimer()
-
         self.mainWindow.switchToModeSelector(self.prev_geometry)
 
     # Start the balance beam with default values
@@ -186,11 +181,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
             csvreader = csv.reader(file)
 
             for row in csvreader:
-                if self.running is False:
-                    return
-
                 # If paused, just spin in a loop and do nothing until un-paused
-                while self.pause is True:
+                while self.paused:
                     pass
 
                 timestamp = float(row[0])
@@ -201,7 +193,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
                 self.high_connector.cb_append_data_point(self.high_sample, timestamp)
 
                 print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep((1 / CONVERT_SEC_TO_MS))
+                time.sleep((100 / CONVERT_SEC_TO_MS))
 
     # Increase the offset
     def offsetInc(self):
