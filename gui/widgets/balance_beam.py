@@ -17,11 +17,11 @@ from pglive.sources.live_plot import LiveLinePlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
-from generated.NewBalanceBeamWidgetUI import Ui_NewBalanceBeamWidget
+from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
 CONVERT_SEC_TO_MS = 1000
 
-class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
+class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
     def __init__(self, mainWindow, cyDAQModeWidget):
@@ -75,6 +75,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons
+        self.start_btn.clicked.connect(self.start)
+        self.stop_btn.clicked.connect(self.stop)
         self.send_constants_btn.clicked.connect(self.sendConstants)
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
@@ -82,7 +84,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.offset_inc_btn.clicked.connect(self.wrapper.offset_inc)
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
-
 
         self.mid_connector = None
         self.low_connector = None
@@ -139,12 +140,13 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
 
     def home(self):
         if self.running:
-            self.wrapper.stop_bb()
-            self.mainWindow.startPingTimer()
+            self.stop()
         self.mainWindow.switchToModeSelector(self.prev_geometry)
 
     # Start the balance beam with default values
     def start(self):
+        if not self.mainWindow.connected or self.running:
+            return
         self.running = True
         self.mainWindow.stopPingTimer()
         self.mainWindow.debug.log_timer.setInterval(0)
@@ -154,6 +156,11 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         #Start Graphing of Data
         #self.graph_thread = Thread(target=self.graph_data)
         #self.graph_thread.start()
+
+    def stop(self):
+        self.running = False
+        self.wrapper.stop_bb()
+        self.mainWindow.startPingTimer()
 
     # Send in the user-defined constants
     def sendConstants(self):
