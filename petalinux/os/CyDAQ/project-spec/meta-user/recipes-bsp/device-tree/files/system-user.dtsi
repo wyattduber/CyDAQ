@@ -130,7 +130,7 @@
 		clock-names = "s_axis_aclk", "s_axi_aclk";
 		clocks = <&misc_clk_0>, <&misc_clk_0>;
 		compatible = "xlnx,xadc-wiz-3.3", "xlnx,axi-xadc-1.00.a";
-		reg = <0x43c00000 0x10000>;
+		reg = <0x43c50000 0x10000>;
 		xlnx,alarm-limit-r0 = <0xb5ed>;
 		xlnx,alarm-limit-r1 = <0x57e4>;
 		xlnx,alarm-limit-r10 = <0x5555>;
