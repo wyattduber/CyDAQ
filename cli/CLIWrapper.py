@@ -334,24 +334,24 @@ class CLI:
         hours = (millis / (1000 * 60 * 60)) % 24
         return seconds, minutes, hours
 
-    def _parse_bb_log(self):
-        while self.bb_log_mode:
-            self.p.expect("%BB_LIVE% [0-9]*\.[0-9]+")
-            try:
-                self.p.expect(INPUT_CHAR)
-            except pexpect.exceptions.EOF:
-                raise CLICloseException(self.p.before)
-            except pexpect.exceptions.TIMEOUT:
-                raise CLITimeoutException
-            finally:
-                self.running_command = False
-            response = self.p.before
+    def retrieve_bb_data(self):
+        #while self.bb_log_mode:
+            #self.p.expect("%BB_LIVE% [0-9]*\.[0-9]+")
+            #try:
+            #    self.p.expect(INPUT_CHAR)
+            #except pexpect.exceptions.EOF:
+            #    raise CLICloseException(self.p.before)
+            #except pexpect.exceptions.TIMEOUT:
+            #    raise CLITimeoutException
+            #finally:
+            #    self.running_command = False
+            #response = self.p.before
 
-            currentData = CyDAQ_CLI.get_bb_data()
-            print(currentData)
+        currentData = CyDAQ_CLI.get_bb_data()
+        print(currentData)
+        self.log = self.log + '\n' + currentData
 
-            self.log = self.log + '\n' + currentData
-
+        return currentData
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""

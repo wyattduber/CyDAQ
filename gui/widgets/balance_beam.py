@@ -85,12 +85,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
 
-        self.mid_connector = None
-        self.low_connector = None
-        self.high_connector = None
-        self.low_plot = None
-        self.high_plot = None
-        self.mid_plot = None
         self.low_sample: Union[float, None] = -5
         self.high_sample: Union[float, None] = 5
 
@@ -150,12 +144,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.running = True
         self.mainWindow.stopPingTimer()
         self.mainWindow.debug.log_timer.setInterval(0)
-        #self.wrapper.bb_log_mode = True
-        self.wrapper.start_bb()
 
         #Start Graphing of Data
         #self.graph_thread = Thread(target=self.graph_data)
         #self.graph_thread.start()
+
+        # Start Balance Beam Mode from Wrapper
+        # self.wrapper.bb_log_mode = True
+        self.wrapper.start_bb()
 
     def stop(self):
         self.running = False
@@ -187,7 +183,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         pass
 
     # Save the plot data to a file (?)
-    def savePlotData(self):
+    def savePlotData(self): # TODO Change this when data is actually being sent
         with open("sin.csv", 'r') as file:
             csvreader = csv.reader(file)
 
@@ -226,7 +222,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     ### TODO Live Graph Widget Below This Line ###
 
     def graph_data(self):
-        log = self.wrapper.getLog()
+        while self.running:
+            current_data = self.wrapper.retrieve_bb_data()
 
-        data = log.split('\n', 1)[0]
-        print(data)
+            data = current_data.split('\n', 1)[0]
+            print(data)
