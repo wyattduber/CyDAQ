@@ -1,0 +1,4 @@
+# These files should be generated and moved into this directory
+boot.scr
+image.ub
+rootfs.cpio

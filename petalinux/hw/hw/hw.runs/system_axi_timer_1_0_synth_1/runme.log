@@ -1,0 +1,18 @@
+
+*** Running vivado
+    with args -log system_axi_timer_1_0.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source system_axi_timer_1_0.tcl
+
+
+
+****** Vivado v2020.1 (64-bit)
+  **** SW Build 2902540 on Wed May 27 19:54:49 MDT 2020
+  **** IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+source system_axi_timer_1_0.tcl -notrace
+create_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:11 . Memory (MB): peak = 1096.953 ; gain = 0.000
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'u:/sdmay23-47/petalinux/hw/hw/hw.ipdefs/repo'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'F:/Xilinx/Vivado/2020.1/data/ip'.
+INFO: [IP_Flow 19-4838] Using cached IP synthesis design for IP system_axi_timer_1_0, cache-ID = f30676ba6857027b.
+INFO: [Common 17-206] Exiting Vivado at Wed Mar 29 21:28:36 2023...
