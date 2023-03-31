@@ -4,6 +4,9 @@ import time
 from typing import Union
 from threading import Thread
 
+from PyQt5.QtWidgets import QFileDialog
+from scipy.io import savemat
+
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
@@ -20,6 +23,7 @@ from pglive.sources.live_plot_widget import LivePlotWidget
 from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
 CONVERT_SEC_TO_MS = 1000
+DEFAULT_SAVE_LOCATION = "U:\\"
 
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
@@ -40,6 +44,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.paused = False
         self.running = False
         self.graph_thread = None
+        self.plot_data = {}
+        self.start_time = 0
+        self.filename = "data.mat"
 
         # Balance Beam Input Values (Default)
         self.kp = 0.8
@@ -152,6 +159,26 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         # Start Balance Beam Mode from Wrapper
         # self.wrapper.bb_log_mode = True
         self.wrapper.start_bb()
+        self.start_time = time.time()
+
+        # TODO Remove later (temporarily here for testing)
+        with open("sin.csv", 'r') as file:
+            csvreader = csv.reader(file)
+
+            for row in csvreader:
+                # If paused, just spin in a loop and do nothing until un-paused
+                while self.paused:
+                    pass
+
+                timestamp = float(row[0])
+                mid_px = float(row[1])
+
+                self.mid_connector.cb_append_data_point(mid_px, timestamp)
+                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
+                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
+
+                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep((100 / CONVERT_SEC_TO_MS))
 
     def stop(self):
         self.running = False
@@ -182,25 +209,15 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     def saveStep(self):
         pass
 
-    # Save the plot data to a file (?)
-    def savePlotData(self): # TODO Change this when data is actually being sent
-        with open("sin.csv", 'r') as file:
-            csvreader = csv.reader(file)
-
-            for row in csvreader:
-                # If paused, just spin in a loop and do nothing until un-paused
-                while self.paused:
-                    pass
-
-                timestamp = float(row[0])
-                mid_px = float(row[1])
-
-                self.mid_connector.cb_append_data_point(mid_px, timestamp)
-                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
-                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
-
-                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep((100 / CONVERT_SEC_TO_MS))
+    # Save the plot data to a file
+    def savePlotData(self):
+        options = QFileDialog.Options()
+        self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the data!",
+                                                       DEFAULT_SAVE_LOCATION, "MATLAB Files (*.mat)",
+                                                       options=options)
+        # Save the current data dictionary to a matlab file
+        # Using a thread because this process can take a while and be memory intensive
+        Thread(target=savemat,args=[self.filename, self.plot_data]).start()
 
     # Increase the offset for calibration
     def offsetInc(self):
@@ -227,3 +244,5 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
             data = current_data.split('\n', 1)[0]
             print(data)
+
+            self.plot_data[f"{time.time() - self.start_time}"] = data
