@@ -1,0 +1,21 @@
+14:59:55 **** Build of configuration Debug for project CyDAQ_comm ****
+make all 
+Building file: ../src/helloworld.c
+Invoking: ARM v7 Linux gcc compiler
+arm-linux-gnueabihf-gcc -Wall -O0 -g3 -c -fmessage-length=0 -MT"src/helloworld.o" --sysroot=/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi -I/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi/usr/include -MMD -MP -MF"src/helloworld.d" -MT"src/helloworld.o" -o "src/helloworld.o" "../src/helloworld.c"
+Finished building: ../src/helloworld.c
+ 
+Building target: CyDAQ_comm.elf
+Invoking: ARM v7 Linux gcc linker
+arm-linux-gnueabihf-gcc -L/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi/lib -L/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi/usr/lib -o "CyDAQ_comm.elf"  ./src/helloworld.o   --sysroot=/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi -Wl,-rpath-link=/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi/lib -Wl,-rpath-link=/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/sw/CyDAQ_platform/linux_domain/sysroot/cortexa9t2hf-neon-xilinx-linux-gnueabi/usr/lib
+Finished building target: CyDAQ_comm.elf
+ 
+Invoking: ARM v7 Linux Print Size
+arm-linux-gnueabihf-size CyDAQ_comm.elf  |tee "CyDAQ_comm.elf.size"
+   text	   data	    bss	    dec	    hex	filename
+   1087	    316	      4	   1407	    57f	CyDAQ_comm.elf
+Finished building: CyDAQ_comm.elf.size
+ 
+
+14:59:56 Build Finished (took 1s.199ms)
+
