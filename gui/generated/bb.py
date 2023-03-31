@@ -47,7 +47,7 @@ class bb_GUI():
     def plotToWorkspace(app = None): 
         # Clock format: [year month day hour minute seconds]
         C = clock
-        Cstr = num2str(C(4)) + 'h' + num2str(C(5)) + 'm' + num2str(np.rint(C(6))) + 's'
+        Cstr = str(C(4)) + 'h' + str(C(5)) + 'm' + str(np.rint(C(6))) + 's'
         name = 'distcm_' + Cstr
         var = np.transpose(np.array([[bb_GUI.t_data],[movmean(app.distCm,app.nMovMean)]]))
         assignin('base',name,var)
@@ -103,27 +103,27 @@ class bb_GUI():
         
         
     def updateKp(app = None,kp = None): 
-        write_(app.uart,'kp ' + num2str(kp) + '!','uint8')
+        write_(app.uart,'kp ' + str(kp) + '!','uint8')
         return
         
         
     def updateKd(app = None,kd = None): 
-        write_(app.uart,'kd ' + num2str(kd) + '!','uint8')
+        write_(app.uart,'kd ' + str(kd) + '!','uint8')
         return
         
         
     def updateKi(app = None,ki = None): 
-        write_(app.uart,'ki ' + num2str(ki) + '!','uint8')
+        write_(app.uart,'ki ' + str(ki) + '!','uint8')
         return
         
         
     def updateN(app = None,N = None): 
-        write_(app.uart,'n ' + num2str(N) + '!','uint8')
+        write_(app.uart,'n ' + str(N) + '!','uint8')
         return
         
         
     def updateSet(app = None,r = None): 
-        write_(app.uart,'r ' + num2str(r) + '!','uint8')
+        write_(app.uart,'r ' + str(r) + '!','uint8')
         return
         
         # Callbacks that handle component events
@@ -236,14 +236,14 @@ class bb_GUI():
         # Button pushed function: OffsetButton
         
     def OffsetButtonIncPressed(app = None,event = None): 
-        cmd_str = bb_GUI.CMD_SERVO_OFFSET + ' ' + num2str(bb_GUI.servoOffsetDelta) + '!'
+        cmd_str = bb_GUI.CMD_SERVO_OFFSET + ' ' + str(bb_GUI.servoOffsetDelta) + '!'
         write_(app.uart,cmd_str,'uint8')
         return
         
         # Button pushed function: OffsetButton_2
         
     def OffsetButtonDecPressed(app = None,event = None): 
-        cmd_str = bb_GUI.CMD_SERVO_OFFSET + ' ' + num2str(- bb_GUI.servoOffsetDelta) + '!'
+        cmd_str = bb_GUI.CMD_SERVO_OFFSET + ' ' + str(- bb_GUI.servoOffsetDelta) + '!'
         write_(app.uart,cmd_str,'uint8')
         return
         

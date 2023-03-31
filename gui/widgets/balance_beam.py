@@ -1,25 +1,27 @@
 # Standard Python Packages
+import csv
+import time
 from typing import Union
+from threading import Thread
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
-from PyQt5.QtWidgets import QGridLayout
 
 # pglive Packages
-from pglive.kwargs import Axis
+from pyqtgraph import mkPen
 from pglive.sources.data_connector import DataConnector
-from pglive.sources.live_axis import LiveAxis
+from pglive.sources.live_axis_range import LiveAxisRange
 from pglive.sources.live_plot import LiveLinePlot
-from pglive.sources.live_plot import LiveScatterPlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
-from generated.NewBalanceBeamWidgetUI import Ui_NewBalanceBeamWidget
+from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
+CONVERT_SEC_TO_MS = 1000
 
-class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
+class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
     def __init__(self, mainWindow, cyDAQModeWidget):
@@ -32,12 +34,12 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
-        self.prev_width = 0
-        self.prev_height = 0
+        self.prev_geometry = None
 
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
         self.running = False
+        self.graph_thread = None
 
         # Balance Beam Input Values (Default)
         self.kp = 0.8
@@ -73,49 +75,51 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons
+        self.start_btn.clicked.connect(self.start)
+        self.stop_btn.clicked.connect(self.stop)
         self.send_constants_btn.clicked.connect(self.sendConstants)
         self.send_set_point_btn.clicked.connect(self.sendSetPoint)
         self.save_step_btn.clicked.connect(self.saveStep)
-        self.save_plot_data_btn.clicked.connect(self.savePlotData)
+        self.save_plot_data_btn.clicked.connect(lambda: Thread(target=self.savePlotData).start())
         self.offset_inc_btn.clicked.connect(self.wrapper.offset_inc)
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
 
-        # Graph Initialization
-        self.graph = LivePlotWidget()
-
-        self.mid_connector = None
-        self.low_connector = None
-        self.high_connector = None
-        self.low_plot = None
-        self.high_plot = None
-        self.mid_plot = None
-        layout = QGridLayout(self)
-        self.low_sample: Union[float, None] = 0.2
-        self.high_sample: Union[float, None] = 0.3
+        self.low_sample: Union[float, None] = -5
+        self.high_sample: Union[float, None] = 5
 
         # Setup bottom axis with TIME tick format
-        bottom_axis = LiveAxis("bottom", **{Axis.TICK_FORMAT: Axis.TIME})
+        self.axis_limit = LiveAxisRange(fixed_range=[1, 10, 1, 10])
 
         # Create plot itself
-        self.graph = LivePlotWidget(title="Ball Position Vs. Time", axisItems={'bottom': bottom_axis})
+        self.graph_view = LivePlotWidget(title="Ball Position Vs. Time", background="#F2F2F2")
 
-        # Create one curve per dataset & add them to the view
-        #self.gen_plots()
-
-        # Show grid
-        self.graph.showGrid(x=True, y=True, alpha=0.3)
+        # Show grid and make it look nice
+        self.graph_view.showGrid(x=True, y=True, alpha=0.3)
+        self.graph_view.setRange(xRange=[-10, 0], yRange=[-15, 15])
+        self.graph_view.getPlotItem().invertX()
 
         # Set labels
-        self.graph.setLabel('bottom', 'Time', units="s")
-        self.graph.setLabel('left', 'Distance', units="cm")
+        self.graph_view.setLabel('bottom', 'Time', units="s")
+        self.graph_view.setLabel('left', 'Distance', units="cm")
 
-        # Using -1 to span through all rows available in the window
-        #layout.addWidget(self.graph)
+        # Init Connectors
+        self.mid_plot = LiveLinePlot(pen="green", width=2)
+        self.low_plot = LiveLinePlot(pen="orange", width=2)
+        self.high_plot = LiveLinePlot(pen="blue", width=2)
 
-        #self.plot_curve = LiveLinePlot()
-        #self.graph.addItem(self.plot_curve)
-        
+        self.mid_connector = DataConnector(self.mid_plot, max_points=5)
+        self.low_connector = DataConnector(self.low_plot, max_points=5)
+        self.high_connector = DataConnector(self.high_plot, max_points=5)
+
+        # Add the plots and the graph view
+        self.graph_view.addItem(self.mid_plot)
+        self.graph_view.addItem(self.low_plot)
+        self.graph_view.addItem(self.high_plot)
+
+        # Attach graph_view to the widget on the page, then resize it properly
+        self.graph_view.setParent(self.graph)
+        self.graph_view.setGeometry(0, 0, 801, 641)
 
     # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):
@@ -130,32 +134,29 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
 
     def home(self):
         if self.running:
-            self.wrapper.stop_bb()
-            self.mainWindow.startPingTimer()
-        
-        # If previous height was changed from default, change to that one instead of default
-        # Otherwise just go back to default window size
-        height = 0
-        weidth = 0
-
-        if self.prev_width != 400:
-            width = self.prev_width
-        else:
-            width = 400
-        
-        if self.prev_height != 590:
-            height = self.prev_height
-        else:
-            height = 590
-
-        self.mainWindow.resize(width, height)
-        self.mainWindow.switchToModeSelector()
+            self.stop()
+        self.mainWindow.switchToModeSelector(self.prev_geometry)
 
     # Start the balance beam with default values
     def start(self):
+        if not self.mainWindow.connected or self.running:
+            return
         self.running = True
         self.mainWindow.stopPingTimer()
+        self.mainWindow.debug.log_timer.setInterval(0)
+
+        #Start Graphing of Data
+        #self.graph_thread = Thread(target=self.graph_data)
+        #self.graph_thread.start()
+
+        # Start Balance Beam Mode from Wrapper
+        # self.wrapper.bb_log_mode = True
         self.wrapper.start_bb()
+
+    def stop(self):
+        self.running = False
+        self.wrapper.stop_bb()
+        self.mainWindow.startPingTimer()
 
     # Send in the user-defined constants
     def sendConstants(self):
@@ -182,14 +183,30 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
         pass
 
     # Save the plot data to a file (?)
-    def savePlotData(self):
-        pass
+    def savePlotData(self): # TODO Change this when data is actually being sent
+        with open("sin.csv", 'r') as file:
+            csvreader = csv.reader(file)
 
-    # Increase the offset
+            for row in csvreader:
+                # If paused, just spin in a loop and do nothing until un-paused
+                while self.paused:
+                    pass
+
+                timestamp = float(row[0])
+                mid_px = float(row[1])
+
+                self.mid_connector.cb_append_data_point(mid_px, timestamp)
+                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
+                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
+
+                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep((100 / CONVERT_SEC_TO_MS))
+
+    # Increase the offset for calibration
     def offsetInc(self):
         self.wrapper.offset_inc()
 
-    # Decrease the offset
+    # Decrease the offset for calibration
     def offsetDec(self):
         self.wrapper.offset_dec()
 
@@ -204,3 +221,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_NewBalanceBeamWidget):
 
     ### TODO Live Graph Widget Below This Line ###
 
+    def graph_data(self):
+        while self.running:
+            current_data = self.wrapper.retrieve_bb_data()
+
+            data = current_data.split('\n', 1)[0]
+            print(data)

@@ -75,9 +75,12 @@ class CyDAQ_CLI:
 		self.mock_mode = False
 		self.balance_beam_enabled = False
 		self.generating = False
+		self.bb_thread = None
+		self.stop_thread = True
+		self.bb_data = ""
 
 	def start(self):
-		"""Start the CLI tool. Blocks indefinately for user input until the quit command is issued."""
+		"""Start the CLI tool. Blocks indefinitely for user input until the quit command is issued."""
 
 		self._print_to_output(self.CLI_START_MESSAGE)
 	
@@ -201,7 +204,7 @@ class CyDAQ_CLI:
 					self._print_to_output("Balance Beam Mode is already enabled!")
 					continue
 				self._start_beam_mode()
-				Thread(target=self._temp_print_stuff)
+				#Thread(target=self._temp_print_stuff)
 				self.balance_beam_enabled = True
 				continue
 			elif command[0] == 'bb_stop':
@@ -522,11 +525,19 @@ class CyDAQ_CLI:
 	### Balance Beam Methods ###
 
 	def _start_beam_mode(self):
+		# Start Balance Beam Mode (Send Start Command)
 		self.cmd_obj.start_bb()
+
+		# Start thread to get buffer and print it
+		self.stop_thread = False
+		self.bb_thread = Thread(target=self._read_bb_buffer)
+		self.bb_thread.start()
 
 	def _stop_beam_mode(self):
 		self.cmd_obj.stop_bb()
 		self.balance_beam_enabled = False
+		self.stop_thread = True
+		self.bb_thread = None
 
 	def _update_constants(self, kp, ki, kd, N):
 		self.cmd_obj.update_constants(kp, ki, kd, N)
@@ -546,9 +557,21 @@ class CyDAQ_CLI:
 	def _resume_bb(self):
 		self.cmd_obj.resume_bb()
 
+	def _read_bb_buffer(self):
+		while not self.stop_thread:
+			buffer = self.cmd_obj.read_bb_buffer()
+			if self.wrapper_mode:
+				self.bb_data = self.bb_data + '\n' + buffer
+			else:
+				self._print_to_output(buffer, log_level="BB_LIVE")
+
+	# Public method to retrieve the current balance beam data when in wrapper mode
+	def get_bb_data(self):
+		return self.bb_data
+
 if __name__ == "__main__":
 	try:
 		cli = CyDAQ_CLI()
 		cli.start()
 	except Exception as e: # Doesn't catch keyboard interrupt
-		cli._print_to_output("exceptinon uncaught in CLI: " + traceback.format_exc())
+		cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())

@@ -34,6 +34,8 @@ class CLI:
 
     def __init__(self):
         self.log = ""
+        self.bb_log_thread = None
+        self.bb_log_mode = False
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
@@ -96,7 +98,11 @@ class CLI:
         response = ""
 
         if command != "q":
-            # Wait for response
+            # Wait for response, unless in balance beam mode
+            #if self.bb_log_mode:
+                #self.bb_log_thread = Thread(target=self._parse_bb_log)
+                #self.bb_log_thread.start()
+            #else:
             try:
                 self.p.expect(INPUT_CHAR)
             except pexpect.exceptions.EOF:
@@ -112,7 +118,6 @@ class CLI:
                 raise CLINoResponseException
             response = response.decode()
             response = response.strip()
-            seconds, minutes, hours = self.convertMillis(time.time())
 
             self.log = response + "\n" + self.log
             self.log = "Cmd: " + command + "\n" + self.log + "\n"
@@ -169,7 +174,12 @@ class CLI:
         try:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:
-            raise CLIException("Unable to parse ping response. Response was: {}".format(response))
+            if response == "":
+                raise CLIException("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? "
+                                   "Is there another instance running/connected to the CyDAQ? "
+                                   "Is there another program using that com port?")
+            else:
+                raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
     def close(self, **_):
         """Close the CLI tool"""
@@ -324,6 +334,24 @@ class CLI:
         hours = (millis / (1000 * 60 * 60)) % 24
         return seconds, minutes, hours
 
+    def retrieve_bb_data(self):
+        #while self.bb_log_mode:
+            #self.p.expect("%BB_LIVE% [0-9]*\.[0-9]+")
+            #try:
+            #    self.p.expect(INPUT_CHAR)
+            #except pexpect.exceptions.EOF:
+            #    raise CLICloseException(self.p.before)
+            #except pexpect.exceptions.TIMEOUT:
+            #    raise CLITimeoutException
+            #finally:
+            #    self.running_command = False
+            #response = self.p.before
+
+        currentData = CyDAQ_CLI.get_bb_data()
+        print(currentData)
+        self.log = self.log + '\n' + currentData
+
+        return currentData
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""
