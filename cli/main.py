@@ -104,6 +104,7 @@ class CyDAQ_CLI:
 			if command[0] == 'q' or command[0] == 'quit':
 				self._print_to_output("Terminating...\n")
 				if self.balance_beam_enabled:
+					self.stop_thread = True
 					self._stop_beam_mode() # Stop Balance Beam mode if running
 				break
 			elif command[0] == "" or command[0] == "\n":
@@ -560,10 +561,17 @@ class CyDAQ_CLI:
 	def _read_bb_buffer(self):
 		while not self.stop_thread:
 			buffer = self.cmd_obj.read_bb_buffer()
+			# Check for if the actual balance beam is not connected to the CyDAQ
+			if buffer == "" or buffer == " " or buffer == "\r":
+				continue
+			if buffer == "0xc9\r":
+				self._print_to_output("Balance Beam Not Connected!", log_level="ERROR")
+				self.stop_thread = True
+				self.balance_beam_enabled = False
+				return
 			if self.wrapper_mode:
 				self.bb_data = self.bb_data + '\n' + buffer
-			else:
-				self._print_to_output(buffer, log_level="BB_LIVE")
+			self._print_to_output(buffer, log_level="BB_LIVE")
 
 	# Public method to retrieve the current balance beam data when in wrapper mode
 	def get_bb_data(self):

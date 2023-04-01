@@ -34,6 +34,10 @@ class ctrl_comm:
             self.mock_thread = thread
             thread.start()
 
+            # Create a seperate thread that just sends tons of data to the master device
+            self.mock_bb_thread = threading.Thread(target=self._mock_bb_data, args=[master])
+            self._mock_bb_thread_running = False
+
     # def __del__(self):
     #     self.kill_mock()
 
@@ -47,6 +51,7 @@ class ctrl_comm:
             print("Command recieved in mock listener: ", res)
 
             if res == b'stop!':
+                self._mock_bb_thread_running = False
                 break
             if res == b'@\x07!':  # ping
                 os.write(port, b'@')
@@ -69,13 +74,15 @@ class ctrl_comm:
             elif res == b'@\x16!':  # bb_start
                 time.sleep(0.01)
                 os.write(port, b'@')
-                os.write(port, b'\xd5\x07' * 10_000_000)
-                os.write(port, b'@ACK')
+                os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'!q':  # bb_stop
+                self._mock_bb_thread_running = True
+                self.mock_bb_thread.start()
+            elif res == b'q!':  # bb_stop
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
+                self._mock_bb_thread_running = False
             elif res == b'pause on!':  # bb_pause
                 os.write(port, b'@')
                 os.write(port, b'ACK')
@@ -100,6 +107,16 @@ class ctrl_comm:
                 os.write(port, b'ERR')
                 os.write(port, b'!')
         print("listener on port {} stopped".format(port))
+
+    # Method that runs and sends data to the mock listening port for fake balance beam data
+    def _mock_bb_data(self, port):
+        while self._mock_thread_running and self._mock_bb_thread_running:
+            os.write(port, b'4')
+            os.write(port, b'.')
+            os.write(port, b'0')
+            os.write(port, b'0')
+            os.write(port, b'0')
+            os.write(port, b' ')
 
     def _init_comm(self):
         self.__s_comm = serial.Serial()
