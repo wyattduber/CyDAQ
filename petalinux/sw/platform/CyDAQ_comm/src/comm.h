@@ -12,21 +12,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
+#include <string.h>
 
 #include "corrections.h"
-#include "shared_objects.c"
-
-//#include "xparameters.h"
-//#include "xplatform_info.h"
-//#include "xuartps.h"
-//#include "xil_exception.h"
-//#include "xil_printf.h"
-//#include "xadc.h"
-//#include "filter.h"
 #include "shared_definitions.h"
-//#include "dac80501.h"
-//#include "ads7047.h"
-//#include "bb_controller.h"
 
 #ifdef XPAR_INTC_0_DEVICE_ID
 #include "xintc.h"

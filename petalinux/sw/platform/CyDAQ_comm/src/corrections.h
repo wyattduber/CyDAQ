@@ -5,6 +5,7 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 
 //there are more then this, but I'm not sure how to include them in the petalinux side
+//probably just not use?
 #define XST_SUCCESS 0L
 #define XST_FAILURE 1L
 

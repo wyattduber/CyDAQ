@@ -15,9 +15,7 @@ volatile u32 SampleCount = 0;
 static int serial_port;
 static u8 receiveBuffer[TEST_BUFFER_SIZE];	// Buffer for receiving UART data
 
-volatile bool fifoFlag;
 int TotalErrorCount;
-
 
 //TODO most likely not needed
 volatile int TotalReceivedCount;// These counters are used to determine when the
@@ -27,9 +25,6 @@ volatile int TotalSentCount;	//   entire buffer has been sent and received.
  * Initializes UART
  */
 int commInit() {
-	int status = 0;
-	fifoFlag = false; //?
-
     serial_port = open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
     printf("Serial_port: %d\n", serial_port);
     if(serial_port < 0){
@@ -38,20 +33,17 @@ int commInit() {
 	}
 
     struct termios tty;
-    struct termios tty_old;
     memset (&tty, 0, sizeof tty);
     if ( tcgetattr ( serial_port, &tty ) != 0 ) {
        printf("Error getting attributes");
        return XST_FAILURE;
     }
-    /* Save old tty parameters */
-    tty_old = tty;
 
-    /* Set Baud Rate */
+    //Set Baud Rate
     cfsetospeed (&tty, (speed_t)B9600);
     cfsetispeed (&tty, (speed_t)B9600);
 
-    /* Setting other Port Stuff */
+    //Setting other Port Stuff
     tty.c_cflag     &=  ~PARENB;            // Make 8n1
     tty.c_cflag     &=  ~CSTOPB;
     tty.c_cflag     &=  ~CSIZE;
@@ -62,10 +54,10 @@ int commInit() {
     tty.c_cc[VTIME]  =  5;                  // 0.5 seconds read timeout
     tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
 
-    /* Make raw */
+    //Make raw
     cfmakeraw(&tty);
 
-    /* Flush Port, then applies attributes */
+    //Flush Port, then applies attributes */
     tcflush( serial_port, TCIFLUSH );
     if ( tcsetattr ( serial_port, TCSANOW, &tty ) != 0) {
        printf("Error setting serial attributes");
