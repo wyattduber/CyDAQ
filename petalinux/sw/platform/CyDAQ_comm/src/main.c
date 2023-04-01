@@ -18,6 +18,8 @@ Note: The newline is required at the end for easy serial processing
 #include <stdio.h>
 #include <fcntl.h>
 
+#include "comm.h"
+
 int main(int argc, char **argv)
 {
 //    char tty[] = "/dev/ttyGS0";
@@ -25,22 +27,26 @@ int main(int argc, char **argv)
 
 	printf("cydaq-comm starting\n");
 
-	//TODO move to constant
-    int serial_port = open("/dev/ttyGS0", O_RDWR);
-    printf("Serial_port: %d\n", serial_port);
-    if(serial_port < 0){
-    	printf("Error opening serial port");
-    	return;
-    }
-    //basic example
-    while(1){
-		char read_buf[10];
-		int num_read = read(serial_port, &read_buf, 3);
-		printf("read_buf: |%s|\n", read_buf);
+	//TODO error handling from these functions
+	commInit();
+//	commReadTest();
+	commRXTask();
 
-		char msg[] = "@ACK!\n";
-		write(serial_port, msg, 6);
-    }
+//    int serial_port = open("/dev/ttyGS0", O_RDWR);
+//    printf("Serial_port: %d\n", serial_port);
+//    if(serial_port < 0){
+//    	printf("Error opening serial port");
+//    	return;
+//    }
+    //basic example
+//    while(1){
+//		char read_buf[10];
+//		int num_read = read(serial_port, &read_buf, 3);
+//		printf("read_buf: |%s|\n", read_buf);
+//
+//		char msg[] = "@ACK!\n";
+//		write(serial_port, msg, 6);
+//    }
 
 //    while(1){
 //    	char read_buf[10];
@@ -50,16 +56,8 @@ int main(int argc, char **argv)
 //    	}
 //    }
 
+
+
     return 0;
-}
-
-void respond_ack(int serial_port){
-	char * message = "!ACK@\n";
-	write(serial_port, message, 6);
-}
-
-void respond_err(int serial_port){
-	char * message = "!ERR@\n";
-	write(serial_port, message, 6);
 }
 
