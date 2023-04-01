@@ -1,0 +1,12 @@
+14:54:37 INFO  : Launching XSCT server: xsct -n  -interactive /home/corbin/sdmay23-47/petalinux/sw/platform/temp_xsdb_launch_script.tcl
+14:54:40 INFO  : Registering command handlers for Vitis TCF services
+14:54:43 INFO  : XSCT server has started successfully.
+14:54:43 INFO  : plnx-install-location is set to ''
+14:54:44 INFO  : Successfully done setting XSCT server connection channel  
+14:54:44 INFO  : Successfully done query RDI_DATADIR 
+14:54:44 INFO  : Successfully done setting workspace for the tool. 
+14:54:45 INFO  : Platform repository initialization has completed.
+14:57:23 INFO  : Result from executing command 'getProjects': CyDAQ_platform
+14:57:23 INFO  : Result from executing command 'getPlatforms': 
+15:00:02 ERROR : (XSDB Server)ERROR: [Hsi 55-1571] The design file /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/hw/CyDAQ_proto_1.xsa is already opened
+
