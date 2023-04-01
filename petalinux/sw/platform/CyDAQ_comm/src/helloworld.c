@@ -1,26 +1,65 @@
 /*
- * Copyright (c) 2012 Xilinx, Inc.  All rights reserved.
- *
- * Xilinx, Inc.
- * XILINX IS PROVIDING THIS DESIGN, CODE, OR INFORMATION "AS IS" AS A
- * COURTESY TO YOU.  BY PROVIDING THIS DESIGN, CODE, OR INFORMATION AS
- * ONE POSSIBLE   IMPLEMENTATION OF THIS FEATURE, APPLICATION OR
- * STANDARD, XILINX IS MAKING NO REPRESENTATION THAT THIS IMPLEMENTATION
- * IS FREE FROM ANY CLAIMS OF INFRINGEMENT, AND YOU ARE RESPONSIBLE
- * FOR OBTAINING ANY RIGHTS YOU MAY REQUIRE FOR YOUR IMPLEMENTATION.
- * XILINX EXPRESSLY DISCLAIMS ANY WARRANTY WHATSOEVER WITH RESPECT TO
- * THE ADEQUACY OF THE IMPLEMENTATION, INCLUDING BUT NOT LIMITED TO
- * ANY WARRANTIES OR REPRESENTATIONS THAT THIS IMPLEMENTATION IS FREE
- * FROM CLAIMS OF INFRINGEMENT, IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- */
+Starting point for CyDAQ communication application that runs on petalinux.
+
+It's function is to handle communication between the CyDAQ and the host PC it is plugged into. It does this in two different ways.
+
+1. Serial Communication - Commands
+- Reading and writing to /dev/ttyGS0
+
+2. Network Connection - Sending large data - petalinux statically assigns an IP
+- Petalinux statically assigns itself an ip of 169.254.7.2
+
+
+Serial commands come in the following format:  @command!\n
+For example: @7!\n = ping
+Note: The newline is required at the end for easy serial processing
+*/
 
 #include <stdio.h>
+#include <fcntl.h>
 
-int main()
+int main(int argc, char **argv)
 {
-    printf("Hello World\n");
+//    char tty[] = "/dev/ttyGS0";
+//    FILE* file = fopen(tty, "r+");
+
+	printf("cydaq-comm starting\n");
+
+	//TODO move to constant
+    int serial_port = open("/dev/ttyGS0", O_RDWR);
+    printf("Serial_port: %d\n", serial_port);
+    if(serial_port < 0){
+    	printf("Error opening serial port");
+    	return;
+    }
+    //basic example
+    while(1){
+		char read_buf[10];
+		int num_read = read(serial_port, &read_buf, 3);
+		printf("read_buf: |%s|\n", read_buf);
+
+		char msg[] = "@ACK!\n";
+		write(serial_port, msg, 6);
+    }
+
+//    while(1){
+//    	char read_buf[10];
+//    	int num_read = read(serial_port, &read_buf, 10);
+//    	for(int i = 0; i < num_read; i++){
+//
+//    	}
+//    }
 
     return 0;
 }
+
+void respond_ack(int serial_port){
+	char * message = "!ACK@\n";
+	write(serial_port, message, 6);
+}
+
+void respond_err(int serial_port){
+	char * message = "!ERR@\n";
+	write(serial_port, message, 6);
+}
+
