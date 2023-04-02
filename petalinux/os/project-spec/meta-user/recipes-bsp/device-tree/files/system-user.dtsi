@@ -15,6 +15,37 @@
 		drv-vbus;
 	};
 
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+		rproc_0_reserved: rproc@5f000000 {
+			no-map;
+			reg = <0x5f000000 0x1000000>;
+		};
+
+		transfer_buffer_reserved: transfer_buffer@5f000000 {
+			no-map;
+			reg = <0x5f000000 0x1000000>;
+		};
+	};
+
+	amba {
+		elf_ddr_0: ddr@0  {
+			compatible = "mmio-sram";
+			reg = <0x5f000000 0x00600000>;
+		};
+	};
+	
+	remoteproc0: remoteproc@0 {
+		compatible = "xlnx,zynq_remoteproc";
+		firmware = "firmware";
+		vring0 = <15>;
+		vring1 = <14>;
+		srams = <&elf_ddr_0>;
+	};
+
+
 };
 
 &gem0 {

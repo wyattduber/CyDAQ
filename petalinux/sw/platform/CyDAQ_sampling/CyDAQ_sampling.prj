@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ASCII"?>
-<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="CyDAQ_sampling" location="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_sampling" platform="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_proto_1/export/CyDAQ_proto_1/CyDAQ_proto_1.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" systemProject="CyDAQ_sampling_system" sysConfig="CyDAQ_proto_1" runtime="cpp" cpu="domain_ps7_cortexa9_1" cpuInstance="ps7_cortexa9_1" os="standalone" mssSignature="e3aac324dee6ff7160d0d8d05f6e5c00">
-  <configuration name="Debug" id="xilinx.gnu.armv7.exe.debug.116903442">
+<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="CyDAQ_sampling" location="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_sampling" platform="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/export/CyDAQ_standalone/CyDAQ_standalone.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" systemProject="CyDAQ_sampling_system" sysConfig="CyDAQ_standalone" runtime="C/C++" cpu="freertos10_xilinx_domain" cpuInstance="ps7_cortexa9_1" os="freertos10_xilinx" mssSignature="ff6435c42270d3214f68320292feca80">
+  <configuration name="Debug" id="xilinx.gnu.armv7.exe.debug.1142951613">
     <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
     <lastBuildOptions xsi:type="sdkproject:SdkOptions"/>
   </configuration>
-  <configuration name="Release" id="xilinx.gnu.armv7.exe.release.711555601" dirty="true">
+  <configuration name="Release" id="xilinx.gnu.armv7.exe.release.1801826517" dirty="true">
     <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
   </configuration>
-  <template appTemplateName="hello_world"/>
+  <template appTemplateName="openamp_echo_test" hasBspSettings="true"/>
 </sdkproject:SdkProject>

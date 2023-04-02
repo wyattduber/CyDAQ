@@ -3920,9 +3920,9 @@ CONFIG_bridge-utils=y
 #
 # packagegroup-petalinux-openamp 
 #
-# CONFIG_packagegroup-petalinux-openamp is not set
-# CONFIG_packagegroup-petalinux-openamp-dbg is not set
-# CONFIG_packagegroup-petalinux-openamp-dev is not set
+CONFIG_packagegroup-petalinux-openamp=y
+CONFIG_packagegroup-petalinux-openamp-dbg=y
+CONFIG_packagegroup-petalinux-openamp-dev=y
 
 #
 # packagegroup-petalinux-opencv 
@@ -4002,6 +4002,7 @@ CONFIG_auto-login=y
 # apps 
 #
 CONFIG_bootscript=y
+CONFIG_freertos-cydaq-sampling=y
 # CONFIG_gpio-demo is not set
 # CONFIG_peekpoke is not set
 

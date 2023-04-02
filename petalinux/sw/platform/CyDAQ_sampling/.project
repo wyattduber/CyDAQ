@@ -3,7 +3,7 @@
 	<name>CyDAQ_sampling</name>
 	<comment>Created by Vitis v2020.1</comment>
 	<projects>
-		<project>CyDAQ_proto_1</project>
+		<project>CyDAQ_standalone</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -3,9 +3,9 @@
     	
     <storageModule moduleId="org.eclipse.cdt.core.settings">
         		
-        <cconfiguration id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1593555077">
+        <cconfiguration id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1709064343">
             			
-            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1593555077" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1709064343" moduleId="org.eclipse.cdt.core.settings" name="Debug">
                 				
                 <externalSettings/>
                 				
@@ -21,17 +21,17 @@
             			
             <storageModule moduleId="cdtBuildSystem" version="4.0.0">
                 				
-                <configuration artifactName="${ProjName}" buildProperties="" description="" id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1593555077" name="Debug" parent="com.xilinx.sdx.system.managedbuilder.debugConfiguration">
+                <configuration artifactName="${ProjName}" buildProperties="" description="" id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1709064343" name="Debug" parent="com.xilinx.sdx.system.managedbuilder.debugConfiguration">
                     					
-                    <folderInfo id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1593555077." name="/" resourcePath="">
+                    <folderInfo id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1709064343." name="/" resourcePath="">
                         						
-                        <toolChain id="com.xilinx.sdx.system.managedbuilder.debug.toolChain.1057613608" name="System Toolchain" superClass="com.xilinx.sdx.system.managedbuilder.debug.toolChain">
+                        <toolChain id="com.xilinx.sdx.system.managedbuilder.debug.toolChain.689565530" name="System Toolchain" superClass="com.xilinx.sdx.system.managedbuilder.debug.toolChain">
                             							
-                            <targetPlatform id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1593555077..64424590" name=""/>
+                            <targetPlatform id="com.xilinx.sdx.system.managedbuilder.debugConfiguration.1709064343..362744796" name=""/>
                             							
-                            <builder buildPath="${workspace_loc:/CyDAQ_sampling_system}/Debug" enableAutoBuild="true" id="com.xilinx.sdx.system.managedbuilder.systemBuilder.1489523025" managedBuildOn="true" name="System Project Builder.Debug" superClass="com.xilinx.sdx.system.managedbuilder.systemBuilder"/>
+                            <builder buildPath="${workspace_loc:/CyDAQ_sampling_system}/Debug" enableAutoBuild="true" id="com.xilinx.sdx.system.managedbuilder.systemBuilder.1818778464" managedBuildOn="true" name="System Project Builder.Debug" superClass="com.xilinx.sdx.system.managedbuilder.systemBuilder"/>
                             							
-                            <tool id="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool.1100779679" name="System Builder" superClass="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool"/>
+                            <tool id="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool.1116593036" name="System Builder" superClass="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool"/>
                             						
                         </toolChain>
                         					
@@ -45,9 +45,9 @@
             		
         </cconfiguration>
         		
-        <cconfiguration id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.70028365">
+        <cconfiguration id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.1031433822">
             			
-            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.70028365" moduleId="org.eclipse.cdt.core.settings" name="Release">
+            <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.1031433822" moduleId="org.eclipse.cdt.core.settings" name="Release">
                 				
                 <externalSettings/>
                 				
@@ -63,17 +63,17 @@
             			
             <storageModule moduleId="cdtBuildSystem" version="4.0.0">
                 				
-                <configuration artifactName="${ProjName}" buildProperties="" description="" id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.70028365" name="Release" parent="com.xilinx.sdx.system.managedbuilder.releaseConfiguration">
+                <configuration artifactName="${ProjName}" buildProperties="" description="" id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.1031433822" name="Release" parent="com.xilinx.sdx.system.managedbuilder.releaseConfiguration">
                     					
-                    <folderInfo id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.70028365." name="/" resourcePath="">
+                    <folderInfo id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.1031433822." name="/" resourcePath="">
                         						
-                        <toolChain id="com.xilinx.sdx.system.managedbuilder.release.toolChain.165475830" name="System Toolchain" superClass="com.xilinx.sdx.system.managedbuilder.release.toolChain">
+                        <toolChain id="com.xilinx.sdx.system.managedbuilder.release.toolChain.752666901" name="System Toolchain" superClass="com.xilinx.sdx.system.managedbuilder.release.toolChain">
                             							
-                            <targetPlatform id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.70028365..412357563" name=""/>
+                            <targetPlatform id="com.xilinx.sdx.system.managedbuilder.releaseConfiguration.1031433822..1047876512" name=""/>
                             							
-                            <builder buildPath="${workspace_loc:/CyDAQ_sampling_system}/Release" enableAutoBuild="true" id="com.xilinx.sdx.system.managedbuilder.systemBuilder.9471138" managedBuildOn="true" name="System Project Builder.Release" superClass="com.xilinx.sdx.system.managedbuilder.systemBuilder"/>
+                            <builder buildPath="${workspace_loc:/CyDAQ_sampling_system}/Release" enableAutoBuild="true" id="com.xilinx.sdx.system.managedbuilder.systemBuilder.1543699737" managedBuildOn="true" name="System Project Builder.Release" superClass="com.xilinx.sdx.system.managedbuilder.systemBuilder"/>
                             							
-                            <tool id="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool.1287783441" name="System Builder" superClass="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool"/>
+                            <tool id="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool.1217617804" name="System Builder" superClass="com.xilinx.sdx.system.managedbuilder.toolchain.cfjoinTool"/>
                             						
                         </toolChain>
                         					
@@ -93,7 +93,7 @@
     	
     <storageModule moduleId="cdtBuildSystem" version="4.0.0">
         		
-        <project id="CyDAQ_sampling_system.com.xilinx.sdx.system.managedbuilder.projectType.1502780487" name="Vitis Embedded System Project" projectType="com.xilinx.sdx.system.managedbuilder.projectType"/>
+        <project id="CyDAQ_sampling_system.com.xilinx.sdx.system.managedbuilder.projectType.566431645" name="Vitis Embedded System Project" projectType="com.xilinx.sdx.system.managedbuilder.projectType"/>
         	
     </storageModule>
     	

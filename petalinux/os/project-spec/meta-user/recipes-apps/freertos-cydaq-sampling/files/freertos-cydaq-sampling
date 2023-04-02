@@ -1,0 +1,4 @@
+#!/bin/sh
+# This script isn't used, but the bb file in the directory above is used to put the CyDAQ_sampling.elf into petalinux
+echo "Hello PetaLinux World"
+
