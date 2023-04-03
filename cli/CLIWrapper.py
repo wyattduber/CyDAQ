@@ -1,5 +1,7 @@
 import os
+import pexpect
 from pexpect import popen_spawn
+from threading import Thread
 from waiting import wait
 import json
 import re
@@ -7,9 +9,8 @@ import csv
 import time
 import pandas
 
-import pexpect
-
 from main import CyDAQ_CLI
+cli_tool = CyDAQ_CLI()
 
 CLI_MAIN_FILE_NAME = "main.py"
 INPUT_CHAR = ">"
@@ -48,16 +49,16 @@ class CLI:
         # Wait for cli to start up. It will NOT be in wrapper mode yet
         # Also, check to make sure that the command shouldn't be another variation of the python command
         try:
-            self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)  # Check with `python3` first
+            self.p.expect(cli_tool.CLI_START_MESSAGE)  # Check with `python3` first
         except pexpect.exceptions.EOF:
             try:
                 pythonCmd = "python "  # Check for `python` next
                 self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
-                self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
+                self.p.expect(cli_tool.CLI_START_MESSAGE)
             except pexpect.exceptions.EOF:
                 pythonCmd = "py "  # Finally, check for `py` last
                 self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
-                self.p.expect(CyDAQ_CLI.CLI_START_MESSAGE)
+                self.p.expect(cli_tool.CLI_START_MESSAGE)
 
         # If the CyDAQ is not connected at this point the CLI will immedately say so
         try:
@@ -94,12 +95,15 @@ class CLI:
 
         response = ""
 
-        if command != "q":
-            # Wait for response, unless in balance beam mode
-            #if self.bb_log_mode:
-                #self.bb_log_thread = Thread(target=self._parse_bb_log)
-                #self.bb_log_thread.start()
-            #else:
+        if command == "bb_start":
+            self.bb_log_mode = True
+            self.bb_log_thread = Thread(target=self.retrieve_bb_data)
+            self.bb_log_thread.start()
+        elif command == "bb_stop":
+            self.bb_log_mode = False
+            self.bb_log_thread = None
+        elif command != "q":
+            # Wait for response
             try:
                 self.p.expect(INPUT_CHAR)
             except pexpect.exceptions.EOF:
@@ -121,7 +125,7 @@ class CLI:
             if wrapper_mode:
                 return self._parse_wrapper_mode_message(response)
             else:
-                if response.strip() == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
+                if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
                     raise cyDAQNotConnectedException
                 return response
 
@@ -145,13 +149,13 @@ class CLI:
         if len(matches) > 0:
             level = matches[0][0]
             message = matches[0][1].strip()
-            if level == CyDAQ_CLI.WRAPPER_INFO:
+            if level == cli_tool.WRAPPER_INFO:
                 return message
-            elif level == CyDAQ_CLI.WRAPPER_ERROR:
+            elif level == cli_tool.WRAPPER_ERROR:
                 self._error_parser(message)
-            elif level == CyDAQ_CLI.WRAPPER_IGNORE:
+            elif level == cli_tool.WRAPPER_IGNORE:
                 return ""
-            elif level == CyDAQ_CLI.WRAPPER_BB_LIVE:
+            elif level == cli_tool.WRAPPER_BB_LIVE:
                 return message
             else:
                 raise CLIUnknownLogLevelException
@@ -160,7 +164,7 @@ class CLI:
 
     def _error_parser(self, message):
         """Parses known error messages and throws the appropiate exception if needed. Otherwise, throws a generic exception."""
-        if message == CyDAQ_CLI.CYDAQ_NOT_CONNECTED:
+        if message == cli_tool.CYDAQ_NOT_CONNECTED:
             raise cyDAQNotConnectedException
         else:
             raise CLIException(message)
@@ -344,7 +348,7 @@ class CLI:
             #    self.running_command = False
             #response = self.p.before
 
-        currentData = CyDAQ_CLI.get_bb_data()
+        currentData = cli_tool.get_bb_data()
         print(currentData)
         self.log = self.log + '\n' + currentData
 

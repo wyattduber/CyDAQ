@@ -153,32 +153,15 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.mainWindow.debug.log_timer.setInterval(0)
 
         #Start Graphing of Data
-        #self.graph_thread = Thread(target=self.graph_data)
-        #self.graph_thread.start()
+        self.graph_thread = Thread(target=self.graph_data)
+        self.graph_thread.start()
 
         # Start Balance Beam Mode from Wrapper
-        # self.wrapper.bb_log_mode = True
         self.wrapper.start_bb()
         self.start_time = time.time()
 
         # TODO Remove later (temporarily here for testing)
-        with open("sin.csv", 'r') as file:
-            csvreader = csv.reader(file)
-
-            for row in csvreader:
-                # If paused, just spin in a loop and do nothing until un-paused
-                while self.paused:
-                    pass
-
-                timestamp = float(row[0])
-                mid_px = float(row[1])
-
-                self.mid_connector.cb_append_data_point(mid_px, timestamp)
-                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
-                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
-
-                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep((100 / CONVERT_SEC_TO_MS))
+        #Thread(target=self._graph_random_stuff).start()
 
     def stop(self):
         self.running = False
@@ -246,3 +229,22 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             print(data)
 
             self.plot_data[f"{time.time() - self.start_time}"] = data
+
+    def _graph_random_stuff(self):
+        with open("\\\\my.files.iastate.edu\\Users\\wyattd\\Desktop\\sdmay23-47\\gui\\sin.csv", 'r') as file:
+            csvreader = csv.reader(file)
+
+            for row in csvreader:
+                # If paused, just spin in a loop and do nothing until un-paused
+                while self.paused:
+                    pass
+
+                timestamp = float(row[0])
+                mid_px = float(row[1])
+
+                self.mid_connector.cb_append_data_point(mid_px, timestamp)
+                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
+                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
+
+                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
+                time.sleep((100 / CONVERT_SEC_TO_MS))
