@@ -669,15 +669,19 @@ class cmd:
 
             while byte_value != ' ': # Check for each number
                 byte_value = self.ctrl_comm_obj.read_byte()
-                if byte_value == False:
+                if type(byte_value) == type(False):
                     continue
                 if byte_value == '-': # If value is negative
                     for i in range(0, 6):
+                        if byte_value == ' ': # number sent might be less than 3 decimals
+                            break
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer
                 elif byte_value.isnumeric(): # If value is positive
                     for i in range(0, 5):
+                        if byte_value == ' ': # number sent might be less than 3 decimals
+                            break
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer

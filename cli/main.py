@@ -2,6 +2,7 @@ from copy import deepcopy
 from scipy.io import savemat
 from threading import Thread
 import datetime
+import re
 import os
 import json
 import time
@@ -104,7 +105,6 @@ class CyDAQ_CLI:
 			if command[0] == 'q' or command[0] == 'quit':
 				self._print_to_output("Terminating...\n")
 				if self.balance_beam_enabled:
-					self.stop_thread = True
 					self._stop_beam_mode() # Stop Balance Beam mode if running
 				break
 			elif command[0] == "" or command[0] == "\n":
@@ -569,6 +569,12 @@ class CyDAQ_CLI:
 				self.stop_thread = True
 				self.balance_beam_enabled = False
 				return
+
+			# Check if the buffer has improper syntax, and throw it out
+			pattern = re.compile("\d\.[0-9]+")
+			neg_pattern = re.compile("-\d\.[0-9]+")
+			if not pattern.match(buffer) and not neg_pattern.match(buffer):
+				continue
 			if self.wrapper_mode:
 				self.bb_data = self.bb_data + '\n' + buffer
 			self._print_to_output(buffer, log_level="BB_LIVE")
