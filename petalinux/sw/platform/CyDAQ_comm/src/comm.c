@@ -26,11 +26,11 @@ volatile int TotalSentCount;	//   entire buffer has been sent and received.
  */
 int commInit() {
     serial_port = open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
-    printf("Serial_port: %d\n", serial_port);
     if(serial_port < 0){
 		printf("Error opening serial port");
 		return XST_FAILURE;
 	}
+    printf("Reading serial port on fd: %d\n", serial_port);
 
     struct termios tty;
     memset (&tty, 0, sizeof tty);

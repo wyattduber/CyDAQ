@@ -57,5 +57,5 @@ u32 commUartWaitReceive(u8 *bufferPtr, char endChar1, char endChar2);
 
 void respond_ack(int serial_port);
 void respond_err(int serial_port);
-
+int commInit();
 #endif /* SRC_COMM_H_ */

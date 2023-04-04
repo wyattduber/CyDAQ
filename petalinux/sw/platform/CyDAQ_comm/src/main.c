@@ -18,17 +18,36 @@ because @ = 0x40 and ! = 0x21
 
 #include <stdio.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 #include "comm.h"
 #include "main.h"
+#include "proxy_app.h"
 
 int main(int argc, char **argv){
 
 	printf("cydaq-comm starting\n");
 
-	//TODO error handling from these functions
-	commInit();
-	commRXTask();
+	//recieving data from PC (UART/USB) and receiving messages from the sampling core are
+	//both blocking, so they must be ran "concurrently"
+	if(fork() == 0){
+		//child
+		printf("RPC Listener started!\n");
+		rpc_init_listen();
+//		rpc_handle();
+		printf("RPC Listener stopped!\n");
+	}else{
+		//parent
+		commInit();
+		printf("Serial Listener started!!\n");
+		commRXTask();
+		printf("Serial Listener stopped!\n");
+
+		//must wait for RPC Listener to close
+		//TODO maybe force it to close if ever reach here?
+		wait(NULL);
+		printf("Serial Listener fork stopped\n");
+	}
 
     return 0;
 }
