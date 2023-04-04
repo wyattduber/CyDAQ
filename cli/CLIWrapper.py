@@ -95,14 +95,7 @@ class CLI:
 
         response = ""
 
-        if command == "bb_start":
-            self.bb_log_mode = True
-            self.bb_log_thread = Thread(target=self.retrieve_bb_data)
-            self.bb_log_thread.start()
-        elif command == "bb_stop":
-            self.bb_log_mode = False
-            self.bb_log_thread = None
-        elif command != "q":
+        if command != "q":
             # Wait for response
             try:
                 self.p.expect(INPUT_CHAR)
@@ -121,13 +114,56 @@ class CLI:
             response = response.strip()
 
             self.log = response + "\n" + self.log
-            self.log = "Cmd: " + command + "\n" + self.log + "\n"
+            if command != "bb_fetch_pos": # Can get a bit spammy
+                self.log = "Cmd: " + command + "\n" + self.log + "\n"
             if wrapper_mode:
                 return self._parse_wrapper_mode_message(response)
             else:
                 if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
                     raise cyDAQNotConnectedException
                 return response
+            if command == "bb_fetch_pos":
+                return response
+
+    def _send_command_async(self, command, wrapper_mode=True, **_):
+        """Send a command to the cyDAQ and returns the result w/out waiting"""
+        if not self.connectionEnabled:
+            return
+
+        # Send command
+        try:
+            self.p.sendline(command)
+        except OSError as e:
+            print("OSError in wrapper _send_command for command:", command)
+            print("OsError: ", e)
+            raise cyDAQNotConnectedException
+
+        response = ""
+
+        # Wait for response
+        try:
+            self.p.expect(INPUT_CHAR)
+        except pexpect.exceptions.EOF:
+            raise CLICloseException(self.p.before)
+        except pexpect.exceptions.TIMEOUT:
+            raise CLITimeoutException
+        finally:
+            self.running_command = False
+        response = self.p.before
+
+        # Parse response
+        if response is None:
+            raise CLINoResponseException
+        response = response.decode()
+        response = response.strip()
+
+        self.log = response + "\n" + self.log
+        if wrapper_mode:
+            return self._parse_wrapper_mode_message(response)
+        else:
+            if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
+                raise cyDAQNotConnectedException
+            return response
 
     def _parse_wrapper_mode_message(self, line):
         """
@@ -258,9 +294,22 @@ class CLI:
         return response == "True"
 
     def start_bb(self, **_):
+        #try:
+        #    self.p.expect('Start')
+        #    print("flag7")
+        #except pexpect.exceptions.EOF:
+        #    raise CLICloseException(self.p.before)
+        #except pexpect.exceptions.TIMEOUT:
+        #    raise CLITimeoutException
+        #finally:
+        self.bb_log_mode = True
+        self.bb_log_thread = Thread(target=self.retrieve_bb_pos)
+        self.bb_log_thread.start()
         self._send_command("bb_start")
 
     def stop_bb(self, **_):
+        self.bb_log_mode = False
+        self.bb_log_thread = None
         self._send_command("bb_stop")
 
     def set_constants(self, kp, ki, kd, N, **_):
@@ -335,24 +384,18 @@ class CLI:
         hours = (millis / (1000 * 60 * 60)) % 24
         return seconds, minutes, hours
 
-    def retrieve_bb_data(self):
-        #while self.bb_log_mode:
-            #self.p.expect("%BB_LIVE% [0-9]*\.[0-9]+")
-            #try:
-            #    self.p.expect(INPUT_CHAR)
-            #except pexpect.exceptions.EOF:
-            #    raise CLICloseException(self.p.before)
-            #except pexpect.exceptions.TIMEOUT:
-            #    raise CLITimeoutException
-            #finally:
-            #    self.running_command = False
-            #response = self.p.before
+    def retrieve_bb_pos(self):
+        #print(f"Incoming data: {self.p.read()}")
+        #print(f"RESPONSE: {self.p.before}")
+        response = self._send_command("bb_fetch_pos")
 
-        currentData = cli_tool.get_bb_data()
-        print(currentData)
-        self.log = self.log + '\n' + currentData
+        #print(f"RESPONSE: {response}")
 
-        return currentData
+        #currentData = cli_tool.get_bb_data()
+        #print(response)
+        #self.log = self.log + '\n' + response
+        #self.log = self.log + '\n' + "proof that this is working"
+        return response
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""

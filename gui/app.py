@@ -260,6 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
             if self.connected:
+                self.balance_beam.running = False
                 self.wrapper.stop_bb()
             event.accept()
             if main.widgets[3].window is not None:

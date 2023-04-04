@@ -48,6 +48,7 @@ class CyDAQ_CLI:
 	mock, (enable/disable/status)\t Enable CyDAQ serial mocking mode
 	bb_start\t\t\t Start Balance Beam Mode
 	bb_stop\t\t\t\t Stop Balance Beam Mode
+	bb_fetch_pos\t\t\t Fetch the current positionf the balance beam
 	bb_const, (kp) (ki) (kd) (N)\t Send updated constants for bb calc
 	bb_set, (value)\t\t\t Send updated set value for bb calc
 	bb_offset_inc\t\t\t Increase the balance beam offset
@@ -78,7 +79,7 @@ class CyDAQ_CLI:
 		self.generating = False
 		self.bb_thread = None
 		self.stop_thread = True
-		self.bb_data = ""
+		self.bb_pos = ""
 
 	def start(self):
 		"""Start the CLI tool. Blocks indefinitely for user input until the quit command is issued."""
@@ -204,8 +205,8 @@ class CyDAQ_CLI:
 				if self.balance_beam_enabled:
 					self._print_to_output("Balance Beam Mode is already enabled!")
 					continue
+				self.bb_pos = "-9"
 				self._start_beam_mode()
-				#Thread(target=self._temp_print_stuff)
 				self.balance_beam_enabled = True
 				continue
 			elif command[0] == 'bb_stop':
@@ -213,6 +214,12 @@ class CyDAQ_CLI:
 					self._print_to_output("Balance Beam Mode is not enabled!")
 					continue
 				self._stop_beam_mode()
+				continue
+			elif command[0] == 'bb_fetch_pos':
+				if not self.balance_beam_enabled:
+					self._print_to_output("Balance Beam Mode is not enabled!")
+					continue
+				self._print_to_output(self.bb_pos, log_level="BB_LIVE")
 				continue
 			elif command[0] == 'bb_const':
 				if not self.balance_beam_enabled:
@@ -576,12 +583,9 @@ class CyDAQ_CLI:
 			if not pattern.match(buffer) and not neg_pattern.match(buffer):
 				continue
 			if self.wrapper_mode:
-				self.bb_data = self.bb_data + '\n' + buffer
-			self._print_to_output(buffer, log_level="BB_LIVE")
-
-	# Public method to retrieve the current balance beam data when in wrapper mode
-	def get_bb_data(self):
-		return self.bb_data
+				self.bb_pos = buffer
+			else:
+				self._print_to_output(buffer, log_level="BB_LIVE")
 
 if __name__ == "__main__":
 	try:

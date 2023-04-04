@@ -3,6 +3,7 @@ import csv
 import time
 from typing import Union
 from threading import Thread
+from waiting import wait
 
 from PyQt5.QtWidgets import QFileDialog
 from scipy.io import savemat
@@ -46,7 +47,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.graph_thread = None
         self.plot_data = {}
         self.start_time = 0
-        self.filename = "data.mat"
+        self.filename = f"data-{time.time()}.mat"
 
         # Balance Beam Input Values (Default)
         self.kp = 0.8
@@ -92,8 +93,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
         self.pause_btn.clicked.connect(self.pause)
 
-        self.low_sample: Union[float, None] = -5
-        self.high_sample: Union[float, None] = 5
+        self.low_sample: Union[float, None] = -9
+        self.high_sample: Union[float, None] = 9
 
         # Setup bottom axis with TIME tick format
         self.axis_limit = LiveAxisRange(fixed_range=[1, 10, 1, 10])
@@ -115,9 +116,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.low_plot = LiveLinePlot(pen="orange", width=2)
         self.high_plot = LiveLinePlot(pen="blue", width=2)
 
-        self.mid_connector = DataConnector(self.mid_plot, max_points=5)
-        self.low_connector = DataConnector(self.low_plot, max_points=5)
-        self.high_connector = DataConnector(self.high_plot, max_points=5)
+        self.mid_connector = DataConnector(self.mid_plot, max_points=100)
+        self.low_connector = DataConnector(self.low_plot, max_points=100)
+        self.high_connector = DataConnector(self.high_plot, max_points=100)
 
         # Add the plots and the graph view
         self.graph_view.addItem(self.mid_plot)
@@ -152,13 +153,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.mainWindow.stopPingTimer()
         self.mainWindow.debug.log_timer.setInterval(0)
 
-        #Start Graphing of Data
-        self.graph_thread = Thread(target=self.graph_data)
-        self.graph_thread.start()
-
         # Start Balance Beam Mode from Wrapper
         self.wrapper.start_bb()
         self.start_time = time.time()
+
+        # Wait to make sure that balance beam logging has started
+        wait(lambda: self.wrapper.bb_log_mode)
+
+        #Start Graphing of Data
+        self.graph_thread = Thread(target=self.graph_data)
+        self.graph_thread.start()
 
         # TODO Remove later (temporarily here for testing)
         #Thread(target=self._graph_random_stuff).start()
@@ -223,12 +227,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
     def graph_data(self):
         while self.running:
-            current_data = self.wrapper.retrieve_bb_data()
-
-            data = current_data.split('\n', 1)[0]
-            print(data)
-
-            self.plot_data[f"{time.time() - self.start_time}"] = data
+            current_data = self.wrapper.retrieve_bb_pos()
+            if current_data == "" or self.paused:
+                continue
+            curr_time = time.time() - self.start_time
+            self.plot_data[f"{curr_time}"] = current_data
+            self.mid_connector.cb_append_data_point(float(current_data), curr_time)
+            self.low_connector.cb_append_data_point(self.low_sample, curr_time)
+            self.high_connector.cb_append_data_point(self.high_sample, curr_time)
 
     def _graph_random_stuff(self):
         with open("\\\\my.files.iastate.edu\\Users\\wyattd\\Desktop\\sdmay23-47\\gui\\sin.csv", 'r') as file:
