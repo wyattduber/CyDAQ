@@ -1,5 +1,4 @@
 # Standard Python Packages
-import csv
 import time
 from typing import Union
 from threading import Thread
@@ -12,6 +11,7 @@ from scipy.io import savemat
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
 from PyQt5.Qt import QMessageBox
+from PyQt5.Qt import QProgressBar
 from PyQt5.QtGui import QDoubleValidator
 
 # pglive Packages
@@ -46,6 +46,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
         self.running = False
+        self.checking_connection = False
         self.graph_thread = None
         self.plot_data = {}
         self.start_time = 0
@@ -82,18 +83,18 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         ### Below are the methods called when buttons are pressed ###
 
         # Home Button
-        self.home_btn.clicked.connect(self.home)
+        self.home_btn.clicked.connect(lambda: self.pre_btn_checks("home"))
 
         # Widget Buttons
-        self.start_btn.clicked.connect(self.start)
-        self.stop_btn.clicked.connect(self.stop)
-        self.send_constants_btn.clicked.connect(self.sendConstants)
-        self.send_set_point_btn.clicked.connect(self.sendSetPoint)
-        self.save_step_btn.clicked.connect(self.saveStep)
-        self.save_plot_data_btn.clicked.connect(lambda: Thread(target=self.savePlotData).start())
-        self.offset_inc_btn.clicked.connect(self.wrapper.offset_inc)
-        self.offset_dec_btn.clicked.connect(self.wrapper.offset_dec)
-        self.pause_btn.clicked.connect(self.pause)
+        self.start_btn.clicked.connect(lambda: self.pre_btn_checks("start"))
+        self.stop_btn.clicked.connect(lambda: self.pre_btn_checks("stop"))
+        self.send_constants_btn.clicked.connect(lambda: self.pre_btn_checks("send_constants"))
+        self.send_set_point_btn.clicked.connect(lambda: self.pre_btn_checks("send_set"))
+        self.save_step_btn.clicked.connect(lambda: self.pre_btn_checks("save_step"))
+        self.save_plot_data_btn.clicked.connect(lambda: self.pre_btn_checks("save_plot_data"))
+        self.offset_inc_btn.clicked.connect(lambda: self.pre_btn_checks("offset_inc"))
+        self.offset_dec_btn.clicked.connect(lambda: self.pre_btn_checks("offset_dec"))
+        self.pause_btn.clicked.connect(lambda: self.pre_btn_checks("pause"))
 
         self.low_sample: Union[float, None] = -9
         self.high_sample: Union[float, None] = 9
@@ -142,23 +143,91 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         # self.connection_status_label.setText("Not Connected!")
         pass
 
-    def home(self):
-        if self.running:
-            self.stop()
-        self.mainWindow.switchToModeSelector(self.prev_geometry)
-
-    # Start the balance beam with default values
-    def start(self):
-        if not self.mainWindow.connected or self.running:
+    def pre_btn_checks(self, btn):
+        """When a button is pressed, check the various conditions
+           that need to be met for each button to work properly"""
+        if btn == "home":
+            if self.running:
+                self.stop()
+            self.mainWindow.switchToModeSelector(self.prev_geometry)
+            return
+        if btn == "save_plot_data":
+            if not self.running and len(self.plot_data) == 0:
+                self._show_error("No Plot Data to Save!")
+            else:
+                self.savePlotData()
+            return
+        elif btn == "save_step":
+            pass # TODO Not sure what save step is
             return
 
+        # Now handle commands that require the CyDAQ's connection
+        # Or balance beam mode to be enabled (Seperate checks)
+
+        if not self.mainWindow.connected:
+            self._show_error("CyDAQ is not Connected!")
+            return
+
+        if btn == "start":
+            if self.running:
+                self._show_error("Balance Beam is already running!")
+            else:
+                self.start()
+            return
+
+        if not self.running:
+            self._show_error("Balance Beam is not running!")
+            return
+
+        if btn == "stop":
+            self.stop()
+        elif btn == "send_constants":
+            self.sendConstants()
+        elif btn == "send_set":
+            self.sendSetPoint()
+        elif btn == "offset_inc":
+            self.offsetInc()
+        elif btn == "offset_dec":
+            self.offsetDec()
+        elif btn == "pause":
+            self.pause()
+
+    # Start menu with a fancy loading bar while checking cydaq bb status
+    def start(self):
+        # Start checking status in the background
+        Thread(target=self.start_bb_mode).start()
+        self.checking_connection = True
+
+        # In the meantime, show a progress bar window
+        # This should keep the GUI from freezing and show the user what is happening
+        self.pbar = QProgressBar()
+        self.pbar.setGeometry(960, 540, 60, 80)
+        self.pbar.setWindowTitle("Checking Balance Beam Status...")
+        self.pbar.show()
+
+        # Do a small loop having the progress bar increase
+        i = 0
+        while self.checking_connection:
+            i += 1
+            if i > 100:
+                i = 0
+            self.pbar.setValue(i)
+            time.sleep(0.05)
+        self.pbar.close()
+
+
+    # Start the balance beam with default values
+    def start_bb_mode(self):
         # Start Balance Beam Mode from Wrapper
-        if not self.wrapper.start_bb():
-            errorbox = QMessageBox(self)
-            errorbox.setWindowTitle("Error")
-            errorbox.setText("Balance Beam Not Connected!")
-            errorbox.setIcon(QMessageBox.Critical)
-            errorbox.exec()
+        try:
+            if not self.wrapper.start_bb():
+                self._show_error("Balance Beam Not Connected!")
+                self.checking_connection = False
+                return
+            self.checking_connection = False
+        except Exception:
+            self._show_error("Balance Beam Not Connected!")
+            self.checking_connection = False
             return
 
         # Once balance beam is connected, start beam mode
@@ -234,12 +303,31 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             self.wrapper.pause_bb()
             self.paused = True
 
+    def _show_error(self, message):
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()
+
     ### TODO Live Graph Widget Below This Line ###
 
     def graph_data(self):
         while self.running:
-            current_data = self.wrapper.retrieve_bb_pos()
-            if current_data == "" or self.paused:
+            try:
+                current_data = self.wrapper.retrieve_bb_pos()
+            except Exception:
+                self._show_error("Balance Beam Not Connected!")
+                self.running = False
+                return
+
+            # Check if the data isn't actually coming through
+            if current_data == "" or current_data == "-9" or self.paused:
+                i =+ 1
+                if i > 100:
+                    self._show_error("Balance Beam Not Connected!")
+                    self.running = False
+                    return
                 continue
             curr_time = time.time() - self.start_time
             self.plot_data[f"{curr_time}"] = current_data

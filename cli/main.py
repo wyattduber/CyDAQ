@@ -105,38 +105,38 @@ class CyDAQ_CLI:
             command = [s.strip(" ") for s in command]
 
             # First process commands that don't require direct connection to the CyDAQ
-            if command[0] == 'q' or command[0] == 'quit':
+            if command[0].lower() == 'q' or command[0].lower() == 'quit':
                 self._print_to_output("Terminating...\n")
                 if self.balance_beam_enabled:
                     self._stop_beam_mode()  # Stop Balance Beam mode if running
                 break
             elif command[0] == "" or command[0] == "\n":
                 continue
-            elif command[0] == 'h' or command[0] == 'help':
+            elif command[0].lower() == 'h' or command[0].lower() == 'help':
                 self._print_help(False)
                 continue
-            elif command[0] == 'configure':
+            elif command[0].lower() == 'configure':
                 self.config = self._construct()
                 continue
-            elif command[0] == 'clear':
+            elif command[0].lower() == 'clear':
                 self.config = self.default_config.copy()
                 self._print_to_output("success")
                 continue
-            elif command[0] == 'print':
+            elif command[0].lower() == 'print':
                 self._print_to_output(json.dumps(self.config), self.WRAPPER_INFO)
                 continue
-            elif command[0] == 'set':
+            elif command[0].lower() == 'set':
                 if len(command) == 3:
                     self._update_single_config(command[1], command[2])
                 else:
                     self._print_to_output("Invalid syntax. Ex: set, Sample Rate, 200")
                 continue
-            elif command[0] == 'setm':
+            elif command[0].lower() == 'setm':
                 raw_json = raw_command.split(',', 1)[1]
                 self._print_to_output("setm json: {0}".format(raw_json))
                 self._update_multiple_config(raw_json)
                 continue
-            elif command[0] == 'wrapper':
+            elif command[0].lower() == 'wrapper':
                 if len(command) == 2:
                     if command[1] == 'enable':
                         self.wrapper_mode = True
@@ -147,7 +147,7 @@ class CyDAQ_CLI:
                 else:
                     self._print_to_output("Invalid syntax. Ex: wrapper, enable/disable")
                 continue
-            elif command[0] == 'mock':
+            elif command[0].lower() == 'mock':
                 if len(command) == 2:
                     if command[1] == 'enable' or command[1] == 'e':
                         if self.mock_mode:
@@ -175,25 +175,25 @@ class CyDAQ_CLI:
                 continue
 
             # Next check for commands that require direct connection to CyDAQ.
-            if command[0] == 'ping' or command[0] == 'p':
+            if command[0].lower() == 'ping' or command[0] == 'p':
                 self._ping()
                 continue
-            elif command[0] == 'send':
+            elif command[0].lower() == 'send':
                 self._send()
                 continue
-            elif command[0] == 'flush':
+            elif command[0].lower() == 'flush':
                 self.cmd_obj.flush()
                 continue
-            elif command[0] == 'start':
+            elif command[0].lower() == 'start':
                 self._start_sampling()
                 continue
-            elif command[0] == "stop":
+            elif command[0].lower() == "stop":
                 if len(command) == 1:
                     self._stop_sampling()
                 elif len(command) == 2:
                     self._stop_sampling(outFile=command[1])
                 continue
-            elif command[0] == 'generate':
+            elif command[0].lower() == 'generate':
                 if not self.generating:
                     self.cmd_obj.send_start_gen()
                     self.generating = True
@@ -203,61 +203,43 @@ class CyDAQ_CLI:
                     self.generating = not self.generating
                     self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
                 continue
-            elif command[0] == 'bb_start':
+            elif command[0].lower() == 'bb_start':
                 if self.balance_beam_enabled:
                     self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
                     continue
-                self.bb_pos = "-9"
+                self.bb_pos = "-9"  # Default start value for plotting
                 self._start_beam_mode()
-                self.balance_beam_enabled = True
                 continue
-            elif command[0] == 'bb_stop':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+
+            # The following commands require that the balance beam mode is already enabled
+            # If the balance beam mode is not enabled, let the user know and deny the command
+            if not self.balance_beam_enabled:
+                self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
+                continue
+
+            if command[0].lower() == 'bb_stop':
                 self._stop_beam_mode()
                 continue
-            elif command[0] == 'bb_fetch_pos':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_fetch_pos':
                 self._print_to_output(self.bb_pos, log_level="BB_LIVE")
                 continue
-            elif command[0] == 'bb_const':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_const':
                 args = command[1].split(' ')
                 self._update_constants(args[0], args[1], args[2], args[3])
                 continue
-            elif command[0] == 'bb_set':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_set':
                 self._update_set(command[1])
                 continue
-            elif command[0] == 'bb_offset_inc':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_offset_inc':
                 self._offset_inc()
                 continue
-            elif command[0] == 'bb_offset_dec':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_offset_dec':
                 self._offset_dec()
                 continue
-            elif command[0] == 'bb_pause':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_pause':
                 self._pause_bb()
                 continue
-            elif command[0] == 'bb_resume':
-                if not self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
-                    continue
+            elif command[0].lower() == 'bb_resume':
                 self._resume_bb()
                 continue
 
@@ -537,8 +519,9 @@ class CyDAQ_CLI:
         # Start Balance Beam Mode (Send Start Command)
         self.cmd_obj.start_bb()
 
-        # Check and see if the buffer ever changes to numeric
-        # If it does, start checking for a numeric value
+        # Check and see if the buffer returns false, or a number
+        # If it returns a number, balance beam is connected and functional
+        # If it returns false, the balance beam is not connected and thread should not start
         buffer = self.cmd_obj.read_bb_buffer()
         if isinstance(buffer, bool):
             if not buffer:
@@ -546,6 +529,7 @@ class CyDAQ_CLI:
                 return
 
         # Start thread to get buffer and print it
+        self.balance_beam_enabled = True
         self.stop_thread = False
         self.bb_thread = Thread(target=self._read_bb_buffer)
         self.bb_thread.start()
@@ -586,7 +570,7 @@ class CyDAQ_CLI:
                     self.stop_thread = True
                     self.balance_beam_enabled = False
                     return
-            if buffer == "0xc9\r": # Balance beam not connected code
+            if buffer == "0xc9\r":  # Balance beam not connected code
                 self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                 self.stop_thread = True
                 self.balance_beam_enabled = False

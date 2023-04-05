@@ -1,6 +1,5 @@
 from serial_comm import ctrl_comm
-from master_enum import enum_filter, enum_commands, sig_serial
-from threading import Thread
+from master_enum import enum_commands, sig_serial
 import struct
 import time as t
 
