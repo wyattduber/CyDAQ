@@ -11,6 +11,7 @@ from scipy.io import savemat
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
+from PyQt5.Qt import QMessageBox
 from PyQt5.QtGui import QDoubleValidator
 
 # pglive Packages
@@ -25,6 +26,7 @@ from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
+
 
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
@@ -149,25 +151,34 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     def start(self):
         if not self.mainWindow.connected or self.running:
             return
-        self.running = True
-        self.mainWindow.stopPingTimer()
-        self.mainWindow.debug.log_timer.setInterval(0)
 
         # Start Balance Beam Mode from Wrapper
-        self.wrapper.start_bb()
+        if not self.wrapper.start_bb():
+            errorbox = QMessageBox(self)
+            errorbox.setWindowTitle("Error")
+            errorbox.setText("Balance Beam Not Connected!")
+            errorbox.setIcon(QMessageBox.Critical)
+            errorbox.exec()
+            return
+
+        # Once balance beam is connected, start beam mode
+        self.running = True
         self.start_time = time.time()
+
+        # Stop ping timer from other window, set log to update instantly for live data
+        self.mainWindow.stopPingTimer()
+        self.mainWindow.debug.log_timer.setInterval(0)
 
         # Wait to make sure that balance beam logging has started
         wait(lambda: self.wrapper.bb_log_mode)
 
-        #Start Graphing of Data
+        # Start Graphing of Data
         self.graph_thread = Thread(target=self.graph_data)
         self.graph_thread.start()
 
-        # TODO Remove later (temporarily here for testing)
-        #Thread(target=self._graph_random_stuff).start()
-
     def stop(self):
+        if not self.mainWindow.connected or self.running:
+            return
         self.running = False
         self.wrapper.stop_bb()
         self.mainWindow.startPingTimer()
@@ -204,7 +215,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
                                                        options=options)
         # Save the current data dictionary to a matlab file
         # Using a thread because this process can take a while and be memory intensive
-        Thread(target=savemat,args=[self.filename, self.plot_data]).start()
+        Thread(target=savemat, args=[self.filename, self.plot_data]).start()
 
     # Increase the offset for calibration
     def offsetInc(self):
@@ -235,22 +246,3 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             self.mid_connector.cb_append_data_point(float(current_data), curr_time)
             self.low_connector.cb_append_data_point(self.low_sample, curr_time)
             self.high_connector.cb_append_data_point(self.high_sample, curr_time)
-
-    def _graph_random_stuff(self):
-        with open("\\\\my.files.iastate.edu\\Users\\wyattd\\Desktop\\sdmay23-47\\gui\\sin.csv", 'r') as file:
-            csvreader = csv.reader(file)
-
-            for row in csvreader:
-                # If paused, just spin in a loop and do nothing until un-paused
-                while self.paused:
-                    pass
-
-                timestamp = float(row[0])
-                mid_px = float(row[1])
-
-                self.mid_connector.cb_append_data_point(mid_px, timestamp)
-                self.low_connector.cb_append_data_point(self.low_sample, timestamp)
-                self.high_connector.cb_append_data_point(self.high_sample, timestamp)
-
-                print(f"epoch: {timestamp}, mid: {mid_px:.2f}")
-                time.sleep((100 / CONVERT_SEC_TO_MS))

@@ -163,6 +163,9 @@ class CLI:
         """Parses known error messages and throws the appropiate exception if needed. Otherwise, throws a generic exception."""
         if message == cli_tool.CYDAQ_NOT_CONNECTED:
             raise cyDAQNotConnectedException
+        elif message == cli_tool.BALANCE_BEAM_NOT_CONNECTED:
+            self.stop_bb()
+            raise BalanceBeamNotConnectedException
         else:
             raise CLIException(message)
 
@@ -255,10 +258,14 @@ class CLI:
         return response == "True"
 
     def start_bb(self, **_):
-        self.bb_log_mode = True
-        self.bb_log_thread = Thread(target=self.retrieve_bb_pos)
-        self.bb_log_thread.start()
-        self._send_command("bb_start")
+        response = self._send_command("bb_start")
+        if not response == CyDAQ_CLI.BALANCE_BEAM_NOT_CONNECTED:
+            self.bb_log_mode = True
+            self.bb_log_thread = Thread(target=self.retrieve_bb_pos)
+            self.bb_log_thread.start()
+            return True
+        else:
+            return False
 
     def stop_bb(self, **_):
         self.bb_log_mode = False
@@ -355,8 +362,12 @@ class CLINoResponseException(Exception):
 
 class cyDAQNotConnectedException(Exception):
     def __init__(self):
-        super().__init__()
+        super().__init__("CyDAQ is not connected properly!")
 
+
+class BalanceBeamNotConnectedException(Exception):
+    def __init__(self):
+        super().__init__("The Balance Beam is not connected to the CyDAQ!")
 
 class CLICloseException(Exception):
     """Thrown when the CLI closes unexpectedly. The last message sent to the output should be included in this error. """
