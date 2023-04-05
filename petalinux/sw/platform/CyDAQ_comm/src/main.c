@@ -32,15 +32,15 @@ int main(int argc, char **argv){
 	//both blocking, so they must be ran "concurrently"
 	if(fork() == 0){
 		//child
-		printf("RPC Listener started!\n");
+		printf("RPC Listener starting...\n");
 		rpc_init_listen();
-//		rpc_handle();
 		printf("RPC Listener stopped!\n");
 	}else{
 		//parent
-		commInit();
-		printf("Serial Listener started!!\n");
-		commRXTask();
+//		commInit();
+		printf("commInit finished\n");
+		printf("Serial Listener starting...\n");
+//		commRXTask();
 		printf("Serial Listener stopped!\n");
 
 		//must wait for RPC Listener to close
