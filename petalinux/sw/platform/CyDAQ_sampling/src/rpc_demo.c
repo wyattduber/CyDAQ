@@ -3,18 +3,15 @@
  This applicationr can print to to master console and perform file I/O using proxy mechanism. */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "xil_printf.h"
-#include "openamp/open_amp.h"
-#include "openamp/rpmsg_retarget.h"
+#include <openamp/open_amp.h>
+#include <openamp/rpmsg_retarget.h>
 #include "rsc_table.h"
 #include "platform_info.h"
 #include "rpmsg-rpc-demo.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
 
 #define REDEF_O_CREAT   0000100
 #define REDEF_O_EXCL    0000200
@@ -24,20 +21,15 @@
 #define REDEF_O_APPEND  0002000
 #define REDEF_O_ACCMODE 0000003
 
-#define RPC_CHANNEL_READY_TO_CLOSE "rpc_channel_ready_to_close"
-
-/* xil_printf goes directly to serial port */
 #define LPRINTF(format, ...) xil_printf(format, ##__VA_ARGS__)
+//#define LPRINTF(format, ...)
 #define LPERROR(format, ...) LPRINTF("ERROR: " format, ##__VA_ARGS__)
-
-static TaskHandle_t comm_task;
 
 static void rpmsg_rpc_shutdown(struct rpmsg_rpc_data *rpc)
 {
 	(void)rpc;
 	LPRINTF("RPMSG RPC is shutting down.\n");
 }
-
 
 /*-----------------------------------------------------------------------------*
  *  Application specific
@@ -58,15 +50,15 @@ int app(struct rpmsg_device *rdev, void *priv)
 	/* redirect I/Os */
 	LPRINTF("Initializating I/Os redirection...\n");
 	ret = rpmsg_rpc_init(&rpc, rdev, RPMSG_SERVICE_NAME,
-				 RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
-				 priv, platform_poll, rpmsg_rpc_shutdown);
+			     RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
+			     priv, platform_poll, rpmsg_rpc_shutdown);
 	rpmsg_set_default_rpc(&rpc);
 	if (ret) {
 		LPRINTF("Failed to initialize rpmsg rpc\n");
 		return -1;
 	}
 
-	printf("\r\nRemote>FreeRTOS Remote Procedure Call (RPC) Demonstration\r\n");
+	printf("\r\nRemote>Baremetal Remote Procedure Call (RPC) Demonstration\r\n");
 	printf("\r\nRemote>***************************************************\r\n");
 
 	printf("\r\nRemote>Rpmsg based retargetting to proxy initialized..\r\n");
@@ -82,7 +74,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 	sprintf(wbuff, "This is a test string being written to file..");
 	bytes_written = write(fd, wbuff, strlen(wbuff));
 	printf("\r\nRemote>Wrote to fd = %d, size = %d, content = %s\r\n", fd,
-		   bytes_written, wbuff);
+	       bytes_written, wbuff);
 	close(fd);
 	printf("\r\nRemote>Closed fd = %d\r\n", fd);
 
@@ -141,57 +133,37 @@ int app(struct rpmsg_device *rdev, void *priv)
 }
 
 /*-----------------------------------------------------------------------------*
- *  Processing Task
+ *  Application entry point
  *-----------------------------------------------------------------------------*/
-static void processing(void *unused_arg)
+int main(int argc, char *argv[])
 {
 	void *platform;
 	struct rpmsg_device *rpdev;
+	int ret;
 
 	LPRINTF("Starting application...\n");
+
 	/* Initialize platform */
-	if (platform_init(NULL, NULL, &platform)) {
+	ret = platform_init(argc, argv, &platform);
+	if (ret) {
 		LPERROR("Failed to initialize platform.\n");
+		ret = -1;
 	} else {
 		rpdev = platform_create_rpmsg_vdev(platform, 0,
-										VIRTIO_DEV_SLAVE,
-										NULL, NULL);
-		if (!rpdev){
+						   VIRTIO_DEV_SLAVE,
+						   NULL, NULL);
+		if (!rpdev) {
 			LPERROR("Failed to create rpmsg virtio device.\n");
+			ret = -1;
 		} else {
 			app(rpdev, platform);
 			platform_release_rpmsg_vdev(rpdev);
+			ret = 0;
 		}
 	}
 
 	LPRINTF("Stopping application...\n");
 	platform_cleanup(platform);
 
-	/* Terminate this task */
-	vTaskDelete(NULL);
+	return ret;
 }
-
-/*-----------------------------------------------------------------------------*
- *  Application entry point
- *-----------------------------------------------------------------------------*/
-int main(void)
-{
-	BaseType_t stat;
-
-	/* Create the tasks */
-	stat = xTaskCreate(processing, ( const char * ) "HW2",
-				1024, NULL, 2, &comm_task);
-	if (stat != pdPASS) {
-		LPERROR("cannot create task\n");
-	} else {
-		/* Start running FreeRTOS tasks */
-		vTaskStartScheduler();
-	}
-
-	/* Will not get here, unless a call is made to vTaskEndScheduler() */
-	while (1) ;
-
-	/* suppress compilation warnings*/
-	return 0;
-}
-

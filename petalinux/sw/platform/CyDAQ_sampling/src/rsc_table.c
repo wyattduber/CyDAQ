@@ -29,19 +29,8 @@
 /* Resource table entries */
 #define NUM_VRINGS                  0x02
 #define VRING_ALIGN                 0x1000
-
-//causes kernel panic... TODO delete
-//#define RING_TX                     FW_RSC_U32_ADDR_ANY
-//#define RING_RX                     FW_RSC_U32_ADDR_ANY
-
-//doesn't cause kernel panic
-#define RING_TX                     0x3ed40000
-#define RING_RX                     0x3ed44000
-
-//causes kernel panic... TODO delete
-//#define RING_TX                     0x3e800000
-//#define RING_RX                     0x3e804000
-
+#define RING_TX                     FW_RSC_U32_ADDR_ANY
+#define RING_RX                     FW_RSC_U32_ADDR_ANY
 #define VRING_SIZE                  256
 
 #define NUM_TABLE_ENTRIES           1

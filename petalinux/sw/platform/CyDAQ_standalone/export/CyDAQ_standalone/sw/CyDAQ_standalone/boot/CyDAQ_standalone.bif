@@ -4,5 +4,4 @@ the_ROM_image:
   [bootloader]<CyDAQ_standalone/boot/fsbl.elf>
    <bitstream> 
   <elf,ps7_cortexa9_1>
-  <elf,ps7_cortexa9_1>
 }
