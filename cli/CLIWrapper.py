@@ -75,22 +75,25 @@ class CLI:
         # Set CLI to wrapper mode. After this, all commands must be parsed in the new mode unless it's specifially toggled off
         self._send_command("wrapper, enable")
 
-    def _send_command(self, command, wrapper_mode=True, **_):
+    def _send_command(self, command, wrapper_mode=True, force_async=False, **_):
         """Send a command to the cyDAQ and returns the result"""
         if not self.connectionEnabled:
             return
 
         # Use the waiting library to prevent two commands from being run at the same time
-        wait(lambda: not self.running_command)
+        if not force_async:
+            wait(lambda: not self.running_command)
 
         # Send command
         try:
-            self.running_command = True
+            if not force_async:
+                self.running_command = True
             self.p.sendline(command)
         except OSError as e:
             print("OSError in wrapper _send_command for command:", command)
             print("OsError: ", e)
-            self.running_command = False
+            if not force_async:
+                self.running_command = False
             raise cyDAQNotConnectedException
 
         response = ""
@@ -122,48 +125,6 @@ class CLI:
                 if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
                     raise cyDAQNotConnectedException
                 return response
-            if command == "bb_fetch_pos":
-                return response
-
-    def _send_command_async(self, command, wrapper_mode=True, **_):
-        """Send a command to the cyDAQ and returns the result w/out waiting"""
-        if not self.connectionEnabled:
-            return
-
-        # Send command
-        try:
-            self.p.sendline(command)
-        except OSError as e:
-            print("OSError in wrapper _send_command for command:", command)
-            print("OsError: ", e)
-            raise cyDAQNotConnectedException
-
-        response = ""
-
-        # Wait for response
-        try:
-            self.p.expect(INPUT_CHAR)
-        except pexpect.exceptions.EOF:
-            raise CLICloseException(self.p.before)
-        except pexpect.exceptions.TIMEOUT:
-            raise CLITimeoutException
-        finally:
-            self.running_command = False
-        response = self.p.before
-
-        # Parse response
-        if response is None:
-            raise CLINoResponseException
-        response = response.decode()
-        response = response.strip()
-
-        self.log = response + "\n" + self.log
-        if wrapper_mode:
-            return self._parse_wrapper_mode_message(response)
-        else:
-            if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
-                raise cyDAQNotConnectedException
-            return response
 
     def _parse_wrapper_mode_message(self, line):
         """
@@ -294,14 +255,6 @@ class CLI:
         return response == "True"
 
     def start_bb(self, **_):
-        #try:
-        #    self.p.expect('Start')
-        #    print("flag7")
-        #except pexpect.exceptions.EOF:
-        #    raise CLICloseException(self.p.before)
-        #except pexpect.exceptions.TIMEOUT:
-        #    raise CLITimeoutException
-        #finally:
         self.bb_log_mode = True
         self.bb_log_thread = Thread(target=self.retrieve_bb_pos)
         self.bb_log_thread.start()
@@ -385,16 +338,7 @@ class CLI:
         return seconds, minutes, hours
 
     def retrieve_bb_pos(self):
-        #print(f"Incoming data: {self.p.read()}")
-        #print(f"RESPONSE: {self.p.before}")
-        response = self._send_command("bb_fetch_pos")
-
-        #print(f"RESPONSE: {response}")
-
-        #currentData = cli_tool.get_bb_data()
-        #print(response)
-        #self.log = self.log + '\n' + response
-        #self.log = self.log + '\n' + "proof that this is working"
+        response = self._send_command("bb_fetch_pos", force_async=True)
         return response
 
 class CLIException(Exception):

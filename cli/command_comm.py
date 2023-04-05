@@ -670,7 +670,7 @@ class cmd:
             while byte_value != ' ': # Check for each number
                 byte_value = self.ctrl_comm_obj.read_byte()
                 if type(byte_value) == type(False):
-                    continue
+                    return False
                 if byte_value == '-': # If value is negative
                     for i in range(0, 6):
                         if byte_value == ' ': # number sent might be less than 3 decimals

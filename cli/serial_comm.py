@@ -253,7 +253,7 @@ class ctrl_comm:
             if len(buffer) >= 2:
                 self.__throw_exception('SerialReadTimeout')
             elif not len(buffer):
-                print("Nothing Received over Comm Port")
+                #print("Nothing Received over Comm Port")
                 return False
             try:
                 buffer1 = buffer.decode('ascii')

@@ -567,12 +567,18 @@ class CyDAQ_CLI:
 
 	def _read_bb_buffer(self):
 		while not self.stop_thread:
+			# Read the buffer
 			buffer = self.cmd_obj.read_bb_buffer()
+
 			# Check for if the actual balance beam is not connected to the CyDAQ
-			if buffer == "" or buffer == " " or buffer == "\r":
-				continue
+			if type(buffer) == type(False):
+				if not buffer:
+					self._print_to_output("Balance Beam is not connected!", log_level="ERROR")
+					self.stop_thread = True
+					self.balance_beam_enabled = False
+					return
 			if buffer == "0xc9\r":
-				self._print_to_output("Balance Beam Not Connected!", log_level="ERROR")
+				self._print_to_output("Balance Beam is not connected!", log_level="ERROR")
 				self.stop_thread = True
 				self.balance_beam_enabled = False
 				return
