@@ -5,6 +5,10 @@
       <applications name="CyDAQ_sampling" domainName="standalone_domain" domainPrettyName="standalone on ps7_cortexa9_1" appBuildConfig="Debug"/>
       <options xsi:type="sdsproject:Option" gensdcard="true" dmclkid="0"/>
     </configBuildOptions>
+    <lastBuildOptions xsi:type="systemproject:SystemOptions">
+      <applications name="CyDAQ_sampling" domainName="standalone_domain" domainPrettyName="standalone on ps7_cortexa9_1" appBuildConfig="Debug"/>
+      <options xsi:type="sdsproject:Option" gensdcard="true" dmclkid="0"/>
+    </lastBuildOptions>
   </configuration>
   <configuration name="Release">
     <configBuildOptions xsi:type="systemproject:SystemOptions">
