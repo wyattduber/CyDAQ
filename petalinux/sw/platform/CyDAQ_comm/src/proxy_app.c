@@ -30,7 +30,7 @@ struct _proxy_data {
 };
 
 static struct _proxy_data *proxy;
-char fw_dst_path[] = "/lib/firmware/image_rpc_demo"; //TODO change to CyDAQ sampling app once made
+char fw_dst_path[] = "/lib/firmware/CyDAQ_sampling.elf";
 char sbuf[512];
 int r5_id = 0;
 
@@ -461,7 +461,7 @@ int rpc_init_listen(){
 
 	/* Write firmware name to remoteproc sysfs interface */
 	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/firmware", r5_id);
-	if (0 != file_write(sbuf, "CyDAQ_sampling.elf")) { //TODO make constant at top of file
+	if (0 != file_write(sbuf, "CyDAQ_sampling.elf")) { //TODO make constant at top of file //was "image_rpc_demo" or "CyDAQ_sampling.elf"
 		return -EINVAL;
 	}
 
@@ -596,6 +596,167 @@ error0:
 	stop_remote();
 
 	return ret;
+
+//==================================================================================
+//	/* Initialize signalling infrastructure */
+//		memset(&exit_action, 0, sizeof(struct sigaction));
+//		memset(&kill_action, 0, sizeof(struct sigaction));
+//		exit_action.sa_handler = exit_action_handler;
+//		kill_action.sa_handler = kill_action_handler;
+//		sigaction(SIGTERM, &exit_action, NULL);
+//		sigaction(SIGINT, &exit_action, NULL);
+//		sigaction(SIGKILL, &kill_action, NULL);
+//		sigaction(SIGHUP, &kill_action, NULL);
+//
+//
+////		/* Bring up remote firmware */
+////		printf("\r\nMaster>Loading remote firmware\r\n");
+////		if (user_fw_path) {
+////			printf("Custom fw path\n");
+////			sprintf(sbuf, "cp %s %s", user_fw_path, fw_dst_path);
+////			system(sbuf);
+////		}
+//
+//		/* Write firmware name to remoteproc sysfs interface */
+//		sprintf(sbuf,
+//			"/sys/class/remoteproc/remoteproc%u/firmware",
+//			r5_id);
+//		if (0 != file_write(sbuf, "image_rpc_demo")) {
+//			return -EINVAL;
+//		}
+//
+//		/* Tell remoteproc to load and start remote cpu */
+//		sprintf(sbuf,
+//			"/sys/class/remoteproc/remoteproc%u/state",
+//			r5_id);
+//		if (0 != file_write(sbuf, "start")) {
+//			return -EINVAL;
+//		}
+//
+//		/* Load rpmsg_char driver */
+//		printf("\r\nMaster>probe rpmsg_char\r\n");
+//		ret = system("modprobe rpmsg_char");
+//		if (ret < 0) {
+//			perror("Failed to load rpmsg_char driver.\n");
+//			ret = -EINVAL;
+//			goto error0;
+//		}
+//
+//		/* Wait for rpmsg dev to be probed */
+//		sleep(1);
+//		ret = get_rpmsg_dev_name(rpmsg_svc, rpmsg_dev_name);
+//		if (ret < 0)
+//			goto error0;
+//
+//		ret = bind_rpmsg_chrdev(rpmsg_dev_name);
+//		if (ret < 0)
+//			goto error0;
+//		rpmsg_char_fd = get_rpmsg_chrdev_fd(rpmsg_dev_name, rpmsg_char_name);
+//		if (rpmsg_char_fd < 0) {
+//			ret = rpmsg_char_fd;
+//			goto error0;
+//		}
+//
+//		/* Create endpoint from rpmsg char driver */
+//		strcpy(eptinfo.name, "rpmsg-openamp-demo-channel");
+//		eptinfo.src = 0;
+//		eptinfo.dst = 0xFFFFFFFF;
+//		ret = rpmsg_create_ept(rpmsg_char_fd, &eptinfo);
+//		if (ret) {
+//			printf("failed to create RPMsg endpoint.\n");
+//			goto error0;
+//		}
+//		if (!get_rpmsg_ept_dev_name(rpmsg_char_name, eptinfo.name,
+//					    ept_dev_name)) {
+//			ret = -EINVAL;
+//			goto error0;
+//		}
+//		sprintf(ept_dev_path, "/dev/%s", ept_dev_name);
+//		ept_fd = open(ept_dev_path, O_RDWR | O_NONBLOCK);
+//		if (ept_fd < 0) {
+//			perror("Failed to open rpmsg device.");
+//			ret = ept_fd;
+//			goto error0;
+//		}
+//		/* Allocate memory for proxy data structure */
+//		proxy = malloc(sizeof(struct _proxy_data));
+//		if (proxy == NULL) {
+//			fprintf(stderr, "\r\nMaster>Failed to allocate memory.\r\n");
+//			ret = -ENOMEM;
+//			goto error0;
+//		}
+//		proxy->rpmsg_proxy_fd = ept_fd;
+//		proxy->active = 1;
+//
+//		/* Allocate memory for rpc payloads */
+//		proxy->rpc = malloc(RPC_BUFF_SIZE);
+//		proxy->rpc_response = malloc(RPC_BUFF_SIZE);
+//		if (proxy->rpc == NULL || proxy->rpc_response == NULL) {
+//			fprintf(stderr, "\r\nMaster>Failed to allocate memory.\r\n");
+//			ret = -ENOMEM;
+//			goto error0;
+//		}
+//
+//		/* RPC service starts */
+//		printf("\r\nMaster>RPC service started !!\r\n");
+//		/* Send init message to remote.
+//		 * This is required otherwise, remote doesn't know the host
+//		 * RPMsg endpoint
+//		 */
+//		ret = write(proxy->rpmsg_proxy_fd, RPMG_INIT_MSG,
+//			    sizeof(RPMG_INIT_MSG));
+//		if (ret < 0) {
+//			printf("\r\nMaster>Failed to send init message.\r\n");
+//			goto error0;
+//		}
+//
+//		/* Block on read for rpc requests from remote context */
+//		do {
+//			bytes_rcvd = read(proxy->rpmsg_proxy_fd, proxy->rpc,
+//					  RPC_BUFF_SIZE);
+//			if (bytes_rcvd < 0 && errno != EAGAIN) {
+//				perror("Failed to read ept");
+//				break;
+//			}
+//			/* Handle rpc */
+//			if ( bytes_rcvd > 0 && handle_rpc(proxy->rpc)) {
+//				printf("\nMaster>Err:Handling remote procedure call!\n");
+//				printf("\nrpc id %d\n", proxy->rpc->id);
+//				printf("\nrpc int field1 %d\n",
+//					proxy->rpc->sys_call_args.int_field1);
+//				printf("\nrpc int field2 %d\n",
+//					proxy->rpc->sys_call_args.int_field2);
+//				break;
+//			}
+//		} while(proxy->active);
+//
+//		printf("\r\nMaster>RPC service exiting !!\r\n");
+//		ret = 0;
+//
+//		/* Close proxy rpmsg device */
+//		close(proxy->rpmsg_proxy_fd);
+//
+//		/* Wait for other end to cleanup
+//		 * Otherwise, virtio_rpmsg_bus can post msg with no recipient
+//		 * warning as it can receive NS destroy after the rpmsg char
+//		 * module is removed.
+//		 */
+//		sleep(1);
+//
+//		/* Free up resources */
+//		free(proxy->rpc);
+//		free(proxy->rpc_response);
+//
+//	error0:
+//		if (ept_fd >= 0)
+//			close(ept_fd);
+//		if (rpmsg_char_fd >= 0)
+//			close(rpmsg_char_fd);
+//		free(proxy);
+//
+//		stop_remote();
+//
+//		return ret;
 }
 
 int main_ree(int argc, char *argv[])

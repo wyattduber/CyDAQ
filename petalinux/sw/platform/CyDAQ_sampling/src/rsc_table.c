@@ -31,8 +31,10 @@
 #define VRING_ALIGN                 0x1000
 //#define RING_TX                     FW_RSC_U32_ADDR_ANY
 //#define RING_RX                     FW_RSC_U32_ADDR_ANY
-#define RING_TX 0x3ed40000
-#define RING_RX 0x3ed44000
+//#define RING_TX 0x3ed40000
+//#define RING_RX 0x3ed44000
+#define RING_TX 0x3e800000
+#define RING_RX 0x3e804000
 
 #define VRING_SIZE                  256
 
