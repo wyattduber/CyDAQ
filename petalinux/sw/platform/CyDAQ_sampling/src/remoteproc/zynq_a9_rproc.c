@@ -20,8 +20,8 @@
 #include <metal/atomic.h>
 #include <metal/device.h>
 #include <metal/irq.h>
-#include "platform_info.h"
 #include <xil_printf.h>
+#include "platform_info.h"
 
 /* SCUGIC macros */
 #define GIC_DIST_SOFTINT                   0xF00

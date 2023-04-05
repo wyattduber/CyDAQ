@@ -17,6 +17,8 @@
  *
  **************************************************************************/
 
+#include "platform_info.h"
+
 #include <errno.h>
 #include <openamp/remoteproc.h>
 #include <openamp/rpmsg_virtio.h>
@@ -25,9 +27,8 @@
 #include <metal/io.h>
 #include <metal/irq.h>
 #include <metal/sys.h>
-#include "platform_info.h"
-#include "rsc_table.h"
 #include <xparameters.h>
+#include "rsc_table.h"
 
 /* Another APU core ID. In this demo, the other APU core is 0. */
 #define A9_CPU_ID	0UL

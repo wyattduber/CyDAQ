@@ -9,9 +9,10 @@
 #include <unistd.h>
 #include <openamp/open_amp.h>
 #include <openamp/rpmsg_retarget.h>
-#include "rsc_table.h"
+
 #include "platform_info.h"
 #include "rpmsg-rpc-demo.h"
+#include "rsc_table.h"
 
 #define REDEF_O_CREAT   0000100
 #define REDEF_O_EXCL    0000200
@@ -135,7 +136,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 /*-----------------------------------------------------------------------------*
  *  Application entry point
  *-----------------------------------------------------------------------------*/
-int main(int argc, char *argv[])
+int run_rpc_demo(int argc, char *argv[])
 {
 	void *platform;
 	struct rpmsg_device *rpdev;
