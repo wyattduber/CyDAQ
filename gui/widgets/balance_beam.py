@@ -208,16 +208,20 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     def start_bb_mode(self):
         # Start Balance Beam Mode from Wrapper
         try:
+            print("check flag 1")
             if not self.wrapper.start_bb():
+                print("check flag 2")
                 self._show_error("Balance Beam Not Connected!")
                 self.checking_connection = False
                 return
             self.checking_connection = False
         except Exception:
+            print("check flag 3")
             self._show_error("Balance Beam Not Connected!")
             self.checking_connection = False
             return
 
+        print("check flag 4")
         # Once balance beam is connected, start beam mode
         self.running = True
         self.start_time = time.time()
@@ -311,7 +315,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         while self.running:
             try:
                 current_data = self.wrapper.retrieve_bb_pos()
+                print("graph flag 1")
             except Exception:
+                print("graph flag 2")
                 self._show_error("Balance Beam Not Connected!")
                 self.running = False
                 return
@@ -323,6 +329,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             if current_data == "" or current_data == "-9":
                 i =+ 1
                 if i > 100:
+                    print("graph flag 3 + " + str(i))
                     self._show_error("Balance Beam Not Connected!")
                     self.running = False
                     return

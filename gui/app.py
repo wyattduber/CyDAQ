@@ -33,7 +33,6 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-
 # This path must be appended because the CLI and GUI aren't in packages.
 # If both were in python packages, this issue wouldn't be here.
 sys.path.insert(0, resource_path("../cli"))
@@ -127,6 +126,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = self.wrapper.ping() >= 0
         except CLIWrapper.cyDAQNotConnectedException:
             self.connected = False
+        except CLIWrapper.CLIException:
+            errorbox = QMessageBox(self)
+            errorbox.setWindowTitle("Error")
+            errorbox.setText("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
+            errorbox.setIcon(QMessageBox.Critical)
+            errorbox.exec()
+            self.close()
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self, CyDAQModeWidget)

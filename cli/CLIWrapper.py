@@ -17,7 +17,7 @@ INPUT_CHAR = ">"
 NOT_CONNECTED = "Zybo not connected"
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
-TIMEOUT = 120
+TIMEOUT = 10
 
 
 class CLI:
@@ -98,7 +98,7 @@ class CLI:
 
         response = ""
 
-        if command != "q":
+        if command != "q" and command != "bb_start":
             # Wait for response
             try:
                 self.p.expect(INPUT_CHAR)
