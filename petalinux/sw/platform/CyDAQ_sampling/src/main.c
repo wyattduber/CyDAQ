@@ -23,7 +23,10 @@
 #include "stdlib.h"
 #include "hardware/xadc.h"
 #include "hardware/shared_definitions.h"
+
 #include "remoteproc/rpc_demo.h"
+#include "remoteproc/rpmsg-echo.h"
+#include "remoteproc/rpc.h"
 
 /* Constant definitions */
 #define BUTTON_BASE_ADDR	XPAR_GPIO_0_BASEADDR
@@ -41,9 +44,18 @@ u8 getButtonChangeBlocking();
  *   tests prior to operation if DEBUG is defined as true.
  */
 int main(int argc, char *argv[]) {
-	run_rpc_demo(argc, argv);
-	return 0;
+//	run_rpc_demo(argc, argv);
+//	run_echo_demo(argc, argv);
+//	return 0;
+//	return 0;
 	//initialize hardware
+	xil_printf("\n**********CyDAQ baremetal sampling process***********\r\n");
+
+	xil_printf("Starting to init remoteproc\r\n");
+	rpc_setup();
+	xil_printf("Finished init remoteproc\r\n");
+
+	xil_printf("Starting to init all hardware...\r\n");
 	init_platform();
     commInit();
     muxInit();
@@ -52,6 +64,20 @@ int main(int argc, char *argv[]) {
     shared_InitSpi();
     init_dac80501();
     init_ads7047();
+    xil_printf("Finished init all hardware...\r\n");
+
+    xadcTest();
+    xil_printf("Finished xadc test...\r\n");
+//    commTest();
+    filterTest();
+    xil_printf("Finished filter test...\r\n");
+
+    cleanup_platform();
+    xil_printf("Finished clean up program...\r\n");
+
+    xil_printf("Starting to tear down remoteproc\r\n");
+	rpc_tear_down();
+	xil_printf("Finished tearing down remoteproc\r\n");
 
     /*
     while(1) {
@@ -63,45 +89,45 @@ int main(int argc, char *argv[]) {
     */
 
     //get UART pointer for test programs
-    XUartPs* ptr = commGetUartPtr();
-    u8 numBytes = 0;
-    u8 buf[5];
+//    XUartPs* ptr = commGetUartPtr();
+//    u8 numBytes = 0;
+//    u8 buf[5];
 
-    if(DEBUG) {
-    	xil_printf("\n**********CyDAQ Test Program***********\n");
+//    if(DEBUG) {
+//    	xil_printf("\n**********CyDAQ Test Program***********\n");
+//
+//		while(1) {
+//			xil_printf("Select Test:\n0. XADC\n1. UART Test\n2. Filter Test\n3. Firmware Start\n");
+//
+//			numBytes = 0;
+//			while(buf[numBytes-1] != '\r' && buf[numBytes-1] != '\n') {
+//				numBytes += XUartPs_Recv(ptr, &buf[numBytes], 1);
+//			}
+//
+//			usleep(300000);
+//
+//			switch(buf[0] - '0') {
+//				case 0: xadcTest(); break;
+//				case 1: commTest(); break;
+//				case 2: filterTest(); break;
+//				case 3:
+//						xil_printf("Started main firmware process\n");
+//						commRXTask();
+//						break;
+//				default:
+//						xil_printf("Invalid input\n");
+//			}
+//
+//			sleep(1);
+//		}
+//    }
+//
+//    commRXTask();
+//
+//	if(DEBUG)
+//		xil_printf("Exiting Test Program\n");
 
-		while(1) {
-			xil_printf("Select Test:\n0. XADC\n1. UART Test\n2. Filter Test\n3. Firmware Start\n");
-
-			numBytes = 0;
-			while(buf[numBytes-1] != '\r' && buf[numBytes-1] != '\n') {
-				numBytes += XUartPs_Recv(ptr, &buf[numBytes], 1);
-			}
-
-			usleep(300000);
-
-			switch(buf[0] - '0') {
-				case 0: xadcTest(); break;
-				case 1: commTest(); break;
-				case 2: filterTest(); break;
-				case 3:
-						xil_printf("Started main firmware process\n");
-						commRXTask();
-						break;
-				default:
-						xil_printf("Invalid input\n");
-			}
-
-			sleep(1);
-		}
-    }
-
-    commRXTask();
-
-	if(DEBUG)
-		xil_printf("Exiting Test Program\n");
-
-    cleanup_platform();
+//    cleanup_platform();
     return 0;
 }
 
@@ -112,29 +138,31 @@ void xadcTest(){
 	xil_printf("*****XADC Test*****\nEnter '1' for data streaming, '0' else\n");
 	xil_printf("Note faster sample rates may be affected by real-time streaming\n");
 	xil_printf("if streaming is enabled, type ! to stop program\n");
-	u8 buffer[10];
-	u8 numBytes = 0;
-	while(buffer[numBytes-1] != '\r' && buffer[numBytes-1] != '\n'){
-		numBytes += commUartRecv(&buffer[numBytes], 1);
-	}
-	buffer[numBytes-1] = 0;
-	u8 streaming = (buffer[0] == '1') ? 1 : 0;
-	numBytes = 0;
-	xil_printf("Enter sample rate in samples/second and hit enter\n");
-	while(1){
-		numBytes += commUartRecv(&buffer[numBytes], 2);
-		if(buffer[numBytes-1] == '\r' || buffer[numBytes-1] == '\n'){
-			buffer[numBytes-1] = '\0';
-			u32 rate = atoi((const char*) buffer);
-			if(xadcSetSampleRate(rate) == 0){
-				break;
-			}else{
-				xil_printf("Error, invalid input, using default (10,000)\n");
-				xadcSetSampleRate(10000);
-				break;
-			}
-		}
-	}
+//	u8 buffer[10];
+//	u8 numBytes = 0;
+//	while(buffer[numBytes-1] != '\r' && buffer[numBytes-1] != '\n'){
+//		numBytes += commUartRecv(&buffer[numBytes], 1);
+//	}
+//	buffer[numBytes-1] = 0;
+//	u8 streaming = (buffer[0] == '1') ? 1 : 0;
+	u8 streaming = 0;
+//	numBytes = 0;
+//	xil_printf("Enter sample rate in samples/second and hit enter\n");
+//	while(1){
+//		numBytes += commUartRecv(&buffer[numBytes], 2);
+//		if(buffer[numBytes-1] == '\r' || buffer[numBytes-1] == '\n'){
+//			buffer[numBytes-1] = '\0';
+//			u32 rate = atoi((const char*) buffer);
+//			if(xadcSetSampleRate(rate) == 0){
+//				break;
+//			}else{
+//				xil_printf("Error, invalid input, using default (10,000)\n");
+//				xadcSetSampleRate(10000);
+//				break;
+//			}
+//		}
+//	}
+	xadcSetSampleRate(10000);
     xadcEnableSampling(streaming);
     if(streaming == 0){
     	xadcProcessSamples();

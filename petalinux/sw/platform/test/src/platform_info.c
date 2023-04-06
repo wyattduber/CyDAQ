@@ -17,8 +17,6 @@
  *
  **************************************************************************/
 
-#include "platform_info.h"
-
 #include <errno.h>
 #include <openamp/remoteproc.h>
 #include <openamp/rpmsg_virtio.h>
@@ -27,8 +25,9 @@
 #include <metal/io.h>
 #include <metal/irq.h>
 #include <metal/sys.h>
-#include <xparameters.h>
+#include "platform_info.h"
 #include "rsc_table.h"
+#include <xparameters.h>
 
 /* Another APU core ID. In this demo, the other APU core is 0. */
 #define A9_CPU_ID	0UL
@@ -133,7 +132,6 @@ platform_create_proc(int proc_index, int rsc_index)
 	return &rproc_inst;
 }
 
-//TODO get rid of argc argv
 int platform_init(int argc, char *argv[], void **platform)
 {
 	unsigned long proc_id = 0;

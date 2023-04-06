@@ -19,7 +19,7 @@
 /**
  * Meant to enable outputting of debug messages over uart (WIP).
  */
-#define DEBUG 0
+#define DEBUG 1
 
 
 /**
