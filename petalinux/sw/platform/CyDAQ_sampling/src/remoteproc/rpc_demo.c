@@ -145,7 +145,7 @@ int run_rpc_demo(int argc, char *argv[])
 	LPRINTF("Starting application...\n");
 
 	/* Initialize platform */
-	ret = platform_init(argc, argv, &platform);
+	ret = platform_init(&platform);
 	if (ret) {
 		LPERROR("Failed to initialize platform.\n");
 		ret = -1;

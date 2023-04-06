@@ -50,7 +50,7 @@ int rpc_setup(){
 
 	//TODO get rid of argc argv (first two params)
 	//TODO redo nested if garbage...
-	ret = platform_init(0, 0, &platform);
+	ret = platform_init(&platform);
 	if (ret) {
 		xil_printf("Failed to initialize platform.\r\n");
 		ret = -1;

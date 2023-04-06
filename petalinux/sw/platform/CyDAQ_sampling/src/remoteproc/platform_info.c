@@ -133,8 +133,7 @@ platform_create_proc(int proc_index, int rsc_index)
 	return &rproc_inst;
 }
 
-//TODO get rid of argc argv
-int platform_init(int argc, char *argv[], void **platform)
+int platform_init(void **platform)
 {
 	unsigned long proc_id = 0;
 	unsigned long rsc_id = 0;
@@ -147,14 +146,6 @@ int platform_init(int argc, char *argv[], void **platform)
 	}
 	/* Initialize HW system components */
 	init_system();
-
-	if (argc >= 2) {
-		proc_id = strtoul(argv[1], NULL, 0);
-	}
-
-	if (argc >= 3) {
-		rsc_id = strtoul(argv[2], NULL, 0);
-	}
 
 	rproc = platform_create_proc(proc_id, rsc_id);
 	if (!rproc) {
