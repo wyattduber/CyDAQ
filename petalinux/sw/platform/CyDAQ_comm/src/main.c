@@ -22,7 +22,8 @@ because @ = 0x40 and ! = 0x21
 
 #include "comm.h"
 #include "main.h"
-#include "proxy_app.h"
+#include "proxy_app.h" //TODO dont use this in the final version, use rpc.c/rpc.h instead
+#include "rpc.h"
 
 int main(int argc, char **argv){
 
@@ -32,9 +33,12 @@ int main(int argc, char **argv){
 	//both blocking, so they must be ran "concurrently"
 	if(fork() == 0){
 		//child
-		printf("RPC Listener starting...\n");
-		rpc_init_listen();
-		printf("RPC Listener stopped!\n");
+		printf("RPC setup starting...\r\n");
+		rpc_setup();
+		printf("RPC setup finished!\r\n");
+		printf("RPC Listener starting...\r\n");
+//		rpc_init_listen();
+		printf("RPC Listener stopped!\r\n");
 	}else{
 		//parent
 //		commInit();

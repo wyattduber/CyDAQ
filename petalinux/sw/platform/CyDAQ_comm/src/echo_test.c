@@ -33,8 +33,8 @@ struct _payload {
 
 static int charfd = -1, fd = -1, err_cnt;
 
-struct _payload *i_payload;
-struct _payload *r_payload;
+struct _payload *send_payload;
+struct _payload *receive_payload;
 
 #define RPMSG_GET_KFIFO_SIZE 1
 #define RPMSG_GET_AVAIL_DATA_SIZE 2
@@ -249,10 +249,10 @@ int main_deleteme(int argc, char *argv[])
 		return -1;
 	}
 
-	i_payload = (struct _payload *)malloc(2 * sizeof(unsigned long) + PAYLOAD_MAX_SIZE);
-	r_payload = (struct _payload *)malloc(2 * sizeof(unsigned long) + PAYLOAD_MAX_SIZE);
+	send_payload = (struct _payload *)malloc(2 * sizeof(unsigned long) + PAYLOAD_MAX_SIZE);
+	receive_payload = (struct _payload *)malloc(2 * sizeof(unsigned long) + PAYLOAD_MAX_SIZE);
 
-	if (i_payload == 0 || r_payload == 0) {
+	if (send_payload == 0 || receive_payload == 0) {
 		printf("ERROR: Failed to allocate memory for payload.\n");
 		return -1;
 	}
@@ -267,17 +267,17 @@ int main_deleteme(int argc, char *argv[])
 		i++, size++) {
 			int k;
 
-			i_payload->num = i;
-			i_payload->size = size;
+			send_payload->num = i;
+			send_payload->size = size;
 
 			/* Mark the data buffer. */
-			memset(&(i_payload->data[0]), 0xA5, size);
+			memset(&(send_payload->data[0]), 0xA5, size);
 
 			printf("\r\n sending payload number");
-			printf(" %ld of size %d\r\n", i_payload->num,
+			printf(" %ld of size %d\r\n", send_payload->num,
 			(2 * sizeof(unsigned long)) + size);
 
-			bytes_sent = write(fd, i_payload,
+			bytes_sent = write(fd, send_payload,
 			(2 * sizeof(unsigned long)) + size);
 
 			if (bytes_sent <= 0) {
@@ -287,28 +287,28 @@ int main_deleteme(int argc, char *argv[])
 			}
 			printf("echo test: sent : %d\n", bytes_sent);
 
-			r_payload->num = 0;
-			bytes_rcvd = read(fd, r_payload,
+			receive_payload->num = 0;
+			bytes_rcvd = read(fd, receive_payload,
 					(2 * sizeof(unsigned long)) + PAYLOAD_MAX_SIZE);
 			while (bytes_rcvd <= 0) {
 				usleep(10000);
-				bytes_rcvd = read(fd, r_payload,
+				bytes_rcvd = read(fd, receive_payload,
 					(2 * sizeof(unsigned long)) + PAYLOAD_MAX_SIZE);
 			}
 			printf(" received payload number ");
-			printf("%ld of size %d\r\n", r_payload->num, bytes_rcvd);
+			printf("%ld of size %d\r\n", receive_payload->num, bytes_rcvd);
 
 			/* Validate data buffer integrity. */
-			for (k = 0; k < r_payload->size; k++) {
+			for (k = 0; k < receive_payload->size; k++) {
 
-				if (r_payload->data[k] != 0xA5) {
+				if (receive_payload->data[k] != 0xA5) {
 					printf(" \r\n Data corruption");
 					printf(" at index %d \r\n", k);
 					err_cnt++;
 					break;
 				}
 			}
-			bytes_rcvd = read(fd, r_payload,
+			bytes_rcvd = read(fd, receive_payload,
 			(2 * sizeof(unsigned long)) + PAYLOAD_MAX_SIZE);
 
 		}
@@ -320,8 +320,8 @@ int main_deleteme(int argc, char *argv[])
 		printf("****\r\n");
 	}
 
-	free(i_payload);
-	free(r_payload);
+	free(send_payload);
+	free(receive_payload);
 
 	close(fd);
 	if (charfd >= 0)

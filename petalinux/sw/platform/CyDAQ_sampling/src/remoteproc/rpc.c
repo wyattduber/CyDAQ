@@ -28,7 +28,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 		return RPMSG_SUCCESS;
 	}
 
-	/* Send data back to master */
+	/* Send data back to master */ //TODO change this to process commands instead
 	if (rpmsg_send(ept, data, len) < 0) {
 		xil_printf("rpmsg_send failed\n");
 	}
