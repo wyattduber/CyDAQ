@@ -66,6 +66,15 @@ int main(int argc, char *argv[]) {
     init_ads7047();
     xil_printf("Finished init all hardware...\r\n");
 
+    //TODO delete - Uncomment this to uncontrollably send captured samples to console.
+    //just for sanity check I guess
+//    while(1) {
+//        	u16 x = ads7047_CaptureSample();
+//        	xil_printf("%d\r\n", x);
+//
+//        	usleep(1);
+//	}
+
     xadcTest();
     xil_printf("Finished xadc test...\r\n");
 //    commTest();
@@ -79,14 +88,8 @@ int main(int argc, char *argv[]) {
 	rpc_tear_down();
 	xil_printf("Finished tearing down remoteproc\r\n");
 
-    /*
-    while(1) {
-    	u16 x = ads7047_CaptureSample();
-    	xil_printf("%d\r\n", x);
 
-    	usleep(1);
-    }
-    */
+
 
     //get UART pointer for test programs
 //    XUartPs* ptr = commGetUartPtr();
