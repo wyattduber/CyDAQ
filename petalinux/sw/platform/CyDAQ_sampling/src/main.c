@@ -70,11 +70,13 @@ int main(int argc, char *argv[]) {
 //        	usleep(1);
 //	}
 
-    xadcTest();
-    xil_printf("Finished xadc test...\r\n");
+//    xadcTest();
+//    xil_printf("Finished xadc test...\r\n");
 //    commTest();
-    filterTest();
-    xil_printf("Finished filter test...\r\n");
+//    filterTest();
+//    xil_printf("Finished filter test...\r\n");
+
+    rpc_listen();
 
     cleanup_platform();
     xil_printf("Finished clean up program...\r\n");

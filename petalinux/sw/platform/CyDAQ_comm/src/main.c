@@ -40,7 +40,7 @@ int main(int argc, char **argv){
 //		commInit();
 		printf("commInit finished\n");
 		printf("Serial Listener starting...\n");
-//		commRXTask();
+		commRXTask();
 		printf("Serial Listener stopped!\n");
 
 		//must wait for RPC Listener to close

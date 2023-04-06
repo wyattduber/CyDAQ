@@ -11,13 +11,15 @@
 void *platform;
 struct rpmsg_device *rpdev;
 static struct rpmsg_endpoint lept;
-static int shutdown_req = 0; //TODO needed?
+static int shutdown_req = 0;
 
 static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 			     uint32_t src, void *priv)
 {
 	(void)priv;
 	(void)src;
+
+	xil_printf("rpmsg_endpoint_cb called! Data: %d\r\n", data);
 
 	/* On reception of a shutdown we signal the application to terminate */
 	if ((*(unsigned int *)data) == SHUTDOWN_MSG) {
@@ -48,8 +50,6 @@ int rpc_setup(){
 		xil_printf("Starting rpc_setup()\r\n");
 	}
 
-	//TODO get rid of argc argv (first two params)
-	//TODO redo nested if garbage...
 	ret = platform_init(&platform);
 	if (ret) {
 		xil_printf("Failed to initialize platform.\r\n");

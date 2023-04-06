@@ -510,6 +510,7 @@ int rpc_init_listen(){
 		goto error0;
 	}
 	sprintf(ept_dev_path, "/dev/%s", ept_dev_name);
+	printf("rpmsg device path: %s\r\n", ept_dev_path);
 	ept_fd = open(ept_dev_path, O_RDWR | O_NONBLOCK);
 	if (ept_fd < 0) {
 		perror("Failed to open rpmsg device.");
