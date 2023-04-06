@@ -44,11 +44,6 @@ u8 getButtonChangeBlocking();
  *   tests prior to operation if DEBUG is defined as true.
  */
 int main(int argc, char *argv[]) {
-//	run_rpc_demo(argc, argv);
-//	run_echo_demo(argc, argv);
-//	return 0;
-//	return 0;
-	//initialize hardware
 	xil_printf("\n**********CyDAQ baremetal sampling process***********\r\n");
 
 	xil_printf("Starting to init remoteproc\r\n");
@@ -88,49 +83,6 @@ int main(int argc, char *argv[]) {
 	rpc_tear_down();
 	xil_printf("Finished tearing down remoteproc\r\n");
 
-
-
-
-    //get UART pointer for test programs
-//    XUartPs* ptr = commGetUartPtr();
-//    u8 numBytes = 0;
-//    u8 buf[5];
-
-//    if(DEBUG) {
-//    	xil_printf("\n**********CyDAQ Test Program***********\n");
-//
-//		while(1) {
-//			xil_printf("Select Test:\n0. XADC\n1. UART Test\n2. Filter Test\n3. Firmware Start\n");
-//
-//			numBytes = 0;
-//			while(buf[numBytes-1] != '\r' && buf[numBytes-1] != '\n') {
-//				numBytes += XUartPs_Recv(ptr, &buf[numBytes], 1);
-//			}
-//
-//			usleep(300000);
-//
-//			switch(buf[0] - '0') {
-//				case 0: xadcTest(); break;
-//				case 1: commTest(); break;
-//				case 2: filterTest(); break;
-//				case 3:
-//						xil_printf("Started main firmware process\n");
-//						commRXTask();
-//						break;
-//				default:
-//						xil_printf("Invalid input\n");
-//			}
-//
-//			sleep(1);
-//		}
-//    }
-//
-//    commRXTask();
-//
-//	if(DEBUG)
-//		xil_printf("Exiting Test Program\n");
-
-//    cleanup_platform();
     return 0;
 }
 
