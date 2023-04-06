@@ -32,6 +32,7 @@ class CLI:
 
     def __init__(self):
         self.log = ""
+        self.running_ping_command = False
         self.bb_log_thread = None
         self.bb_log_mode = False
 
@@ -88,6 +89,8 @@ class CLI:
         try:
             if not force_async:
                 self.running_command = True
+            if command == "ping":
+                self.running_ping_command = True
             self.p.sendline(command)
         except OSError as e:
             print("OSError in wrapper _send_command for command:", command)
@@ -95,8 +98,6 @@ class CLI:
             if not force_async:
                 self.running_command = False
             raise cyDAQNotConnectedException
-
-        response = ""
 
         if command != "q" and command != "bb_start":
             # Wait for response
@@ -117,13 +118,19 @@ class CLI:
             response = response.strip()
 
             self.log = response + "\n" + self.log
+            print(response)
             if command != "bb_fetch_pos": # Can get a bit spammy
                 self.log = "Cmd: " + command + "\n" + self.log + "\n"
+                print(f"Cmd: {command}")
             if wrapper_mode:
+                if command == "ping":
+                    self.running_ping_command = False
                 return self._parse_wrapper_mode_message(response)
             else:
                 if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
                     raise cyDAQNotConnectedException
+                if command == "ping":
+                    self.running_ping_command = False
                 return response
 
     def _parse_wrapper_mode_message(self, line):
@@ -258,6 +265,10 @@ class CLI:
         return response == "True"
 
     def start_bb(self, **_):
+        # If a ping command is running, wait for it to finish
+        wait(lambda: not self.running_ping_command)
+
+        # Check if the balance beam is connected before retrieving data
         response = self._send_command("bb_start")
         if not response == CyDAQ_CLI.BALANCE_BEAM_NOT_CONNECTED:
             self.bb_log_mode = True

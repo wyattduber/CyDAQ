@@ -127,12 +127,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         except CLIWrapper.cyDAQNotConnectedException:
             self.connected = False
         except CLIWrapper.CLIException:
+            self.connected = False
             errorbox = QMessageBox(self)
             errorbox.setWindowTitle("Error")
             errorbox.setText("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
+            errorbox.setInformativeText("Try restarting the CyDAQ.")
             errorbox.setIcon(QMessageBox.Critical)
             errorbox.exec()
-            self.close()
+            qApp.exit(-2)
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self, CyDAQModeWidget)

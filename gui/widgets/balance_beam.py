@@ -208,20 +208,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     def start_bb_mode(self):
         # Start Balance Beam Mode from Wrapper
         try:
-            print("check flag 1")
             if not self.wrapper.start_bb():
-                print("check flag 2")
                 self._show_error("Balance Beam Not Connected!")
                 self.checking_connection = False
                 return
             self.checking_connection = False
         except Exception:
-            print("check flag 3")
             self._show_error("Balance Beam Not Connected!")
             self.checking_connection = False
             return
 
-        print("check flag 4")
         # Once balance beam is connected, start beam mode
         self.running = True
         self.start_time = time.time()
@@ -315,9 +311,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         while self.running:
             try:
                 current_data = self.wrapper.retrieve_bb_pos()
-                print("graph flag 1")
             except Exception:
-                print("graph flag 2")
                 self._show_error("Balance Beam Not Connected!")
                 self.running = False
                 return
@@ -329,13 +323,19 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             if current_data == "" or current_data == "-9":
                 i =+ 1
                 if i > 100:
-                    print("graph flag 3 + " + str(i))
                     self._show_error("Balance Beam Not Connected!")
                     self.running = False
                     return
                 continue
-            curr_time = time.time() - self.start_time
-            self.plot_data[f"{curr_time}"] = current_data
-            self.mid_connector.cb_append_data_point(float(current_data), curr_time)
-            self.low_connector.cb_append_data_point(self.low_sample, curr_time)
-            self.high_connector.cb_append_data_point(self.high_sample, curr_time)
+
+            # Check that input is valid and not some other kind of string
+            try:
+                curr_time = time.time() - self.start_time
+                self.plot_data[f"{curr_time}"] = current_data
+                self.mid_connector.cb_append_data_point(float(current_data), curr_time)
+                self.low_connector.cb_append_data_point(self.low_sample, curr_time)
+                self.high_connector.cb_append_data_point(self.high_sample, curr_time)
+            except ValueError:
+                self._show_error(f"Error plotting data! Current data is {current_data}")
+                self.running = False
+                self.stop()
