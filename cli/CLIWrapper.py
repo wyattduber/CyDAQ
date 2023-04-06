@@ -290,6 +290,10 @@ class CLI:
     def resume_bb(self, **_):
         self._send_command("bb_resume")
 
+    def retrieve_bb_pos(self):
+        response = self._send_command("bb_fetch_pos", force_async=True)
+        return response
+
     def writeALotOfData(self, **_):
         print("Writing Data for 20 Seconds....")
         start = round(time.time())
@@ -343,10 +347,6 @@ class CLI:
         minutes = (millis / (1000 * 60)) % 60
         hours = (millis / (1000 * 60 * 60)) % 24
         return seconds, minutes, hours
-
-    def retrieve_bb_pos(self):
-        response = self._send_command("bb_fetch_pos", force_async=True)
-        return response
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""

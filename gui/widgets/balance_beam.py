@@ -27,7 +27,6 @@ from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
@@ -45,9 +44,12 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
+        self.cmd_paused = False
         self.running = False
         self.checking_connection = False
         self.graph_thread = None
+        self.connection_thread = None
+        self.savemat_thread = None
         self.plot_data = {}
         self.start_time = 0
         self.filename = f"data-{time.time()}.mat"
@@ -96,19 +98,15 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.offset_dec_btn.clicked.connect(lambda: self.pre_btn_checks("offset_dec"))
         self.pause_btn.clicked.connect(lambda: self.pre_btn_checks("pause"))
 
-        self.low_sample: Union[float, None] = -9
-        self.high_sample: Union[float, None] = 9
-
-        # Setup bottom axis with TIME tick format
-        self.axis_limit = LiveAxisRange(fixed_range=[1, 10, 1, 10])
+        # Set high and low line values
+        self.low_sample: Union[float, None] = -10
+        self.high_sample: Union[float, None] = 10
 
         # Create plot itself
         self.graph_view = LivePlotWidget(title="Ball Position Vs. Time", background="#F2F2F2")
 
         # Show grid and make it look nice
         self.graph_view.showGrid(x=True, y=True, alpha=0.3)
-        self.graph_view.setRange(xRange=[-10, 0], yRange=[-15, 15])
-        self.graph_view.getPlotItem().invertX()
 
         # Set labels
         self.graph_view.setLabel('bottom', 'Time', units="s")
@@ -181,7 +179,10 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
         if btn == "stop":
             self.stop()
-        elif btn == "send_constants":
+
+        # Pause graphing while the command is sent
+        self.cmd_paused = True
+        if btn == "send_constants":
             self.sendConstants()
         elif btn == "send_set":
             self.sendSetPoint()
@@ -191,30 +192,17 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             self.offsetDec()
         elif btn == "pause":
             self.pause()
+        self.cmd_paused = False
 
     # Start menu with a fancy loading bar while checking cydaq bb status
     def start(self):
         # Start checking status in the background
-        Thread(target=self.start_bb_mode).start()
-        self.checking_connection = True
+        self.connection_thread = Thread(target=self.start_bb_mode)
+        self.connection_thread.start()
 
-        # In the meantime, show a progress bar window
-        # This should keep the GUI from freezing and show the user what is happening
-        self.pbar = QProgressBar()
-        self.pbar.setGeometry(960, 540, 60, 80)
-        self.pbar.setWindowTitle("Checking Balance Beam Status...")
-        self.pbar.show()
-
-        # Do a small loop having the progress bar increase
-        i = 0
-        while self.checking_connection:
-            i += 1
-            if i > 100:
-                i = 0
-            self.pbar.setValue(i)
-            time.sleep(0.05)
-        self.pbar.close()
-
+        # Stop ping timer from other window, set log to update instantly for live data
+        self.mainWindow.stopPingTimer()
+        self.mainWindow.debug.log_timer.setInterval(0)
 
     # Start the balance beam with default values
     def start_bb_mode(self):
@@ -234,10 +222,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.running = True
         self.start_time = time.time()
 
-        # Stop ping timer from other window, set log to update instantly for live data
-        self.mainWindow.stopPingTimer()
-        self.mainWindow.debug.log_timer.setInterval(0)
-
         # Wait to make sure that balance beam logging has started
         wait(lambda: self.wrapper.bb_log_mode)
 
@@ -246,11 +230,13 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.graph_thread.start()
 
     def stop(self):
-        if not self.mainWindow.connected or self.running:
-            return
         self.running = False
+        self.graph_thread = None
+        self.connection_thread = None
+        self.savemat_thread = None
         self.wrapper.stop_bb()
         self.mainWindow.startPingTimer()
+        self.mainWindow.debug.log_timer.setInterval(1000)
 
     # Send in the user-defined constants
     def sendConstants(self):
@@ -284,7 +270,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
                                                        options=options)
         # Save the current data dictionary to a matlab file
         # Using a thread because this process can take a while and be memory intensive
-        Thread(target=savemat, args=[self.filename, self.plot_data]).start()
+        self.savemat_thread = Thread(target=savemat, args=[self.filename, self.plot_data]).start()
+        self.savemat_thread.start()
 
     # Increase the offset for calibration
     def offsetInc(self):
@@ -310,6 +297,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         errorbox.setIcon(QMessageBox.Critical)
         errorbox.exec()
 
+    def _show_message(self, title, message, subtext=None):
+        messagebox = QMessageBox(self)
+        messagebox.setWindowTitle(title)
+        messagebox.setText(message)
+        messagebox.setInformativeText(subtext)
+        messagebox.setIcon(QMessageBox.Information)
+        messagebox.exec()
+
     ### TODO Live Graph Widget Below This Line ###
 
     def graph_data(self):
@@ -321,8 +316,11 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
                 self.running = False
                 return
 
+            # Don't graph anything if paused or paused to run a command
+            while self.paused or self.cmd_paused:
+                pass
             # Check if the data isn't actually coming through
-            if current_data == "" or current_data == "-9" or self.paused:
+            if current_data == "" or current_data == "-9":
                 i =+ 1
                 if i > 100:
                     self._show_error("Balance Beam Not Connected!")

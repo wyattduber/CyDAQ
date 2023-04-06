@@ -78,6 +78,7 @@ class CyDAQ_CLI:
         self.wrapper_mode = False
         self.mock_mode = False
         self.balance_beam_enabled = False
+        self.is_working_stop_cmd_sent = False
         self.generating = False
         self.bb_thread = None
         self.stop_thread = True
@@ -218,6 +219,7 @@ class CyDAQ_CLI:
                 continue
 
             if command[0].lower() == 'bb_stop':
+                self.is_working_stop_cmd_sent = True
                 self._stop_beam_mode()
                 continue
             elif command[0].lower() == 'bb_fetch_pos':
@@ -566,11 +568,15 @@ class CyDAQ_CLI:
             # Check for if the actual balance beam is not connected to the CyDAQ
             if type(buffer) == type(False):
                 if not buffer:
+                    if self.is_working_stop_cmd_sent:
+                        continue
                     self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                     self.stop_thread = True
                     self.balance_beam_enabled = False
                     return
             if buffer == "0xc9\r":  # Balance beam not connected code
+                if self.is_working_stop_cmd_sent:
+                        continue
                 self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                 self.stop_thread = True
                 self.balance_beam_enabled = False
