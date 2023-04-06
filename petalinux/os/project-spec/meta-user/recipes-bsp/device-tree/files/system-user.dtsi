@@ -41,7 +41,7 @@
 		rproc_0_reserved: rproc@0x3a800000 {
 			no-map;
 			compatible = "shared-dma-pool";
-			reg = <0x3a800000 0x4000000>;
+			reg = <0x3a800000 0x2000000>;
 		};
 	};
 

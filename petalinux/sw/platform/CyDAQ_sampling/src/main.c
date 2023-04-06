@@ -25,7 +25,6 @@
 #include "hardware/shared_definitions.h"
 #include "remoteproc/rpc_demo.h"
 
-
 /* Constant definitions */
 #define BUTTON_BASE_ADDR	XPAR_GPIO_0_BASEADDR
 
@@ -41,7 +40,9 @@ u8 getButtonChangeBlocking();
  * Firmware main function. Idles in commRXTask() under normal operation. Runs various system
  *   tests prior to operation if DEBUG is defined as true.
  */
-int main() {
+int main(int argc, char *argv[]) {
+	run_rpc_demo(argc, argv);
+	return 0;
 	//initialize hardware
 	init_platform();
     commInit();
