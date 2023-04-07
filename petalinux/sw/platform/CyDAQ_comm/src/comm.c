@@ -125,19 +125,19 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 	u8* payload = NULL;
 
 	if(DEBUG){
-		printf("=== Processing packet ===\n");
-
-		printf("Char representation: ");
-		for(int i = 0; i < bufSize; i++){
-			printf("%c", buffer[i]);
-		}
-		printf("\n");
-
-		printf("Hex representation: ");
-		for(int i = 0; i < bufSize; i++){
-			printf("0x%02x ", buffer[i]);
-		}
-		printf("\n");
+//		printf("=== Processing packet ===\n");
+//
+//		printf("Char representation: ");
+//		for(int i = 0; i < bufSize; i++){
+//			printf("%c", buffer[i]);
+//		}
+//		printf("\n");
+//
+//		printf("Hex representation: ");
+//		for(int i = 0; i < bufSize; i++){
+//			printf("0x%02x ", buffer[i]);
+//		}
+//		printf("\n");
 	}
 
 	if ((char) buffer[0] != COMM_START_CHAR

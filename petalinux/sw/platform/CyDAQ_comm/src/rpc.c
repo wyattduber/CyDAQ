@@ -204,14 +204,16 @@ int write_file(char *path, char *str)
 
 //TODO this could probably be moved to main, as it involves the whole program?
 void exit_kill_action_handler(int signum){
-	printf("Comm killed!\r\n");
+	printf("Comm>Comm killed!\r\n");
 
 	close(fd);
 
+	//TODO make this a seperate function most likely
 	system("modprobe -r rpmsg_char");
 	sprintf(sbuf,
 		"/sys/class/remoteproc/remoteproc%u/state",
 		r5_id_);
+	(void)write_file(sbuf, "stop");
 }
 
 /*
@@ -232,7 +234,7 @@ int rpc_setup(){
 	char ept_dev_path[32];
 	char sbuf[512];
 
-	printf("Running rpc_setup\r\n");
+	printf("Comm>Running rpc_setup\r\n");
 
 	memset(&exit_action, 0, sizeof(struct sigaction));
 	memset(&kill_action, 0, sizeof(struct sigaction));
@@ -256,17 +258,17 @@ int rpc_setup(){
 	}
 
 	/* Load rpmsg_char driver */
-	printf("\r\nMaster>probe rpmsg_char\r\n");
+	printf("comm>probe rpmsg_char\r\n");
 	ret = system("modprobe rpmsg_char");
 	if (ret < 0) {
-		perror("Failed to load rpmsg_char driver.\n");
+		perror("comm>Failed to load rpmsg_char driver.\n");
 		return -EINVAL;
 	}
 
-	printf("Open rpmsg dev %s! \r\n", rpmsg_dev);
+	printf("comm>Open rpmsg dev %s! \r\n", rpmsg_dev);
 	sprintf(fpath, "%s/devices/%s", RPMSG_BUS_SYS, rpmsg_dev);
 	if (access(fpath, F_OK)) {
-		fprintf(stderr, "Not able to access rpmsg device %s, %s\n",
+		fprintf(stderr, "comm>Not able to access rpmsg device %s, %s\n",
 			fpath, strerror(errno));
 		return -EINVAL;
 	}
@@ -283,7 +285,7 @@ int rpc_setup(){
 	eptinfo.dst = 0xFFFFFFFF;
 	ret = rpmsg_create_ept(charfd, &eptinfo);
 	if (ret) {
-		printf("failed to create RPMsg endpoint.\n");
+		printf("comm>failed to create RPMsg endpoint.\n");
 		return -EINVAL;
 	}
 	if (!get_rpmsg_ept_dev_name(rpmsg_char_name, eptinfo.name,
@@ -301,7 +303,7 @@ int rpc_setup(){
 	receive_payload = (struct _payload *)malloc(PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
 
 	if (send_payload == 0 || receive_payload == 0) {
-		printf("ERROR: Failed to allocate memory for payload.\n");
+		printf("comm>ERROR: Failed to allocate memory for payload.\n");
 		return -1;
 	}
 
@@ -362,18 +364,18 @@ int rpc_send_message(char message[], int data[], int data_len){
 }
 
 void print_payload(struct _payload* payload){
-	printf("= Payload ==\r\n");
+	printf("== comm>Payload ==\r\n");
 	printf("Message: %s\r\n", payload->message);
 	printf("Data: ");
 	for(int i = 0; i < payload->data_len; i++){
 		printf("%d ", payload->data[i]);
 	}
 	printf("\r\n");
-	printf("= Payload ==\r\n");
+	printf("==================\r\n");
 }
 
 void rpc_tear_down(){
-	printf("\r\nMaster>RPC service exiting !!\r\n");
+	printf("comm>RPC service exiting !!\r\n");
 
 	close(fd);
 
@@ -388,7 +390,7 @@ void rpc_tear_down(){
 	sprintf(sbuf,
 		"/sys/class/remoteproc/remoteproc%u/state",
 		r5_id_);
-//	(void)write_file(sbuf, "stop");
+	(void)write_file(sbuf, "stop");
 }
 
 //TODO this might not be needed

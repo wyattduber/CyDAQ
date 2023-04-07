@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
 	xil_printf("Starting to init all hardware...\r\n");
 	init_platform();
-    commInit();
+//    commInit();
     muxInit();
     xadcInit();
     init_x9258_i2c();
@@ -76,7 +76,8 @@ int main(int argc, char *argv[]) {
 //    filterTest();
 //    xil_printf("Finished filter test...\r\n");
 
-    rpc_listen();
+//    rpc_listen();
+    while(1){}
 
     cleanup_platform();
     xil_printf("Finished clean up program...\r\n");
