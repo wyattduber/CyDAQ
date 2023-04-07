@@ -9,10 +9,10 @@ CMD_PAUSE = "pause on!"
 CMD_RESUME = "pause off!"
 
 # Balance Beam Default Values
-DEFAULT_KP = 0.8
-DEFAULT_KI = 0.2
-DEFAULT_KD = 0.4
-DEFAULT_N = 16
+DEFAULT_KP = 0
+DEFAULT_KI = 0
+DEFAULT_KD = 0
+DEFAULT_N = 0
 DEFAULT_SET = 0
 
 class cmd:
@@ -554,6 +554,9 @@ class cmd:
     ### Balance Beam Commands ###
 
     def start_bb(self):
+        """
+        Sends the start command to the CyDAQ
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -572,22 +575,24 @@ class cmd:
         self.update_set(DEFAULT_SET)
 
     def stop_bb(self):
+        """
+        Sends the stop command to the CyDAQ.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
             return False
 
         if self.ctrl_comm_obj.isOpen():
-            # First, stop the thread
-            self.stop_thread = True
-            self.bb_thread = None
-
             # Then, send stop command
             self.ctrl_comm_obj.write('q!'.encode())
         else:
             self.__throw_exception('Stopping balance beam mode failed')
 
     def update_constants(self, kp, ki, kd, N):
+        """
+        Send the user-defined constants to the CyDAQ.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -602,6 +607,11 @@ class cmd:
             self.__throw_exception('Updating constants failed')
 
     def update_set(self, setv):
+        """
+        Send the user-defined set point in cm to the CyDAQ.
+        Args:
+            setv: The set point in cm
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -613,6 +623,9 @@ class cmd:
             self.__throw_exception('Updating set failed')
 
     def offset_inc(self):
+        """
+        Increase the offset for calibration.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -624,6 +637,9 @@ class cmd:
             self.__throw_exception('Increasing offset failed')
 
     def offset_dec(self):
+        """
+        Decrease the offset for calibration.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -635,6 +651,9 @@ class cmd:
             self.__throw_exception('Decreasing offset failed')
 
     def pause_bb(self):
+        """
+        Pause the Balance Beam Mode.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -646,6 +665,9 @@ class cmd:
             self.__throw_exception('Error pausing')
 
     def resume_bb(self):
+        """
+        Resume the Balance Beam Mode.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:
@@ -657,6 +679,11 @@ class cmd:
             self.__throw_exception('Error pausing')
 
     def read_bb_buffer(self):
+        """
+        Method that receives the buffer being sent from the CyDAQ
+        Parses the buffer into either positive or negataive numbers
+        and returns the number to the CLI tool to be output.
+        """
         try:
             self.ctrl_comm_obj.open(self.port)
         except ValueError:

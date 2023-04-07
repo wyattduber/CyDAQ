@@ -14,7 +14,6 @@ from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-
 class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
 

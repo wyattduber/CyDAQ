@@ -7,7 +7,7 @@ from PyQt5.QtGui import QDoubleValidator
 from generated.DacModeWidgetUI import Ui_DAC_mode_widget
 
 
-# TODO This will get used later
+# TODO This will get used later - Might not be included for final product in sdmay23-47
 class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
     def __init__(self, mainWindow, cyDAQModeWidget):
         super(DACModeWidget, self).__init__()
@@ -52,13 +52,10 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
 
         def onFileOpenBtnClicked():
             options = QFileDialog.Options()
-            # options |= QFileDialog.DontUseNativeDialog
             fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "CSV Files (*.csv);;",
                                                       options=options)
             if fileName:
                 self.input_file_name.setText(fileName)
-                # global generationFilename
-                # generationFilename = fileName
 
         self.file_upload_btn.clicked.connect(onFileOpenBtnClicked)
         self.repetitions_min_limit_btn.clicked.connect(
@@ -83,12 +80,3 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
 
     def getData(self):
         pass
-        # global generationFilename
-        # if generationFilename is None or generationFilename == "":
-        #     generationFilename = self.input_file_name.text()
-        # allData.update({
-        #     "Dac Mode": self.dac_mode_dropdown.currentText(),
-        #     "Dac Reps": self.repetitions_input.text(),
-        #     "Dac Generation Rate": self.gen_rate_input.text()
-        # })
-        # return allData

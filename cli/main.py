@@ -574,7 +574,7 @@ class CyDAQ_CLI:
                     self.stop_thread = True
                     self.balance_beam_enabled = False
                     return
-            if buffer == "0xc9\r":  # Balance beam not connected code
+            if buffer == "0xc9\r":  # Alternate balance beam not connected code
                 if self.is_working_stop_cmd_sent:
                         continue
                 self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
@@ -582,7 +582,7 @@ class CyDAQ_CLI:
                 self.balance_beam_enabled = False
                 return
 
-            # Check if the buffer has improper syntax, and throw it out
+            # Check if the buffer has improper syntax, and if so, throw it out
             pattern = re.compile("\d\.[0-9]+")
             neg_pattern = re.compile("-\d\.[0-9]+")
             if not pattern.match(buffer) and not neg_pattern.match(buffer):

@@ -31,7 +31,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         # Home Button
         self.home_btn.clicked.connect(self.home)
 
-        # Widget Buttons (Disabled for Lab Launch
+        # Widget Buttons (Disabled for Lab Launch)
         # self.write_btn.clicked.connect(self.writeData)
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
@@ -58,6 +58,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         pass
 
     def home(self):
+        """Return to whatever the previous window was before switching to debug"""
         tmp = self.prev_index
         if self.prev_index == 0:
             self.mainWindow.switchToModeSelector()
@@ -78,6 +79,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     """
 
     def writeData(self):
+        """Test Method to write data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.writeALotOfData,
@@ -86,6 +88,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         )
 
     def writeDataV2(self):
+        """Second Test Method to write data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.writeALotOfDataV2,
@@ -94,6 +97,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         )
 
     def readData(self):
+        """Test Method to read data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.readALotOfData,

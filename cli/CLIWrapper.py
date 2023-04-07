@@ -251,6 +251,8 @@ class CLI:
         """Start/Stop DAC Generation"""
         self._send_command("generate")
 
+    ### Mock Mode Methods ###
+
     def enable_mock(self, **_):
         """Enable CyDAQ serial connection mocking"""
         self._send_command("mock, enable")
@@ -264,7 +266,11 @@ class CLI:
         response = self._send_command("mock, status")
         return response == "True"
 
+    ### Balance Beam Wrapper Methods ###
+
     def start_bb(self, **_):
+        """Start balance beam mode and live data streaming"""
+
         # If a ping command is running, wait for it to finish
         wait(lambda: not self.running_ping_command)
 
@@ -279,29 +285,42 @@ class CLI:
             return False
 
     def stop_bb(self, **_):
+        """Stop balance beam mode and live data streaming"""
         self.bb_log_mode = False
         self.bb_log_thread = None
         self._send_command("bb_stop")
 
     def set_constants(self, kp, ki, kd, N, **_):
+        """Send balance beam configuration constants"""
         self._send_command(f"bb_const, {kp} {ki} {kd} {N}")
 
     def send_set_point(self, setv, **_):
+        """Send balance beam set point"""
         self._send_command(f"bb_set, {setv}")
 
     def offset_inc(self, **_):
+        """Increase the offset for calibration"""
         self._send_command("bb_offset_inc")
 
     def offset_dec(self, **_):
+        """Decrease the offset for calibration"""
         self._send_command("bb_offset_dec")
 
     def pause_bb(self, **_):
+        """Pause the balance beam, but do not disable it entirely"""
         self._send_command("bb_pause")
 
     def resume_bb(self, **_):
+        """Resume balance beam mode and data streaming"""
         self._send_command("bb_resume")
 
     def retrieve_bb_pos(self):
+        """
+        Returns the current balance beam position each call
+        In the current configuration, this command needs to run a lot of times to get a live feed
+        In order to not conflict with other commands being sent, it needs to not wait for other commands
+        to stop sending like the other commands do. Hence, the "force_async" option
+        """
         response = self._send_command("bb_fetch_pos", force_async=True)
         return response
 
@@ -368,6 +387,7 @@ class CLIException(Exception):
 
 
 class CLINoResponseException(Exception):
+    """Exception for when the CLI does not send a response in time"""
     pass
 
 

@@ -11,13 +11,10 @@ from scipy.io import savemat
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QIntValidator
 from PyQt5.Qt import QMessageBox
-from PyQt5.Qt import QProgressBar
 from PyQt5.QtGui import QDoubleValidator
 
 # pglive Packages
-from pyqtgraph import mkPen
 from pglive.sources.data_connector import DataConnector
-from pglive.sources.live_axis_range import LiveAxisRange
 from pglive.sources.live_plot import LiveLinePlot
 from pglive.sources.live_plot_widget import LivePlotWidget
 
@@ -130,15 +127,12 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.graph_view.setParent(self.graph)
         self.graph_view.setGeometry(0, 0, 801, 641)
 
-    # CyDAQ Connection Label (disabled until re-layout)
     def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        # self.connection_status_label.setText("Connected!")
+        """When CyDAQ changes from disconnected to connected (Disabled until re-layout)"""
         pass
 
     def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        # self.connection_status_label.setText("Not Connected!")
+        """When CyDAQ changes from connected to disconnected (Disabled until re-layout)"""
         pass
 
     def pre_btn_checks(self, btn):
@@ -194,8 +188,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             self.pause()
         self.cmd_paused = False
 
-    # Start menu with a fancy loading bar while checking cydaq bb status
     def start(self):
+        """
+        Stops the ping timer and does whatever else is needed in the main thread
+        Runs the threaded start command as well
+        This is because the wrapper call may cause the entire GUI window to freeze
+        when it is waiting for a response from the CyDAQ. When run in a thread,
+        this does not happen.
+        """
         # Start checking status in the background
         self.connection_thread = Thread(target=self.start_bb_mode)
         self.connection_thread.start()
@@ -204,8 +204,11 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.mainWindow.stopPingTimer()
         self.mainWindow.debug.log_timer.setInterval(0)
 
-    # Start the balance beam with default values
     def start_bb_mode(self):
+        """
+        Starts the Balance Beam and live graphing of the data.
+        """
+
         # Start Balance Beam Mode from Wrapper
         try:
             if not self.wrapper.start_bb():
@@ -230,6 +233,10 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.graph_thread.start()
 
     def stop(self):
+        """
+        Sends the stop command to the CyDAQ and ends all threads
+        Also re-enables the ping timer in the background for connectivity
+        """
         self.running = False
         self.graph_thread = None
         self.connection_thread = None
@@ -238,8 +245,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.mainWindow.startPingTimer()
         self.mainWindow.debug.log_timer.setInterval(1000)
 
-    # Send in the user-defined constants
     def sendConstants(self):
+        """Send in the user-defined constants"""
         self.kp = float(self.kp_input.text()) or 0
         self.ki = float(self.ki_input.text()) or 0
         self.kd = float(self.kd_input.text()) or 0
@@ -252,18 +259,18 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.kd_output.setText(str(self.kd))
         self.n_output.setText(str(self.N))
 
-    # Send in the user-defined set point in cm
     def sendSetPoint(self):
+        """Send in the user-defined set point in cm"""
         self.setcm = int(self.set_cm_input.text()) or 0
         self.wrapper.send_set_point(self.setcm)
         self.set_cm_output.setText(str(self.setcm))
 
-    # Save the step (?)
     def saveStep(self):
+        """Method that does nothing at the moment according to Matt Post"""
         pass
 
-    # Save the plot data to a file
     def savePlotData(self):
+        """Save the plot data to a file"""
         options = QFileDialog.Options()
         self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the data!",
                                                        DEFAULT_SAVE_LOCATION, "MATLAB Files (*.mat)",
@@ -273,16 +280,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.savemat_thread = Thread(target=savemat, args=[self.filename, self.plot_data]).start()
         self.savemat_thread.start()
 
-    # Increase the offset for calibration
     def offsetInc(self):
+        """Increase the offset for calibration"""
         self.wrapper.offset_inc()
 
-    # Decrease the offset for calibration
     def offsetDec(self):
+        """Decrease the offset for calibration"""
         self.wrapper.offset_dec()
 
-    # Pause the plotting / balancing
     def pause(self):
+        """Pause the plotting/balancing"""
         if self.paused:
             self.wrapper.resume_bb()
             self.paused = False
@@ -291,6 +298,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             self.paused = True
 
     def _show_error(self, message):
+        """Private method to just show an error message box with a custom message"""
         errorbox = QMessageBox(self)
         errorbox.setWindowTitle("Error")
         errorbox.setText(message)
@@ -298,6 +306,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         errorbox.exec()
 
     def _show_message(self, title, message, subtext=None):
+        """Private method to just show an info message box with a custom message"""
         messagebox = QMessageBox(self)
         messagebox.setWindowTitle(title)
         messagebox.setText(message)
@@ -305,9 +314,12 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         messagebox.setIcon(QMessageBox.Information)
         messagebox.exec()
 
-    ### TODO Live Graph Widget Below This Line ###
-
     def graph_data(self):
+        """
+        Method that runs the graphing, usually in another thread.
+        Retrieves the data from the CyDAQ using the wrapper,
+        and plots it live using pglive
+        """
         while self.running:
             try:
                 current_data = self.wrapper.retrieve_bb_pos()
