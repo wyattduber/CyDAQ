@@ -52,10 +52,10 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.filename = f"data-{time.time()}.mat"
 
         # Balance Beam Input Values (Default)
-        self.kp = 0.8
-        self.ki = 0.2
-        self.kd = 0.4
-        self.N = 16
+        self.kp = 0
+        self.ki = 0
+        self.kd = 0
+        self.N = 0
         self.setcm = 0
 
         # Set current values for reference
@@ -136,14 +136,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         pass
 
     def pre_btn_checks(self, btn):
-        """When a button is pressed, check the various conditions
-           that need to be met for each button to work properly"""
+        """
+        When a button is pressed, check the various conditions
+        that need to be met for each button to work properly
+        """
         if btn == "home":
             if self.running:
                 self.stop()
             self.mainWindow.switchToModeSelector(self.prev_geometry)
             return
-        if btn == "save_plot_data":
+        elif btn == "save_plot_data":
             if not self.running and len(self.plot_data) == 0:
                 self._show_error("No Plot Data to Save!")
             else:
@@ -153,7 +155,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             pass # TODO Not sure what save step is
             return
 
-        # Now handle commands that require the CyDAQ's connection
+        # Now handle commands that require an active CyDAQ connection
         # Or balance beam mode to be enabled (Seperate checks)
 
         if not self.mainWindow.connected:

@@ -37,11 +37,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         ### Below are the methods called when buttons are pressed ###
 
         # Home Button
-        self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
+        self.home_btn.clicked.connect(lambda: self.pre_btn_check("home"))
 
         # Bottom Buttons
         send_config = self.send_config_btn
-        send_config.clicked.connect(lambda: self.send_config_only())
+        send_config.clicked.connect(lambda: self.pre_btn_check("send_config_only"))
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -78,7 +78,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.high_corner_input.setValidator(validator)
 
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(self.startStopSampling)
+        self.start_stop_sampling_btn.clicked.connect(lambda: self.pre_btn_check("start_stop_sampling"))
 
         def onFilterChange():
             midCorner = [
@@ -209,6 +209,35 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
 
         print(f"{self.sampling_time_input.text()}s reached, timeout")
         self.stop_sampling()
+
+    def pre_btn_check(self, btn):
+        """
+        When a button is pressed, check the various conditions
+        that need to be met for each button to work properly
+        """
+        # First, buttons that don't require an active CyDAQ connection
+        if btn == "home":
+            if self.sampling:
+                self.stop_sampling()
+            self.mainWindow.switchToModeSelector()
+
+        # Now handle that commands that require an active CyDAQ connection
+        if not self.mainWindow.connected:
+            self._show_error("CyDAQ is not Connected!")
+            return
+
+        # Send start/stop sample command
+        if btn == "start_stop_sampling":
+            self.startStopSampling()
+
+        # Now check if already sampling
+        if self.sampling:
+            self._show_error("You cannot send the config when already sampling!")
+
+        # Send the config only
+        if btn == "send_config_only":
+            self.send_config_only()
+
 
     def stop_sampling(self):
         self.shouldTimeout = False
@@ -447,3 +476,9 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
                                   "}")
         Thread(target=resetSendConfigBtn).start()
         # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
+
+    def _show_error(self, message):
+        pass
+
+    def _show_message(self, message):
+        pass
