@@ -9,19 +9,26 @@
 #include <fcntl.h>
 #include <string.h>
 #include <linux/rpmsg.h>
+#include <signal.h>
 
 #include "rpc.h"
 
+#define PAYLOAD_MESSAGE_LEN 16
 struct _payload {
-	unsigned long num;
-	unsigned long size;
-	char data[];
+	char message[PAYLOAD_MESSAGE_LEN];
+	int data_len;
+	int data[];
 };
 
 static int charfd = -1, fd = -1, err_cnt;
+int r5_id_ = 0; //TODO rename
+char sbuf[512]; //TODO needed? just make local vars..
 
 struct _payload *send_payload;
 struct _payload *receive_payload;
+
+struct sigaction exit_action;
+struct sigaction kill_action;
 
 //#define RPMSG_GET_KFIFO_SIZE 1
 //#define RPMSG_GET_AVAIL_DATA_SIZE 2
@@ -34,6 +41,8 @@ struct _payload *receive_payload;
 //#define NUM_PAYLOADS		(PAYLOAD_MAX_SIZE/PAYLOAD_MIN_SIZE)
 
 #define RPMSG_BUS_SYS "/sys/bus/rpmsg"
+
+void print_payload(struct _payload* payload);
 
 static int bind_rpmsg_chrdev(const char *rpmsg_dev_name)
 {
@@ -164,20 +173,96 @@ static char *get_rpmsg_ept_dev_name(const char *rpmsg_char_name,
 	return NULL;
 }
 
+/* write a string to an existing and writtable file */
+int write_file(char *path, char *str)
+{
+	int fd;
+	ssize_t bytes_written;
+	size_t str_sz;
+
+	fd = open(path, O_WRONLY);
+	if (fd == -1) {
+		perror("Error");
+		return -1;
+	}
+	str_sz = strlen(str);
+	bytes_written = write(fd, str, str_sz);
+	if (bytes_written != str_sz) {
+	        if (bytes_written == -1) {
+			perror("Error");
+		}
+		close(fd);
+		return -1;
+	}
+
+	if (-1 == close(fd)) {
+		perror("Error");
+		return -1;
+	}
+	return 0;
+}
+
+//TODO this could probably be moved to main, as it involves the whole program?
+void exit_kill_action_handler(int signum){
+	printf("Comm killed!\r\n");
+
+	close(fd);
+
+	system("modprobe -r rpmsg_char");
+	sprintf(sbuf,
+		"/sys/class/remoteproc/remoteproc%u/state",
+		r5_id_);
+}
+
+/*
+ * TODO write
+ */
 int rpc_setup(){
+	//TODO clean up unused
 	int ret, i, j;
 	int size, bytes_rcvd, bytes_sent;
 	err_cnt = 0;
 	int opt;
-	char *rpmsg_dev="virtio0.rpmsg-openamp-demo-channel.-1.0"; //TODO rename
+	char *rpmsg_dev="virtio0.rpmsg-openamp-demo-channel.-1.0"; //TODO rename and make global const
 	int ntimes = 1;
 	char fpath[256];
 	char rpmsg_char_name[16];
 	struct rpmsg_endpoint_info eptinfo;
 	char ept_dev_name[16];
 	char ept_dev_path[32];
+	char sbuf[512];
 
 	printf("Running rpc_setup\r\n");
+
+	memset(&exit_action, 0, sizeof(struct sigaction));
+	memset(&kill_action, 0, sizeof(struct sigaction));
+	exit_action.sa_handler = exit_kill_action_handler;
+	kill_action.sa_handler = exit_kill_action_handler;
+	sigaction(SIGTERM, &exit_action, NULL);
+	sigaction(SIGINT, &exit_action, NULL);
+	sigaction(SIGKILL, &kill_action, NULL);
+	sigaction(SIGHUP, &kill_action, NULL);
+
+	/* Write firmware name to remoteproc sysfs interface */
+	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/firmware", r5_id_);
+	if (0 != write_file(sbuf, "CyDAQ_sampling.elf")) { //TODO make constant at top of file //was "image_rpc_demo" or "CyDAQ_sampling.elf"
+		return -EINVAL;
+	}
+
+	/* Tell remoteproc to load and start remote cpu */
+	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/state", r5_id_);
+	if (0 != write_file(sbuf, "start")) {
+		return -EINVAL;
+	}
+
+	/* Load rpmsg_char driver */
+	printf("\r\nMaster>probe rpmsg_char\r\n");
+	ret = system("modprobe rpmsg_char");
+	if (ret < 0) {
+		perror("Failed to load rpmsg_char driver.\n");
+		return -EINVAL;
+	}
+
 	printf("Open rpmsg dev %s! \r\n", rpmsg_dev);
 	sprintf(fpath, "%s/devices/%s", RPMSG_BUS_SYS, rpmsg_dev);
 	if (access(fpath, F_OK)) {
@@ -212,8 +297,8 @@ int rpc_setup(){
 		return -1;
 	}
 
-	send_payload = (struct _payload *)malloc(2 * sizeof(unsigned long) + PAYLOAD_MAX_SIZE);
-	receive_payload = (struct _payload *)malloc(2 * sizeof(unsigned long) + PAYLOAD_MAX_SIZE);
+	send_payload = (struct _payload *)malloc(PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+	receive_payload = (struct _payload *)malloc(PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
 
 	if (send_payload == 0 || receive_payload == 0) {
 		printf("ERROR: Failed to allocate memory for payload.\n");
@@ -223,8 +308,33 @@ int rpc_setup(){
 	return 0;
 }
 
-int rpc_send_message(struct _payload payload){
-	//TODO
+/*
+ * TODO write
+ * make sure to include info about message len and data len
+ */
+int rpc_send_message(char message[], int data[], int data_len){
+	//construct payload
+	for(int i = 0; i < PAYLOAD_MESSAGE_LEN; i++){
+		send_payload->message[i] = message[i];
+	}
+
+	int b = data_len;
+	if(data_len > MAX_RPMSG_BUFF_SIZE)
+		data_len = MAX_RPMSG_BUFF_SIZE;
+	send_payload->data_len = data_len;
+	for(int i = 0; i < b; i++){
+		send_payload->data[i] = data[i];
+	}
+
+	print_payload(send_payload);
+
+	int bytes_sent = write(fd, send_payload,
+			PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+	if(bytes_sent <= 0){
+		printf("Error sending payload. Printing payload: \r\n");
+		print_payload(send_payload);
+	}
+
 //	printf("\r\n sending payload number");
 //	printf(" %ld of size %d\r\n", send_payload->num,
 //	(2 * sizeof(unsigned long)) + size);
@@ -249,6 +359,36 @@ int rpc_send_message(struct _payload payload){
 //	}
 //	printf(" received payload number ");
 //	printf("%ld of size %d\r\n", receive_payload->num, bytes_rcvd);
+}
+
+void print_payload(struct _payload* payload){
+	printf("= Payload ==\r\n");
+	printf("Message: %s\r\n", payload->message);
+	printf("Data: ");
+	for(int i = 0; i < payload->data_len; i++){
+		printf("%d ", payload->data[i]);
+	}
+	printf("\r\n");
+	printf("= Payload ==\r\n");
+}
+
+void rpc_tear_down(){
+	printf("\r\nMaster>RPC service exiting !!\r\n");
+
+	close(fd);
+
+	/* Wait for other end to cleanup
+	 * Otherwise, virtio_rpmsg_bus can post msg with no recipient
+	 * warning as it can receive NS destroy after the rpmsg char
+	 * module is removed.
+	 */
+	sleep(1);
+
+	system("modprobe -r rpmsg_char");
+	sprintf(sbuf,
+		"/sys/class/remoteproc/remoteproc%u/state",
+		r5_id_);
+//	(void)write_file(sbuf, "stop");
 }
 
 //TODO this might not be needed

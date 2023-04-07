@@ -29,29 +29,57 @@ int main(int argc, char **argv){
 
 	printf("cydaq-comm starting\n");
 
+	printf("RPC setup starting...\r\n");
+	if(rpc_setup() != 0){
+		printf("rpc setup failed!\r\n");
+		return 0;
+	}
+	printf("RPC setup finished!\r\n");
+	char message[16] = "Hi";
+	int data[1] = {1};
+	rpc_send_message(message, data, 1);
+//	printf("RPC Listener starting...\r\n");
+//	rpc_init_listen();
+//	printf("RPC Listener stopped!\r\n");
+
+	printf("commInit starting...\r\n");
+	commInit();
+	printf("commInit finished\n");
+	printf("Serial Listener starting...\n");
+	commRXTask();
+	printf("Serial Listener stopped!\n");
+
+	rpc_tear_down();
+
 	//recieving data from PC (UART/USB) and receiving messages from the sampling core are
 	//both blocking, so they must be ran "concurrently"
-	if(fork() == 0){
-		//child
-		printf("RPC setup starting...\r\n");
-		rpc_setup();
-		printf("RPC setup finished!\r\n");
-		printf("RPC Listener starting...\r\n");
-//		rpc_init_listen();
-		printf("RPC Listener stopped!\r\n");
-	}else{
-		//parent
-//		commInit();
-		printf("commInit finished\n");
-		printf("Serial Listener starting...\n");
-		commRXTask();
-		printf("Serial Listener stopped!\n");
-
-		//must wait for RPC Listener to close
-		//TODO maybe force it to close if ever reach here?
-		wait(NULL);
-		printf("Serial Listener fork stopped\n");
-	}
+//	if(fork() == 0){
+//		//child
+//		printf("RPC setup starting...\r\n");
+//		if(rpc_setup() != 0){
+//			printf("rpc setup failed!\r\n");
+//			return 0;
+//		}
+//		printf("RPC setup finished!\r\n");
+//		char message[16] = "Hi";
+//		int data[1] = {1};
+//		rpc_send_message(message, data, 1);
+//		printf("RPC Listener starting...\r\n");
+////		rpc_init_listen();
+//		printf("RPC Listener stopped!\r\n");
+//	}else{
+//		//parent
+////		commInit();
+//		printf("commInit finished\n");
+//		printf("Serial Listener starting...\n");
+//		commRXTask();
+//		printf("Serial Listener stopped!\n");
+//
+//		//must wait for RPC Listener to close
+//		//TODO maybe force it to close if ever reach here?
+//		wait(NULL);
+//		printf("Serial Listener fork stopped\n");
+//	}
 
     return 0;
 }
