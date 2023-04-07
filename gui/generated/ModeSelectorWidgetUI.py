@@ -14,11 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ModeSelectorWidget(object):
     def setupUi(self, ModeSelectorWidget):
         ModeSelectorWidget.setObjectName("ModeSelectorWidget")
+        ModeSelectorWidget.resize(436, 602)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ModeSelectorWidget.sizePolicy().hasHeightForWidth())
         ModeSelectorWidget.setSizePolicy(sizePolicy)
+        ModeSelectorWidget.setMinimumSize(QtCore.QSize(436, 596))
         ModeSelectorWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 20px;\n"
@@ -90,7 +92,7 @@ class Ui_ModeSelectorWidget(object):
         _translate = QtCore.QCoreApplication.translate
         ModeSelectorWidget.setWindowTitle(_translate("ModeSelectorWidget", "Form"))
         self.select_mode_header.setText(_translate("ModeSelectorWidget", "Select Mode"))
-        self.basic_operation_btn.setText(_translate("ModeSelectorWidget", "Basic Operation"))
+        self.basic_operation_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.livestream_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.balance_beam_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
         self.external_adc_btn.setText(_translate("ModeSelectorWidget", "Disabled"))
