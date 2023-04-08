@@ -17,6 +17,53 @@ static int shutdown_req = 0;
 #define MSG_LIMIT 100
 #define SHUTDOWN_MSG	0xEF56A55A
 
+int handle_message(struct _payload* payload){
+	char* message = payload->message;
+	int* data = payload->data;
+	int data_len = payload->data_len;
+
+	//TODO implement each command
+	if(strcmp(message, RPC_MESSAGE_XADC_SET_SAMPLE_RATE) == 0){
+		LPRINTF("setting xadc sample rate to: %d\r\n", data[0]);
+	}else if(strcmp(message, RPC_MESSAGE_ADS_SET_SAMPLE_RATE) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_MUTED_SET_INPUT_PINS) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_SET_ACTIVE_FILTER) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_TUNE_FILTER) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_XADC_PROCESS_SAMPLES) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_ADS_PROCESS_SAMPLES) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_XADC_ENABLE_SAMPLING) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_ADS_ENABLE_SAMPLING) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_XADC_DISABLE_SAMPLING) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_NUM_REPETITIONS) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_GEN_RATE) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_RECEIVE_DATASET) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_ENABLE_GENERATION) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_DISABLE_GENERATION) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_BALL_BEAM_START) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_ACK) == 0){
+
+	}else if(strcmp(message, RPC_MESSAGE_DAC_STOP) == 0){
+
+	}else{
+		//unknown message
+	}
+}
+
 /*-----------------------------------------------------------------------------*
  *  RPMSG endpoint callbacks
  *-----------------------------------------------------------------------------*/
@@ -30,10 +77,12 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	char cmp[16] = "xadcSetSR";
 
 	//just for testing for now :D
-	if(strncmp(((struct _payload*)data)->message, cmp, 9) == 0){
-		xil_printf("sampling> Got command to configure xadc sample rate to: %d\r\n", ((struct _payload*)data)->data[0]);
-//		xadcSetSampleRate(((struct _payload*)data)->data[0]);
-	}
+//	if(strncmp(((struct _payload*)data)->message, cmp, 9) == 0){
+//		xil_printf("sampling> Got command to configure xadc sample rate to: %d\r\n", ((struct _payload*)data)->data[0]);
+////		xadcSetSampleRate(((struct _payload*)data)->data[0]);
+//	}
+	handle_message((struct _payload*)data);
+
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
 	if ((*(unsigned int *)data) == SHUTDOWN_MSG) {
@@ -42,7 +91,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 		return RPMSG_SUCCESS;
 	}
 
-	/* Send data back to master */
+	/* Send data back to master */ //TODO change this to just ACK later on
 	if (rpmsg_send(ept, data, len) < 0) {
 		LPERROR("rpmsg_send failed\n");
 	}
