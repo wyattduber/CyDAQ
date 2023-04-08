@@ -124,6 +124,9 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 	u8 cmd, status = 0;
 	u8* payload = NULL;
 
+	char rpc_message[PAYLOAD_MESSAGE_LEN] = "";
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
+
 	if ((char) buffer[0] != COMM_START_CHAR
 			|| (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
 		//command structure was invalid
@@ -155,13 +158,10 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 				printf("comm> Got sample rate set of: %d\r\n", rate);
-//				char message[16] = "xadcSetSR";
-//				int data[16] = {(int)rate};
-//				rpc_send_message(message, data, 1);
-//				char message[16] = "_xadcSetSR";
-				int data[16] = {(int)rate};
-				rpc_send_message(RPC_MESSAGE_XADC_SET_SAMPLE_RATE, data, 1);
-				rpc_recieve_message();
+
+				rpc_data[0] = (int)rate;
+				rpc_send_message(RPC_MESSAGE_XADC_SET_SAMPLE_RATE, rpc_data, 1);
+				printf("rpc_recieve_ack returned: %d\r\n", rpc_recieve_ack());
 
 //				xadcSetSampleRate(rate); //TODO
 //				ads7047_SetSampleRate(rate); //TODO

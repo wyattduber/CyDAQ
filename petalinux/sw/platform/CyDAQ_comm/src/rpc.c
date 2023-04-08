@@ -62,8 +62,7 @@ int rpc_send_message(char message[], int data[], int data_len){
 	printf("comm>Attempting to send message:\r\n");
 	rpc_print_payload(send_payload);
 
-	int bytes_sent = write(fd, send_payload,
-			PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int));
+	int bytes_sent = write(fd, send_payload, PAYLOAD_TOTAL_LEN);
 	printf("message sent: Bytes written: %d\r\n", bytes_sent);
 	if(bytes_sent <= 0){
 		printf("Error sending payload. Printing payload: \r\n");
@@ -78,12 +77,28 @@ int rpc_send_message(char message[], int data[], int data_len){
  */
 int rpc_recieve_message(){
 	int bytes_rcvd = 0;
-	bytes_rcvd = read(fd, receive_payload,
-			PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	while (bytes_rcvd <= 0) {
 		usleep(10000);
-		bytes_rcvd = read(fd, receive_payload,
-				PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
+	}
+	printf(" received payload with message: %s\r\n", receive_payload->message);
+}
+
+/*
+ * Blocking - waits for ACK message from RPC. Returns 1 if successful, -1 if anything but ACK is received.
+ */
+int rpc_recieve_ack(){
+	int bytes_rcvd = 0;
+	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
+	while (bytes_rcvd <= 0) {
+		usleep(10000);
+		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
+	}
+	if(strcmp(receive_payload->message, RPC_MESSAGE_DAC_ACK) == 0){
+		return 0;
+	}else{
+		return -1;//TODO just return the strcmp return? idk just being safe
 	}
 	printf(" received payload with message: %s\r\n", receive_payload->message);
 }
@@ -153,9 +168,8 @@ int rpc_setup(){
 		return -1;
 	}
 
-	int payload_datasize = PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int);
-	send_payload = (struct _payload *)malloc(payload_datasize);
-	receive_payload = (struct _payload *)malloc(payload_datasize);
+	send_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
+	receive_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
 
 	if (send_payload == 0 || receive_payload == 0) {
 		printf("ERROR: Failed to allocate memory for payload.\n");

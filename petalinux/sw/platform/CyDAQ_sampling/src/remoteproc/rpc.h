@@ -27,6 +27,7 @@ struct _payload {
 	int data_len;
 	int data[PAYLOAD_DATA_LEN];
 };
+#define PAYLOAD_TOTAL_LEN PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int)
 
 int rpc_setup();
 int rpc_tear_down();

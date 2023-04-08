@@ -17,6 +17,39 @@ static int shutdown_req = 0;
 #define MSG_LIMIT 100
 #define SHUTDOWN_MSG	0xEF56A55A
 
+struct _payload *send_payload;
+struct _payload *receive_payload;
+
+int rpc_send_message(char message[], int data[], int data_len){
+	//construct payload
+	for(int i = 0; i < PAYLOAD_MESSAGE_LEN; i++){
+		send_payload->message[i] = message[i];
+	}
+
+	int b = data_len;
+	if(data_len > PAYLOAD_DATA_LEN)
+		data_len = PAYLOAD_DATA_LEN;
+	send_payload->data_len = data_len;
+	for(int i = 0; i < b; i++){
+		send_payload->data[i] = data[i];
+	}
+
+	if (rpmsg_send(&lept, send_payload, PAYLOAD_TOTAL_LEN) < 0) {
+		LPERROR("send_ack failed\n");
+	}
+
+	return 0;
+}
+
+int send_ack(){
+	char message[PAYLOAD_MESSAGE_LEN] = RPC_MESSAGE_DAC_ACK;
+	int data[PAYLOAD_DATA_LEN] = {}; //ack has no data needed
+	if (rpc_send_message(message, data, 0) < 0) {
+		LPERROR("send_ack failed\n");
+	}
+	return 0;
+}
+
 int handle_message(struct _payload* payload){
 	char* message = payload->message;
 	int* data = payload->data;
@@ -25,6 +58,9 @@ int handle_message(struct _payload* payload){
 	//TODO implement each command
 	if(strcmp(message, RPC_MESSAGE_XADC_SET_SAMPLE_RATE) == 0){
 		LPRINTF("setting xadc sample rate to: %d\r\n", data[0]);
+		xadcSetSampleRate(data[0]); //TODO check this func return type and return ERR if bad
+		send_ack();
+
 	}else if(strcmp(message, RPC_MESSAGE_ADS_SET_SAMPLE_RATE) == 0){
 
 	}else if(strcmp(message, RPC_MESSAGE_MUTED_SET_INPUT_PINS) == 0){
@@ -92,9 +128,9 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	}
 
 	/* Send data back to master */ //TODO change this to just ACK later on
-	if (rpmsg_send(ept, data, len) < 0) {
-		LPERROR("rpmsg_send failed\n");
-	}
+//	if (rpmsg_send(ept, data, len) < 0) {
+//		LPERROR("rpmsg_send failed\n");
+//	}
 	return RPMSG_SUCCESS;
 }
 
@@ -141,6 +177,9 @@ int rpc_setup(){
 	int ret;
 
 	LPRINTF("\n**********CyDAQ baremetal sampling process***********\r\n");
+
+	send_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
+	receive_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
 
 	/* Initialize platform */
 	ret = platform_init(&platform);

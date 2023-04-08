@@ -25,6 +25,8 @@ struct _payload {
 	int data_len;
 	int data[PAYLOAD_DATA_LEN];
 };
+#define PAYLOAD_TOTAL_LEN PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int)
+
 
 #define RPMSG_HEADER_LEN 16
 
@@ -39,3 +41,4 @@ int rpc_setup();
 int rpc_send_message(char message[], int data[], int data_len);
 int rpc_recieve_message();
 void rpc_teardown();
+int rpc_recieve_ack();
