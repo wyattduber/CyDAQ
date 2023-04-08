@@ -2,6 +2,7 @@
  *
  */
 #include "comm.h"
+#include "rpc.h"
 
 bool samplingEnabled = false;
 bool streamingEnabled = false;
@@ -30,12 +31,11 @@ int commInit() {
 		printf("Error opening serial port");
 		return XST_FAILURE;
 	}
-    printf("Reading serial port on fd: %d\n", serial_port);
 
     struct termios tty;
     memset (&tty, 0, sizeof tty);
     if ( tcgetattr ( serial_port, &tty ) != 0 ) {
-       printf("Error getting attributes");
+       printf("Error getting serial attributes");
        return XST_FAILURE;
     }
 
@@ -57,7 +57,7 @@ int commInit() {
     //Make raw
     cfmakeraw(&tty);
 
-    //Flush Port, then applies attributes */
+    //Flush Port, then applies attributes
     tcflush( serial_port, TCIFLUSH );
     if ( tcsetattr ( serial_port, TCSANOW, &tty ) != 0) {
        printf("Error setting serial attributes");
@@ -124,22 +124,6 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 	u8 cmd, status = 0;
 	u8* payload = NULL;
 
-	if(DEBUG){
-//		printf("=== Processing packet ===\n");
-//
-//		printf("Char representation: ");
-//		for(int i = 0; i < bufSize; i++){
-//			printf("%c", buffer[i]);
-//		}
-//		printf("\n");
-//
-//		printf("Hex representation: ");
-//		for(int i = 0; i < bufSize; i++){
-//			printf("0x%02x ", buffer[i]);
-//		}
-//		printf("\n");
-	}
-
 	if ((char) buffer[0] != COMM_START_CHAR
 			|| (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
 		//command structure was invalid
@@ -170,6 +154,10 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			} else {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
+				printf("Got sample rate set of: %d\r\n", rate);
+				char message[16] = "xadcSetSR";
+				int data[16] = {rate};
+				rpc_send_message(message, data, 1);
 //				xadcSetSampleRate(rate); //TODO
 //				ads7047_SetSampleRate(rate); //TODO
 			}
@@ -397,7 +385,6 @@ void respond_ack(int serial_port){
 		printf("Responding ACK\n");
 	char * message = "@ACK!";
 	write(serial_port, message, 6);
-//	fsync(serial_port);
 }
 
 void respond_err(int serial_port){
@@ -405,7 +392,6 @@ void respond_err(int serial_port){
 		printf("Responding ERR\n");
 	char * message = "@ERR!";
 	write(serial_port, message, 6);
-//	fsync(serial_port);
 }
 
 //TODO delete when done

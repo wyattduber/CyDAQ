@@ -35,7 +35,7 @@ static void rpmsg_rpc_shutdown(struct rpmsg_rpc_data *rpc)
 /*-----------------------------------------------------------------------------*
  *  Application specific
  *-----------------------------------------------------------------------------*/
-int app(struct rpmsg_device *rdev, void *priv)
+int app_(struct rpmsg_device *rdev, void *priv)
 {
 	struct rpmsg_rpc_data rpc;
 	struct rpmsg_rpc_syscall rpccall;
@@ -157,7 +157,7 @@ int run_rpc_demo(int argc, char *argv[])
 			LPERROR("Failed to create rpmsg virtio device.\n");
 			ret = -1;
 		} else {
-			app(rpdev, platform);
+			app_(rpdev, platform);
 			platform_release_rpmsg_vdev(rpdev);
 			ret = 0;
 		}

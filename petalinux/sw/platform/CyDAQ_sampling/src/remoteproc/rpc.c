@@ -60,29 +60,28 @@ int rpc_setup(){
 		xil_printf("Sampling>Starting rpc_setup()\r\n");
 	}
 
+
+	/* Initialize platform */
 	ret = platform_init(&platform);
 	if (ret) {
-		xil_printf("Sampling>Failed to initialize platform.\r\n");
+		xil_printf("Failed to initialize platform.\n");
 		ret = -1;
 	} else {
 		rpdev = platform_create_rpmsg_vdev(platform, 0,
 						   VIRTIO_DEV_SLAVE,
 						   NULL, NULL);
 		if (!rpdev) {
-			xil_printf("Sampling>Failed to create rpmsg virtio device.\r\n");
+			xil_printf("Failed to create rpmsg virtio device.\n");
 			ret = -1;
 		} else {
-			xil_printf("Sampling>Try to create rpmsg endpoint\r\n");
-			ret = rpmsg_create_ept(&lept, rpdev, RPMSG_SERVICE_NAME,
-				       0, RPMSG_ADDR_ANY, rpmsg_endpoint_cb,
-				       rpmsg_service_unbind);;
-			if(ret){
-				xil_printf("Sampling>Failed to create rpmsg endpoint\r\n");
-			}else{
-
-			}
+			app_echo(rpdev, platform);
+			platform_release_rpmsg_vdev(rpdev);
+			ret = 0;
 		}
 	}
+
+	xil_printf("Stopping application...\n");
+	platform_cleanup(platform);
 
 	return ret;
 }
@@ -105,15 +104,20 @@ void print_payload(struct _payload* payload){
 }
 
 int rpc_listen(){
-	int bytes_rcvd = 0;
+//	int bytes_rcvd = 0;
+	xil_printf("Entered rpc_listen\r\n");
 	while(1) {
-//		platform_poll(platform);
-//		/* we got a shutdown request, exit */
-//		if (shutdown_req) {
-//			break;
-//		}
+		platform_poll(platform);
+		xil_printf("|");
+		/* we got a shutdown request, exit */
+		if (shutdown_req) {
+			xil_printf("sampling>got shutdown request\r\n");
+			break;
+		}
 //		bytes_rcvd = read(fd, receive_payload,
 //				(2 * sizeof(unsigned long)) + PAYLOAD_MAX_SIZE);
 //		xil_printf("got payload on baremetal core\r\n");
 	}
+	rpmsg_destroy_ept(&lept);
+	platform_cleanup(platform);
 }
