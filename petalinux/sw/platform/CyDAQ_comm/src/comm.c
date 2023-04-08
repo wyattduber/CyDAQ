@@ -161,7 +161,14 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				rpc_data[0] = (int)rate;
 				rpc_send_message(RPC_MESSAGE_XADC_SET_SAMPLE_RATE, rpc_data, 1);
-				printf("rpc_recieve_ack returned: %d\r\n", rpc_recieve_ack());
+				if(rpc_recieve_ack() != 0){
+					err = true;
+				}
+
+//				rpc_send_message(RPC_MESSAGE_ADS_SET_SAMPLE_RATE, rpc_data, 1);
+//				if(rpc_recieve_ack() != 0){
+//					err = true;
+//				}
 
 //				xadcSetSampleRate(rate); //TODO
 //				ads7047_SetSampleRate(rate); //TODO

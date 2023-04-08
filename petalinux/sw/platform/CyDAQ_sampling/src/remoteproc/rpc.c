@@ -62,6 +62,9 @@ int handle_message(struct _payload* payload){
 		send_ack();
 
 	}else if(strcmp(message, RPC_MESSAGE_ADS_SET_SAMPLE_RATE) == 0){
+		LPRINTF("setting ads sample rate to: %d\r\n", data[0]);
+		ads7047_SetSampleRate(data[0]);
+		send_ack();
 
 	}else if(strcmp(message, RPC_MESSAGE_MUTED_SET_INPUT_PINS) == 0){
 
@@ -97,6 +100,7 @@ int handle_message(struct _payload* payload){
 
 	}else{
 		//unknown message
+		LPRINTF("Unknown message: %s\r\n", message);
 	}
 }
 
