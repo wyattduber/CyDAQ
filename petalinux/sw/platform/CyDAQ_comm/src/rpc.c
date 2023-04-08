@@ -19,8 +19,6 @@ static int charfd = -1, fd = -1;
 struct _payload *send_payload;
 struct _payload *receive_payload;
 
-struct sigaction exit_action;
-struct sigaction kill_action;
 char sbuf[512];
 int r5_id = 0;
 char rpmsg_dev_name[256];
@@ -46,27 +44,6 @@ void rpc_stop_remote(void)
 		"/sys/class/remoteproc/remoteproc%u/state",
 		r5_id);
 	(void)file_write(sbuf, "stop");
-}
-
-void exit_action_handler(int signum)
-{
-//	proxy->active = 0;
-}
-
-void kill_action_handler(int signum)
-{
-	printf("\r\nMaster>RPC service killed !!\r\n");
-
-	/* Close proxy rpmsg device */
-//	close(proxy->rpmsg_proxy_fd);
-
-	/* Free up resources */
-//	free(proxy->rpc);
-//	free(proxy->rpc_response);
-//	free(proxy);
-
-	/* Stop remote cpu and unload drivers */
-	rpc_stop_remote();
 }
 
 int rpc_send_message(char message[], int data[], int data_len){
@@ -107,15 +84,6 @@ int rpc_setup(){
 	char ept_dev_path[32];
 
 	printf("rpc setup starting\r\n");
-
-	memset(&exit_action, 0, sizeof(struct sigaction));
-	memset(&kill_action, 0, sizeof(struct sigaction));
-	exit_action.sa_handler = exit_action_handler;
-	kill_action.sa_handler = kill_action_handler;
-	sigaction(SIGTERM, &exit_action, NULL);
-	sigaction(SIGINT, &exit_action, NULL);
-	sigaction(SIGKILL, &kill_action, NULL);
-	sigaction(SIGHUP, &kill_action, NULL);
 
 	/* Write firmware name to remoteproc sysfs interface */
 	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/firmware", r5_id);
