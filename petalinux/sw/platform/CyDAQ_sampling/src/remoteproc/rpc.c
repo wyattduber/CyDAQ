@@ -35,7 +35,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	char cmp[16] = "xadcSetSR";
 
 	//just for testing for now :D
-	if(strncmp(((struct _payload*)data)->message, cmp, 9)){
+	if(strncmp(((struct _payload*)data)->message, cmp, 9) == 0){
 		xil_printf("sampling> Got command to configure xadc sample rate\r\n");
 		xadcSetSampleRate(((struct _payload*)data)->data[0]);
 	}
@@ -70,7 +70,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 	LPRINTF("Try to create rpmsg endpoint.\r\n");
 
 	ret = rpmsg_create_ept(&lept, rdev, RPMSG_SERVICE_NAME,
-			       RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
+			       0, RPMSG_ADDR_ANY,
 			       rpmsg_endpoint_cb, rpmsg_service_unbind);
 	if (ret) {
 		LPERROR("Failed to create endpoint.\r\n");
@@ -79,6 +79,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 
 	LPRINTF("Successfully created rpmsg endpoint.\r\n");
 	while (1) {
+		xil_printf("|");
 		platform_poll(priv);
 		/* we got a shutdown request, exit */
 		if (shutdown_req) {

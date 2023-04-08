@@ -70,6 +70,7 @@ int app_echo(struct rpmsg_device *rdev, void *priv)
 
 	LPRINTF("Successfully created rpmsg endpoint.\n");
 	while(1) {
+		xil_printf("+");
 		platform_poll(priv);
 		/* we got a shutdown request, exit */
 		if (shutdown_req) {
@@ -84,7 +85,7 @@ int app_echo(struct rpmsg_device *rdev, void *priv)
 /*-----------------------------------------------------------------------------*
  *  Application entry point
  *-----------------------------------------------------------------------------*/
-int run_echo_demo(int argc, char *argv[])
+int main___(int argc, char *argv[])
 {
 	void *platform;
 	struct rpmsg_device *rpdev;

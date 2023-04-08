@@ -32,6 +32,7 @@
 
 static int zynq_a9_proc_irq_handler(int vect_id, void *data)
 {
+//	xil_printf("zynq_a9_proc_irq_handler called!\r\n");
 	struct remoteproc *rproc = data;
 	struct remoteproc_priv *prproc;
 

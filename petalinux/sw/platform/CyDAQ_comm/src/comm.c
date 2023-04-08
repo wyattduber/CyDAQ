@@ -154,10 +154,15 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			} else {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
-				printf("Got sample rate set of: %d\r\n", rate);
-				char message[16] = "xadcSetSR";
-				int data[16] = {rate};
+				printf("comm> Got sample rate set of: %d\r\n", rate);
+//				char message[16] = "xadcSetSR";
+//				int data[16] = {(int)rate};
+//				rpc_send_message(message, data, 1);
+				char message[16] = "_xadcSetSR";
+				int data[16] = {1};
 				rpc_send_message(message, data, 1);
+				rpc_recieve_message();
+
 //				xadcSetSampleRate(rate); //TODO
 //				ads7047_SetSampleRate(rate); //TODO
 			}

@@ -177,7 +177,7 @@ static int get_rpmsg_chrdev_fd(const char *rpmsg_dev_name,
 	return -EINVAL;
 }
 
-int main_deleteme(int argc, char *argv[])
+int main_(int argc, char *argv[])
 {
 	int ret, i, j;
 	int size, bytes_rcvd, bytes_sent;

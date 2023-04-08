@@ -22,7 +22,6 @@ struct _payload *receive_payload;
 char sbuf[512];
 int r5_id = 0;
 char rpmsg_dev_name[256];
-int rpmsg_char_fd = -1;
 int ept_fd = -1;
 char *rpmsg_svc="rpmsg-openamp-demo-channel"; //TDOO change name? //TODO make define?
 
@@ -72,6 +71,21 @@ int rpc_send_message(char message[], int data[], int data_len){
 	}
 
 	return 0;
+}
+
+/*
+ * Blocking
+ */
+int rpc_recieve_message(){
+	int bytes_rcvd = 0;
+	bytes_rcvd = read(fd, receive_payload,
+			PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+	while (bytes_rcvd <= 0) {
+		usleep(10000);
+		bytes_rcvd = read(fd, receive_payload,
+				PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+	}
+	printf(" received payload with message: %s\r\n", receive_payload->message);
 }
 
 int rpc_setup(){
@@ -151,6 +165,7 @@ int rpc_setup(){
 
 void rpc_teardown(){
 	//todo clean up other memory?
+	close(fd);
 	rpc_stop_remote();
 	free(send_payload);
 	free(receive_payload);

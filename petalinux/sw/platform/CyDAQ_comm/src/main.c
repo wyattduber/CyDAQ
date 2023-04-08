@@ -53,9 +53,9 @@ int main(int argc, char **argv){
 	commInit();
 
 	//test sending some data for now
-	char message[16] = "Hi!";
-	int data[16] = {1};
-	rpc_send_message(message, data, 1);
+//	char message[16] = "Hi!";
+//	int data[16] = {1};
+//	rpc_send_message(message, data, 1);
 
 	commRXTask(); //when this returns, program is now wanting to stop
 

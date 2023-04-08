@@ -18,4 +18,5 @@ struct _payload {
 
 int rpc_setup();
 int rpc_send_message(char message[], int data[], int data_len);
+int rpc_recieve_message();
 void rpc_teardown();
