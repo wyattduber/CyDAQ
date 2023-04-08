@@ -52,8 +52,8 @@ int rpc_send_message(char message[], int data[], int data_len){
 	}
 
 	int b = data_len;
-	if(data_len > MAX_RPMSG_BUFF_SIZE)
-		data_len = MAX_RPMSG_BUFF_SIZE;
+	if(data_len > PAYLOAD_DATA_LEN)
+		data_len = PAYLOAD_DATA_LEN;
 	send_payload->data_len = data_len;
 	for(int i = 0; i < b; i++){
 		send_payload->data[i] = data[i];
@@ -63,7 +63,7 @@ int rpc_send_message(char message[], int data[], int data_len){
 	rpc_print_payload(send_payload);
 
 	int bytes_sent = write(fd, send_payload,
-			PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+			PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int));
 	printf("message sent: Bytes written: %d\r\n", bytes_sent);
 	if(bytes_sent <= 0){
 		printf("Error sending payload. Printing payload: \r\n");
@@ -153,8 +153,9 @@ int rpc_setup(){
 		return -1;
 	}
 
-	send_payload = (struct _payload *)malloc(PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
-	receive_payload = (struct _payload *)malloc(PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_MAX_SIZE + sizeof(int));
+	int payload_datasize = PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int);
+	send_payload = (struct _payload *)malloc(payload_datasize);
+	receive_payload = (struct _payload *)malloc(payload_datasize);
 
 	if (send_payload == 0 || receive_payload == 0) {
 		printf("ERROR: Failed to allocate memory for payload.\n");

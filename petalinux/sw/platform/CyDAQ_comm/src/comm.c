@@ -158,9 +158,9 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 //				char message[16] = "xadcSetSR";
 //				int data[16] = {(int)rate};
 //				rpc_send_message(message, data, 1);
-				char message[16] = "_xadcSetSR";
-				int data[16] = {1};
-				rpc_send_message(message, data, 1);
+//				char message[16] = "_xadcSetSR";
+				int data[16] = {69};
+				rpc_send_message(RPC_MESSAGE_XADC_SET_SAMPLE_RATE, data, 1);
 				rpc_recieve_message();
 
 //				xadcSetSampleRate(rate); //TODO

@@ -20,6 +20,14 @@
 #define RPC_MESSAGE_DAC_DISABLE_GENERATION	"dac80501_DisableGeneration"
 #define RPC_MESSAGE_DAC_BALL_BEAM_START		"ballbeamStart"
 
+#define PAYLOAD_MESSAGE_LEN 32
+#define PAYLOAD_DATA_LEN 64
+struct _payload {
+	char message[PAYLOAD_MESSAGE_LEN];
+	int data_len;
+	int data[PAYLOAD_DATA_LEN];
+};
+
 int rpc_setup();
 int rpc_tear_down();
 int rpc_listen();

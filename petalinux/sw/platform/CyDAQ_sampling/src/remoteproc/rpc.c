@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <openamp/open_amp.h>
 #include <metal/alloc.h>
+
 #include "platform_info.h"
+#include "rpc.h"
 
 #define LPRINTF(format, ...) xil_printf(format, ##__VA_ARGS__)
 #define LPERROR(format, ...) LPRINTF("ERROR: " format, ##__VA_ARGS__)
@@ -14,13 +16,6 @@ static int shutdown_req = 0;
 
 #define MSG_LIMIT 100
 #define SHUTDOWN_MSG	0xEF56A55A
-
-#define PAYLOAD_MESSAGE_LEN 16
-struct _payload {
-	char message[PAYLOAD_MESSAGE_LEN];
-	int data_len;
-	int data[];
-};
 
 /*-----------------------------------------------------------------------------*
  *  RPMSG endpoint callbacks
@@ -36,8 +31,8 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 
 	//just for testing for now :D
 	if(strncmp(((struct _payload*)data)->message, cmp, 9) == 0){
-		xil_printf("sampling> Got command to configure xadc sample rate\r\n");
-		xadcSetSampleRate(((struct _payload*)data)->data[0]);
+		xil_printf("sampling> Got command to configure xadc sample rate to: %d\r\n", ((struct _payload*)data)->data[0]);
+//		xadcSetSampleRate(((struct _payload*)data)->data[0]);
 	}
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
