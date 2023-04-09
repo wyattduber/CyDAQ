@@ -91,18 +91,24 @@ int rpc_recieve_message(){
 int rpc_recieve_ack(){
 	//TODO add error returns
 	int bytes_rcvd = 0;
+	printf("comm> rpc_recieve_ack() called\r\n");
 	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
+	printf("comm> first read: %d bytes read\r\n", bytes_rcvd);
 	while (bytes_rcvd <= 0) {
+//		printf("comm> bytes_rcvd <=0, so waiting and reading again\r\n");
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
+//		printf("comm> another read: %d bytes read\r\n", bytes_rcvd);
 	}
+	printf("comm> bytes read finally not <= 0: %d \r\n", bytes_rcvd);
+
 	if(receive_payload->message == RPC_MESSAGE_DAC_ACK){
+		printf("comm> returning 0\r\n");
 		return 0;
 	}else{
+		printf("comm> returning -1\r\n");
 		return -1;//TODO just return the strcmp return? idk just being safe
 	}
-	printf("comm> received payload with message: %d\r\n", receive_payload->message);
-	return 0;
 }
 
 int rpc_setup(){

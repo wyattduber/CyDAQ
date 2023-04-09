@@ -20,7 +20,21 @@ static int shutdown_req = 0;
 struct _payload *send_payload;
 struct _payload *receive_payload;
 
-int rpc_send_message(int message, int data[], int data_len){
+void rpc_print_payload(struct _payload* payload){
+	xil_printf("== sampling> Payload ==\r\n");
+	xil_printf("Message: %d\r\n", payload->message);
+	xil_printf("Data: ");
+	for(int i = 0; i < payload->data_len; i++){
+		xil_printf("%d ", payload->data[i]);
+	}
+	xil_printf("\r\n");
+	xil_printf("==================\r\n");
+}
+
+int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int data_len){
+	xil_printf("sampling> rpc_send_message called with message: %d, data[0]:%d, data[1]:%d\r\n", message, data[0], data[1]);
+	rpc_print_payload(send_payload);
+
 	send_payload->message = message;
 
 	//TODO zero out all other data?
@@ -32,16 +46,18 @@ int rpc_send_message(int message, int data[], int data_len){
 		send_payload->data[i] = data[i];
 	}
 
-	if (rpmsg_send(&lept, send_payload, PAYLOAD_TOTAL_LEN) < 0) {
-		LPERROR("send_ack failed\n");
+	if (rpmsg_send(ept, send_payload, PAYLOAD_TOTAL_LEN) < 0) {
+		xil_printf("send_ack failed\r\n");
+	}else{
+		xil_printf("send_ack success!\r\n");
 	}
 
 	return 0;
 }
 
-int send_ack(){
+int send_ack(struct rpmsg_endpoint *ept){
 	int data[PAYLOAD_DATA_LEN] = {}; //ack has no data needed
-	if (rpc_send_message(RPC_MESSAGE_DAC_ACK, data, 0) < 0) {
+	if (rpc_send_message(ept, RPC_MESSAGE_DAC_ACK, data, 0) < 0) {
 		LPERROR("send_ack failed\n");
 	}
 	return 0;
@@ -155,7 +171,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	LPRINTF("sampling>callback! Message: %d\r\n", ((struct _payload*)data)->message);
 
 	handle_message((struct _payload*)data);
-	send_ack();
+	send_ack(ept);
 
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
@@ -199,6 +215,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 	while (1) {
 		xil_printf("|");
 		platform_poll(priv);
+		xil_printf("platform_poll returned!\r\n");
 		/* we got a shutdown request, exit */
 		if (shutdown_req) {
 			break;
