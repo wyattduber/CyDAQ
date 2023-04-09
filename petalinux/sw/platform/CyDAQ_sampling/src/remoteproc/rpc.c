@@ -68,12 +68,42 @@ int handle_message(struct _payload* payload){
 
 	//command handling
 	if(message_type == MSG_TYPE_COMMEND){
-		if(data[0] == 0){
+		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 			if(DEBUG){
 				LPRINTF("message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 			}
 			xadcSetSampleRate(data[1]);
 			send_ack();
+		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){
+
+		}else if(data[0] == RPC_MESSAGE_MUTED_SET_INPUT_PINS){
+
+		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
+
+		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
+
+		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
+
+		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
+
+		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
+
+		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
+
+		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
+
+		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
+
+		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
+
+		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
+
+		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
+
+		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
+
+		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
+
 		}else{
 			LPRINTF("Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 		}
