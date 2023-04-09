@@ -102,7 +102,7 @@ int rpc_recieve_ack(){
 	}
 	printf("comm> bytes read finally not <= 0: %d \r\n", bytes_rcvd);
 
-	if(receive_payload->message == RPC_MESSAGE_DAC_ACK){
+	if(receive_payload->data[0] == RPC_MESSAGE_DAC_ACK){
 		printf("comm> returning 0\r\n");
 		return 0;
 	}else{

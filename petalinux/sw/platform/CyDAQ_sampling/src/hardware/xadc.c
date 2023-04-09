@@ -164,6 +164,8 @@ static int xadcSetupInterruptSystem(XScuGic *IntcInstancePtr, XSysMon *XAdcPtr, 
 void xadcEnableSampling(u8 streamSetting) {
 	//check that XADC has been initialized
 	if(xadcInitStatus == 0) {
+		if(DEBUG)
+			xil_printf("sampling> xadc not init. calling xadcInit()\r\n");
 		xadcInit();
 		xadcInitStatus = 1;
 	}
@@ -327,6 +329,8 @@ int xadcSetPolarity(u8 setting){
 int xadcSetSampleRate(u32 rate) {
 	//check that XADC is initialized
 	if(xadcInitStatus == 0) {
+			if(DEBUG)
+				xil_printf("sampling> xadc not init. calling xadcInit()\r\n");
 			xadcInit();
 			xadcInitStatus = 1;
 	}

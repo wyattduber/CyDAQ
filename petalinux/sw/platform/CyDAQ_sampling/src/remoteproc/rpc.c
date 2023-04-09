@@ -56,8 +56,8 @@ int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int da
 }
 
 int send_ack(struct rpmsg_endpoint *ept){
-	int data[PAYLOAD_DATA_LEN] = {}; //ack has no data needed
-	if (rpc_send_message(ept, RPC_MESSAGE_DAC_ACK, data, 0) < 0) {
+	int data[PAYLOAD_DATA_LEN] = {RPC_MESSAGE_DAC_ACK};
+	if (rpc_send_message(ept, MSG_TYPE_COMMAND, data, 1) < 0) {
 		LPERROR("send_ack failed\n");
 	}
 	return 0;
@@ -168,10 +168,16 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)priv;
 	(void)src;
 
-	LPRINTF("sampling>callback! Message: %d\r\n", ((struct _payload*)data)->message);
+//	xil_printf("sampling>callback! Message: %d of len: %d\r\n", ((struct _payload*)data)->message, len);
 
-	handle_message((struct _payload*)data);
-	send_ack(ept);
+//	handle_message((struct _payload*)data);
+//	send_ack(ept);
+
+//	((struct _payload*)data)->data[0] = RPC_MESSAGE_DAC_ACK;
+//	((struct _payload*)data)->message
+//	if (rpmsg_send(ept, data, len) < 0) {
+//		xil_printf("rpmsg_send failed\n");
+//	}
 
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
@@ -181,9 +187,12 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 		return RPMSG_SUCCESS;
 	}
 
+	handle_message((struct _payload*)data);
+	send_ack(ept);
+
 	/* Send data back to master */ //TODO change this to just ACK later on
 //	if (rpmsg_send(ept, data, len) < 0) {
-//		LPERROR("rpmsg_send failed\n");
+//		xil_printf("sampling> rpmsg_send failed\r\n");
 //	}
 	return RPMSG_SUCCESS;
 }
@@ -204,7 +213,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 	LPRINTF("Try to create rpmsg endpoint.\r\n");
 
 	ret = rpmsg_create_ept(&lept, rdev, RPMSG_SERVICE_NAME,
-			       0, RPMSG_ADDR_ANY,
+			RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
 			       rpmsg_endpoint_cb, rpmsg_service_unbind);
 	if (ret) {
 		LPERROR("Failed to create endpoint.\r\n");
