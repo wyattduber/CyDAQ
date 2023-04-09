@@ -82,6 +82,7 @@ void commRXTask() {
 		//idle until a complete command is received
 		while (receiveBuffer[bytesReceived - 1] != COMM_STOP_CHAR && bytesReceived < 7) {
 			bytesReceived += read(serial_port, &receiveBuffer[bytesReceived], 1);
+			printf("comm> just put %u into the serial recieveBuffer\r\n", &receiveBuffer[bytesReceived]);
 		}
 
 		//stop sampling to config device
@@ -158,13 +159,14 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 						| (payload[2] << 8) | (payload[3]);
 				printf("COMM: Got sample rate set of: %d\r\n", rate);
 
-				rpc_data[0] = (int)cmd;
+				rpc_data[0] = RPC_MESSAGE_XADC_SET_SAMPLE_RATE;
 				rpc_data[1] = (int)rate;
-				rpc_send_message(COMM_COMMAND_MSG, rpc_data, PAYLOAD_DATA_LEN);
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				printf("comm> waiting for rpc_recieve_ack\r\n");
 				if(rpc_recieve_ack() != 0){
 					err = true;
 				}
-				printf("exit comm.c\r\n");
+				printf("comm> rpc_recieve_ack returned\r\n");
 //				rpc_send_message(RPC_MESSAGE_ADS_SET_SAMPLE_RATE, rpc_data, 1);
 //				if(rpc_recieve_ack() != 0){
 //					err = true;
@@ -349,7 +351,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			err = true;
 		}
 	}
-
+	printf("comm> commProcessPacket returning err: %d\r\n", err);
 	return err;
 }
 

@@ -20,7 +20,7 @@ static int shutdown_req = 0;
 struct _payload *send_payload;
 struct _payload *receive_payload;
 
-int rpc_send_message(char message[], int data[], int data_len){
+int rpc_send_message(int message, int data[], int data_len){
 	send_payload->message = message;
 
 	//TODO zero out all other data?
@@ -139,8 +139,6 @@ int handle_message(struct _payload* payload){
 			LPRINTF("Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 		}
 
-		send_ack();
-
 	}
 
 }
@@ -154,9 +152,10 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)priv;
 	(void)src;
 
-	LPRINTF("sampling>callback! Message: %s\r\n", ((struct _payload*)data)->message);
+	LPRINTF("sampling>callback! Message: %d\r\n", ((struct _payload*)data)->message);
 
 	handle_message((struct _payload*)data);
+	send_ack();
 
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
