@@ -27,7 +27,7 @@ char *rpmsg_svc="rpmsg-openamp-demo-channel"; //TDOO change name? //TODO make de
 
 void rpc_print_payload(struct _payload* payload){
 	printf("== comm>Payload ==\r\n");
-	printf("Message: %s\r\n", payload->message);
+	printf("Message: %d\r\n", payload->message);
 	printf("Data: ");
 	for(int i = 0; i < payload->data_len; i++){
 		printf("%d ", payload->data[i]);
@@ -45,12 +45,10 @@ void rpc_stop_remote(void)
 	(void)file_write(sbuf, "stop");
 }
 
-int rpc_send_message(char message[], int data[], int data_len){
-	//construct payload
-	for(int i = 0; i < (int)strlen(message); i++){
-		send_payload->message[i] = message[i];
-	}
+int rpc_send_message(int message, int data[], int data_len){
+	send_payload->message = message;
 
+	//TODO zero out all other data?
 	int b = data_len;
 	if(data_len > PAYLOAD_DATA_LEN)
 		data_len = PAYLOAD_DATA_LEN;
@@ -76,31 +74,35 @@ int rpc_send_message(char message[], int data[], int data_len){
  * Blocking
  */
 int rpc_recieve_message(){
+	//TODO add error returns
 	int bytes_rcvd = 0;
 	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	while (bytes_rcvd <= 0) {
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	}
-	printf(" received payload with message: %s\r\n", receive_payload->message);
+	printf("comm> Received payload with message: %d\r\n", receive_payload->message);
+	return 0;
 }
 
 /*
  * Blocking - waits for ACK message from RPC. Returns 1 if successful, -1 if anything but ACK is received.
  */
 int rpc_recieve_ack(){
+	//TODO add error returns
 	int bytes_rcvd = 0;
 	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	while (bytes_rcvd <= 0) {
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	}
-	if(strcmp(receive_payload->message, RPC_MESSAGE_DAC_ACK) == 0){
+	if(receive_payload->message == RPC_MESSAGE_DAC_ACK){
 		return 0;
 	}else{
 		return -1;//TODO just return the strcmp return? idk just being safe
 	}
-	printf(" received payload with message: %s\r\n", receive_payload->message);
+	printf("comm> received payload with message: %d\r\n", receive_payload->message);
+	return 0;
 }
 
 int rpc_setup(){

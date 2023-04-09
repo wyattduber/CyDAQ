@@ -124,7 +124,6 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 	u8 cmd, status = 0;
 	u8* payload = NULL;
 
-	char rpc_message[PAYLOAD_MESSAGE_LEN] = "";
 	int rpc_data[PAYLOAD_DATA_LEN] = {};
 
 	if ((char) buffer[0] != COMM_START_CHAR
@@ -161,8 +160,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				rpc_data[0] = (int)cmd;
 				rpc_data[1] = (int)rate;
-				snprintf(rpc_message, sizeof(rpc_message), "%d", COMM_COMMEND_MSG);
-				rpc_send_message(rpc_message, rpc_data, PAYLOAD_DATA_LEN);
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, PAYLOAD_DATA_LEN);
 				if(rpc_recieve_ack() != 0){
 					err = true;
 				}

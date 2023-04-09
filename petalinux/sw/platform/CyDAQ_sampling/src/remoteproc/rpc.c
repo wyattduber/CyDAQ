@@ -21,11 +21,9 @@ struct _payload *send_payload;
 struct _payload *receive_payload;
 
 int rpc_send_message(char message[], int data[], int data_len){
-	//construct payload
-	for(int i = 0; i < PAYLOAD_MESSAGE_LEN; i++){
-		send_payload->message[i] = message[i];
-	}
+	send_payload->message = message;
 
+	//TODO zero out all other data?
 	int b = data_len;
 	if(data_len > PAYLOAD_DATA_LEN)
 		data_len = PAYLOAD_DATA_LEN;
@@ -42,24 +40,23 @@ int rpc_send_message(char message[], int data[], int data_len){
 }
 
 int send_ack(){
-	char message[PAYLOAD_MESSAGE_LEN] = RPC_MESSAGE_DAC_ACK;
 	int data[PAYLOAD_DATA_LEN] = {}; //ack has no data needed
-	if (rpc_send_message(message, data, 0) < 0) {
+	if (rpc_send_message(RPC_MESSAGE_DAC_ACK, data, 0) < 0) {
 		LPERROR("send_ack failed\n");
 	}
 	return 0;
 }
 
 int handle_message(struct _payload* payload){
-	char* message = payload->message;
+	int message = payload->message;
 	int* data = payload->data;
 	int data_len = payload->data_len;
 	int message_type = MSG_TYPE_INVALID;
 
 	//check the message type
-	switch((int)message){
-		case COMM_COMMEND_MSG:
-			message_type = MSG_TYPE_COMMEND;
+	switch(message){
+		case COMM_COMMAND_MSG:
+			message_type = MSG_TYPE_COMMAND;
 			break;
 		default:
 			message_type = MSG_TYPE_INVALID;
@@ -70,7 +67,7 @@ int handle_message(struct _payload* payload){
 		LPRINTF("message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 	}
 	//command message handling
-	if(message_type == MSG_TYPE_COMMEND){
+	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 
 			xadcSetSampleRate(data[1]);
@@ -158,13 +155,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)src;
 
 	LPRINTF("sampling>callback! Message: %s\r\n", ((struct _payload*)data)->message);
-	char cmp[16] = "xadcSetSR";
 
-	//just for testing for now :D
-//	if(strncmp(((struct _payload*)data)->message, cmp, 9) == 0){
-//		xil_printf("sampling> Got command to configure xadc sample rate to: %d\r\n", ((struct _payload*)data)->data[0]);
-////		xadcSetSampleRate(((struct _payload*)data)->data[0]);
-//	}
 	handle_message((struct _payload*)data);
 
 	/* On reception of a shutdown we signal the application to terminate */

@@ -1,7 +1,7 @@
 #define RPMSG_SERVICE_NAME         "rpmsg-openamp-demo-channel" //TODO change
 
-#define RPC_MESSAGE_DAC_ACK					"ACK"
-#define RPC_MESSAGE_DAC_STOP				"STOP"
+#define RPC_MESSAGE_DAC_ACK					100
+#define RPC_MESSAGE_DAC_STOP				101
 
 //#define RPC_MESSAGE_XADC_SET_SAMPLE_RATE 	"xadcSetSampleRate"
 //#define RPC_MESSAGE_ADS_SET_SAMPLE_RATE 	"ads7047_SetSampleRate"
@@ -49,22 +49,21 @@
 #define RPC_MESSAGE_DAC_BALL_BEAM_START		16
 
 //Message type from comm
-#define COMM_COMMEND_MSG 0
+#define COMM_COMMAND_MSG 0
 
 //number message type
 #define MSG_TYPE_INVALID -1
-#define MSG_TYPE_COMMEND 0
+#define MSG_TYPE_COMMAND 0
 
 
 //Payload
-#define PAYLOAD_MESSAGE_LEN 32
 #define PAYLOAD_DATA_LEN 64
 struct _payload {
-	char message[PAYLOAD_MESSAGE_LEN];
+	int message;
 	int data_len;
 	int data[PAYLOAD_DATA_LEN];
 };
-#define PAYLOAD_TOTAL_LEN PAYLOAD_MESSAGE_LEN * sizeof(char) + PAYLOAD_DATA_LEN * sizeof(int) + sizeof(int)
+#define PAYLOAD_TOTAL_LEN sizeof(int) + sizeof(int) + PAYLOAD_DATA_LEN * sizeof(int)
 
 int rpc_setup();
 int rpc_tear_down();
