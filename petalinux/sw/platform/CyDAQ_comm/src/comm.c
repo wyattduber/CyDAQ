@@ -172,8 +172,8 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 //					err = true;
 //				}
 
-//				xadcSetSampleRate(rate); //TODO
-//				ads7047_SetSampleRate(rate); //TODO
+//				xadcSetSampleRate(rate);
+//				ads7047_SetSampleRate(rate);
 			}
 
 			/*  ---Select Input Source---  */
@@ -184,7 +184,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				err = true;
 			} else {
-//				status = muxSetInputPins(payload[0]); //TODO
+//				status = muxSetInputPins(payload[0]);
 				if (status > 0) {
 					err = true;
 				}
@@ -198,7 +198,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				err = true;
 			} else {
-//				err = muxSetActiveFilter(payload[0]); //TODO
+//				err = muxSetActiveFilter(payload[0]); /
 			}
 
 			/*  ---Set Filter Corner Frequencies---  */
@@ -216,7 +216,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 						+ payload[3];
 
 				//tune filter
-//				err = tuneFilter(50, lower, upper); //TODO
+//				err = tuneFilter(50, lower, upper);
 			}
 
 			/*  ---Select between XADC and external SPI ADC---  */
@@ -251,10 +251,10 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 			switch (activeAdc) {
 			case ADC_XADC:
-//				xadcProcessSamples(); //TODO
+//				xadcProcessSamples();
 				break;
 			case ADC_SPI_EXTERNAL:
-//				ads7047_ProcessSamples(); //TODO
+//				ads7047_ProcessSamples();
 				break;
 			default:
 				err = true;
@@ -271,10 +271,10 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 			switch (activeAdc) {
 			case ADC_XADC:
-//				xadcEnableSampling(useStreaming); //TODO
+//				xadcEnableSampling(useStreaming);
 				break;
 			case ADC_SPI_EXTERNAL:
-//				ads7047_EnableSampling(useStreaming); //TODO
+//				ads7047_EnableSampling(useStreaming);
 				break;
 			default:
 				err = true;
@@ -285,10 +285,10 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == STOP_SAMPLING) {
 			switch (activeAdc) {
 			case ADC_XADC:
-//				xadcDisableSampling(); //TODO
+//				xadcDisableSampling();
 				break;
 			case ADC_SPI_EXTERNAL:
-//				ads7047_DisableSampling(); //TODO
+//				ads7047_DisableSampling();
 				break;
 			default:
 				err = true;
@@ -310,7 +310,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				u32 num = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 
-//				dac80501_SetNumRepetitions(num); //TODO
+//				dac80501_SetNumRepetitions(num);
 			}
 
 			/*  ---Set DAC Generation Rate (Sampling Rate)---  */
@@ -324,7 +324,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 
-//				err = dac80501_SetGenerationRate(rate); //TODO
+//				err = dac80501_SetGenerationRate(rate);
 			}
 
 			/*  ---Receive New Dataset Sent from PC---  */
@@ -332,15 +332,15 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			u32 dsSize = (payload[0] << 24) | (payload[1] << 16)
 					| (payload[2] << 8) | (payload[3]);
 
-//			err = dac80501_ReceiveDataset(dsSize); //TODO
+//			err = dac80501_ReceiveDataset(dsSize);
 
 			/*  ---Start Waveform Generation---  */
 		} else if (cmd == START_GENERATION) {
-//			dac80501_EnableGeneration(); //TODO
+//			dac80501_EnableGeneration();
 
 			/*  ---Stop Waveform Generation---  */
 		} else if (cmd == STOP_GENERATION) {
-//			dac80501_DisableGeneration(); //TODO
+//			dac80501_DisableGeneration();
 
 			/*  ---Ball & Beam Controller---  */
 		} else if (cmd == START_CONTROLLER) {

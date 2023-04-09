@@ -74,51 +74,76 @@ int handle_message(struct _payload* payload){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 
 			xadcSetSampleRate(data[1]);
-			send_ack();
+
 		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
 
-			ads7047_SetSampleRate(data[1]);
-			send_ack();
+			xadcProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
 
+			xadcEnableSampling(data[1]);//0 = normal, 1 = stream
+
 		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
+
+			xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){
 
 		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
 
+			ads7047_ProcessSamples();
+
 		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
+
+			ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){
 
-			xadcEnableSampling(data[1]);//0 = normal, 1 = stream
-			send_ack();
+			ads7047_DisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_MUTED_SET_INPUT_PINS){
 
+			muxSetInputPins(data[1]);
+
 		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
 
-			xadcDisableSampling();
-			send_ack();
+			muxSetActiveFilter(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
+			//data[2] = lower
+			//data[3] = upper
+			tuneFilter(50,data[2],data[3]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
 
+			dac80501_SetNumRepetitions(data[1]);
+
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
+
+			dac80501_SetGenerationRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
 
+			dac80501_ReceiveDataset(data[1]);
+
 		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
+
+			dac80501_EnableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
 
+			dac80501_DisableGeneration();
+
 		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
+
+			ballbeamStart();
 
 		}else{
 			LPRINTF("Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 		}
+
+		send_ack();
+
 	}
 	//TODO implement each command
 //	if(strcmp(message, RPC_MESSAGE_XADC_SET_SAMPLE_RATE) == 0){
