@@ -145,53 +145,7 @@ int handle_message(struct _payload* payload){
 		send_ack();
 
 	}
-	//TODO implement each command
-//	if(strcmp(message, RPC_MESSAGE_XADC_SET_SAMPLE_RATE) == 0){
-//		LPRINTF("setting xadc sample rate to: %d\r\n", data[0]);
-//		xadcSetSampleRate(data[0]); //TODO check this func return type and return ERR if bad
-//		send_ack();
-//
-//	}else if(strcmp(message, RPC_MESSAGE_ADS_SET_SAMPLE_RATE) == 0){
-//		LPRINTF("setting ads sample rate to: %d\r\n", data[0]);
-//		ads7047_SetSampleRate(data[0]);
-//		send_ack();
-//
-//	}else if(strcmp(message, RPC_MESSAGE_MUTED_SET_INPUT_PINS) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_SET_ACTIVE_FILTER) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_TUNE_FILTER) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_XADC_PROCESS_SAMPLES) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_ADS_PROCESS_SAMPLES) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_XADC_ENABLE_SAMPLING) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_ADS_ENABLE_SAMPLING) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_XADC_DISABLE_SAMPLING) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_NUM_REPETITIONS) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_GEN_RATE) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_RECEIVE_DATASET) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_ENABLE_GENERATION) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_DISABLE_GENERATION) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_BALL_BEAM_START) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_ACK) == 0){
-//
-//	}else if(strcmp(message, RPC_MESSAGE_DAC_STOP) == 0){
 
-//	}else{
-//		//unknown message
-//		LPRINTF("Unknown message: %s\r\n", message);
-//	}
 }
 
 /*-----------------------------------------------------------------------------*
