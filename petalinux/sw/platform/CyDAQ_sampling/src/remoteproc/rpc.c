@@ -63,34 +63,46 @@ int handle_message(struct _payload* payload){
 			break;
 		default:
 			message_type = MSG_TYPE_INVALID;
+			break;
 
 	}
-
-	//command handling
+	if(DEBUG){
+		LPRINTF("message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+	}
+	//command message handling
 	if(message_type == MSG_TYPE_COMMEND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
-			if(DEBUG){
-				LPRINTF("message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
-			}
+
 			xadcSetSampleRate(data[1]);
 			send_ack();
+		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
+
+			ads7047_SetSampleRate(data[1]);
+			send_ack();
+
+		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
+
+		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
+
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){
+
+		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
+
+		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
+
+		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){
+
+			xadcEnableSampling(data[1]);//0 = normal, 1 = stream
+			send_ack();
 
 		}else if(data[0] == RPC_MESSAGE_MUTED_SET_INPUT_PINS){
 
 		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
 
+			xadcDisableSampling();
+			send_ack();
+
 		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
-
-		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
-
-		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
-
-		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
-
-		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
-
-		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
 
