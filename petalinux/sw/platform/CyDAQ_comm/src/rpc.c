@@ -47,7 +47,7 @@ void rpc_stop_remote(void)
 
 int rpc_send_message(char message[], int data[], int data_len){
 	//construct payload
-	for(int i = 0; i < PAYLOAD_MESSAGE_LEN; i++){
+	for(int i = 0; i < (int)strlen(message); i++){
 		send_payload->message[i] = message[i];
 	}
 

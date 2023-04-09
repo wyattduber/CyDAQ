@@ -54,54 +54,77 @@ int handle_message(struct _payload* payload){
 	char* message = payload->message;
 	int* data = payload->data;
 	int data_len = payload->data_len;
+	int message_type = MSG_TYPE_INVALID;
 
-	//TODO implement each command
-	if(strcmp(message, RPC_MESSAGE_XADC_SET_SAMPLE_RATE) == 0){
-		LPRINTF("setting xadc sample rate to: %d\r\n", data[0]);
-		xadcSetSampleRate(data[0]); //TODO check this func return type and return ERR if bad
-		send_ack();
+	//check the message type
+	switch((int)message){
+		case COMM_COMMEND_MSG:
+			message_type = MSG_TYPE_COMMEND;
+			break;
+		default:
+			message_type = MSG_TYPE_INVALID;
 
-	}else if(strcmp(message, RPC_MESSAGE_ADS_SET_SAMPLE_RATE) == 0){
-		LPRINTF("setting ads sample rate to: %d\r\n", data[0]);
-		ads7047_SetSampleRate(data[0]);
-		send_ack();
-
-	}else if(strcmp(message, RPC_MESSAGE_MUTED_SET_INPUT_PINS) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_SET_ACTIVE_FILTER) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_TUNE_FILTER) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_XADC_PROCESS_SAMPLES) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_ADS_PROCESS_SAMPLES) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_XADC_ENABLE_SAMPLING) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_ADS_ENABLE_SAMPLING) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_XADC_DISABLE_SAMPLING) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_NUM_REPETITIONS) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_GEN_RATE) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_RECEIVE_DATASET) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_ENABLE_GENERATION) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_DISABLE_GENERATION) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_BALL_BEAM_START) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_ACK) == 0){
-
-	}else if(strcmp(message, RPC_MESSAGE_DAC_STOP) == 0){
-
-	}else{
-		//unknown message
-		LPRINTF("Unknown message: %s\r\n", message);
 	}
+
+	//command handling
+	if(message_type == MSG_TYPE_COMMEND){
+		if(data[0] == 0){
+			if(DEBUG){
+				LPRINTF("message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+			}
+			xadcSetSampleRate(data[1]);
+			send_ack();
+		}else{
+			LPRINTF("Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+		}
+	}
+	//TODO implement each command
+//	if(strcmp(message, RPC_MESSAGE_XADC_SET_SAMPLE_RATE) == 0){
+//		LPRINTF("setting xadc sample rate to: %d\r\n", data[0]);
+//		xadcSetSampleRate(data[0]); //TODO check this func return type and return ERR if bad
+//		send_ack();
+//
+//	}else if(strcmp(message, RPC_MESSAGE_ADS_SET_SAMPLE_RATE) == 0){
+//		LPRINTF("setting ads sample rate to: %d\r\n", data[0]);
+//		ads7047_SetSampleRate(data[0]);
+//		send_ack();
+//
+//	}else if(strcmp(message, RPC_MESSAGE_MUTED_SET_INPUT_PINS) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_SET_ACTIVE_FILTER) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_TUNE_FILTER) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_XADC_PROCESS_SAMPLES) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_ADS_PROCESS_SAMPLES) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_XADC_ENABLE_SAMPLING) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_ADS_ENABLE_SAMPLING) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_XADC_DISABLE_SAMPLING) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_NUM_REPETITIONS) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_SET_GEN_RATE) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_RECEIVE_DATASET) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_ENABLE_GENERATION) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_DISABLE_GENERATION) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_BALL_BEAM_START) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_ACK) == 0){
+//
+//	}else if(strcmp(message, RPC_MESSAGE_DAC_STOP) == 0){
+
+//	}else{
+//		//unknown message
+//		LPRINTF("Unknown message: %s\r\n", message);
+//	}
 }
 
 /*-----------------------------------------------------------------------------*

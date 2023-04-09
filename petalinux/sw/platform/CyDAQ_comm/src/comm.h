@@ -43,6 +43,8 @@
 #define TEST_BUFFER_SIZE	50
 #define DEF_SAMPLE_BURST_SIZE 200 //number of bytes worth of samples to send in single burst (# samples* 2 bytes/sample)
 
+//Message type
+#define COMM_COMMEND_MSG 0
 //int commInit();
 
 void commRXTask();

@@ -151,20 +151,22 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		if (cmd == SAMPLE_RATE_SET) {
 			if (payloadLength < COMM_SAMPLE_RATE_SIZE) {
 				if (DEBUG)
-					printf("Error, not enough bytes to represent sample rate\n");
+					printf("ERROR: not enough bytes to represent sample rate\n");
 
 				err = true;
 			} else {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
-				printf("comm> Got sample rate set of: %d\r\n", rate);
+				printf("COMM: Got sample rate set of: %d\r\n", rate);
 
-				rpc_data[0] = (int)rate;
-				rpc_send_message(RPC_MESSAGE_XADC_SET_SAMPLE_RATE, rpc_data, 1);
+				rpc_data[0] = (int)cmd;
+				rpc_data[1] = (int)rate;
+				snprintf(rpc_message, sizeof(rpc_message), "%d", COMM_COMMEND_MSG);
+				rpc_send_message(rpc_message, rpc_data, PAYLOAD_DATA_LEN);
 				if(rpc_recieve_ack() != 0){
 					err = true;
 				}
-
+				printf("exit comm.c\r\n");
 //				rpc_send_message(RPC_MESSAGE_ADS_SET_SAMPLE_RATE, rpc_data, 1);
 //				if(rpc_recieve_ack() != 0){
 //					err = true;

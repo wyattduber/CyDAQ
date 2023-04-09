@@ -3,7 +3,7 @@ set(CMAKE_HOST_SYSTEM_NAME "Linux")
 set(CMAKE_HOST_SYSTEM_VERSION "5.4.0-146-generic")
 set(CMAKE_HOST_SYSTEM_PROCESSOR "x86_64")
 
-include("/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal/cmake/platforms/toolchain.cmake")
+include("/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal/cmake/platforms/toolchain.cmake")
 
 set(CMAKE_SYSTEM "Generic")
 set(CMAKE_SYSTEM_NAME "Generic")
