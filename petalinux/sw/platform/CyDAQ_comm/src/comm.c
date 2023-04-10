@@ -162,18 +162,19 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				rpc_data[0] = RPC_MESSAGE_XADC_SET_SAMPLE_RATE;
 				rpc_data[1] = (int)rate;
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
-				printf("comm> waiting for rpc_recieve_ack\r\n");
 				if(rpc_recieve_ack() != 0){
 					err = true;
 				}
-				printf("comm> rpc_recieve_ack returned\r\n");
-//				rpc_send_message(RPC_MESSAGE_ADS_SET_SAMPLE_RATE, rpc_data, 1);
-//				if(rpc_recieve_ack() != 0){
-//					err = true;
-//				}
 
-//				xadcSetSampleRate(rate);
-//				ads7047_SetSampleRate(rate);
+				rpc_data[0] = RPC_MESSAGE_ADS_SET_SAMPLE_RATE;
+				rpc_data[1] = (int)rate;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					err = true;
+				}
+
+//				xadcSetSampleRate(rate); //TODO
+//				ads7047_SetSampleRate(rate); //TODO
 			}
 
 			/*  ---Select Input Source---  */
@@ -184,10 +185,17 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				err = true;
 			} else {
-//				status = muxSetInputPins(payload[0]);
-				if (status > 0) {
+				printf("comm> setting input select!\r\n");
+				rpc_data[0] = RPC_MESSAGE_MUX_SET_INPUT_PINS;
+				rpc_data[1] = (int)payload[0];
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
 					err = true;
 				}
+//				status = muxSetInputPins(payload[0]); //TODO
+//				if (status > 0) {
+//					err = true;
+//				}
 			}
 
 			/*  ---Select Active Filter---  */

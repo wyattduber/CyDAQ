@@ -127,24 +127,27 @@ bool dac80501_SetGenerationRate(u32 rateHz)
 	return false;
 }
 
-void dac80501_SetNumRepetitions(u32 num)
+int dac80501_SetNumRepetitions(u32 num)
 {
 	numRepetitions = num;
+	return 0;
 }
 
-void dac80501_EnableGeneration(void)
+int dac80501_EnableGeneration(void)
 {
 	dacCurrentIndex = 0;
 	currentRepetition = 0;
 
 	XScuTimer_EnableInterrupt(&DACTimerInst);
 	XScuTimer_Start(&DACTimerInst);
+	return 0;
 }
 
-void dac80501_DisableGeneration(void)
+int dac80501_DisableGeneration(void)
 {
 	XScuTimer_DisableInterrupt(&DACTimerInst);
 	XScuTimer_Stop(&DACTimerInst);
+	return 0;
 }
 
 int dac80501_ReceiveDataset(u32 datasetSize)

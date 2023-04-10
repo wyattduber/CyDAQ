@@ -109,7 +109,7 @@ int ads7047_SetupInterruptSystem(XScuGic *IntcInstancePtr, XTtcPs *TimerInstPtr,
 	return XST_SUCCESS;
 }
 
-void ads7047_EnableSampling(u8 streamSetting)
+int ads7047_EnableSampling(u8 streamSetting)
 {
 	//check that ADC has been initialized
 	if(ads7047_InitStatus == 0) {
@@ -128,19 +128,21 @@ void ads7047_EnableSampling(u8 streamSetting)
 
 	//Start TTC0 to begin sampling
 	XTtcPs_Start(TtcPtr);
+	return 0;
 }
 
-void ads7047_DisableSampling(void)
+int ads7047_DisableSampling(void)
 {
 	samplingEnabled = false;
 	streamingEnabled = false;
 
 	XTtcPs_Stop(TtcPtr);
+	return 0;
 }
 
-void ads7047_ProcessSamples(void)
+int ads7047_ProcessSamples(void)
 {
-	xadcProcessSamples();
+	return xadcProcessSamples();
 }
 
 int intrcount = 0;

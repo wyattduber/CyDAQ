@@ -51,9 +51,9 @@
 
 u8 xadcInit();
 
-void xadcEnableSampling(u8 streamSetting);
-void xadcDisableSampling();
-void xadcProcessSamples();
+int xadcEnableSampling(u8 streamSetting);
+int xadcDisableSampling();
+int xadcProcessSamples();
 
 void xadcInterruptHandler(void *CallBackRef);
 

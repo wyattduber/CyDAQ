@@ -52,11 +52,6 @@ int main(int argc, char **argv){
 	rpc_setup();
 	commInit();
 
-	//test sending some data for now
-//	char message[16] = "Hi!";
-//	int data[16] = {1};
-//	rpc_send_message(message, data, 1);
-
 	commRXTask(); //when this returns, program is now wanting to stop
 
 	rpc_teardown();

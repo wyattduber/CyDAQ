@@ -26,9 +26,9 @@
 
 int init_dac80501(void);
 bool dac80501_SetGenerationRate(u32 freqHz);
-void dac80501_SetNumRepetitions(u32 num);
-void dac80501_EnableGeneration(void);
-void dac80501_DisableGeneration(void);
+int dac80501_SetNumRepetitions(u32 num);
+int dac80501_EnableGeneration(void);
+int dac80501_DisableGeneration(void);
 int dac80501_ReceiveDataset(u32 datasetSize);
 
 void dac80501_InterruptHandler(void *CallBackRef);

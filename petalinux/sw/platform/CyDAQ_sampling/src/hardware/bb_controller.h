@@ -28,7 +28,7 @@
 #define min(x, y) ((x) < (y) ? x : y)
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
-void ballbeamStart();
+int ballbeamStart();
 
 int parseInput(PID *pid);
 void tolower_str(char *str);

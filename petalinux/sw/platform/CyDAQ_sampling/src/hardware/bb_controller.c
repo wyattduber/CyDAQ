@@ -28,7 +28,7 @@
 XUartPs *uart;
 int pause = 0;
 
-void ballbeamStart() {
+int ballbeamStart() {
 	PID *pid;
 	IR *ir_sensor;
 	SERVO *servo;
@@ -94,6 +94,7 @@ void ballbeamStart() {
 		}
 
 	}
+	return 0;
 
 }
 

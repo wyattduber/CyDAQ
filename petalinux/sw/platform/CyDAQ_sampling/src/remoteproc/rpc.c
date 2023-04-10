@@ -86,70 +86,70 @@ int handle_message(struct _payload* payload){
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 
-			xadcSetSampleRate(data[1]);
+			return xadcSetSampleRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
 
-			xadcProcessSamples();
+			return xadcProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
 
-			xadcEnableSampling(data[1]);//0 = normal, 1 = stream
+			return xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
 
-			xadcDisableSampling();
+			return xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){
 
 		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
 
-			ads7047_ProcessSamples();
+			return ads7047_ProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
 
-			ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
+			return ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){
 
-			ads7047_DisableSampling();
+			return ads7047_DisableSampling();
 
-		}else if(data[0] == RPC_MESSAGE_MUTED_SET_INPUT_PINS){
+		}else if(data[0] == RPC_MESSAGE_MUX_SET_INPUT_PINS){
 
-			muxSetInputPins(data[1]);
+			return muxSetInputPins(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
 
-			muxSetActiveFilter(data[1]);
+			return muxSetActiveFilter(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
 			//data[2] = lower
 			//data[3] = upper
-			tuneFilter(50,data[2],data[3]);
+			return tuneFilter(50,data[2],data[3]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
 
-			dac80501_SetNumRepetitions(data[1]);
+			return dac80501_SetNumRepetitions(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
 
-			dac80501_SetGenerationRate(data[1]);
+			return dac80501_SetGenerationRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
 
-			dac80501_ReceiveDataset(data[1]);
+			return dac80501_ReceiveDataset(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
 
-			dac80501_EnableGeneration();
+			return dac80501_EnableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
 
-			dac80501_DisableGeneration();
+			return dac80501_DisableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
 
-			ballbeamStart();
+			return ballbeamStart(); //TODO this is blocking...
 
 		}else{
 			LPRINTF("Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
@@ -168,16 +168,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)priv;
 	(void)src;
 
-//	xil_printf("sampling>callback! Message: %d of len: %d\r\n", ((struct _payload*)data)->message, len);
-
-//	handle_message((struct _payload*)data);
-//	send_ack(ept);
-
-//	((struct _payload*)data)->data[0] = RPC_MESSAGE_DAC_ACK;
-//	((struct _payload*)data)->message
-//	if (rpmsg_send(ept, data, len) < 0) {
-//		xil_printf("rpmsg_send failed\n");
-//	}
+	xil_printf("sampling>callback! Message: %d with data[0]: %d of len: %d\r\n", ((struct _payload*)data)->message, ((struct _payload*)data)->data[0], len);
 
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?

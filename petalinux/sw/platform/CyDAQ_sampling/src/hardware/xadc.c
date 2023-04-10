@@ -161,7 +161,7 @@ static int xadcSetupInterruptSystem(XScuGic *IntcInstancePtr, XSysMon *XAdcPtr, 
 /**
  * Enables XADC sample capture timer and XADC EOC interrupts.
  */
-void xadcEnableSampling(u8 streamSetting) {
+int xadcEnableSampling(u8 streamSetting) {
 	//check that XADC has been initialized
 	if(xadcInitStatus == 0) {
 		if(DEBUG)
@@ -185,12 +185,13 @@ void xadcEnableSampling(u8 streamSetting) {
 	//start XADC driver timer and enable interrupts to begin sampling
 	XTmrCtr_Start(&TimerCounterInst, TIMER_CNTR_0);
 	XSysMon_IntrGlobalEnable(SysMonInstPtr);
+	return 0;
 }
 
 /**
  * Disables XADC sample capture timer and XADC EOC interrupts.
  */
-void xadcDisableSampling() {
+int xadcDisableSampling() {
 	//stop XADC driver timer and disable sampling interrupts
 	XTmrCtr_Stop(&TimerCounterInst, TIMER_CNTR_0);
 	XSysMon_IntrGlobalDisable(&SysMonInst);
@@ -198,6 +199,7 @@ void xadcDisableSampling() {
 	//resets status variables
 	samplingEnabled = false;
 	streamingEnabled = false;
+	return 0;
 }
 
 /**
@@ -209,7 +211,7 @@ void xadcDisableSampling() {
  * sending appropriate sized bursts and waiting for a confirmation back form the PC before sending the next
  * burst. This also allows error checking.
  */
-void xadcProcessSamples() {
+int xadcProcessSamples() {
 	volatile u32* xadcSampleCount = shared_GetSampleCount();
 	u32 i = 0;
 //	u8 sent = 0;
@@ -226,7 +228,7 @@ void xadcProcessSamples() {
 			xil_printf("000000000");
 		}
 
-		return;
+		return 0;
 	}
 
 	sleep(1);
@@ -276,7 +278,7 @@ void xadcProcessSamples() {
 	}
 
 	shared_clearSampleCount();
-	return;
+	return 0;
 }
 
 /**
