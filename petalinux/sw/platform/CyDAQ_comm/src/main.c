@@ -23,7 +23,6 @@ because @ = 0x40 and ! = 0x21
 #include "comm.h"
 #include "main.h"
 #include "rpc.h"
-#include "shared_functions.h"
 
 void exit_action_handler(int signum){
 	printf("\r\nComm exit handler!\r\n");

@@ -13,7 +13,6 @@
 
 #include "rpc_support.h"
 #include "rpc.h"
-#include "shared_functions.h"
 #include "shared_definitions.h"
 
 static int charfd = -1, fd = -1;
