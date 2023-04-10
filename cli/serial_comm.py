@@ -115,6 +115,9 @@ class ctrl_comm:
         for element in all_ports:
             if "USB Serial Port" in element.description:
                 open_ports.append(element.device)
+            if "USB Serial Device" in element.description: 
+                # for new firmware. Prepend instead to it takes higher priority
+                open_ports = [element.device] + open_ports
         try:
             zybo_port = open_ports[0]
             port = str(zybo_port)
