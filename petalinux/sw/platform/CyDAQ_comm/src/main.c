@@ -23,6 +23,7 @@ because @ = 0x40 and ! = 0x21
 #include "comm.h"
 #include "main.h"
 #include "rpc.h"
+#include "shared_functions.h"
 
 void exit_action_handler(int signum){
 	printf("\r\nComm exit handler!\r\n");
@@ -35,7 +36,7 @@ void kill_action_handler(int signum){
 }
 
 int main(int argc, char **argv){
-	printf("cydaq-comm starting\n");
+	debug_printf("cydaq-comm starting\n");
 
 	//add handlers for program exit/kill
 	struct sigaction exit_action;

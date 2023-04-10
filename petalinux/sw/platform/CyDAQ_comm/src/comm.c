@@ -82,7 +82,6 @@ void commRXTask() {
 		//idle until a complete command is received
 		while (receiveBuffer[bytesReceived - 1] != COMM_STOP_CHAR && bytesReceived < 7) {
 			bytesReceived += read(serial_port, &receiveBuffer[bytesReceived], 1);
-			printf("comm> just put %u into the serial recieveBuffer\r\n", &receiveBuffer[bytesReceived]);
 		}
 
 		//stop sampling to config device
@@ -144,8 +143,8 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		u8 payloadLength = bufSize - COMM_NUM_START_CHARS - COMM_NUM_STOP_CHARS
 				- COMM_CMD_SIZE;
 
-		if (DEBUG)
-			printf("CMD: %u, payloadLen: %d\n", cmd, payloadLength);
+//		if (DEBUG)
+//			printf("CMD: %u, payloadLen: %d\n", cmd, payloadLength);
 
 		/*	---Set XADC and external ADC Sample Rates---  */
 		if (cmd == SAMPLE_RATE_SET) {
@@ -376,7 +375,6 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			err = true;
 		}
 	}
-	printf("comm> commProcessPacket returning err: %d\r\n", err);
 	return err;
 }
 

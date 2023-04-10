@@ -13,6 +13,8 @@
 
 #include "rpc_support.h"
 #include "rpc.h"
+#include "shared_functions.h"
+#include "shared_definitions.h"
 
 static int charfd = -1, fd = -1;
 
@@ -26,14 +28,16 @@ int ept_fd = -1;
 char *rpmsg_svc="rpmsg-openamp-demo-channel"; //TDOO change name? //TODO make define?
 
 void rpc_print_payload(struct _payload* payload){
-	printf("== comm>Payload ==\r\n");
-	printf("Message: %d\r\n", payload->message);
-	printf("Data: ");
-	for(int i = 0; i < payload->data_len; i++){
-		printf("%d ", payload->data[i]);
+	if(DEBUG){
+		printf("== comm>Payload ==\r\n");
+		printf("Message: %d\r\n", payload->message);
+		printf("Data: ");
+		for(int i = 0; i < payload->data_len; i++){
+			printf("%d ", payload->data[i]);
+		}
+		printf("\r\n");
+		printf("==================\r\n\r\n");
 	}
-	printf("\r\n");
-	printf("==================\r\n");
 }
 
 void rpc_stop_remote(void)
@@ -57,11 +61,11 @@ int rpc_send_message(int message, int data[], int data_len){
 		send_payload->data[i] = data[i];
 	}
 
-	printf("comm>Attempting to send message:\r\n");
-	rpc_print_payload(send_payload);
+	if(DEBUG)
+		rpc_print_payload(send_payload);
 
 	int bytes_sent = write(fd, send_payload, PAYLOAD_TOTAL_LEN);
-	printf("message sent: Bytes written: %d\r\n", bytes_sent);
+	debug_printf("Message sent to sampling cpu: Bytes written: %d\r\n", bytes_sent);
 	if(bytes_sent <= 0){
 		printf("Error sending payload. Printing payload: \r\n");
 		rpc_print_payload(send_payload);
@@ -74,14 +78,14 @@ int rpc_send_message(int message, int data[], int data_len){
  * Blocking
  */
 int rpc_recieve_message(){
-	//TODO add error returns
 	int bytes_rcvd = 0;
 	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	while (bytes_rcvd <= 0) {
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	}
-	printf("comm> Received payload with message: %d\r\n", receive_payload->message);
+	debug_printf("Received payload:\r\n");
+	rpc_print_payload(receive_payload);
 	return 0;
 }
 
@@ -89,25 +93,12 @@ int rpc_recieve_message(){
  * Blocking - waits for ACK message from RPC. Returns 1 if successful, -1 if anything but ACK is received.
  */
 int rpc_recieve_ack(){
-	//TODO add error returns
-	int bytes_rcvd = 0;
-	printf("comm> rpc_recieve_ack() called\r\n");
-	bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
-	printf("comm> first read: %d bytes read\r\n", bytes_rcvd);
-	while (bytes_rcvd <= 0) {
-//		printf("comm> bytes_rcvd <=0, so waiting and reading again\r\n");
-		usleep(10000);
-		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
-//		printf("comm> another read: %d bytes read\r\n", bytes_rcvd);
-	}
-	printf("comm> bytes read finally not <= 0: %d \r\n", bytes_rcvd);
+	rpc_recieve_message();
 
 	if(receive_payload->data[0] == RPC_MESSAGE_DAC_ACK){
-		printf("comm> returning 0\r\n");
 		return 0;
 	}else{
-		printf("comm> returning -1\r\n");
-		return -1;//TODO just return the strcmp return? idk just being safe
+		return -1;
 	}
 }
 
@@ -120,7 +111,7 @@ int rpc_setup(){
 	char ept_dev_name[16];
 	char ept_dev_path[32];
 
-	printf("rpc setup starting\r\n");
+	debug_printf("rpc setup starting\r\n");
 
 	/* Write firmware name to remoteproc sysfs interface */
 	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/firmware", r5_id);
