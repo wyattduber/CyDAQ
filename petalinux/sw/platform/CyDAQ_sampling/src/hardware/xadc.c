@@ -239,7 +239,7 @@ int xadcProcessSamples() {
 		while(i < (*xadcSampleCount)) {
 			voltage = RawToExtVoltage(xadcSampleBuffer[i]);
 			xil_printf(" => %d.%d V\n", (int)voltage, xadcFractionToInt(voltage));
-			i++;
+
 		}
 
 		xil_printf("SAMP> Finished processing samples\r\n");
@@ -247,7 +247,9 @@ int xadcProcessSamples() {
 		xil_printf("%c", COMM_START_CHAR);
 
 		while(ptr < lastVal) {
-			commUartSend(ptr++, 1);
+			//commUartSend(ptr++, 1);
+			//rpc_send_message();
+			rpc_send_message(COMM_SAMPLE_MSG, ptr++, 2);
 			usleep(30);
 			/*
 			//if we are on the last burst is smaller than the burst limit, resize window so we don't miss end samples
