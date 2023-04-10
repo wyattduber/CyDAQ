@@ -20,7 +20,8 @@ from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEBUG_LOGS = ""
+DEFAULT_WINDOW_WIDTH = 400
+DEFAULT_WINDOW_HEIGHT = 590
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -31,7 +32,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
 
 # This path must be appended because the CLI and GUI aren't in packages.
 # If both were in python packages, this issue wouldn't be here.
@@ -126,6 +126,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = self.wrapper.ping() >= 0
         except CLIWrapper.cyDAQNotConnectedException:
             self.connected = False
+        except CLIWrapper.CLIException:
+            self.connected = False
+            errorbox = QMessageBox(self)
+            errorbox.setWindowTitle("Error")
+            errorbox.setText("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
+            errorbox.setInformativeText("Try restarting the CyDAQ.")
+            errorbox.setIcon(QMessageBox.Critical)
+            errorbox.exec()
+            qApp.exit(-2)
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self, CyDAQModeWidget)
@@ -149,6 +158,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(0)
 
         self.updateWidgetConnectionStatus()
+
+        self.current_index = 0
 
         plotterAction = self.actionLaunch_Plotter
         plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
@@ -213,21 +224,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     ### The following are methods for switching to different widgets of the gui application. ###
 
-    def switchToModeSelector(self):
+    def switchToModeSelector(self, prev_geometry=None):
+        if prev_geometry is not None:
+            self.setMaximumSize(16777215, 16777215) # Reset maximum size
+            self.setMinimumSize(0, 0) # Reset minimum size
+            self.setGeometry(prev_geometry)
         self.stack.setCurrentIndex(0)
+        self.current_index = 0
 
     def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
+        self.current_index = 1
 
     def switchToBalanceBeam(self):
+        # Check that the cydaq is connected and that balance beam mode isn't already on
+        self.balance_beam.prev_geometry = self.geometry()
         self.stack.setCurrentIndex(2)
+        self.current_index = 2
 
     def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
+        self.current_index = 3
         self.livestream.show_window(self.livestream)
         self.livestream.came_from_basic = came_from_basic
 
     def switchToDebug(self):
+        self.debug.prev_index = self.current_index
         self.stack.setCurrentIndex(4)
 
     def restartWindow(self):
@@ -245,6 +267,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
+            if self.connected:
+                self.balance_beam.running = False
+                self.wrapper.stop_bb()
             event.accept()
             if main.widgets[3].window is not None:
                 main.widgets[3].window.close()
