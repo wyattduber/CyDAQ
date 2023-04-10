@@ -152,7 +152,7 @@ int handle_message(struct _payload* payload){
 			return ballbeamStart(); //TODO this is blocking...
 
 		}else{
-			LPRINTF("SAMP> Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+			LPRINTF("SAMP> Unknown message, type: %d, command: %d, data: %d\r\n", message,data[0],data[1]);
 		}
 
 	}
