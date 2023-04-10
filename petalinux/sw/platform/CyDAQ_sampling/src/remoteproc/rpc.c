@@ -80,7 +80,7 @@ int handle_message(struct _payload* payload){
 
 	}
 	if(DEBUG){
-		LPRINTF("SAMP> Message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+		LPRINTF("SAMP> Message received, type: %d, command: %d, data: %d\r\n", message,data[0],data[1]);
 	}
 	//command message handling
 	if(message_type == MSG_TYPE_COMMAND){
