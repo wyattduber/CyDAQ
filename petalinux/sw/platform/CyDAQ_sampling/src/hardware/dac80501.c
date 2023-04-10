@@ -108,7 +108,7 @@ bool dac80501_SetGenerationRate(u32 rateHz)
 
 	if(rateHz > DAC_SCUTIMER_FREQ) {
 		if(DEBUG)
-			xil_printf("Invalid generation rate given");
+			xil_printf("SAMP> Invalid generation rate given\r\n");
 
 		return true;
 	}
@@ -122,7 +122,7 @@ bool dac80501_SetGenerationRate(u32 rateHz)
 	//XScuTimer_LoadTimer(&DACTimerInst, 1);	//useful for profiling how long the DAC ISR runs
 
 	if(DEBUG)
-		xil_printf("New Generation Rate: %d SPS\r\n", rateHz);
+		xil_printf("SAMP> New Generation Rate: %d SPS\r\n", rateHz);
 
 	return false;
 }
@@ -155,7 +155,7 @@ int dac80501_ReceiveDataset(u32 datasetSize)
 	//check for errors before beginning reception
 	if(datasetSize == 0 || datasetSize > DAC_DATASET_BUFFER_SIZE) {
 		if(DEBUG)
-			xil_printf("Invalid dataset length\r\n");
+			xil_printf("SAMP> Invalid dataset length\r\n");
 
 		return 1;
 	}

@@ -29,9 +29,9 @@ char *rpmsg_svc="rpmsg-openamp-demo-channel"; //TDOO change name? //TODO make de
 
 void rpc_print_payload(struct _payload* payload){
 	if(DEBUG){
-		printf("== comm>Payload ==\r\n");
-		printf("Message: %d\r\n", payload->message);
-		printf("Data: ");
+		printf("== COMM Payload ==\r\n");
+		printf("COMM> Message: %d\r\n", payload->message);
+		printf("COMM> Data: ");
 		for(int i = 0; i < payload->data_len; i++){
 			printf("%d ", payload->data[i]);
 		}
@@ -65,9 +65,9 @@ int rpc_send_message(int message, int data[], int data_len){
 		rpc_print_payload(send_payload);
 
 	int bytes_sent = write(fd, send_payload, PAYLOAD_TOTAL_LEN);
-	debug_printf("Message sent to sampling cpu: Bytes written: %d\r\n", bytes_sent);
+	printf("COMM> Message sent to sampling cpu: Bytes written: %d\r\n", bytes_sent);
 	if(bytes_sent <= 0){
-		printf("Error sending payload. Printing payload: \r\n");
+		printf("COMM> Error sending payload. Printing payload: \r\n");
 		rpc_print_payload(send_payload);
 	}
 
@@ -84,7 +84,7 @@ int rpc_recieve_message(){
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	}
-	debug_printf("Received payload:\r\n");
+	printf("COMM> Received payload:\r\n");
 	rpc_print_payload(receive_payload);
 	return 0;
 }
@@ -111,7 +111,7 @@ int rpc_setup(){
 	char ept_dev_name[16];
 	char ept_dev_path[32];
 
-	debug_printf("rpc setup starting\r\n");
+	printf("COMM> RPC Setup Starting\r\n");
 
 	/* Write firmware name to remoteproc sysfs interface */
 	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/firmware", r5_id);
@@ -126,14 +126,14 @@ int rpc_setup(){
 	}
 
 	/* Load rpmsg_char driver */
-	printf("\r\nMaster>probe rpmsg_char\r\n");
+	printf("COMM> Probe rpmsg_char\r\n");
 	ret = system("modprobe rpmsg_char");
 	if (ret < 0) {
-		perror("Failed to load rpmsg_char driver.\n");
+		printf("COMM> ERROR: Failed to load rpmsg_char driver.\r\n");
 		return -EINVAL;
 	}
 
-	printf("\r\n Open rpmsg dev %s! \r\n", rpmsg_dev);
+	printf("COMM> Open rpmsg dev %s! \r\n", rpmsg_dev);
 	sprintf(fpath, "%s/devices/%s", RPMSG_BUS_SYS, rpmsg_dev);
 	if (access(fpath, F_OK)) {
 		fprintf(stderr, "Not able to access rpmsg device %s, %s\n",
@@ -153,7 +153,7 @@ int rpc_setup(){
 	eptinfo.dst = 0xFFFFFFFF;
 	ret = rpmsg_create_ept(charfd, &eptinfo);
 	if (ret) {
-		printf("failed to create RPMsg endpoint.\n");
+		printf("COMM> ERROR: Failed to create RPMsg endpoint.\n");
 		return -EINVAL;
 	}
 	if (!get_rpmsg_ept_dev_name(rpmsg_char_name, eptinfo.name,
@@ -162,7 +162,7 @@ int rpc_setup(){
 	sprintf(ept_dev_path, "/dev/%s", ept_dev_name);
 	fd = open(ept_dev_path, O_RDWR | O_NONBLOCK);
 	if (fd < 0) {
-		perror("Failed to open rpmsg device.");
+		printf("COMM> ERROR: Failed to open rpmsg device.");
 		close(charfd);
 		return -1;
 	}
@@ -171,7 +171,7 @@ int rpc_setup(){
 	receive_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
 
 	if (send_payload == 0 || receive_payload == 0) {
-		printf("ERROR: Failed to allocate memory for payload.\n");
+		printf("COMM> ERROR: Failed to allocate memory for payload.\n");
 		return -1;
 	}
 	return 0;

@@ -117,7 +117,7 @@ int ads7047_EnableSampling(u8 streamSetting)
 	}
 
 	if(DEBUG)
-		xil_printf("Starting sampling, Streaming: %s\n", (streamSetting) ? "On" : "Off");
+		xil_printf("SAMP> Starting sampling, Streaming: %s\n", (streamSetting) ? "On" : "Off");
 
 	//set status variables
 	samplingEnabled = true;
@@ -179,7 +179,7 @@ int ads7047_SetSampleRate(u32 rateHz)
 
 	if(rateHz > ADS7047_MAX_SAMPLE_RATE) {
 		if(DEBUG)
-			xil_printf("Invalid sample rate given");
+			xil_printf("SAMP> Invalid sample rate given");
 		return 1;
 	}
 
@@ -196,7 +196,7 @@ int ads7047_SetSampleRate(u32 rateHz)
     XTtcPs_SetPrescaler(TtcPtr, ADCTtcConfig.Prescaler);
 
 	if(DEBUG)
-		xil_printf("New ADS7047 Sample Rate: %d SPS\n", rateHz);
+		xil_printf("SAMP> New ADS7047 Sample Rate: %d SPS\n", rateHz);
 
 	return 0;
 }

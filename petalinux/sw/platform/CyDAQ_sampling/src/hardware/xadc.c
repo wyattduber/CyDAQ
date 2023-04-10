@@ -165,7 +165,7 @@ int xadcEnableSampling(u8 streamSetting) {
 	//check that XADC has been initialized
 	if(xadcInitStatus == 0) {
 		if(DEBUG)
-			xil_printf("sampling> xadc not init. calling xadcInit()\r\n");
+			xil_printf("SAMP> XADC not init. calling xadcInit()\r\n");
 		xadcInit();
 		xadcInitStatus = 1;
 	}
@@ -173,7 +173,7 @@ int xadcEnableSampling(u8 streamSetting) {
 	shared_clearSampleCount();
 
 	if(DEBUG)
-		xil_printf("Starting sampling, Streaming: %s\n", (streamSetting) ? "On" : "Off");
+		xil_printf("SAMP> Starting sampling, Streaming: %s\r\n", (streamSetting) ? "On" : "Off");
 
 	//set status variables
 	samplingEnabled = true;
@@ -221,7 +221,7 @@ int xadcProcessSamples() {
 
 	if((*xadcSampleCount) == 0) {
 		if(DEBUG) {
-			xil_printf("No new samples\n");
+			xil_printf("SAMP> No new samples\r\n");
 		} else {
 			xil_printf("%c", COMM_START_CHAR);
 			usleep(100);
@@ -234,7 +234,7 @@ int xadcProcessSamples() {
 	sleep(1);
 
 	if(DEBUG) {
-		xil_printf("Beginning sample playback..\n\n");
+		xil_printf("SAMP> Beginning sample playback..\r\n");
 
 		while(i < (*xadcSampleCount)) {
 			voltage = RawToExtVoltage(xadcSampleBuffer[i]);
@@ -242,7 +242,7 @@ int xadcProcessSamples() {
 			i++;
 		}
 
-		xil_printf("Finished processing samples\n\n");
+		xil_printf("SAMP> Finished processing samples\r\n");
 	} else {
 		xil_printf("%c", COMM_START_CHAR);
 
@@ -319,7 +319,7 @@ int xadcSetPolarity(u8 setting){
 
 	if(status != XST_SUCCESS) {
 		if(DEBUG)
-			xil_printf("Error changing polarity");
+			xil_printf("SAMP> Error changing polarity\r\n");
 	}
 
 	return status;
@@ -332,14 +332,14 @@ int xadcSetSampleRate(u32 rate) {
 	//check that XADC is initialized
 	if(xadcInitStatus == 0) {
 			if(DEBUG)
-				xil_printf("sampling> xadc not init. calling xadcInit()\r\n");
+				xil_printf("SAMP> XADC not init. calling xadcInit()\r\n");
 			xadcInit();
 			xadcInitStatus = 1;
 	}
 
 	if(rate > XADC_MAX_SAMPLE_RATE) {
 		if(DEBUG)
-			xil_printf("Invalid sample rate given");
+			xil_printf("SAMP> Invalid sample rate given\r\n");
 		return 1;
 	}
 
@@ -351,7 +351,7 @@ int xadcSetSampleRate(u32 rate) {
 	XTmrCtr_SetResetValue(&TimerCounterInst, TIMER_CNTR_0, (u32) resetValue);
 
 	if(DEBUG)
-		xil_printf("New XADC Sample Rate: %d SPS\n", rate);
+		xil_printf("SAMP> New XADC Sample Rate: %d SPS\r\n", rate);
 
 	return 0;
 }

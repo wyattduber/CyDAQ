@@ -124,11 +124,11 @@ platform_create_proc(int proc_index, int rsc_index)
 	/* parse resource table to remoteproc */
 	ret = remoteproc_set_rsc_table(&rproc_inst, rsc_table, rsc_size);
 	if (ret) {
-		xil_printf("Failed to initialize remoteproc\r\n");
+		xil_printf("SAMP> Failed to initialize remoteproc\r\n");
 		remoteproc_remove(&rproc_inst);
 		return NULL;
 	}
-	xil_printf("Initialize remoteproc successfully.\r\n");
+	xil_printf("SAMP> Initialize remoteproc successfully.\r\n");
 
 	return &rproc_inst;
 }
@@ -140,8 +140,8 @@ int platform_init(void **platform)
 	struct remoteproc *rproc;
 
 	if (!platform) {
-		xil_printf("Failed to initialize platform,"
-			   "NULL pointer to store platform data.\n");
+		xil_printf("SAMP> Failed to initialize platform,"
+			   "NULL pointer to store platform data.\r\n");
 		return -EINVAL;
 	}
 	/* Initialize HW system components */
@@ -149,7 +149,7 @@ int platform_init(void **platform)
 
 	rproc = platform_create_proc(proc_id, rsc_id);
 	if (!rproc) {
-		xil_printf("Failed to create remoteproc device.\n");
+		xil_printf("SAMP> Failed to create remoteproc device.\n");
 		return -EINVAL;
 	}
 	*platform = rproc;
@@ -181,15 +181,15 @@ platform_create_rpmsg_vdev(void *platform, unsigned int vdev_index,
 	shbuf = metal_io_phys_to_virt(shbuf_io,
 				      SHARED_MEM_PA + SHARED_BUF_OFFSET);
 
-	xil_printf("creating remoteproc virtio\r\n");
+	xil_printf("SAMP> Creating remoteproc virtio\r\n");
 	/* TODO: can we have a wrapper for the following two functions? */
 	vdev = remoteproc_create_virtio(rproc, vdev_index, role, rst_cb);
 	if (!vdev) {
-		xil_printf("failed remoteproc_create_virtio\r\n");
+		xil_printf("SAMP> Failed remoteproc_create_virtio\r\n");
 		goto err1;
 	}
 
-	xil_printf("initializing rpmsg vdev\r\n");
+	xil_printf("SAMP> Initializing rpmsg vdev\r\n");
 	if (role == VIRTIO_DEV_MASTER) {
 		/* Only RPMsg virtio master needs to initialize the
 		 * shared buffers pool
@@ -208,10 +208,10 @@ platform_create_rpmsg_vdev(void *platform, unsigned int vdev_index,
 				       shbuf_io, NULL);
 	}
 	if (ret) {
-		xil_printf("failed rpmsg_init_vdev\r\n");
+		xil_printf("SAMP> Failed rpmsg_init_vdev\r\n");
 		goto err2;
 	}
-	xil_printf("initializing rpmsg vdev\r\n");
+	xil_printf("SAMP> Initializing rpmsg vdev\r\n");
 	return rpmsg_virtio_get_rpmsg_device(rpmsg_vdev);
 err2:
 	remoteproc_remove_virtio(rproc, vdev);

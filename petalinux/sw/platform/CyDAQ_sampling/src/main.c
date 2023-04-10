@@ -43,7 +43,7 @@ u8 getButtonChangeBlocking();
  */
 int main(int argc, char *argv[]) {
 
-	xil_printf("sampling> Starting to init all hardware...\r\n");
+	xil_printf("SAMP> Starting to init all hardware...\r\n");
 	init_platform();
 //    commInit();
 	muxInit();
@@ -52,8 +52,8 @@ int main(int argc, char *argv[]) {
 	shared_InitSpi();
 	init_dac80501();
 	init_ads7047();
-	xil_printf("sampling> Finished init all hardware...\r\n");
-
+	xil_printf("SAMP> Finished init all hardware\r\n");
+	xil_printf("SAMP> Starting RPC\r\n");
 	rpc_setup();
 
 	return 0;

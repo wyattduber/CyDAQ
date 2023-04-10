@@ -15,7 +15,7 @@ u8 potInit = 0;
 
 int init_x9258_i2c(){
 	if(DEBUG)
-		xil_printf("Initializing I2C for X9258\n");
+		xil_printf("SAMP> Initializing I2C for X9258\r\n");
 	int status;
 	XIicPs_Config *Config;
 
@@ -54,7 +54,7 @@ POT_R_TYPE pot_value_conversion(int ohmValue){
 
   if(ohmValue < 0 || ohmValue > 100000){
 	if(DEBUG)
-		xil_printf("Invalid resistance given, choose val between 0-100,000 ohm\n");
+		xil_printf("SAMP> Invalid resistance given, choose val between 0-100,000 ohm\r\n");
     return 0;
   }
   return map(ohmValue,0,100000,0,255) + calFactor;
@@ -79,7 +79,7 @@ uint8_t x9258_volatile_write(wiper_t wiper_location, POT_R_TYPE r_value){
 		return XST_FAILURE;
 	}
 	if(DEBUG)
-		xil_printf("Wrote to IC_Addr: %x,Pot#: %d,Reg Val: %d \n", wiper_location.ic_addr, wiper_location.wiper, r_value);
+		xil_printf("SAMP> Wrote to IC_Addr: %x,Pot#: %d,Reg Val: %d \r\n", wiper_location.ic_addr, wiper_location.wiper, r_value);
 
 	/*
 	 * Wait until bus is idle to start another transfer.

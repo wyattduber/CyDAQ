@@ -120,12 +120,12 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 
 	if(freq1 > FILTER_FREQ_MAX || freq2 > FILTER_FREQ_MAX) {
 		if(DEBUG)
-			xil_printf("sampling> Invalid frequency values given %d and %d\r\n", freq1, freq2);
+			xil_printf("SAMP> Invalid frequency values given %d and %d\r\n", freq1, freq2);
 
 		return 1;
 	} else if(filterSelect == FILTER_60_HZ_NOTCH || filterSelect == FILTER_PASSTHROUGH) { //cant be notch or pass
 		if(DEBUG)
-			xil_printf("Can't tune passthrough or notch\n");
+			xil_printf("SAMP> Can't tune passthrough or notch\r\n");
 		//return 2;
 		return 0;	//temporary fix; old GUI forces filter tune even if passthrough is selected
 	}
@@ -147,7 +147,7 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 
 	//if filter is a bandpass, write upper corner to lp pots (upper half of wiper array)
 	if(filterSelect == FILTER_2ND_ORDER_BP || filterSelect == FILTER_6TH_ORDER_BP) {
-		xil_printf("Upper ");
+		xil_printf("SAMP> Upper \r\n");
 		POT_R_TYPE potVal2 = freqToPotVal(freq2);
 
 		for(int i = wipersToWrite / 2; i < wipersToWrite; i++) {
@@ -177,7 +177,7 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 	  currentFilter->currentFreq[0] = freq1;
 	  currentFilter->currentFreq[1] = freq2;
 	} else if(DEBUG) {
-		xil_printf("Error tuning filter\n");
+		xil_printf("SAMP> Error tuning filter\r\n");
 	}
 
 	return err;
@@ -188,6 +188,6 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
  */
 POT_R_TYPE freqToPotVal(FILTER_FREQ_TYPE freq) {
   int resistance = 1.0 / (2.0 * 3.14159 * CAPACITANCE * freq);
-  xil_printf("Freq (hz): %d, R (ohm): %d\n", freq, resistance);
+  xil_printf("SAMP> Freq (hz): %d, R (ohm): %d\r\n", freq, resistance);
   return pot_value_conversion(resistance);
 }

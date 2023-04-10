@@ -36,7 +36,7 @@ void kill_action_handler(int signum){
 }
 
 int main(int argc, char **argv){
-	debug_printf("cydaq-comm starting\n");
+	printf("COMM> CyDAQ-COMM Starting\n");
 
 	//add handlers for program exit/kill
 	struct sigaction exit_action;

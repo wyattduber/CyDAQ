@@ -51,7 +51,7 @@ int muxInit(){
 	Config = XGpio_LookupConfig(GPIO_DEV_ID);
 	status = XGpio_CfgInitialize(&GPIO_MUX, Config, Config->BaseAddress);
 	if(status != XST_SUCCESS && DEBUG){
-		xil_printf("Error setting up GPIO for Mux Pins\n");
+		xil_printf("SAMP> Error setting up GPIO for Mux Pins\r\n");
 	}
 	//mask used to get output direction of gpio bus
 //	u8 outputMask =~HL_TOGGLE_PIN & ~ENABLE_PIN;
@@ -84,10 +84,10 @@ u8 muxSetActiveFilter( filters_e filterSelect){
 	//checks if input is valid
 	if(filterSelect >= NUM_FILTERS){
 		if(DEBUG)
-			xil_printf("Error, %d is not a valid filter enum #\n", filterSelect);
+			xil_printf("SAMP> Error, %d is not a valid filter enum #\r\n", filterSelect);
 		return MUX_SET_FAILED;
 	}else if(DEBUG){
-		xil_printf("Changing filter to %d\n", filterSelect);
+		xil_printf("SAMP> Changing filter to %d\r\n", filterSelect);
 	}
 	//gets mux configuration from input array using input number
 	mux_config_data_t *config = &outputConfigs[filterSelect];
@@ -109,10 +109,10 @@ u8 muxSetInputPins( inputs_e inputSelect){
 	//checks if input is valid
 	if(inputSelect >= NUM_INPUTS){
 		if(DEBUG)
-			xil_printf("input requested %d not in valid range\n", inputSelect);
+			xil_printf("SAMP> Input requested %d not in valid range\r\n", inputSelect);
 		return MUX_SET_FAILED;
 	}else if(DEBUG){
-		xil_printf("Changing input to: %d\n", inputSelect);
+		xil_printf("SAMP> Changing input to: %d\r\n", inputSelect);
 	}
 	//gets mux configuration from input array using input number
 	mux_config_data_t *config = &inputConfigs[inputSelect];

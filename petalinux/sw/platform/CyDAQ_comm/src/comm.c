@@ -28,14 +28,14 @@ volatile int TotalSentCount;	//   entire buffer has been sent and received.
 int commInit() {
     serial_port = open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
     if(serial_port < 0){
-		printf("Error opening serial port");
+		printf("COMM> Error opening serial port");
 		return XST_FAILURE;
 	}
 
     struct termios tty;
     memset (&tty, 0, sizeof tty);
     if ( tcgetattr ( serial_port, &tty ) != 0 ) {
-       printf("Error getting serial attributes");
+       printf("COMM> Error getting serial attributes");
        return XST_FAILURE;
     }
 
@@ -60,7 +60,7 @@ int commInit() {
     //Flush Port, then applies attributes
     tcflush( serial_port, TCIFLUSH );
     if ( tcsetattr ( serial_port, TCSANOW, &tty ) != 0) {
-       printf("Error setting serial attributes");
+       printf("COMM> Error setting serial attributes");
        return XST_FAILURE;
     }
 
@@ -130,7 +130,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			|| (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
 		//command structure was invalid
 		if (DEBUG)
-			printf("Command structure was invalid\n");
+			printf("COMM> Command structure was invalid\r\n");
 		err = true;
 	} else {
 		//capture command byte
@@ -150,13 +150,13 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		if (cmd == SAMPLE_RATE_SET) {
 			if (payloadLength < COMM_SAMPLE_RATE_SIZE) {
 				if (DEBUG)
-					printf("ERROR: not enough bytes to represent sample rate\n");
+					printf("COMM> ERROR: not enough bytes to represent sample rate\r\n");
 
 				err = true;
 			} else {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
-				printf("COMM: Got sample rate set of: %d\r\n", rate);
+				printf("COMM> Got sample rate set of: %d\r\n", rate);
 
 				rpc_data[0] = RPC_MESSAGE_XADC_SET_SAMPLE_RATE;
 				rpc_data[1] = (int)rate;
@@ -180,11 +180,11 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == INPUT_SELECT) {
 			if (payloadLength == 0) {
 				if (DEBUG)
-					printf("Error, payload length too small\n");
+					printf("COMM> Error, payload length too small\r\n");
 
 				err = true;
 			} else {
-				printf("comm> setting input select!\r\n");
+				printf("COMM> setting input select!\r\n");
 				rpc_data[0] = RPC_MESSAGE_MUX_SET_INPUT_PINS;
 				rpc_data[1] = (int)payload[0];
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
@@ -201,11 +201,11 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == FILTER_SELECT) {
 			if (payloadLength < 1) {
 				if (DEBUG)
-					printf("No filter param given to set\n");
+					printf("COMM> No filter param given to set\r\n");
 
 				err = true;
 			} else {
-				printf("comm> setting filter select!\r\n");
+				printf("COMM> Setting filter select!\r\n");
 				rpc_data[0] = RPC_MESSAGE_SET_ACTIVE_FILTER;
 				rpc_data[1] = (int)payload[0];
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
@@ -219,7 +219,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == CORNER_FREQ_SET) {
 			if (payloadLength < 4) {
 				if (DEBUG)
-					printf("err in filter tune function");
+					printf("COMM> err in filter tune function\r\n");
 
 				err = true;
 			} else {
@@ -229,7 +229,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				FILTER_FREQ_TYPE upper = ((payload[2] << 8) & 0xFF00)
 						+ payload[3];
 
-				printf("comm> setting corner freq!\r\n");
+				printf("COMM> setting corner freq!\r\n");
 				rpc_data[0] = RPC_MESSAGE_TUNE_FILTER;
 				rpc_data[1] = (int)payload[0];
 				rpc_data[2] = (int)lower;
@@ -247,7 +247,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == ADC_SELECT) {
 			if (payloadLength != 1) {
 				if (DEBUG)
-					printf("Incorrect formatting in ADC select command");
+					printf("COMM> Incorrect formatting in ADC select command\r\n");
 
 				err = true;
 			} else {
@@ -255,7 +255,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				if (adcSel >= NUM_ADCS) {
 					if (DEBUG)
-						printf("Invalid ADC selection");
+						printf("COMM> Invalid ADC selection\r\n");
 
 					err = true;
 				} else {
@@ -266,6 +266,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			/*  ---Respond to Ping---  */
 		} else if (cmd == PING) {
 			//sets err to false so zybo always sends an ACK back to GUI, confirming operation
+			printf("COMM> NEVER GONNA GIVE YOU UP!!!\r\n");
 			err = false;
 
 			/*  ---Print Samples---  */
@@ -327,7 +328,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == DAC_NUM_REPS_SET) {
 			if (payloadLength < 4) {
 				if (DEBUG)
-					printf("Not enough bytes to represent num repetitions\r\n");
+					printf("COMM> Not enough bytes to represent num repetitions\r\n");
 
 				err = true;
 			} else {
@@ -335,13 +336,16 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 						| (payload[2] << 8) | (payload[3]);
 
 //				dac80501_SetNumRepetitions(num);
+				rpc_data[0] = RPC_MESSAGE_DAC_SET_NUM_REPETITIONS;
+				rpc_data[1] = num;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
 			/*  ---Set DAC Generation Rate (Sampling Rate)---  */
 		} else if (cmd == DAC_GEN_RATE_SET) {
 			if (payloadLength < 4) {
 				if (DEBUG)
-					printf("Not enough bytes to represent generation rate\r\n");
+					printf("COMM> Not enough bytes to represent generation rate\r\n");
 
 				err = true;
 			} else {
@@ -349,6 +353,9 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 						| (payload[2] << 8) | (payload[3]);
 
 //				err = dac80501_SetGenerationRate(rate);
+				rpc_data[0] = RPC_MESSAGE_DAC_SET_GEN_RATE;
+				rpc_data[1] = rate;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
 			/*  ---Receive New Dataset Sent from PC---  */
@@ -357,19 +364,26 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 					| (payload[2] << 8) | (payload[3]);
 
 //			err = dac80501_ReceiveDataset(dsSize);
+			rpc_data[0] = RPC_MESSAGE_DAC_RECEIVE_DATASET;
+			rpc_data[1] = dsSize;
+			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Start Waveform Generation---  */
 		} else if (cmd == START_GENERATION) {
 //			dac80501_EnableGeneration();
-
+			rpc_data[0] = RPC_MESSAGE_DAC_ENABLE_GENERATION;
+			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Stop Waveform Generation---  */
 		} else if (cmd == STOP_GENERATION) {
 //			dac80501_DisableGeneration();
+			rpc_data[0] = RPC_MESSAGE_DAC_DISABLE_GENERATION;
+			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Ball & Beam Controller---  */
 		} else if (cmd == START_CONTROLLER) {
 //			ballbeamStart(); //TODO
-
+			rpc_data[0] = RPC_MESSAGE_DAC_BALL_BEAM_START;
+			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Unsupported Command---  */
 		} else {
 			err = true;
@@ -419,14 +433,14 @@ u32 commUartWaitReceive(u8 *bufferPtr, char endChar1, char endChar2) {
 
 void respond_ack(int serial_port){
 	if(DEBUG)
-		printf("Responding ACK\n");
+		printf("COMM> Responding ACK\n");
 	char * message = "@ACK!";
 	write(serial_port, message, 6);
 }
 
 void respond_err(int serial_port){
 	if(DEBUG)
-		printf("Responding ERR\n");
+		printf("COMM> Responding ERR\n");
 	char * message = "@ERR!";
 	write(serial_port, message, 6);
 }

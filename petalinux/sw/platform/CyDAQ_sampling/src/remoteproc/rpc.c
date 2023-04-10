@@ -21,7 +21,7 @@ struct _payload *send_payload;
 struct _payload *receive_payload;
 
 void rpc_print_payload(struct _payload* payload){
-	xil_printf("== sampling> Payload ==\r\n");
+	xil_printf("== SAMP>  Payload ==\r\n");
 	xil_printf("Message: %d\r\n", payload->message);
 	xil_printf("Data: ");
 	for(int i = 0; i < payload->data_len; i++){
@@ -32,7 +32,7 @@ void rpc_print_payload(struct _payload* payload){
 }
 
 int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int data_len){
-	xil_printf("sampling> rpc_send_message called with message: %d, data[0]:%d, data[1]:%d\r\n", message, data[0], data[1]);
+	xil_printf("SAMP> rpc_send_message called with message: %d, data[0]:%d, data[1]:%d\r\n", message, data[0], data[1]);
 	rpc_print_payload(send_payload);
 
 	send_payload->message = message;
@@ -47,9 +47,9 @@ int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int da
 	}
 
 	if (rpmsg_send(ept, send_payload, PAYLOAD_TOTAL_LEN) < 0) {
-		xil_printf("send_ack failed\r\n");
+		xil_printf("SAMP> send_ack failed\r\n");
 	}else{
-		xil_printf("send_ack success!\r\n");
+		xil_printf("SAMP> send_ack success!\r\n");
 	}
 
 	return 0;
@@ -58,7 +58,7 @@ int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int da
 int send_ack(struct rpmsg_endpoint *ept){
 	int data[PAYLOAD_DATA_LEN] = {RPC_MESSAGE_DAC_ACK};
 	if (rpc_send_message(ept, MSG_TYPE_COMMAND, data, 1) < 0) {
-		LPERROR("send_ack failed\n");
+		LPERROR("SAMP> send_ack failed\n");
 	}
 	return 0;
 }
@@ -80,7 +80,7 @@ int handle_message(struct _payload* payload){
 
 	}
 	if(DEBUG){
-		LPRINTF("message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+		LPRINTF("SAMP> Message received, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 	}
 	//command message handling
 	if(message_type == MSG_TYPE_COMMAND){
@@ -152,7 +152,7 @@ int handle_message(struct _payload* payload){
 			return ballbeamStart(); //TODO this is blocking...
 
 		}else{
-			LPRINTF("Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
+			LPRINTF("SAMP> Unknown message, type: %s, command: %d, data: %d\r\n", message,data[0],data[1]);
 		}
 
 	}
@@ -168,12 +168,12 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)priv;
 	(void)src;
 
-	xil_printf("sampling>callback! Message: %d with data[0]: %d of len: %d\r\n", ((struct _payload*)data)->message, ((struct _payload*)data)->data[0], len);
+	xil_printf("SAMP> callback! Message: %d with data[0]: %d of len: %d\r\n", ((struct _payload*)data)->message, ((struct _payload*)data)->data[0], len);
 
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
 	if ((*(unsigned int *)data) == SHUTDOWN_MSG) {
-		LPRINTF("shutdown message is received.\n");
+		LPRINTF("SAMP> shutdown message is received.\n");
 		shutdown_req = 1;
 		return RPMSG_SUCCESS;
 	}
@@ -183,7 +183,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 
 	/* Send data back to master */ //TODO change this to just ACK later on
 //	if (rpmsg_send(ept, data, len) < 0) {
-//		xil_printf("sampling> rpmsg_send failed\r\n");
+//		xil_printf("SAMP>  rpmsg_send failed\r\n");
 //	}
 	return RPMSG_SUCCESS;
 }
@@ -191,7 +191,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 static void rpmsg_service_unbind(struct rpmsg_endpoint *ept)
 {
 	(void)ept;
-	LPRINTF("unexpected Remote endpoint destroy\r\n");
+	LPRINTF("SAMP> Unexpected Remote endpoint destroy\r\n");
 	shutdown_req = 1;
 }
 
@@ -201,21 +201,21 @@ int app(struct rpmsg_device *rdev, void *priv)
 	int ret;
 
 	/* Initialize RPMSG framework */
-	LPRINTF("Try to create rpmsg endpoint.\r\n");
+	LPRINTF("SAMP> Try to create rpmsg endpoint.\r\n");
 
 	ret = rpmsg_create_ept(&lept, rdev, RPMSG_SERVICE_NAME,
 			RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
 			       rpmsg_endpoint_cb, rpmsg_service_unbind);
 	if (ret) {
-		LPERROR("Failed to create endpoint.\r\n");
+		LPERROR("SAMP> Failed to create endpoint.\r\n");
 		return -1;
 	}
 
-	LPRINTF("Successfully created rpmsg endpoint.\r\n");
+	LPRINTF("SAMP> Successfully created rpmsg endpoint.\r\n");
 	while (1) {
 		xil_printf("|");
 		platform_poll(priv);
-		xil_printf("platform_poll returned!\r\n");
+		xil_printf("SAMP> platform_poll returned!\r\n");
 		/* we got a shutdown request, exit */
 		if (shutdown_req) {
 			break;
@@ -239,14 +239,14 @@ int rpc_setup(){
 	/* Initialize platform */
 	ret = platform_init(&platform);
 	if (ret) {
-		LPERROR("Failed to initialize platform.\r\n");
+		LPERROR("SAMP> Failed to initialize platform.\r\n");
 		ret = -1;
 	} else {
 		rpdev = platform_create_rpmsg_vdev(platform, 0,
 						   VIRTIO_DEV_DEVICE,
 						   NULL, NULL);
 		if (!rpdev) {
-			LPERROR("Failed to create rpmsg virtio device.\r\n");
+			LPERROR("SAMP> Failed to create rpmsg virtio device.\r\n");
 			ret = -1;
 		} else {
 			app(rpdev, platform);
@@ -255,6 +255,6 @@ int rpc_setup(){
 		}
 	}
 
-	LPRINTF("Stopping application...\r\n");
+	LPRINTF("SAMP> Stopping application...\r\n");
 	platform_cleanup(platform);
 }

@@ -4,7 +4,7 @@
 
 void debug_printf(const char *__restrict __format, ...){
 	if(DEBUG){
-		printf("comm> ");
+		printf("COMM> ");
 
 		va_list args;
 		va_start(args, __format);

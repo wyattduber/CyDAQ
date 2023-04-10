@@ -33,17 +33,17 @@ char *get_rpmsg_ept_dev_name(const char *rpmsg_char_name,
 	for (i = 0; i < 128; i++) {
 		sprintf(sys_rpmsg_ept_name_path, "%s/%s/rpmsg%d/name",
 			sys_rpmsg_path, rpmsg_char_name, i);
-		printf("checking %s\n", sys_rpmsg_ept_name_path);
+		printf("COMM> checking %s\n", sys_rpmsg_ept_name_path);
 		if (access(sys_rpmsg_ept_name_path, F_OK) < 0)
 			continue;
 		fp = fopen(sys_rpmsg_ept_name_path, "r");
 		if (!fp) {
-			printf("failed to open %s\n", sys_rpmsg_ept_name_path);
+			printf("COMM> ERROR: Failed to open %s\r\n", sys_rpmsg_ept_name_path);
 			break;
 		}
 		fgets(svc_name, sizeof(svc_name), fp);
 		fclose(fp);
-		printf("svc_name: %s.\n",svc_name);
+		printf("COMM> svc_name: %s.\n",svc_name);
 		ept_name_len = strlen(ept_name);
 		if (ept_name_len > sizeof(svc_name))
 			ept_name_len = sizeof(svc_name);
@@ -53,7 +53,7 @@ char *get_rpmsg_ept_dev_name(const char *rpmsg_char_name,
 		}
 	}
 
-	printf("Not able to RPMsg endpoint file for %s:%s.\n",
+	printf("COMM> ERROR: Not able to RPMsg endpoint file for %s:%s.\n",
 	       rpmsg_char_name, ept_name);
 	return NULL;
 }
@@ -64,7 +64,7 @@ int rpmsg_create_ept(int rpfd, struct rpmsg_endpoint_info *eptinfo)
 
 	ret = ioctl(rpfd, RPMSG_CREATE_EPT_IOCTL, eptinfo);
 	if (ret)
-		perror("Failed to create endpoint.\n");
+		printf("COMM> ERROR: Failed to create endpoint.\n");
 	return ret;
 }
 
@@ -87,7 +87,7 @@ int get_rpmsg_chrdev_fd(const char *rpmsg_dev_name,
 	while ((ent = readdir(dir)) != NULL) {
 		if (!strncmp(ent->d_name, rpmsg_ctrl_prefix,
 			    strlen(rpmsg_ctrl_prefix))) {
-			printf("Opening file %s.\n", ent->d_name);
+			printf("COMM> Opening file %s.\r\n", ent->d_name);
 			sprintf(fpath, "/dev/%s", ent->d_name);
 			fd = open(fpath, O_RDWR | O_NONBLOCK);
 			if (fd < 0) {
@@ -181,21 +181,21 @@ int file_write(char *path, char *str)
 
 	fd = open(path, O_WRONLY);
 	if (fd == -1) {
-		perror("Error");
+		printf("COMM> ERROR: Cannot open file\r\n");
 		return -1;
 	}
 	str_sz = strlen(str);
 	bytes_written = write(fd, str, str_sz);
 	if (bytes_written != str_sz) {
 	        if (bytes_written == -1) {
-			perror("Error");
+	        	printf("COMM> ERROR: Cannot write to file\r\n");
 		}
 		close(fd);
 		return -1;
 	}
 
 	if (-1 == close(fd)) {
-		perror("Error");
+		printf("COMM> ERROR: Cannot close file\r\n");
 		return -1;
 	}
 	return 0;
