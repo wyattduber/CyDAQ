@@ -206,7 +206,14 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 				err = true;
 			} else {
-//				err = muxSetActiveFilter(payload[0]); /
+				printf("comm> setting filter select!\r\n");
+				rpc_data[0] = RPC_MESSAGE_SET_ACTIVE_FILTER;
+				rpc_data[1] = (int)payload[0];
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					err = true;
+				}
+//				err = muxSetActiveFilter(payload[0]); //TODO
 			}
 
 			/*  ---Set Filter Corner Frequencies---  */
@@ -223,8 +230,18 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				FILTER_FREQ_TYPE upper = ((payload[2] << 8) & 0xFF00)
 						+ payload[3];
 
+				printf("comm> setting corner freq!\r\n");
+				rpc_data[0] = RPC_MESSAGE_TUNE_FILTER;
+				rpc_data[1] = (int)payload[0];
+				rpc_data[2] = (int)lower;
+				rpc_data[3] = (int)upper;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 4);
+				if(rpc_recieve_ack() != 0){
+					err = true;
+				}
+
 				//tune filter
-//				err = tuneFilter(50, lower, upper);
+//				err = tuneFilter(50, lower, upper); //TODO
 			}
 
 			/*  ---Select between XADC and external SPI ADC---  */

@@ -120,7 +120,7 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 
 	if(freq1 > FILTER_FREQ_MAX || freq2 > FILTER_FREQ_MAX) {
 		if(DEBUG)
-			xil_printf("Invalid frequency values given\n");
+			xil_printf("sampling> Invalid frequency values given %d and %d\r\n", freq1, freq2);
 
 		return 1;
 	} else if(filterSelect == FILTER_60_HZ_NOTCH || filterSelect == FILTER_PASSTHROUGH) { //cant be notch or pass
