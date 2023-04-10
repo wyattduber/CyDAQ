@@ -1,10 +1,10 @@
 #!/bin/bash
 
-pyuic5 --from-imports qtdesigner/BasicOperation.ui -o generated/BasicOperationUI.py
-pyuic5 --from-imports qtdesigner/BalanceBeam.ui -o generated/BalanceBeamUI.py
-pyuic5 --from-imports qtdesigner/LiveStream.ui -o generated/LiveStreamUI.py
+pyuic5 --from-imports qtdesigner/BasicOperationWidget.ui -o generated/BasicOperationWidgetUI.py
+pyuic5 --from-imports qtdesigner/BalanceBeamWidget.ui -o generated/BalanceBeamWidgetUI.py
+pyuic5 --from-imports qtdesigner/LiveStreamWidget.ui -o generated/LiveStreamWidgetUI.py
+pyuic5 --from-imports qtdesigner/DebugWidget.ui -o generated/DebugWidgetUI.py
 pyuic5 --from-imports qtdesigner/MainWindow.ui -o generated/MainWindowUI.py
-pyuic5 --from-imports qtdesigner/Debug.ui -o generated/DebugUI.py
 pyuic5 --from-imports qtdesigner/DacModeWidget.ui -o generated/DacModeWidgetUI.py
 pyuic5 --from-imports qtdesigner/SamplingGenerationStart.ui -o generated/SamplingGenerationStartUI.py
 pyuic5 --from-imports qtdesigner/ModeSelectorWidget.ui -o generated/ModeSelectorWidgetUI.py
