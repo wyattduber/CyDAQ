@@ -49,3 +49,4 @@ int rpc_send_message(int message, int data[], int data_len);
 int rpc_recieve_message();
 void rpc_teardown();
 int rpc_recieve_ack();
+void rpc_listen_for_sampling_data();

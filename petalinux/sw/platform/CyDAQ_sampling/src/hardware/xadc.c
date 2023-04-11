@@ -120,6 +120,8 @@ u8 xadcInit() {
 		//save reference to shared sample buffer
 		xadcSampleBuffer = shared_GetSampleBuffer();
 
+		xadcInitStatus = 1;
+
 		return XST_SUCCESS;
 }
 

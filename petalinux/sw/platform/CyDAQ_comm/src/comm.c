@@ -100,6 +100,7 @@ void commRXTask() {
 			bytesReceived += len;
 		}
 
+		//TODO is this wanted anymore?
 		//stop sampling to config device
 		//TODO: instead, save configuration and apply once sampling is done
 		if (samplingEnabled == true) {
@@ -161,6 +162,19 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 		if (DEBUG)
 			printf("COMM> CMD: %u, payloadLen: %d\n", cmd, payloadLength);
+
+		/*  ---Respond to Ping. Should be the only command that works while sampling---  */
+		if (cmd == PING) {
+			//sets err to false so zybo always sends an ACK back to GUI, confirming operation
+			printf("COMM> NEVER GONNA GIVE YOU UP!!!\r\n");
+			err = false; //TODO clean up
+			return err;
+		}
+
+		if(samplingEnabled){
+			err = true;
+			return err;
+		}
 
 		/*	---Set XADC and external ADC Sample Rates---  */
 		if (cmd == SAMPLE_RATE_SET) {
@@ -279,12 +293,6 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Respond to Ping---  */
-		} else if (cmd == PING) {
-			//sets err to false so zybo always sends an ACK back to GUI, confirming operation
-			printf("COMM> NEVER GONNA GIVE YOU UP!!!\r\n");
-			err = false;
-
 			/*  ---Print Samples---  */
 		} else if (cmd == FETCH_SAMPLES) {
 			//acknowledge command before returning samples
@@ -304,26 +312,39 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 			/*  ---Start Sampling---  */
 		} else if (cmd == START_SAMPLING) {
-			//sending an additional dummy byte indicates that streaming mode should be used
-			u8 useStreaming = 0;
-//			if (payloadLength == 1) {
-//				useStreaming = 1;
-//			}
+
+			if(samplingEnabled){
+				printf("COMM> Starting sampling when already enabled");
+				err = true;
+				return err;
+			}
+
+			samplingEnabled = true;
 
 			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcEnableSampling(useStreaming);
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_EnableSampling(useStreaming);
-				break;
-			default:
-				err = true;
-				break;
+				case ADC_XADC:
+	//				xadcEnableSampling(useStreaming);
+					break;
+				case ADC_SPI_EXTERNAL:
+	//				ads7047_EnableSampling(useStreaming);
+					break;
+				default:
+					err = true;
+					break;
+			}
+
+			if(fork() == 0){
+				//child
+				rpc_listen_for_sampling_data();
+				exit(0);
+			}else{
+				//parent
+
 			}
 
 			/*  ---Stop Sampling---  */
 		} else if (cmd == STOP_SAMPLING) {
+			samplingEnabled = false;
 			switch (activeAdc) {
 			case ADC_XADC:
 //				xadcDisableSampling();

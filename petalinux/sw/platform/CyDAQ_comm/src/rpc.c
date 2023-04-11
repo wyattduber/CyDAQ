@@ -183,3 +183,11 @@ void rpc_teardown(){
 	free(send_payload);
 	free(receive_payload);
 }
+
+/*
+ * Continuously listens for sampling data from the remote core.
+ * Blocks until it receives a data end packet from rpc
+ */
+void rpc_listen_for_sampling_data(){
+	//TODO
+}

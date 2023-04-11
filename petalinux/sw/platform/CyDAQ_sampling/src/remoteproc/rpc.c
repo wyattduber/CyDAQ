@@ -178,7 +178,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 		return RPMSG_SUCCESS;
 	}
 
-	handle_message((struct _payload*)data);
+	handle_message((struct _payload*)data); //TODO handle error message from this function call
 	send_ack(ept);
 
 	/* Send data back to master */ //TODO change this to just ACK later on
