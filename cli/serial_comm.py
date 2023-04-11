@@ -4,6 +4,11 @@ import time
 import serial
 import serial.tools.list_ports
 
+# Old firmware
+# COMM_PORT_DESCRIPTION = "USB Serial Port"
+
+# New firmware
+COMM_PORT_DESCRIPTION = "USB Serial Device"
 
 class ctrl_comm:
     """
@@ -159,11 +164,13 @@ class ctrl_comm:
         all_ports = serial.tools.list_ports.comports()
         open_ports = []
         for element in all_ports:
+            if COMM_PORT_DESCRIPTION in element.description:
+                open_ports.append(element.device)
             # if "USB Serial Port" in element.description:
             #     open_ports.append(element.device)
-            if "USB Serial Device" in element.description: 
-                # for new firmware. Prepend instead to it takes higher priority
-                open_ports = [element.device] + open_ports
+            # if "USB Serial Device" in element.description: 
+            #     # for new firmware. Prepend instead to it takes higher priority
+            #     open_ports = [element.device] + open_ports
         try:
             zybo_port = open_ports[0]
             port = str(zybo_port)
