@@ -26,10 +26,12 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
 
-        # Home Button
-        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+        self.prev_index = 0
 
-        # Widget Buttons (Disabled for Lab Launch
+        # Home Button
+        self.home_btn.clicked.connect(self.home)
+
+        # Widget Buttons (Disabled for Lab Launch)
         # self.write_btn.clicked.connect(self.writeData)
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
@@ -55,6 +57,21 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         self.connection_status_label.setText("Not Connected!")
         pass
 
+    def home(self):
+        """Return to whatever the previous window was before switching to debug"""
+        tmp = self.prev_index
+        if self.prev_index == 0:
+            self.mainWindow.switchToModeSelector()
+        elif self.prev_index == 1:
+            self.mainWindow.switchToBasicOperation()
+        elif self.prev_index == 2:
+            self.mainWindow.switchToBalanceBeam()
+        elif self.prev_index == 3:
+            self.mainWindow.switchToLiveStream()
+        elif self.prev_index == 4:
+            self.prev_index = tmp
+            self.home()
+
     """ 
     Below are some tests that we came up with to test the reading/writing
     speed of python an the GUI that we created to make sure that it can 
@@ -62,6 +79,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     """
 
     def writeData(self):
+        """Test Method to write data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.writeALotOfData,
@@ -70,6 +88,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         )
 
     def writeDataV2(self):
+        """Second Test Method to write data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.writeALotOfDataV2,
@@ -78,6 +97,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         )
 
     def readData(self):
+        """Test Method to read data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.readALotOfData,
@@ -93,7 +113,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
                                                        options=options)
         # Default Filename
         if filename.strip() == "":
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
+            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt"
 
         # Save the logs to the file
         with open(filename, 'w') as file:

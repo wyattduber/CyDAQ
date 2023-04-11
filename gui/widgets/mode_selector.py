@@ -23,6 +23,7 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget):
 
         basicOperationButton = self.basic_operation_btn
         basicOperationButton.setCheckable(True)
+        basicOperationButton.setText("Basic Operation")
         basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
 
         balanceBeamButton = self.balance_beam_btn
