@@ -22,11 +22,19 @@ int TotalErrorCount;
 volatile int TotalReceivedCount;// These counters are used to determine when the
 volatile int TotalSentCount;	//   entire buffer has been sent and received.
 
+/*
+ * Opens a serial connection to the PC.
+ * Returns the FD id
+ */
+int open_serial_port(){
+	return open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
+}
+
 /**
  * Initializes UART
  */
 int commInit() {
-    serial_port = open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
+    serial_port = open_serial_port();
     if(serial_port < 0){
 		printf("COMM> Error opening serial port");
 		return XST_FAILURE;
@@ -81,7 +89,15 @@ void commRXTask() {
 	while (1) {
 		//idle until a complete command is received
 		while (receiveBuffer[bytesReceived - 1] != COMM_STOP_CHAR && bytesReceived < 7) {
-			bytesReceived += read(serial_port, &receiveBuffer[bytesReceived], 1);
+			int len = read(serial_port, &receiveBuffer[bytesReceived], 1);
+			if(len == 0){
+				//serial must be unplugged, as the above read is blocking while connected
+				printf("COMM> detected serial unplugged, re-opening device\r\n");
+				close(serial_port);
+				serial_port = open_serial_port();
+				continue;
+			}
+			bytesReceived += len;
 		}
 
 		//stop sampling to config device
@@ -143,8 +159,8 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		u8 payloadLength = bufSize - COMM_NUM_START_CHARS - COMM_NUM_STOP_CHARS
 				- COMM_CMD_SIZE;
 
-//		if (DEBUG)
-//			printf("CMD: %u, payloadLen: %d\n", cmd, payloadLength);
+		if (DEBUG)
+			printf("COMM> CMD: %u, payloadLen: %d\n", cmd, payloadLength);
 
 		/*	---Set XADC and external ADC Sample Rates---  */
 		if (cmd == SAMPLE_RATE_SET) {

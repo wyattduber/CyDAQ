@@ -9,6 +9,7 @@
  */
 
 #include "xadc.h"
+#include "../remoteproc/rpc.h"
 
 /* Constant definitions */
 #define INTC_DEVICE_INT_ID	 	XPAR_INTC_0_TMRCTR_0_VEC_ID
