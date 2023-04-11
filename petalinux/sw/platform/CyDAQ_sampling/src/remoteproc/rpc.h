@@ -50,6 +50,7 @@
 
 //Message type from comm
 #define COMM_COMMAND_MSG 0
+#define COMM_SAMPLE_MSG 1
 
 //number message type
 #define MSG_TYPE_INVALID -1

@@ -4,4 +4,3 @@
 CONFIG_gpio-demo
 CONFIG_peekpoke
 CONFIG_bootscript
-CONFIG_freertos-cydaq-sampling
