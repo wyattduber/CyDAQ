@@ -54,5 +54,12 @@ ls /sys/class/udc/ > UDC
 ifconfig usb0 169.254.7.2 up
 # ========================================================================================================
 
+# Start the CyDAQ_comm.elf application, which launches CyDAQ_sampling.elf on another CPU
+# NOTE: There is most likely a more stable way of doing this (systemd), but as the user will have # to restart the whole cydaq anyways to restart the app, it's probably unneeded.
+cd /home/root
+./CyDAQ_comm.elf &
+
 # Add any new startup commands below
+
+
 

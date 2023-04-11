@@ -4002,7 +4002,6 @@ CONFIG_auto-login=y
 # apps 
 #
 CONFIG_bootscript=y
-CONFIG_freertos-cydaq-sampling=y
 # CONFIG_gpio-demo is not set
 # CONFIG_peekpoke is not set
 
