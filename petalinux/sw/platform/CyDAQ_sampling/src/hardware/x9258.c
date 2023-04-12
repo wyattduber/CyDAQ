@@ -18,7 +18,6 @@ int init_x9258_i2c(){
 		xil_printf("SAMP> Initializing I2C for X9258\r\n");
 	int status;
 	XIicPs_Config *Config;
-
 /*
 	 * Initialize the IIC driver so that it's ready to use
 	 * Look up the configuration in the config table, then initialize it.
@@ -27,6 +26,7 @@ int init_x9258_i2c(){
 	if (NULL == Config) {
 		return XST_FAILURE;
 	}
+
 
 	status = XIicPs_CfgInitialize(&I2C0_IIC, Config, Config->BaseAddress);
 	if (status != XST_SUCCESS) {
@@ -38,6 +38,7 @@ int init_x9258_i2c(){
 	 */
 	status = XIicPs_SelfTest(&I2C0_IIC);
 	if (status != XST_SUCCESS) {
+		xil_printf("SAMP> XIicPs_SelfTest failed! \r\n");
 		return XST_FAILURE;
 	}
 
@@ -45,6 +46,7 @@ int init_x9258_i2c(){
 	 * Set the IIC serial clock rate.
 	 */
 	status = XIicPs_SetSClk(&I2C0_IIC, POT_I2C_CLK_RATE);
+	xil_printf("SAMP> setting potInit = 1 in x9259 init function!\r\n");
 	potInit = 1;
 	return status;
 }
@@ -63,7 +65,8 @@ POT_R_TYPE pot_value_conversion(int ohmValue){
 uint8_t x9258_volatile_write(wiper_t wiper_location, POT_R_TYPE r_value){
 
 	if(potInit == 0){
-		init_x9258_i2c();
+		xil_printf("SAMP> potInit == 0, running x9258 init!\r\n");
+		init_x9258_i2c(); //TODO check if this returns failure or not!
 	}
   	u8 SendBuffer[POT_I2C_BUFFER_SIZE];
   	SendBuffer[0] = (u8) (0b10100000 | wiper_location.wiper);

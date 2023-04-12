@@ -85,70 +85,71 @@ int handle_message(struct _payload* payload){
 	//command message handling
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
-
+			xil_printf("SAMP> before xadcSetSampleRate \r\n");
 			return xadcSetSampleRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
-
+			xil_printf("SAMP> before xadcProcessSamples\r\n");
 			return xadcProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
-
+			xil_printf("SAMP> before xadcEnableSampling\r\n");
 			return xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
-
+			xil_printf("SAMP> before xadcDisableSampling\r\n");
 			return xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){
 
 		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
-
+			xil_printf("SAMP> before ads7047_ProcessSamples\r\n");
 			return ads7047_ProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
-
+			xil_printf("SAMP> before ads7047_EnableSampling\r\n");
 			return ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){
-
+			xil_printf("SAMP> before ads7047_DisableSampling\r\n");
 			return ads7047_DisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_MUX_SET_INPUT_PINS){
-
+			xil_printf("SAMP> before muxSetInputPins\r\n");
 			return muxSetInputPins(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
-
+			xil_printf("SAMP> before muxSetActiveFilter\r\n");
 			return muxSetActiveFilter(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
+			xil_printf("SAMP> before tuneFilter\r\n");
 			//data[2] = lower
 			//data[3] = upper
 			return tuneFilter(50,data[2],data[3]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
-
+			xil_printf("SAMP> before dac80501_SetNumRepetitions\r\n");
 			return dac80501_SetNumRepetitions(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
-
+			xil_printf("SAMP> before dac80501_SetGenerationRate\r\n");
 			return dac80501_SetGenerationRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
-
+			xil_printf("SAMP> before dac80501_ReceiveDataset\r\n");
 			return dac80501_ReceiveDataset(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
-
+			xil_printf("SAMP> before dac80501_EnableGeneration\r\n");
 			return dac80501_EnableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
-
+			xil_printf("SAMP> before dac80501_DisableGeneration\r\n");
 			return dac80501_DisableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
-
+			xil_printf("SAMP> before ballbeamStart\r\n");
 			return ballbeamStart(); //TODO this is blocking...
 
 		}else{
@@ -178,7 +179,8 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 		return RPMSG_SUCCESS;
 	}
 
-	handle_message((struct _payload*)data); //TODO handle error message from this function call
+	int ret = handle_message((struct _payload*)data); //TODO handle error message from this function call
+	xil_printf("SAMP> handle_message with data[0] = %d returned %d\r\n",((struct _payload*)data)->data[0], ret);
 	send_ack(ept);
 
 	/* Send data back to master */ //TODO change this to just ACK later on

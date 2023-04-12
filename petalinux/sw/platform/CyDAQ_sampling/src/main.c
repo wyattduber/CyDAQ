@@ -48,9 +48,12 @@ int main(int argc, char *argv[]) {
 	init_platform();
 	muxInit();
 	if(xadcInit() != XST_SUCCESS){
-		xil_printf("SAMP> ERROR! xadcInit failed!");
+		xil_printf("SAMP> ERROR! xadcInit failed!\r\n");
 	}
-	init_x9258_i2c();
+
+	if(init_x9258_i2c() != XST_SUCCESS){
+		xil_printf("SAMP> ERROR! x9258_i2c init failed!\r\n");
+	}
 	shared_InitSpi();
 	init_dac80501();
 	init_ads7047();

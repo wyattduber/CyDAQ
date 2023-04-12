@@ -217,10 +217,14 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				printf("COMM> setting input select!\r\n");
 				rpc_data[0] = RPC_MESSAGE_MUX_SET_INPUT_PINS;
 				rpc_data[1] = (int)payload[0];
+				printf("COMM> before sending input rpc message\r\n");
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				printf("COMM> after sending input rpc message\r\n");
 				if(rpc_recieve_ack() != 0){
+					printf("COMM> recieve ack returned false from input rpc message!\r\n");
 					err = true;
 				}
+				printf("COMM> rpc_recieve_ack returned 0 from input as expected!\r\n");
 //				status = muxSetInputPins(payload[0]); //TODO
 //				if (status > 0) {
 //					err = true;
