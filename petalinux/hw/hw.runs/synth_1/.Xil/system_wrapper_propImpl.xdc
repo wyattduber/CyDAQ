@@ -1,5 +1,5 @@
-set_property SRC_FILE_INFO {cfile:u:/sdmay23-47/petalinux/hw/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc rfile:../../../hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc id:1 order:EARLY scoped_inst:system_i/processing_system7_0} [current_design]
-set_property SRC_FILE_INFO {cfile:U:/sdmay23-47/petalinux/hw/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc rfile:../../../hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc id:2} [current_design]
+set_property SRC_FILE_INFO {cfile:/home/corbin/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc rfile:../../../hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc id:1 order:EARLY scoped_inst:system_i/processing_system7_0} [current_design]
+set_property SRC_FILE_INFO {cfile:/home/corbin/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc rfile:../../../hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc id:2} [current_design]
 current_instance system_i/processing_system7_0
 set_property src_info {type:SCOPED_XDC file:1 line:2 export:INPUT save:INPUT read:READ} [current_design]
 create_clock -period 10.000 [get_ports {}]

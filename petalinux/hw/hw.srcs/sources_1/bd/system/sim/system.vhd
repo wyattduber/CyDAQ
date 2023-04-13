@@ -1,8 +1,8 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
---Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
---Date        : Wed Mar 29 21:22:17 2023
---Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
+--Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
+--Date        : Wed Apr 12 23:17:23 2023
+--Host        : Ubuntu-18-04 running 64-bit Ubuntu 18.04.6 LTS
 --Command     : generate_target system.bd
 --Design      : system
 --Purpose     : IP block netlist
@@ -2788,6 +2788,17 @@ entity system_axi_mem_intercon_HP0_0 is
     S00_AXI_wvalid : in STD_LOGIC;
     S01_ACLK : in STD_LOGIC;
     S01_ARESETN : in STD_LOGIC;
+    S01_AXI_araddr : in STD_LOGIC;
+    S01_AXI_arburst : in STD_LOGIC;
+    S01_AXI_arcache : in STD_LOGIC;
+    S01_AXI_arlen : in STD_LOGIC;
+    S01_AXI_arlock : in STD_LOGIC;
+    S01_AXI_arprot : in STD_LOGIC;
+    S01_AXI_arqos : in STD_LOGIC;
+    S01_AXI_arready : out STD_LOGIC;
+    S01_AXI_arregion : in STD_LOGIC;
+    S01_AXI_arsize : in STD_LOGIC;
+    S01_AXI_arvalid : in STD_LOGIC;
     S01_AXI_awaddr : in STD_LOGIC;
     S01_AXI_awburst : in STD_LOGIC;
     S01_AXI_awcache : in STD_LOGIC;
@@ -2802,6 +2813,11 @@ entity system_axi_mem_intercon_HP0_0 is
     S01_AXI_bready : in STD_LOGIC;
     S01_AXI_bresp : out STD_LOGIC;
     S01_AXI_bvalid : out STD_LOGIC;
+    S01_AXI_rdata : out STD_LOGIC;
+    S01_AXI_rlast : out STD_LOGIC;
+    S01_AXI_rready : in STD_LOGIC;
+    S01_AXI_rresp : out STD_LOGIC;
+    S01_AXI_rvalid : out STD_LOGIC;
     S01_AXI_wdata : in STD_LOGIC;
     S01_AXI_wlast : in STD_LOGIC;
     S01_AXI_wready : out STD_LOGIC;
@@ -2911,6 +2927,17 @@ architecture STRUCTURE of system_axi_mem_intercon_HP0_0 is
   signal axi_mem_intercon_HP0_to_s00_couplers_WREADY : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s00_couplers_WSTRB : STD_LOGIC_VECTOR ( 3 downto 0 );
   signal axi_mem_intercon_HP0_to_s00_couplers_WVALID : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARADDR : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARBURST : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARCACHE : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARLEN : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARLOCK : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARPROT : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARQOS : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARREADY : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARREGION : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARSIZE : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_ARVALID : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_AWADDR : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_AWBURST : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_AWCACHE : STD_LOGIC;
@@ -2925,6 +2952,11 @@ architecture STRUCTURE of system_axi_mem_intercon_HP0_0 is
   signal axi_mem_intercon_HP0_to_s01_couplers_BREADY : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_BRESP : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_BVALID : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_RDATA : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_RLAST : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_RREADY : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_RRESP : STD_LOGIC;
+  signal axi_mem_intercon_HP0_to_s01_couplers_RVALID : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_WDATA : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_WLAST : STD_LOGIC;
   signal axi_mem_intercon_HP0_to_s01_couplers_WREADY : STD_LOGIC;
@@ -3058,11 +3090,6 @@ architecture STRUCTURE of system_axi_mem_intercon_HP0_0 is
   signal xbar_to_m00_couplers_WREADY : STD_LOGIC;
   signal xbar_to_m00_couplers_WSTRB : STD_LOGIC_VECTOR ( 7 downto 0 );
   signal xbar_to_m00_couplers_WVALID : STD_LOGIC_VECTOR ( 0 to 0 );
-  signal NLW_s01_couplers_S_AXI_arready_UNCONNECTED : STD_LOGIC;
-  signal NLW_s01_couplers_S_AXI_rdata_UNCONNECTED : STD_LOGIC;
-  signal NLW_s01_couplers_S_AXI_rlast_UNCONNECTED : STD_LOGIC;
-  signal NLW_s01_couplers_S_AXI_rresp_UNCONNECTED : STD_LOGIC;
-  signal NLW_s01_couplers_S_AXI_rvalid_UNCONNECTED : STD_LOGIC;
   signal NLW_xbar_s_axi_arready_UNCONNECTED : STD_LOGIC_VECTOR ( 0 to 0 );
   signal NLW_xbar_s_axi_bid_UNCONNECTED : STD_LOGIC_VECTOR ( 1 downto 0 );
   signal NLW_xbar_s_axi_rdata_UNCONNECTED : STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -3102,9 +3129,14 @@ begin
   S00_AXI_bresp(1 downto 0) <= axi_mem_intercon_HP0_to_s00_couplers_BRESP(1 downto 0);
   S00_AXI_bvalid <= axi_mem_intercon_HP0_to_s00_couplers_BVALID;
   S00_AXI_wready <= axi_mem_intercon_HP0_to_s00_couplers_WREADY;
+  S01_AXI_arready <= axi_mem_intercon_HP0_to_s01_couplers_ARREADY;
   S01_AXI_awready <= axi_mem_intercon_HP0_to_s01_couplers_AWREADY;
   S01_AXI_bresp <= axi_mem_intercon_HP0_to_s01_couplers_BRESP;
   S01_AXI_bvalid <= axi_mem_intercon_HP0_to_s01_couplers_BVALID;
+  S01_AXI_rdata <= axi_mem_intercon_HP0_to_s01_couplers_RDATA;
+  S01_AXI_rlast <= axi_mem_intercon_HP0_to_s01_couplers_RLAST;
+  S01_AXI_rresp <= axi_mem_intercon_HP0_to_s01_couplers_RRESP;
+  S01_AXI_rvalid <= axi_mem_intercon_HP0_to_s01_couplers_RVALID;
   S01_AXI_wready <= axi_mem_intercon_HP0_to_s01_couplers_WREADY;
   axi_mem_intercon_HP0_ACLK_net <= ACLK;
   axi_mem_intercon_HP0_ARESETN_net <= ARESETN;
@@ -3120,6 +3152,16 @@ begin
   axi_mem_intercon_HP0_to_s00_couplers_WLAST <= S00_AXI_wlast;
   axi_mem_intercon_HP0_to_s00_couplers_WSTRB(3 downto 0) <= S00_AXI_wstrb(3 downto 0);
   axi_mem_intercon_HP0_to_s00_couplers_WVALID <= S00_AXI_wvalid;
+  axi_mem_intercon_HP0_to_s01_couplers_ARADDR <= S01_AXI_araddr;
+  axi_mem_intercon_HP0_to_s01_couplers_ARBURST <= S01_AXI_arburst;
+  axi_mem_intercon_HP0_to_s01_couplers_ARCACHE <= S01_AXI_arcache;
+  axi_mem_intercon_HP0_to_s01_couplers_ARLEN <= S01_AXI_arlen;
+  axi_mem_intercon_HP0_to_s01_couplers_ARLOCK <= S01_AXI_arlock;
+  axi_mem_intercon_HP0_to_s01_couplers_ARPROT <= S01_AXI_arprot;
+  axi_mem_intercon_HP0_to_s01_couplers_ARQOS <= S01_AXI_arqos;
+  axi_mem_intercon_HP0_to_s01_couplers_ARREGION <= S01_AXI_arregion;
+  axi_mem_intercon_HP0_to_s01_couplers_ARSIZE <= S01_AXI_arsize;
+  axi_mem_intercon_HP0_to_s01_couplers_ARVALID <= S01_AXI_arvalid;
   axi_mem_intercon_HP0_to_s01_couplers_AWADDR <= S01_AXI_awaddr;
   axi_mem_intercon_HP0_to_s01_couplers_AWBURST <= S01_AXI_awburst;
   axi_mem_intercon_HP0_to_s01_couplers_AWCACHE <= S01_AXI_awcache;
@@ -3131,6 +3173,7 @@ begin
   axi_mem_intercon_HP0_to_s01_couplers_AWSIZE <= S01_AXI_awsize;
   axi_mem_intercon_HP0_to_s01_couplers_AWVALID <= S01_AXI_awvalid;
   axi_mem_intercon_HP0_to_s01_couplers_BREADY <= S01_AXI_bready;
+  axi_mem_intercon_HP0_to_s01_couplers_RREADY <= S01_AXI_rready;
   axi_mem_intercon_HP0_to_s01_couplers_WDATA <= S01_AXI_wdata;
   axi_mem_intercon_HP0_to_s01_couplers_WLAST <= S01_AXI_wlast;
   axi_mem_intercon_HP0_to_s01_couplers_WSTRB <= S01_AXI_wstrb;
@@ -3310,17 +3353,17 @@ s01_couplers: entity work.s01_couplers_imp_1J3S6TC
       M_AXI_wvalid => s01_couplers_to_xbar_WVALID,
       S_ACLK => axi_mem_intercon_HP0_ACLK_net,
       S_ARESETN => axi_mem_intercon_HP0_ARESETN_net,
-      S_AXI_araddr => '0',
-      S_AXI_arburst => '1',
-      S_AXI_arcache => '1',
-      S_AXI_arlen => '0',
-      S_AXI_arlock => '0',
-      S_AXI_arprot => '0',
-      S_AXI_arqos => '0',
-      S_AXI_arready => NLW_s01_couplers_S_AXI_arready_UNCONNECTED,
-      S_AXI_arregion => '0',
-      S_AXI_arsize => '1',
-      S_AXI_arvalid => '0',
+      S_AXI_araddr => axi_mem_intercon_HP0_to_s01_couplers_ARADDR,
+      S_AXI_arburst => axi_mem_intercon_HP0_to_s01_couplers_ARBURST,
+      S_AXI_arcache => axi_mem_intercon_HP0_to_s01_couplers_ARCACHE,
+      S_AXI_arlen => axi_mem_intercon_HP0_to_s01_couplers_ARLEN,
+      S_AXI_arlock => axi_mem_intercon_HP0_to_s01_couplers_ARLOCK,
+      S_AXI_arprot => axi_mem_intercon_HP0_to_s01_couplers_ARPROT,
+      S_AXI_arqos => axi_mem_intercon_HP0_to_s01_couplers_ARQOS,
+      S_AXI_arready => axi_mem_intercon_HP0_to_s01_couplers_ARREADY,
+      S_AXI_arregion => axi_mem_intercon_HP0_to_s01_couplers_ARREGION,
+      S_AXI_arsize => axi_mem_intercon_HP0_to_s01_couplers_ARSIZE,
+      S_AXI_arvalid => axi_mem_intercon_HP0_to_s01_couplers_ARVALID,
       S_AXI_awaddr => axi_mem_intercon_HP0_to_s01_couplers_AWADDR,
       S_AXI_awburst => axi_mem_intercon_HP0_to_s01_couplers_AWBURST,
       S_AXI_awcache => axi_mem_intercon_HP0_to_s01_couplers_AWCACHE,
@@ -3335,11 +3378,11 @@ s01_couplers: entity work.s01_couplers_imp_1J3S6TC
       S_AXI_bready => axi_mem_intercon_HP0_to_s01_couplers_BREADY,
       S_AXI_bresp => axi_mem_intercon_HP0_to_s01_couplers_BRESP,
       S_AXI_bvalid => axi_mem_intercon_HP0_to_s01_couplers_BVALID,
-      S_AXI_rdata => NLW_s01_couplers_S_AXI_rdata_UNCONNECTED,
-      S_AXI_rlast => NLW_s01_couplers_S_AXI_rlast_UNCONNECTED,
-      S_AXI_rready => '0',
-      S_AXI_rresp => NLW_s01_couplers_S_AXI_rresp_UNCONNECTED,
-      S_AXI_rvalid => NLW_s01_couplers_S_AXI_rvalid_UNCONNECTED,
+      S_AXI_rdata => axi_mem_intercon_HP0_to_s01_couplers_RDATA,
+      S_AXI_rlast => axi_mem_intercon_HP0_to_s01_couplers_RLAST,
+      S_AXI_rready => axi_mem_intercon_HP0_to_s01_couplers_RREADY,
+      S_AXI_rresp => axi_mem_intercon_HP0_to_s01_couplers_RRESP,
+      S_AXI_rvalid => axi_mem_intercon_HP0_to_s01_couplers_RVALID,
       S_AXI_wdata => axi_mem_intercon_HP0_to_s01_couplers_WDATA,
       S_AXI_wlast => axi_mem_intercon_HP0_to_s01_couplers_WLAST,
       S_AXI_wready => axi_mem_intercon_HP0_to_s01_couplers_WREADY,
@@ -4898,12 +4941,6 @@ architecture STRUCTURE of system is
     GPIO_I : in STD_LOGIC_VECTOR ( 63 downto 0 );
     GPIO_O : out STD_LOGIC_VECTOR ( 63 downto 0 );
     GPIO_T : out STD_LOGIC_VECTOR ( 63 downto 0 );
-    I2C0_SDA_I : in STD_LOGIC;
-    I2C0_SDA_O : out STD_LOGIC;
-    I2C0_SDA_T : out STD_LOGIC;
-    I2C0_SCL_I : in STD_LOGIC;
-    I2C0_SCL_O : out STD_LOGIC;
-    I2C0_SCL_T : out STD_LOGIC;
     I2C1_SDA_I : in STD_LOGIC;
     I2C1_SDA_O : out STD_LOGIC;
     I2C1_SDA_T : out STD_LOGIC;
@@ -5615,9 +5652,14 @@ architecture STRUCTURE of system is
   signal NLW_axi_dma_0_s2mm_introut_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_dma_0_s2mm_prmry_reset_out_n_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_iic_0_iic2intc_irpt_UNCONNECTED : STD_LOGIC;
+  signal NLW_axi_mem_intercon_HP0_S01_AXI_arready_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_mem_intercon_HP0_S01_AXI_awready_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_mem_intercon_HP0_S01_AXI_bresp_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_mem_intercon_HP0_S01_AXI_bvalid_UNCONNECTED : STD_LOGIC;
+  signal NLW_axi_mem_intercon_HP0_S01_AXI_rdata_UNCONNECTED : STD_LOGIC;
+  signal NLW_axi_mem_intercon_HP0_S01_AXI_rlast_UNCONNECTED : STD_LOGIC;
+  signal NLW_axi_mem_intercon_HP0_S01_AXI_rresp_UNCONNECTED : STD_LOGIC;
+  signal NLW_axi_mem_intercon_HP0_S01_AXI_rvalid_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_mem_intercon_HP0_S01_AXI_wready_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_quad_spi_0_ip2intc_irpt_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_timer_0_generateout0_UNCONNECTED : STD_LOGIC;
@@ -5632,10 +5674,6 @@ architecture STRUCTURE of system is
   signal NLW_processing_system7_0_DMA0_DRREADY_UNCONNECTED : STD_LOGIC;
   signal NLW_processing_system7_0_DMA1_DAVALID_UNCONNECTED : STD_LOGIC;
   signal NLW_processing_system7_0_DMA1_DRREADY_UNCONNECTED : STD_LOGIC;
-  signal NLW_processing_system7_0_I2C0_SCL_O_UNCONNECTED : STD_LOGIC;
-  signal NLW_processing_system7_0_I2C0_SCL_T_UNCONNECTED : STD_LOGIC;
-  signal NLW_processing_system7_0_I2C0_SDA_O_UNCONNECTED : STD_LOGIC;
-  signal NLW_processing_system7_0_I2C0_SDA_T_UNCONNECTED : STD_LOGIC;
   signal NLW_processing_system7_0_I2C1_SCL_O_UNCONNECTED : STD_LOGIC;
   signal NLW_processing_system7_0_I2C1_SCL_T_UNCONNECTED : STD_LOGIC;
   signal NLW_processing_system7_0_I2C1_SDA_O_UNCONNECTED : STD_LOGIC;
@@ -5686,22 +5724,22 @@ architecture STRUCTURE of system is
   attribute X_INTERFACE_INFO of FIXED_IO_ps_srstb : signal is "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_SRSTB";
   attribute X_INTERFACE_INFO of Vp_Vn_0_v_n : signal is "xilinx.com:interface:diff_analog_io:1.0 Vp_Vn_0 V_N";
   attribute X_INTERFACE_INFO of Vp_Vn_0_v_p : signal is "xilinx.com:interface:diff_analog_io:1.0 Vp_Vn_0 V_P";
-  attribute X_INTERFACE_INFO of ir_sensor_scl_i : signal is "xilinx.com:interface:iic:1.0 ir_sensor ";
-  attribute X_INTERFACE_INFO of ir_sensor_scl_o : signal is "xilinx.com:interface:iic:1.0 ir_sensor ";
-  attribute X_INTERFACE_INFO of ir_sensor_scl_t : signal is "xilinx.com:interface:iic:1.0 ir_sensor ";
-  attribute X_INTERFACE_INFO of ir_sensor_sda_i : signal is "xilinx.com:interface:iic:1.0 ir_sensor ";
-  attribute X_INTERFACE_INFO of ir_sensor_sda_o : signal is "xilinx.com:interface:iic:1.0 ir_sensor ";
-  attribute X_INTERFACE_INFO of ir_sensor_sda_t : signal is "xilinx.com:interface:iic:1.0 ir_sensor ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_io0_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_io0_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_io0_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_io1_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_io1_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_io1_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_sck_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_sck_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_sck_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_ss_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
+  attribute X_INTERFACE_INFO of ir_sensor_scl_i : signal is "xilinx.com:interface:iic:1.0 ir_sensor SCL_I";
+  attribute X_INTERFACE_INFO of ir_sensor_scl_o : signal is "xilinx.com:interface:iic:1.0 ir_sensor SCL_O";
+  attribute X_INTERFACE_INFO of ir_sensor_scl_t : signal is "xilinx.com:interface:iic:1.0 ir_sensor SCL_T";
+  attribute X_INTERFACE_INFO of ir_sensor_sda_i : signal is "xilinx.com:interface:iic:1.0 ir_sensor SDA_I";
+  attribute X_INTERFACE_INFO of ir_sensor_sda_o : signal is "xilinx.com:interface:iic:1.0 ir_sensor SDA_O";
+  attribute X_INTERFACE_INFO of ir_sensor_sda_t : signal is "xilinx.com:interface:iic:1.0 ir_sensor SDA_T";
+  attribute X_INTERFACE_INFO of spi_rtl_0_io0_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 IO0_I";
+  attribute X_INTERFACE_INFO of spi_rtl_0_io0_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 IO0_O";
+  attribute X_INTERFACE_INFO of spi_rtl_0_io0_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 IO0_T";
+  attribute X_INTERFACE_INFO of spi_rtl_0_io1_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 IO1_I";
+  attribute X_INTERFACE_INFO of spi_rtl_0_io1_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 IO1_O";
+  attribute X_INTERFACE_INFO of spi_rtl_0_io1_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 IO1_T";
+  attribute X_INTERFACE_INFO of spi_rtl_0_sck_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SCK_I";
+  attribute X_INTERFACE_INFO of spi_rtl_0_sck_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SCK_O";
+  attribute X_INTERFACE_INFO of spi_rtl_0_sck_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SCK_T";
+  attribute X_INTERFACE_INFO of spi_rtl_0_ss_t : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_T";
   attribute X_INTERFACE_INFO of DDR_addr : signal is "xilinx.com:interface:ddrx:1.0 DDR ADDR";
   attribute X_INTERFACE_PARAMETER of DDR_addr : signal is "XIL_INTERFACENAME DDR, AXI_ARBITRATION_SCHEME TDM, BURST_LENGTH 8, CAN_DEBUG false, CAS_LATENCY 11, CAS_WRITE_LATENCY 11, CS_ENABLED true, DATA_MASK_ENABLED true, DATA_WIDTH 8, MEMORY_TYPE COMPONENTS, MEM_ADDR_MAP ROW_COLUMN_BANK, SLOT Single, TIMEPERIOD_PS 1250";
   attribute X_INTERFACE_INFO of DDR_ba : signal is "xilinx.com:interface:ddrx:1.0 DDR BA";
@@ -5713,9 +5751,9 @@ architecture STRUCTURE of system is
   attribute X_INTERFACE_INFO of eth_rst_b_tri_i : signal is "xilinx.com:interface:gpio:1.0 eth_rst_b TRI_I";
   attribute X_INTERFACE_INFO of eth_rst_b_tri_o : signal is "xilinx.com:interface:gpio:1.0 eth_rst_b TRI_O";
   attribute X_INTERFACE_INFO of eth_rst_b_tri_t : signal is "xilinx.com:interface:gpio:1.0 eth_rst_b TRI_T";
-  attribute X_INTERFACE_INFO of je_tri_o : signal is "xilinx.com:interface:gpio:1.0 je ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_ss_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
-  attribute X_INTERFACE_INFO of spi_rtl_0_ss_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 ";
+  attribute X_INTERFACE_INFO of je_tri_o : signal is "xilinx.com:interface:gpio:1.0 je TRI_O";
+  attribute X_INTERFACE_INFO of spi_rtl_0_ss_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_I";
+  attribute X_INTERFACE_INFO of spi_rtl_0_ss_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_O";
 begin
   Vp_Vn_0_1_V_N <= Vp_Vn_0_v_n;
   Vp_Vn_0_1_V_P <= Vp_Vn_0_v_p;
@@ -5932,6 +5970,17 @@ axi_mem_intercon_HP0: entity work.system_axi_mem_intercon_HP0_0
       S00_AXI_wvalid => axi_dma_0_M_AXI_S2MM_WVALID,
       S01_ACLK => processing_system7_0_FCLK_CLK0,
       S01_ARESETN => rst_ps7_0_100M_peripheral_aresetn(0),
+      S01_AXI_araddr => '0',
+      S01_AXI_arburst => '1',
+      S01_AXI_arcache => '1',
+      S01_AXI_arlen => '0',
+      S01_AXI_arlock => '0',
+      S01_AXI_arprot => '0',
+      S01_AXI_arqos => '0',
+      S01_AXI_arready => NLW_axi_mem_intercon_HP0_S01_AXI_arready_UNCONNECTED,
+      S01_AXI_arregion => '0',
+      S01_AXI_arsize => '1',
+      S01_AXI_arvalid => '0',
       S01_AXI_awaddr => '0',
       S01_AXI_awburst => '1',
       S01_AXI_awcache => '1',
@@ -5946,6 +5995,11 @@ axi_mem_intercon_HP0: entity work.system_axi_mem_intercon_HP0_0
       S01_AXI_bready => '0',
       S01_AXI_bresp => NLW_axi_mem_intercon_HP0_S01_AXI_bresp_UNCONNECTED,
       S01_AXI_bvalid => NLW_axi_mem_intercon_HP0_S01_AXI_bvalid_UNCONNECTED,
+      S01_AXI_rdata => NLW_axi_mem_intercon_HP0_S01_AXI_rdata_UNCONNECTED,
+      S01_AXI_rlast => NLW_axi_mem_intercon_HP0_S01_AXI_rlast_UNCONNECTED,
+      S01_AXI_rready => '0',
+      S01_AXI_rresp => NLW_axi_mem_intercon_HP0_S01_AXI_rresp_UNCONNECTED,
+      S01_AXI_rvalid => NLW_axi_mem_intercon_HP0_S01_AXI_rvalid_UNCONNECTED,
       S01_AXI_wdata => '0',
       S01_AXI_wlast => '0',
       S01_AXI_wready => NLW_axi_mem_intercon_HP0_S01_AXI_wready_UNCONNECTED,
@@ -6100,12 +6154,6 @@ processing_system7_0: component system_processing_system7_0_0
       GPIO_I(63 downto 0) => B"0000000000000000000000000000000000000000000000000000000000000000",
       GPIO_O(63 downto 0) => NLW_processing_system7_0_GPIO_O_UNCONNECTED(63 downto 0),
       GPIO_T(63 downto 0) => NLW_processing_system7_0_GPIO_T_UNCONNECTED(63 downto 0),
-      I2C0_SCL_I => '0',
-      I2C0_SCL_O => NLW_processing_system7_0_I2C0_SCL_O_UNCONNECTED,
-      I2C0_SCL_T => NLW_processing_system7_0_I2C0_SCL_T_UNCONNECTED,
-      I2C0_SDA_I => '0',
-      I2C0_SDA_O => NLW_processing_system7_0_I2C0_SDA_O_UNCONNECTED,
-      I2C0_SDA_T => NLW_processing_system7_0_I2C0_SDA_T_UNCONNECTED,
       I2C1_SCL_I => '0',
       I2C1_SCL_O => NLW_processing_system7_0_I2C1_SCL_O_UNCONNECTED,
       I2C1_SCL_T => NLW_processing_system7_0_I2C1_SCL_T_UNCONNECTED,

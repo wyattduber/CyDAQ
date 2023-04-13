@@ -3,8 +3,8 @@
 -- Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
 -- Date        : Wed Mar 29 21:30:34 2023
 -- Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               u:/sdmay23-47/petalinux/hw/hw/hw.srcs/sources_1/bd/system/ip/system_m00_regslice_0/system_m00_regslice_0_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top system_m00_regslice_0 -prefix
+--               system_m00_regslice_0_ system_m00_regslice_0_sim_netlist.vhdl
 -- Design      : system_m00_regslice_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -27,8 +27,6 @@ entity system_m00_regslice_0_axi_register_slice_v2_1_21_axic_register_slice is
     s_ready_i_reg_0 : in STD_LOGIC;
     D : in STD_LOGIC_VECTOR ( 54 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of system_m00_regslice_0_axi_register_slice_v2_1_21_axic_register_slice : entity is "axi_register_slice_v2_1_21_axic_register_slice";
 end system_m00_regslice_0_axi_register_slice_v2_1_21_axic_register_slice;
 
 architecture STRUCTURE of system_m00_regslice_0_axi_register_slice_v2_1_21_axic_register_slice is
@@ -5790,8 +5788,6 @@ entity system_m00_regslice_0_axi_register_slice_v2_1_21_axi_register_slice is
   attribute G_AXI_WUSER_INDEX of system_m00_regslice_0_axi_register_slice_v2_1_21_axi_register_slice : entity is 74;
   attribute G_AXI_WUSER_WIDTH : integer;
   attribute G_AXI_WUSER_WIDTH of system_m00_regslice_0_axi_register_slice_v2_1_21_axi_register_slice : entity is 0;
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of system_m00_regslice_0_axi_register_slice_v2_1_21_axi_register_slice : entity is "axi_register_slice_v2_1_21_axi_register_slice";
   attribute P_FORWARD : integer;
   attribute P_FORWARD of system_m00_regslice_0_axi_register_slice_v2_1_21_axi_register_slice : entity is 0;
   attribute P_RESPONSE : integer;

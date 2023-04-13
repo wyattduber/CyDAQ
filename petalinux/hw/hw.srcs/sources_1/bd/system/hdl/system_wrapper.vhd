@@ -1,8 +1,8 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
---Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
---Date        : Wed Mar 29 21:22:18 2023
---Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
+--Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
+--Date        : Wed Apr 12 23:17:23 2023
+--Host        : Ubuntu-18-04 running 64-bit Ubuntu 18.04.6 LTS
 --Command     : generate_target system_wrapper.bd
 --Design      : system_wrapper
 --Purpose     : IP block netlist
@@ -53,6 +53,9 @@ end system_wrapper;
 architecture STRUCTURE of system_wrapper is
   component system is
   port (
+    btns_4bits : in STD_LOGIC_VECTOR ( 3 downto 0 );
+    servo_pwm : out STD_LOGIC;
+    ir_gpo : out STD_LOGIC_VECTOR ( 0 to 0 );
     DDR_cas_n : inout STD_LOGIC;
     DDR_cke : inout STD_LOGIC;
     DDR_ck_n : inout STD_LOGIC;
@@ -77,11 +80,9 @@ architecture STRUCTURE of system_wrapper is
     eth_rst_b_tri_i : in STD_LOGIC_VECTOR ( 0 to 0 );
     eth_rst_b_tri_o : out STD_LOGIC_VECTOR ( 0 to 0 );
     eth_rst_b_tri_t : out STD_LOGIC_VECTOR ( 0 to 0 );
+    je_tri_o : out STD_LOGIC_VECTOR ( 7 downto 0 );
     Vp_Vn_0_v_n : in STD_LOGIC;
     Vp_Vn_0_v_p : in STD_LOGIC;
-    je_tri_o : out STD_LOGIC_VECTOR ( 7 downto 0 );
-    btns_4bits : in STD_LOGIC_VECTOR ( 3 downto 0 );
-    servo_pwm : out STD_LOGIC;
     spi_rtl_0_io0_i : in STD_LOGIC;
     spi_rtl_0_io0_o : out STD_LOGIC;
     spi_rtl_0_io0_t : out STD_LOGIC;
@@ -99,8 +100,7 @@ architecture STRUCTURE of system_wrapper is
     ir_sensor_scl_t : out STD_LOGIC;
     ir_sensor_sda_i : in STD_LOGIC;
     ir_sensor_sda_o : out STD_LOGIC;
-    ir_sensor_sda_t : out STD_LOGIC;
-    ir_gpo : out STD_LOGIC_VECTOR ( 0 to 0 )
+    ir_sensor_sda_t : out STD_LOGIC
   );
   end component system;
   component IOBUF is

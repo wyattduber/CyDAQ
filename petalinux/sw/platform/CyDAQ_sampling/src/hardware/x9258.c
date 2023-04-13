@@ -24,12 +24,14 @@ int init_x9258_i2c(){
 	 */
 	Config = XIicPs_LookupConfig(IIC_DEVICE_ID);
 	if (NULL == Config) {
+		xil_printf("SAMP> XIicPs_LookupConfig failed!\r\n");
 		return XST_FAILURE;
 	}
-
+	xil_printf("SAMP> config base address: %d", Config->BaseAddress);
 
 	status = XIicPs_CfgInitialize(&I2C0_IIC, Config, Config->BaseAddress);
 	if (status != XST_SUCCESS) {
+		xil_printf("SAMP> XIicPs_CfgInitialize failed!\r\n");
 		return XST_FAILURE;
 	}
 
@@ -38,7 +40,7 @@ int init_x9258_i2c(){
 	 */
 	status = XIicPs_SelfTest(&I2C0_IIC);
 	if (status != XST_SUCCESS) {
-		xil_printf("SAMP> XIicPs_SelfTest failed! \r\n");
+		xil_printf("SAMP> XIicPs_SelfTest failed! Returned %d\r\n", status);
 		return XST_FAILURE;
 	}
 

@@ -14,7 +14,7 @@ echo 0x0104 > idProduct # Multifunction Composite Gadget
 echo 0x0101 > bcdDevice # v1.0.1 - increment when changes are made
 echo 0x0200 > bcdUSB    # USB 2.0
 
-ehco "64" > bMaxPacketSize0
+#echo "64" > bMaxPacketSize0 # need to test this some more
 
 # required for windows to use it's correct RNDIS driver
 # https://irq5.io/2016/12/22/raspberry-pi-zero-as-multiple-usb-gadgets/
@@ -56,8 +56,8 @@ ifconfig usb0 169.254.7.2 up
 
 # Start the CyDAQ_comm.elf application, which launches CyDAQ_sampling.elf on another CPU
 # NOTE: There is most likely a more stable way of doing this (systemd), but as the user will have # to restart the whole cydaq anyways to restart the app, it's probably unneeded.
-cd /home/root
-./CyDAQ_comm.elf &
+#cd /home/root
+#./CyDAQ_comm.elf &
 
 # Add any new startup commands below
 

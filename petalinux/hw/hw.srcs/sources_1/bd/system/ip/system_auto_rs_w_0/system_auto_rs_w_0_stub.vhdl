@@ -3,8 +3,8 @@
 -- Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
 -- Date        : Wed Mar 29 21:30:34 2023
 -- Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub
---               u:/sdmay23-47/petalinux/hw/hw/hw.srcs/sources_1/bd/system/ip/system_auto_rs_w_0/system_auto_rs_w_0_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top system_auto_rs_w_0 -prefix
+--               system_auto_rs_w_0_ system_auto_rs_w_0_stub.vhdl
 -- Design      : system_auto_rs_w_0
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7z010clg400-1

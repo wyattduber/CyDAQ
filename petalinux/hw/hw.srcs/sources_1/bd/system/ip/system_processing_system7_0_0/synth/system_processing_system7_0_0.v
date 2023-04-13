@@ -61,12 +61,6 @@ module system_processing_system7_0_0 (
   GPIO_I,
   GPIO_O,
   GPIO_T,
-  I2C0_SDA_I,
-  I2C0_SDA_O,
-  I2C0_SDA_T,
-  I2C0_SCL_I,
-  I2C0_SCL_O,
-  I2C0_SCL_T,
   I2C1_SDA_I,
   I2C1_SDA_O,
   I2C1_SDA_T,
@@ -211,18 +205,6 @@ input wire [63 : 0] GPIO_I;
 output wire [63 : 0] GPIO_O;
 (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 GPIO_0 TRI_T" *)
 output wire [63 : 0] GPIO_T;
-(* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_I" *)
-input wire I2C0_SDA_I;
-(* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_O" *)
-output wire I2C0_SDA_O;
-(* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_T" *)
-output wire I2C0_SDA_T;
-(* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_I" *)
-input wire I2C0_SCL_I;
-(* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_O" *)
-output wire I2C0_SCL_O;
-(* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_T" *)
-output wire I2C0_SCL_T;
 (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_1 SDA_I" *)
 input wire I2C1_SDA_I;
 (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_1 SDA_O" *)
@@ -625,12 +607,12 @@ inout wire PS_PORB;
     .GPIO_I(GPIO_I),
     .GPIO_O(GPIO_O),
     .GPIO_T(GPIO_T),
-    .I2C0_SDA_I(I2C0_SDA_I),
-    .I2C0_SDA_O(I2C0_SDA_O),
-    .I2C0_SDA_T(I2C0_SDA_T),
-    .I2C0_SCL_I(I2C0_SCL_I),
-    .I2C0_SCL_O(I2C0_SCL_O),
-    .I2C0_SCL_T(I2C0_SCL_T),
+    .I2C0_SDA_I(1'B0),
+    .I2C0_SDA_O(),
+    .I2C0_SDA_T(),
+    .I2C0_SCL_I(1'B0),
+    .I2C0_SCL_O(),
+    .I2C0_SCL_T(),
     .I2C1_SDA_I(I2C1_SDA_I),
     .I2C1_SDA_O(I2C1_SDA_O),
     .I2C1_SDA_T(I2C1_SDA_T),
