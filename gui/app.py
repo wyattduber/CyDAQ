@@ -143,10 +143,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
         
-        self.centerWidget = QtWidgets.QWidget()
-        self.setCentralWidget(self.centerWidget)
+        # self.centerWidget = QtWidgets.QWidget()
+        # self.setCentralWidget(self.widget5)
 
-        self.stack = StackedLayout(self.centerWidget)        
+        self.stack = StackedLayout(self.stackedWidget)        
         self.widgets = []
         self.widgets.append(self.mode_selector)
         self.widgets.append(self.basic_operation)
@@ -213,8 +213,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         for widget in self.widgets:
             if self.connected:
                 widget.cyDaqConnected()
+                self.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                   "{"
+                                                   "color: #0EAD69;"
+                                                   "}")
             else:
                 widget.cyDaqDisconnected()
+                self.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                       "{"
+                                                       "color: #DE3C4B;"
+                                                       "}")
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
