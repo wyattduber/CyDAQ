@@ -18,6 +18,7 @@ from widgets import BasicOperationModeWidget
 from widgets import LiveStreamModeWidget
 from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
+from widgets import SettingsWidget
 from generated.MainWindowUI import Ui_MainWindow
 
 DEFAULT_WINDOW_WIDTH = 400

@@ -36,54 +36,9 @@
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">QWidget {
-	font-family: &quot;Segoe UI&quot;;
-	font-size: 14px;
-	color: #033f63;
-}</string>
+    <string notr="true"/>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item alignment="Qt::AlignTop">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>CyDAQ Status:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignTop">
-       <widget class="QLabel" name="connectionIndicator">
-        <property name="text">
-         <string>⬤</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QWidget" name="stackedWidget" native="true"/>
-    </item>
-   </layout>
+   <layout class="QVBoxLayout" name="verticalLayout"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -113,6 +68,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionDebug"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
@@ -144,6 +100,11 @@
    </property>
    <property name="text">
     <string>Launch Plotter</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

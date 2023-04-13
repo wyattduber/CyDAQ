@@ -30,6 +30,7 @@ class SettingsWidget(QtWidgets.QWidget, Ui_SettingsWidget):
 
         # Buttons
         self.home_btn.clicked.connect(lambda: self.pre_btn_check("home"))
+        self.update_btn_ping_timer.clicked.connect(lambda: self.pre_btn_check("ping_timer"))
 
 
     def pre_btn_check(self, btn):
@@ -45,6 +46,18 @@ class SettingsWidget(QtWidgets.QWidget, Ui_SettingsWidget):
         # Now, handle buttons that require an active CyDAQ connection
         if not self.mainWindow.conected:
             self._show_error("CyDAQ is not connected! You cannot edit this setting.")
+
+        if btn == "ping_timer":
+            self.update_ping_timer()
+
+    def update_ping_timer(self):
+        # Try to cast the input value as int
+        try:
+            new_ping_timer = int(self.ping_timer_input.text())
+        except ValueError:
+            self._show_error("Invalid input for Ping Timer! Must be a float or integer!")
+
+        self.mainWindow.pingTimer.setInterval(new_ping_timer)
 
     def _show_error(self, message):
         """Private method to just show an error message box with a custom message"""

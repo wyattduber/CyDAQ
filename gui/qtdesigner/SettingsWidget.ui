@@ -101,7 +101,7 @@ background-color: #d9d9d9;</string>
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="update_btn_ping_timer">
        <property name="text">
         <string>Update</string>
        </property>

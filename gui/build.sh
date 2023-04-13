@@ -6,7 +6,7 @@ python -m PyQt5.uic.pyuic --from-imports qtdesigner/BasicOperationWidget.ui -o g
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/BalanceBeamWidget.ui -o generated/BalanceBeamWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/LiveStreamWidget.ui -o generated/LiveStreamWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/DebugWidget.ui -o generated/DebugWidgetUI.py
-python -m PyQt5.uic.pyuic --from-imports qtdesigner/SettingsWidgetUI.ui -o generated/SettingsWidgetUI.py
+python -m PyQt5.uic.pyuic --from-imports qtdesigner/SettingsWidget.ui -o generated/SettingsWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/MainWindow.ui -o generated/MainWindowUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/DacModeWidget.ui -o generated/DacModeWidgetUI.py
 python -m PyQt5.uic.pyuic --from-imports qtdesigner/SamplingGenerationStart.ui -o generated/SamplingGenerationStartUI.py
