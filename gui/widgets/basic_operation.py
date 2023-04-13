@@ -32,6 +32,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.sampling = False
         self.writing = False
         self.shouldTimeout = False
+        self.config_timeout = False
         self.filename = None
 
         ### Below are the methods called when buttons are pressed ###
@@ -437,7 +438,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     # Still validates input, but just sends the config to the CyDAQ and implements it
     def send_config_only(self):
         # Changing the button
-        if not self.mainWindow.connected or self.writing or self.sampling:
+        if not self.mainWindow.connected or self.writing or self.sampling or self.config_timeout:
             return
 
         # validate input
@@ -461,8 +462,10 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
                                                "background-color: #d9d9d9;"
                                                "border: 1px solid #033f63;"
                                                "}")
+            self.config_timeout = False
 
         # send config
+        self.config_timeout = True
         self.wrapper.set_values(json.dumps(self.getData()))
         self.wrapper.send_config_to_cydaq()
         print(self.wrapper.get_config())
