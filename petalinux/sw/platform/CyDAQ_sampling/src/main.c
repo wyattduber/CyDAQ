@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
 	xil_printf("SAMP> Starting to init all hardware...\r\n");
 	///TODO add return checking for all these inits
 	init_platform();
+	commInit();
 	muxInit();
 	if(xadcInit() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! xadcInit failed!\r\n");

@@ -170,6 +170,9 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 	for(int i = 0; i < wipersToWrite; i++) {
 		do {
 			err = x9258_volatile_write(currentFilter->wipers[i], potVal1);
+			if(err == XST_FAILURE){
+				xil_printf("SAMP> x9258_volatile_write failed in tuneFilter!!\r\n");
+			}
 			retries++;
 		} while(err != 0 && retries < MAX_RETRIES);
 	}

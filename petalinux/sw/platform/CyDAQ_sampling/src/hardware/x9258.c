@@ -70,6 +70,7 @@ uint8_t x9258_volatile_write(wiper_t wiper_location, POT_R_TYPE r_value){
 		xil_printf("SAMP> potInit == 0, running x9258 init!\r\n");
 		init_x9258_i2c(); //TODO check if this returns failure or not!
 	}
+	xil_printf("SAMP> x9258_volatile_write got 1\r\n");
   	u8 SendBuffer[POT_I2C_BUFFER_SIZE];
   	SendBuffer[0] = (u8) (0b10100000 | wiper_location.wiper);
   	SendBuffer[1] = r_value;
@@ -79,7 +80,11 @@ uint8_t x9258_volatile_write(wiper_t wiper_location, POT_R_TYPE r_value){
 	 * Send the buffer using the IIC and ignore the number of bytes sent
 	 * as the return value since we are using it in interrupt mode.
 	 */
+	xil_printf("SAMP> x9258_volatile_write got 2\r\n");
+	xil_printf("SAMP> x9258_volatile_write to address");
+
   	int status = XIicPs_MasterSendPolled(&I2C0_IIC, SendBuffer, POT_I2C_BUFFER_SIZE,  address);
+  	xil_printf("SAMP> XIicPs_MasterSendPolled returned %d\r\n", status);
 	if (status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
@@ -92,6 +97,7 @@ uint8_t x9258_volatile_write(wiper_t wiper_location, POT_R_TYPE r_value){
 	while (XIicPs_BusIsBusy(&I2C0_IIC)) {
 		/* NOP */
 	}
+	xil_printf("SAMP> x9258_volatile_write got 3\r\n");
 
 	return XST_SUCCESS;
 }

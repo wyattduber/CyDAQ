@@ -59,6 +59,10 @@ ifconfig usb0 169.254.7.2 up
 #cd /home/root
 #./CyDAQ_comm.elf &
 
+# Enable some devices on bootup. Petalinux suspends them, making the baremetal app unable to make changes. Enabling them here stop that.
+echo on > /sys/bus/i2c/devices/i2c-1/device/power/control
+echo on > /sys/bus/iio/devices/iio:device0/power/control
+
 # Add any new startup commands below
 
 
