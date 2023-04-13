@@ -142,6 +142,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
+        self.settings = SettingsWidget(self, CyDAQModeWidget)
         
         self.centerWidget = QtWidgets.QWidget()
         self.setCentralWidget(self.centerWidget)
@@ -153,6 +154,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.widgets.append(self.balance_beam)
         self.widgets.append(self.livestream)
         self.widgets.append(self.debug)
+        self.widgets.append(self.settings)
         for widget in self.widgets:
             self.stack.addWidget(widget)
         self.stack.setCurrentIndex(0)
@@ -166,6 +168,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         debugAction = self.actionDebug
         debugAction.triggered.connect(self.switchToDebug)
+
+        settingsAction = self.actionSettings
+        settingsAction.triggered.connect(self.switchToSettings)
 
         restartAction = self.actionRestart
         restartAction.triggered.connect(self.restartWindow)
@@ -251,6 +256,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def switchToDebug(self):
         self.debug.prev_index = self.current_index
         self.stack.setCurrentIndex(4)
+
+    def switchToSettings(self):
+        self.current_index = 5
+        self.stack.setCurrentIndex(self.current_index)
 
     def restartWindow(self):
         self.pingTimer.stop()

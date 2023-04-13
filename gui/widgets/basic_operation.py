@@ -5,6 +5,7 @@ from threading import Thread
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
+from PyQt5.Qt import QMessageBox
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QDoubleValidator
 
@@ -481,7 +482,18 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
 
     def _show_error(self, message):
-        pass
+        """Private method to just show an error message box with a custom message"""
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()
 
-    def _show_message(self, message):
-        pass
+    def _show_message(self, title, message, subtext=None):
+        """Private method to just show an info message box with a custom message"""
+        messagebox = QMessageBox(self)
+        messagebox.setWindowTitle(title)
+        messagebox.setText(message)
+        messagebox.setInformativeText(subtext)
+        messagebox.setIcon(QMessageBox.Information)
+        messagebox.exec()

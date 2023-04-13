@@ -4,6 +4,7 @@ pyuic5 --from-imports qtdesigner/BasicOperationWidget.ui -o generated/BasicOpera
 pyuic5 --from-imports qtdesigner/BalanceBeamWidget.ui -o generated/BalanceBeamWidgetUI.py
 pyuic5 --from-imports qtdesigner/LiveStreamWidget.ui -o generated/LiveStreamWidgetUI.py
 pyuic5 --from-imports qtdesigner/DebugWidget.ui -o generated/DebugWidgetUI.py
+pyuic5 --from-imports qtdesigner/SettingsWidget.ui -o generated/SettingsWidgetUI.py
 pyuic5 --from-imports qtdesigner/MainWindow.ui -o generated/MainWindowUI.py
 pyuic5 --from-imports qtdesigner/DacModeWidget.ui -o generated/DacModeWidgetUI.py
 pyuic5 --from-imports qtdesigner/SamplingGenerationStart.ui -o generated/SamplingGenerationStartUI.py
