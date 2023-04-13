@@ -61,18 +61,6 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget):
         self.pause_btn.clicked.connect(self.pause)
         self.reload_btn.clicked.connect(self.reload)
 
-    # CyDAQ Connection Label
-    # Pinged every second to confirm if the CyDAQ is connected (allows hotplugging)
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("CyDAQ Status: Connected!")
-        pass
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("CyDAQ Status: Not Connected!")
-        pass
-
     # Called to open the plotter window
     # Called when user switches to livestream window or resets the graph
     @staticmethod

@@ -127,14 +127,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.graph_view.setParent(self.graph)
         self.graph_view.setGeometry(0, 0, 801, 641)
 
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected (Disabled until re-layout)"""
-        pass
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected (Disabled until re-layout)"""
-        pass
-
     def pre_btn_checks(self, btn):
         """
         When a button is pressed, check the various conditions

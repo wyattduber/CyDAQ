@@ -21,8 +21,8 @@ from widgets import DebugWidget
 from widgets import SettingsWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEFAULT_WINDOW_WIDTH = 400
-DEFAULT_WINDOW_HEIGHT = 590
+DEFAULT_WINDOW_WIDTH = 553
+DEFAULT_WINDOW_HEIGHT = 626
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -145,10 +145,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.debug = DebugWidget(self, CyDAQModeWidget)
         self.settings = SettingsWidget(self, CyDAQModeWidget)
         
-        # self.centerWidget = QtWidgets.QWidget()
-        # self.setCentralWidget(self.widget5)
+        # Creating new widget inside a layout
+        # TODO Resizing automatically doesn't work need to fix
+        self.centerWidget = QtWidgets.QWidget()
+        self.stackedWidget.addWidget(self.centerWidget)
 
-        self.stack = StackedLayout(self.stackedWidget)        
+        self.stack = StackedLayout(self.centerWidget)        
         self.widgets = []
         self.widgets.append(self.mode_selector)
         self.widgets.append(self.basic_operation)
@@ -218,13 +220,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def updateWidgetConnectionStatus(self):
         for widget in self.widgets:
             if self.connected:
-                widget.cyDaqConnected()
+                # widget.cyDaqConnected()
                 self.connectionIndicator.setStyleSheet("#connectionIndicator"
                                                    "{"
                                                    "color: #0EAD69;"
                                                    "}")
             else:
-                widget.cyDaqDisconnected()
+                # widget.cyDaqDisconnected()
                 self.connectionIndicator.setStyleSheet("#connectionIndicator"
                                                        "{"
                                                        "color: #DE3C4B;"

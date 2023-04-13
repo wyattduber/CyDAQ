@@ -128,14 +128,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.filter_input_box.currentIndexChanged.connect(onFilterChange)
         onFilterChange()
 
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("CyDAQ Status: Connected!")
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("CyDAQ Status: Not Connected!")
-
     def writingData(self):
         """When the cyDAQ is sending data to the frontend, and it's writing it to a file."""
         self.writing = True

@@ -134,14 +134,6 @@ class Ui_LiveStreamWidget(object):
         self.reload_btn.setObjectName("reload_btn")
         self.horizontalLayout_4.addWidget(self.reload_btn)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.connection_status_label = QtWidgets.QLabel(LiveStreamWidget)
-        self.connection_status_label.setMinimumSize(QtCore.QSize(219, 32))
-        self.connection_status_label.setMaximumSize(QtCore.QSize(109, 32))
-        self.connection_status_label.setObjectName("connection_status_label")
-        self.horizontalLayout_2.addWidget(self.connection_status_label, 0, QtCore.Qt.AlignLeft|QtCore.Qt.AlignBottom)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(LiveStreamWidget)
         QtCore.QMetaObject.connectSlotsByName(LiveStreamWidget)
@@ -160,5 +152,4 @@ class Ui_LiveStreamWidget(object):
         self.clear_btn.setText(_translate("LiveStreamWidget", "Clear"))
         self.pause_btn.setText(_translate("LiveStreamWidget", "Pause"))
         self.reload_btn.setText(_translate("LiveStreamWidget", "Reload Graph"))
-        self.connection_status_label.setText(_translate("LiveStreamWidget", "CyDAQ Status: Not Connected!"))
 from . import basic_operation_rc

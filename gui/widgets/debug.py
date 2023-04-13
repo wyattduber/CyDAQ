@@ -47,16 +47,6 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
 
     # CyDAQ Connection Label
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("Connected!")
-        pass
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("Not Connected!")
-        pass
-
     def home(self):
         """Return to whatever the previous window was before switching to debug"""
         tmp = self.prev_index
