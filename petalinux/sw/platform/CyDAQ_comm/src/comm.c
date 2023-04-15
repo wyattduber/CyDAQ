@@ -306,7 +306,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == START_SAMPLING) { //TODO not supported yet
 
 			if(samplingEnabled){
-				printf("COMM> Starting sampling when already enabled");
+				printf("COMM> Starting sampling when already enabled\r\n");
 				err = true;
 				return err;
 			}
@@ -315,23 +315,32 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 			switch (activeAdc) {
 				case ADC_XADC:
-	//				xadcEnableSampling(useStreaming);
+					printf("COMM> enabling xadc sampling\r\n");
+					rpc_data[0] = RPC_MESSAGE_XADC_ENABLE_SAMPLING;
+					rpc_data[1] = 0; //useStreaming - not implemented
+					rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+					if(rpc_recieve_ack() != 0){
+						if(DEBUG)
+							printf("COMM> enabling xadc sampling failed!\r\n");
+						err = true;
+					}
+	//				xadcEnableSampling(useStreaming); //TODO delete
 					break;
 				case ADC_SPI_EXTERNAL:
-	//				ads7047_EnableSampling(useStreaming);
+					printf("COMM> enabling ads7047 sampling\r\n");
+					rpc_data[0] = RPC_MESSAGE_ADS_ENABLE_SAMPLING;
+					rpc_data[1] = 0; //useStreaming - not implemented
+					rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+					if(rpc_recieve_ack() != 0){
+						if(DEBUG)
+							printf("COMM> enabling ads7047 sampling failed!\r\n");
+						err = true;
+					}
+	//				ads7047_EnableSampling(useStreaming);//TODO delete
 					break;
 				default:
 					err = true;
 					break;
-			}
-
-			if(fork() == 0){
-				//child
-				rpc_listen_for_sampling_data();
-				exit(0);
-			}else{
-				//parent
-
 			}
 
 			/*  ---Stop Sampling---  */
@@ -339,10 +348,28 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			samplingEnabled = false;
 			switch (activeAdc) {
 			case ADC_XADC:
-//				xadcDisableSampling();
+				printf("COMM> disabling xadc sampling\r\n");
+				rpc_data[0] = RPC_MESSAGE_XADC_DISABLE_SAMPLING;
+				rpc_data[1] = 0; //useStreaming - not implemented
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> disabling xadc sampling failed!\r\n");
+					err = true;
+				}
+//				xadcDisableSampling();//TODO delete
 				break;
 			case ADC_SPI_EXTERNAL:
-//				ads7047_DisableSampling();
+				printf("COMM> disabling ads7047 sampling\r\n");
+				rpc_data[0] = RPC_MESSAGE_ADS_DISABLE_SAMPLING;
+				rpc_data[1] = 0; //useStreaming - not implemented
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> disabling ads7047 sampling failed!\r\n");
+					err = true;
+				}
+//				ads7047_DisableSampling();//TODO delete
 				break;
 			default:
 				err = true;

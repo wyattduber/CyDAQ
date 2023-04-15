@@ -44,15 +44,31 @@ int main(int argc, char *argv[]) {
 	if(init_x9258_i2c() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! x9258_i2c init failed!\r\n");
 	}
-	if(shared_InitSpi() != XST_SUCCESS){
-		xil_printf("SAMP> ERROR! shared spi init failed!\r\n");
-	}
+//	if(shared_InitSpi() != XST_SUCCESS){ //TODO currently not using
+//		xil_printf("SAMP> ERROR! shared spi init failed!\r\n");
+//	}
 	if(init_dac80501() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! dac80501 init failed!\r\n");
 	}
-	if(init_ads7047() != XST_SUCCESS){
-		xil_printf("SAMP> ERROR! ads7047 init failed!\r\n");
-	}
+//	if(init_ads7047() != XST_SUCCESS){ //TODO was throwing errors
+//		xil_printf("SAMP> ERROR! ads7047 init failed!\r\n");
+//	}
+
+	//TESTING data send
+
+	//first, lets test just writing to the memory space
+//	int *a = (int*)0x38800000;
+//	for(int i = 0; i < 100; i++){
+//		a[i] = i;
+//	}
+//	xil_printf("SAMP> Finished writing 100 sample data. Size of int: %d\r\n", sizeof(int));
+//	for(int i = 0; i < 100; i++){
+//		xil_printf("%d", a[i]);
+//	}
+//	*a = 69;
+//	xil_printf("SAMP> Test memory read: %d\r\n", *a);
+
+
 	rpc_setup(); //blocking
 
 	return 0;

@@ -68,7 +68,10 @@ u8 xadcInit() {
 	    status = XSysMon_GetSeqInputMode(SysMonInstPtr);
 
 	    //disable averaging on all inputs
-	    XSysMon_SetSeqAvgEnables(SysMonInstPtr, XSM_AVG_0_SAMPLES);
+	    if(XSysMon_SetSeqAvgEnables(SysMonInstPtr, XSM_AVG_0_SAMPLES) != XST_SUCCESS){
+	    	xil_printf("SAMP> XSysMon_SetSeqAvgEnables failed!\r\n");
+	    	return XST_FAILURE;
+	    }
 
 	    //clear the old status
 	    XSysMon_GetStatus(SysMonInstPtr);
@@ -176,7 +179,7 @@ int xadcEnableSampling(u8 streamSetting) {
 	shared_clearSampleCount();
 
 	if(DEBUG)
-		xil_printf("SAMP> Starting sampling, Streaming: %s\r\n", (streamSetting) ? "On" : "Off");
+		xil_printf("SAMP> Starting xadc sampling, Streaming: %s\r\n", (streamSetting) ? "On" : "Off");
 
 	//set status variables
 	samplingEnabled = true;
@@ -187,7 +190,10 @@ int xadcEnableSampling(u8 streamSetting) {
 
 	//start XADC driver timer and enable interrupts to begin sampling
 	XTmrCtr_Start(&TimerCounterInst, TIMER_CNTR_0);
+	xil_printf("SAMP> xadcEnableSampling got 1\r\n");
 	XSysMon_IntrGlobalEnable(SysMonInstPtr);
+	xil_printf("SAMP> xadcEnableSampling got 2\r\n");
+
 	return 0;
 }
 
@@ -195,6 +201,7 @@ int xadcEnableSampling(u8 streamSetting) {
  * Disables XADC sample capture timer and XADC EOC interrupts.
  */
 int xadcDisableSampling() {
+	xil_printf("SAMP> stopping xadc sampling\r\n");
 	//stop XADC driver timer and disable sampling interrupts
 	XTmrCtr_Stop(&TimerCounterInst, TIMER_CNTR_0);
 	XSysMon_IntrGlobalDisable(&SysMonInst);
@@ -205,7 +212,7 @@ int xadcDisableSampling() {
 	return 0;
 }
 
-/**
+/** TODO this function is no longer valid as we need to just write to the shared memory region. Proably delete?
  * Process XADC samples and print to GUI over UART
  * TODO: Re-implement burst writes. Issues occur with bursts where a single byte will be dropped, causing
  * the reassembly of the 16-bit int to be off by 1 byte and wrecking the data. Adding a longer delay helps,
@@ -290,6 +297,7 @@ int xadcProcessSamples() {
  * ISR triggers on XADC end-of-capture, stores sample to buffer
  */
 void xadcInterruptHandler(void *CallBackRef) {
+	xil_printf("SAMP> xadc interrupt!\r\n");
 	// Clear Interrupt bits
 	u32 ControlStatusReg = XTmrCtr_ReadReg(TimerCounterInst.BaseAddress,
 										   TIMER_CNTR_0, XTC_TCSR_OFFSET);
