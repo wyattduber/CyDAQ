@@ -138,14 +138,12 @@ void commRXTask() {
  */
 bool commProcessPacket(u8 *buffer, u16 bufSize) {
 	bool err = false;
-	u8 cmd, status = 0;
+	u8 cmd = 0;
 	u8* payload = NULL;
 
 	int rpc_data[PAYLOAD_DATA_LEN] = {};
 
-	if ((char) buffer[0] != COMM_START_CHAR
-			|| (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
-		//command structure was invalid
+	if ((char) buffer[0] != COMM_START_CHAR || (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
 		if (DEBUG)
 			printf("COMM> Command structure was invalid\r\n");
 		err = true;
@@ -166,8 +164,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		/*  ---Respond to Ping. Should be the only command that works while sampling---  */
 		if (cmd == PING) {
 			//sets err to false so zybo always sends an ACK back to GUI, confirming operation
-			printf("COMM> NEVER GONNA GIVE YOU UP!!!\r\n");
-			err = false; //TODO clean up
+			err = false;
 			return err;
 		}
 
@@ -192,6 +189,8 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				rpc_data[1] = (int)rate;
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> XADC set sample rate failed!r\n");
 					err = true;
 				}
 
@@ -199,11 +198,10 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				rpc_data[1] = (int)rate;
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> ADS set sample rate failed!r\n");
 					err = true;
 				}
-
-//				xadcSetSampleRate(rate); //TODO
-//				ads7047_SetSampleRate(rate); //TODO
 			}
 
 			/*  ---Select Input Source---  */
@@ -211,24 +209,17 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			if (payloadLength == 0) {
 				if (DEBUG)
 					printf("COMM> Error, payload length too small\r\n");
-
 				err = true;
 			} else {
-				printf("COMM> setting input select!\r\n");
+				printf("COMM> setting input select to number %d\r\n", (int)payload[0]);
 				rpc_data[0] = RPC_MESSAGE_MUX_SET_INPUT_PINS;
 				rpc_data[1] = (int)payload[0];
-				printf("COMM> before sending input rpc message\r\n");
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
-				printf("COMM> after sending input rpc message\r\n");
 				if(rpc_recieve_ack() != 0){
-					printf("COMM> recieve ack returned false from input rpc message!\r\n");
+					if(DEBUG)
+						printf("COMM> setting input failed!\r\n");
 					err = true;
 				}
-				printf("COMM> rpc_recieve_ack returned 0 from input as expected!\r\n");
-//				status = muxSetInputPins(payload[0]); //TODO
-//				if (status > 0) {
-//					err = true;
-//				}
 			}
 
 			/*  ---Select Active Filter---  */
@@ -236,17 +227,17 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			if (payloadLength < 1) {
 				if (DEBUG)
 					printf("COMM> No filter param given to set\r\n");
-
 				err = true;
 			} else {
-				printf("COMM> Setting filter select!\r\n");
+				printf("COMM> Setting filter select to filter number %d\r\n", (int)payload[0]);
 				rpc_data[0] = RPC_MESSAGE_SET_ACTIVE_FILTER;
 				rpc_data[1] = (int)payload[0];
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> setting failed!\r\n");
 					err = true;
 				}
-//				err = muxSetActiveFilter(payload[0]); //TODO
 			}
 
 			/*  ---Set Filter Corner Frequencies---  */
@@ -254,7 +245,6 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			if (payloadLength < 4) {
 				if (DEBUG)
 					printf("COMM> err in filter tune function\r\n");
-
 				err = true;
 			} else {
 				//each frequency should be sent as two bytes each
@@ -262,27 +252,25 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 						+ payload[1];
 				FILTER_FREQ_TYPE upper = ((payload[2] << 8) & 0xFF00)
 						+ payload[3];
-
-				printf("COMM> setting corner freq!\r\n");
+				if(DEBUG)
+					printf("COMM> setting corner freq %d %d %d\r\n", (int)payload[0], (int)lower, (int)upper);
 				rpc_data[0] = RPC_MESSAGE_TUNE_FILTER;
 				rpc_data[1] = (int)payload[0];
 				rpc_data[2] = (int)lower;
 				rpc_data[3] = (int)upper;
 				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 4);
 				if(rpc_recieve_ack() != 0){
+					if (DEBUG)
+						printf("COMM> err setting corner freq\r\n");
 					err = true;
 				}
-
-				//tune filter
-//				err = tuneFilter(50, lower, upper); //TODO
 			}
 
 			/*  ---Select between XADC and external SPI ADC---  */
-		} else if (cmd == ADC_SELECT) {
+		} else if (cmd == ADC_SELECT) { //TODO not supported yet
 			if (payloadLength != 1) {
 				if (DEBUG)
 					printf("COMM> Incorrect formatting in ADC select command\r\n");
-
 				err = true;
 			} else {
 				u8 adcSel = payload[0];
@@ -298,7 +286,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 
 			/*  ---Print Samples---  */
-		} else if (cmd == FETCH_SAMPLES) {
+		} else if (cmd == FETCH_SAMPLES) { //TODO not supported yet
 			//acknowledge command before returning samples
 			respond_ack(serial_port);
 
@@ -315,7 +303,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 
 			/*  ---Start Sampling---  */
-		} else if (cmd == START_SAMPLING) {
+		} else if (cmd == START_SAMPLING) { //TODO not supported yet
 
 			if(samplingEnabled){
 				printf("COMM> Starting sampling when already enabled");
@@ -347,7 +335,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 
 			/*  ---Stop Sampling---  */
-		} else if (cmd == STOP_SAMPLING) {
+		} else if (cmd == STOP_SAMPLING) { //TODO not supported yet
 			samplingEnabled = false;
 			switch (activeAdc) {
 			case ADC_XADC:
@@ -366,7 +354,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			//TODO: implement me once DAC has multiple operating modes
 
 			/*  ---Set DAC Generation Repetitions Count---  */
-		} else if (cmd == DAC_NUM_REPS_SET) {
+		} else if (cmd == DAC_NUM_REPS_SET) { //TODO not finished yet
 			if (payloadLength < 4) {
 				if (DEBUG)
 					printf("COMM> Not enough bytes to represent num repetitions\r\n");
@@ -383,7 +371,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 
 			/*  ---Set DAC Generation Rate (Sampling Rate)---  */
-		} else if (cmd == DAC_GEN_RATE_SET) {
+		} else if (cmd == DAC_GEN_RATE_SET) { //TODO not finished yet
 			if (payloadLength < 4) {
 				if (DEBUG)
 					printf("COMM> Not enough bytes to represent generation rate\r\n");
@@ -400,7 +388,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 
 			/*  ---Receive New Dataset Sent from PC---  */
-		} else if (cmd == DAC_SEND_DATASET) {
+		} else if (cmd == DAC_SEND_DATASET) { //TODO not finished yet
 			u32 dsSize = (payload[0] << 24) | (payload[1] << 16)
 					| (payload[2] << 8) | (payload[3]);
 
@@ -410,23 +398,25 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Start Waveform Generation---  */
-		} else if (cmd == START_GENERATION) {
+		} else if (cmd == START_GENERATION) { //TODO not finished yet
 //			dac80501_EnableGeneration();
 			rpc_data[0] = RPC_MESSAGE_DAC_ENABLE_GENERATION;
 			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Stop Waveform Generation---  */
-		} else if (cmd == STOP_GENERATION) {
+		} else if (cmd == STOP_GENERATION) { //TODO not finished yet
 //			dac80501_DisableGeneration();
 			rpc_data[0] = RPC_MESSAGE_DAC_DISABLE_GENERATION;
 			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Ball & Beam Controller---  */
-		} else if (cmd == START_CONTROLLER) {
+		} else if (cmd == START_CONTROLLER) { //TODO not finished yet
 //			ballbeamStart(); //TODO
 			rpc_data[0] = RPC_MESSAGE_DAC_BALL_BEAM_START;
 			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Unsupported Command---  */
 		} else {
+			if(DEBUG)
+				printf("COMM> Unknown command!\r\n");
 			err = true;
 		}
 	}
@@ -473,15 +463,11 @@ u32 commUartWaitReceive(u8 *bufferPtr, char endChar1, char endChar2) {
 //}
 
 void respond_ack(int serial_port){
-	if(DEBUG)
-		printf("COMM> Responding ACK\n");
 	char * message = "@ACK!";
 	write(serial_port, message, 6);
 }
 
 void respond_err(int serial_port){
-	if(DEBUG)
-		printf("COMM> Responding ERR\n");
 	char * message = "@ERR!";
 	write(serial_port, message, 6);
 }

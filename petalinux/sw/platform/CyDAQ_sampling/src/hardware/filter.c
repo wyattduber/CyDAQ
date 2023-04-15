@@ -164,8 +164,6 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 		wipersToWrite = currentFilter->filterOrder / 2;
 	}
 
-	xil_printf("SAMP> before x9258 volatile write in tuneFilter()\r\n");
-
 	//write the remaining pots (or all of them if filter is not BP)
 	for(int i = 0; i < wipersToWrite; i++) {
 		do {
@@ -176,8 +174,6 @@ u8 tuneFilter(filters_e filterSelect, FILTER_FREQ_TYPE freq1, FILTER_FREQ_TYPE f
 			retries++;
 		} while(err != 0 && retries < MAX_RETRIES);
 	}
-
-	xil_printf("SAMP> after x9258 volatile write in tuneFilter()\r\n");
 
 	//if no error writing pots, write the new frequencies to the filter object.
 	if(err == 0) {

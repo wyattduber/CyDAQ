@@ -1,13 +1,3 @@
-/*
- * main.c
- *
- *  Created on: Oct 7, 2019
- *      Author: tdempsay
- *
- *  Revised: Oct 4, 2020
- *  	Author: bcra
- */
-
 #include <sleep.h>
 #include <stdio.h>
 #include <xparameters.h>
@@ -42,70 +32,30 @@ u8 getButtonChangeBlocking();
  *   tests prior to operation if DEBUG is defined as true.
  */
 int main(int argc, char *argv[]) {
-
-	xil_printf("SAMP> Starting to init all hardware...\r\n");
-	///TODO add return checking for all these inits
+	xil_printf("\n**********CyDAQ baremetal sampling process***********\r\n");
 	init_platform();
-	commInit();
+//	if(commInit() != XST_SUCCESS){
+//		xil_printf("SAMP> ERROR! commInit failed!\r\n");
+//	}
 	muxInit();
 	if(xadcInit() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! xadcInit failed!\r\n");
 	}
-
 	if(init_x9258_i2c() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! x9258_i2c init failed!\r\n");
 	}
-	shared_InitSpi();
-	init_dac80501();
-	init_ads7047();
-	xil_printf("SAMP> Finished init all hardware\r\n");
-	xil_printf("SAMP> Starting RPC\r\n");
-	rpc_setup();
+	if(shared_InitSpi() != XST_SUCCESS){
+		xil_printf("SAMP> ERROR! shared spi init failed!\r\n");
+	}
+	if(init_dac80501() != XST_SUCCESS){
+		xil_printf("SAMP> ERROR! dac80501 init failed!\r\n");
+	}
+	if(init_ads7047() != XST_SUCCESS){
+		xil_printf("SAMP> ERROR! ads7047 init failed!\r\n");
+	}
+	rpc_setup(); //blocking
 
 	return 0;
-
-//
-//	xil_printf("Starting to init remoteproc\r\n");
-//	rpc_setup();
-//	xil_printf("Finished init remoteproc\r\n");
-//
-//	xil_printf("Starting to init all hardware...\r\n");
-//	init_platform();
-////    commInit();
-//    muxInit();
-//    xadcInit();
-//    init_x9258_i2c();
-//    shared_InitSpi();
-//    init_dac80501();
-//    init_ads7047();
-//    xil_printf("Finished init all hardware...\r\n");
-
-    //TODO delete - Uncomment this to uncontrollably send captured samples to console.
-    //just for sanity check I guess
-//    while(1) {
-//        	u16 x = ads7047_CaptureSample();
-//        	xil_printf("%d\r\n", x);
-//
-//        	usleep(1);
-//	}
-
-//    xadcTest();
-//    xil_printf("Finished xadc test...\r\n");
-//    commTest();
-//    filterTest();
-//    xil_printf("Finished filter test...\r\n");
-
-//    rpc_listen();
-//    rpc_listen();
-//
-//    cleanup_platform();
-//    xil_printf("Finished clean up program...\r\n");
-//
-//    xil_printf("Starting to tear down remoteproc\r\n");
-//	rpc_tear_down();
-//	xil_printf("Finished tearing down remoteproc\r\n");
-
-    return 0;
 }
 
 /**

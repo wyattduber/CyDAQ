@@ -32,9 +32,6 @@ void rpc_print_payload(struct _payload* payload){
 }
 
 int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int data_len){
-	xil_printf("SAMP> rpc_send_message called with message: %d, data[0]:%d, data[1]:%d\r\n", message, data[0], data[1]);
-	rpc_print_payload(send_payload);
-
 	send_payload->message = message;
 
 	//TODO zero out all other data?
@@ -48,8 +45,7 @@ int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int da
 
 	if (rpmsg_send(ept, send_payload, PAYLOAD_TOTAL_LEN) < 0) {
 		xil_printf("SAMP> send_ack failed\r\n");
-	}else{
-		xil_printf("SAMP> send_ack success!\r\n");
+		return -1;
 	}
 
 	return 0;
@@ -58,7 +54,7 @@ int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int da
 int send_ack(struct rpmsg_endpoint *ept){
 	int data[PAYLOAD_DATA_LEN] = {RPC_MESSAGE_DAC_ACK};
 	if (rpc_send_message(ept, MSG_TYPE_COMMAND, data, 1) < 0) {
-		LPERROR("SAMP> send_ack failed\n");
+		xil_printf("SAMP> send_ack failed\n");
 	}
 	return 0;
 }
@@ -79,77 +75,59 @@ int handle_message(struct _payload* payload){
 			break;
 
 	}
-	if(DEBUG){
-		LPRINTF("SAMP> Message received, type: %d, command: %d, data: %d\r\n", message,data[0],data[1]);
-	}
+
 	//command message handling
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
-			xil_printf("SAMP> before xadcSetSampleRate \r\n");
 			return xadcSetSampleRate(data[1]);
 
-		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){
-			xil_printf("SAMP> before xadcProcessSamples\r\n");
+		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){ //TODO not implemented yet
 			return xadcProcessSamples();
 
-		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
-			xil_printf("SAMP> before xadcEnableSampling\r\n");
+		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){ //TODO not implemented yet
 			return xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
-		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
-			xil_printf("SAMP> before xadcDisableSampling\r\n");
+		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){ //TODO not implemented yet
 			return xadcDisableSampling();
 
-		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){
+		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){ //TODO not implemented yet
 
-		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){
-			xil_printf("SAMP> before ads7047_ProcessSamples\r\n");
+		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){ //TODO not implemented yet
 			return ads7047_ProcessSamples();
 
-		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){
-			xil_printf("SAMP> before ads7047_EnableSampling\r\n");
+		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){ //TODO not implemented yet
 			return ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
 
-		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){
-			xil_printf("SAMP> before ads7047_DisableSampling\r\n");
+		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){ //TODO not implemented yet
 			return ads7047_DisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_MUX_SET_INPUT_PINS){
-			xil_printf("SAMP> before muxSetInputPins\r\n");
 			return muxSetInputPins(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
-			xil_printf("SAMP> before muxSetActiveFilter\r\n");
 			return muxSetActiveFilter(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
-			xil_printf("SAMP> before tuneFilter\r\n");
 			//data[2] = lower
 			//data[3] = upper
 			return tuneFilter(50,data[2],data[3]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
-			xil_printf("SAMP> before dac80501_SetNumRepetitions\r\n");
 			return dac80501_SetNumRepetitions(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
-			xil_printf("SAMP> before dac80501_SetGenerationRate\r\n");
 			return dac80501_SetGenerationRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
-			xil_printf("SAMP> before dac80501_ReceiveDataset\r\n");
 			return dac80501_ReceiveDataset(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
-			xil_printf("SAMP> before dac80501_EnableGeneration\r\n");
 			return dac80501_EnableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
-			xil_printf("SAMP> before dac80501_DisableGeneration\r\n");
 			return dac80501_DisableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
-			xil_printf("SAMP> before ballbeamStart\r\n");
 			return ballbeamStart(); //TODO this is blocking...
 
 		}else{
@@ -169,8 +147,6 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)priv;
 	(void)src;
 
-	xil_printf("SAMP> callback! Message: %d with data[0]: %d of len: %d\r\n", ((struct _payload*)data)->message, ((struct _payload*)data)->data[0], len);
-
 	/* On reception of a shutdown we signal the application to terminate */
 	//TODO test or remove this?
 	if ((*(unsigned int *)data) == SHUTDOWN_MSG) {
@@ -180,8 +156,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	}
 
 	int ret = handle_message((struct _payload*)data); //TODO handle error message from this function call
-	xil_printf("SAMP> handle_message with data[0] = %d returned %d\r\n",((struct _payload*)data)->data[0], ret);
-	send_ack(ept);
+	send_ack(ept); //TODO send fail if failed
 
 	/* Send data back to master */ //TODO change this to just ACK later on
 //	if (rpmsg_send(ept, data, len) < 0) {
@@ -203,21 +178,19 @@ int app(struct rpmsg_device *rdev, void *priv)
 	int ret;
 
 	/* Initialize RPMSG framework */
-	LPRINTF("SAMP> Try to create rpmsg endpoint.\r\n");
+	xil_printf("SAMP> Try to create rpmsg endpoint.\r\n");
 
 	ret = rpmsg_create_ept(&lept, rdev, RPMSG_SERVICE_NAME,
 			RPMSG_ADDR_ANY, RPMSG_ADDR_ANY,
 			       rpmsg_endpoint_cb, rpmsg_service_unbind);
 	if (ret) {
-		LPERROR("SAMP> Failed to create endpoint.\r\n");
+		xil_printf("SAMP> Failed to create endpoint.\r\n");
 		return -1;
 	}
 
-	LPRINTF("SAMP> Successfully created rpmsg endpoint.\r\n");
+	xil_printf("SAMP> Successfully created rpmsg endpoint.\r\n");
 	while (1) {
-		xil_printf("|");
 		platform_poll(priv);
-		xil_printf("SAMP> platform_poll returned!\r\n");
 		/* we got a shutdown request, exit */
 		if (shutdown_req) {
 			break;
@@ -233,22 +206,20 @@ int rpc_setup(){
 	struct rpmsg_device *rpdev;
 	int ret;
 
-	LPRINTF("\n**********CyDAQ baremetal sampling process***********\r\n");
-
 	send_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
 	receive_payload = (struct _payload *)malloc(PAYLOAD_TOTAL_LEN);
 
 	/* Initialize platform */
 	ret = platform_init(&platform);
 	if (ret) {
-		LPERROR("SAMP> Failed to initialize platform.\r\n");
+		xil_printf("SAMP> Failed to initialize platform.\r\n");
 		ret = -1;
 	} else {
 		rpdev = platform_create_rpmsg_vdev(platform, 0,
 						   VIRTIO_DEV_DEVICE,
 						   NULL, NULL);
 		if (!rpdev) {
-			LPERROR("SAMP> Failed to create rpmsg virtio device.\r\n");
+			xil_printf("SAMP> Failed to create rpmsg virtio device.\r\n");
 			ret = -1;
 		} else {
 			app(rpdev, platform);
@@ -257,6 +228,6 @@ int rpc_setup(){
 		}
 	}
 
-	LPRINTF("SAMP> Stopping application...\r\n");
+	xil_printf("SAMP> Stopping application...\r\n");
 	platform_cleanup(platform);
 }

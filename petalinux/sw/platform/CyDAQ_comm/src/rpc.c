@@ -60,11 +60,9 @@ int rpc_send_message(int message, int data[], int data_len){
 		send_payload->data[i] = data[i];
 	}
 
-	if(DEBUG)
-		rpc_print_payload(send_payload);
-
 	int bytes_sent = write(fd, send_payload, PAYLOAD_TOTAL_LEN);
-	printf("COMM> Message sent to sampling cpu: Bytes written: %d\r\n", bytes_sent);
+//	if(DEBUG)
+//		printf("COMM> Message sent to sampling cpu: Bytes written: %d\r\n", bytes_sent);
 	if(bytes_sent <= 0){
 		printf("COMM> Error sending payload. Printing payload: \r\n");
 		rpc_print_payload(send_payload);
@@ -83,8 +81,8 @@ int rpc_recieve_message(){
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	}
-	printf("COMM> Received payload:\r\n");
-	rpc_print_payload(receive_payload);
+//	if(DEBUG)
+//		printf("COMM> Received payload. Read %d bytes\r\n", bytes_rcvd);
 	return 0;
 }
 
