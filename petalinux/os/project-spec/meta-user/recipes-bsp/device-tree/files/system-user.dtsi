@@ -43,6 +43,12 @@
 			compatible = "shared-dma-pool";
 			reg = <0x3a800000 0x2000000>;
 		};
+
+		shared_memory: shared_memory@0x38800000 {
+			no-map;
+			compatible = "shared-dma-pool";
+			reg = <0x38800000 0x2000000>;
+		};
 	};
 
 	remoteproc0: remoteproc@0 {
