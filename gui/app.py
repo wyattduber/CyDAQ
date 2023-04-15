@@ -20,8 +20,8 @@ from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEFAULT_WINDOW_WIDTH = 400
-DEFAULT_WINDOW_HEIGHT = 590
+DEFAULT_WINDOW_WIDTH = 553
+DEFAULT_WINDOW_HEIGHT = 626
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -143,8 +143,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
         
+        # Creating new widget inside a layout
+        # TODO Resizing automatically doesn't work need to fix
         self.centerWidget = QtWidgets.QWidget()
-        self.setCentralWidget(self.centerWidget)
+        self.stackedWidget.addWidget(self.centerWidget)
 
         self.stack = StackedLayout(self.centerWidget)        
         self.widgets = []
@@ -212,9 +214,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def updateWidgetConnectionStatus(self):
         for widget in self.widgets:
             if self.connected:
-                widget.cyDaqConnected()
+                # widget.cyDaqConnected()
+                self.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                   "{"
+                                                   "color: #0EAD69;"
+                                                   "}")
             else:
-                widget.cyDaqDisconnected()
+                # widget.cyDaqDisconnected()
+                self.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                       "{"
+                                                       "color: #DE3C4B;"
+                                                       "}")
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
