@@ -149,6 +149,8 @@ static int xadcSetupInterruptSystem(XScuGic *IntcInstancePtr, XSysMon *XAdcPtr, 
 		return XST_FAILURE;
 	}
 
+	XScuGic_InterruptMaptoCpu(IntcInstancePtr, 1, IntrId);
+
 	XScuGic_Enable(IntcInstancePtr, IntrId);
 	Xil_ExceptionInit();
 
@@ -304,10 +306,12 @@ void xadcInterruptHandler(void *CallBackRef) {
 	XTmrCtr_WriteReg(TimerCounterInst.BaseAddress, TIMER_CNTR_0, XTC_TCSR_OFFSET,
 					 ControlStatusReg | XTC_CSR_INT_OCCURED_MASK);
 	XSysMon_IntrClear(&SysMonInst, XSM_IPIXR_EOC_MASK);
+	xil_printf("SAMP> xadc interrupt got 1\r\n");
 
 	volatile u32 *xadcSampleCount = shared_GetSampleCount();
-
+	xil_printf("SAMP> xadc interrupt got 2\r\n");
 	if ((*xadcSampleCount) < SAMPLE_BUFFER_SIZE ) {
+		xil_printf("SAMP> xadc interrupt got 3\r\n");
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
 		(*xadcSampleCount)++;
 
@@ -315,6 +319,7 @@ void xadcInterruptHandler(void *CallBackRef) {
 		(*xadcSampleCount) = 0;
 
 	} else {
+		xil_printf("SAMP> disabling interrupt\r\n");
 		samplingEnabled = false;
 		XSysMon_IntrGlobalDisable(SysMonInstPtr);
 	}
