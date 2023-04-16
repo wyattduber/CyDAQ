@@ -15,7 +15,7 @@ set_property -dict { PACKAGE_PIN Y16   IOSTANDARD LVCMOS33 } [get_ports { btns_4
 set_property src_info {type:XDC file:2 line:58 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict { PACKAGE_PIN E17   IOSTANDARD LVCMOS33 } [get_ports { eth_rst_b_tri_io }]; #IO_L3P_T0_DQS_AD1P_35 Sch=eth_rst_b
 set_property src_info {type:XDC file:2 line:110 export:INPUT save:INPUT read:READ} [current_design]
-set_property -dict { PACKAGE_PIN N15   IOSTANDARD LVCMOS33 } [get_ports Vaux14_v_p]; #IO_L21P_T3_DQS_AD14P_35 Sch=JA1_R_p
+set_property -dict { PACKAGE_PIN N15   IOSTANDARD LVCMOS33 } [get_ports Vaux14_0_v_p]; #IO_L21P_T3_DQS_AD14P_35 Sch=JA1_R_p
 set_property src_info {type:XDC file:2 line:111 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict { PACKAGE_PIN L14   IOSTANDARD LVCMOS33 } [get_ports { Vaux7_0_v_p } ]; #IO_L24P_T3_AD15P_35 Sch=JA3_R_P
 set_property src_info {type:XDC file:2 line:112 export:INPUT save:INPUT read:READ} [current_design]

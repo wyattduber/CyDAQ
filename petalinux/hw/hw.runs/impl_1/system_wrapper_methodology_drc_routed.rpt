@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
-| Date         : Sun Apr 16 01:25:53 2023
+| Date         : Sun Apr 16 14:55:56 2023
 | Host         : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 | Command      : report_methodology -file system_wrapper_methodology_drc_routed.rpt -pb system_wrapper_methodology_drc_routed.pb -rpx system_wrapper_methodology_drc_routed.rpx
 | Design       : system_wrapper
@@ -92,21 +92,21 @@ Related violations: <none>
 
 LUTAR-1#4 Warning
 LUT drives async reset alert  
-LUT cell system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/FIFO18E1_inst_data_i_2, with 2 or more inputs, drives asynchronous preset/clear pin(s) system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/FSM_sequential_state_reg[0]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/FSM_sequential_state_reg[1]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/FSM_sequential_state_reg[2]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/FSM_sequential_state_reg[3]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/busy_o_reg/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/channel_id_reg[0]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/channel_id_reg[1]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/channel_id_reg[2]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/channel_id_reg[3]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/channel_id_reg[4]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/channel_id_reg[6]/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/den_o_reg/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/mode_change_sig_reset_reg/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/valid_data_wren_reg/CLR,
-system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/axi4_stream_inst/FIFO18E1_inst_data/RST (the first 15 of 104 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
+LUT cell system_i/xadc_wiz_0/U0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/FIFO18E1_inst_data_i_2, with 2 or more inputs, drives asynchronous preset/clear pin(s) system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/FSM_sequential_state_reg[0]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/FSM_sequential_state_reg[1]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[0]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[1]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[2]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[3]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[4]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[5]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_C_reg_reg[6]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_reg_reg[0]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_reg_reg[1]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_reg_reg[2]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_reg_reg[3]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_reg_reg[4]/CLR,
+system_i/xadc_wiz_0/U0/AXI_XADC_CORE_I/Inst_drp_arbiter/daddr_reg_reg[5]/CLR (the first 15 of 104 listed). The LUT may glitch and trigger an unexpected reset, even if it is a properly timed path.
 Related violations: <none>
 
 TIMING-18#1 Warning

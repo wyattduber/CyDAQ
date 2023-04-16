@@ -1,7 +1,7 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
 --Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
---Date        : Sun Apr 16 01:18:54 2023
+--Date        : Sun Apr 16 14:51:00 2023
 --Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 --Command     : generate_target system_wrapper.bd
 --Design      : system_wrapper
@@ -34,6 +34,10 @@ entity system_wrapper is
     FIXED_IO_ps_clk : inout STD_LOGIC;
     FIXED_IO_ps_porb : inout STD_LOGIC;
     FIXED_IO_ps_srstb : inout STD_LOGIC;
+    Vaux14_0_v_n : in STD_LOGIC;
+    Vaux14_0_v_p : in STD_LOGIC;
+    Vaux7_0_v_n : in STD_LOGIC;
+    Vaux7_0_v_p : in STD_LOGIC;
     Vp_Vn_0_v_n : in STD_LOGIC;
     Vp_Vn_0_v_p : in STD_LOGIC;
     btns_4bits : in STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -100,7 +104,11 @@ architecture STRUCTURE of system_wrapper is
     ir_sensor_scl_t : out STD_LOGIC;
     ir_sensor_sda_i : in STD_LOGIC;
     ir_sensor_sda_o : out STD_LOGIC;
-    ir_sensor_sda_t : out STD_LOGIC
+    ir_sensor_sda_t : out STD_LOGIC;
+    Vaux14_0_v_n : in STD_LOGIC;
+    Vaux14_0_v_p : in STD_LOGIC;
+    Vaux7_0_v_n : in STD_LOGIC;
+    Vaux7_0_v_p : in STD_LOGIC
   );
   end component system;
   component IOBUF is
@@ -217,6 +225,10 @@ system_i: component system
       FIXED_IO_ps_clk => FIXED_IO_ps_clk,
       FIXED_IO_ps_porb => FIXED_IO_ps_porb,
       FIXED_IO_ps_srstb => FIXED_IO_ps_srstb,
+      Vaux14_0_v_n => Vaux14_0_v_n,
+      Vaux14_0_v_p => Vaux14_0_v_p,
+      Vaux7_0_v_n => Vaux7_0_v_n,
+      Vaux7_0_v_p => Vaux7_0_v_p,
       Vp_Vn_0_v_n => Vp_Vn_0_v_n,
       Vp_Vn_0_v_p => Vp_Vn_0_v_p,
       btns_4bits(3 downto 0) => btns_4bits(3 downto 0),

@@ -163,6 +163,8 @@ static int xadcSetupInterruptSystem(XScuGic *IntcInstancePtr, XSysMon *XAdcPtr, 
 
 	Xil_Out32(XPAR_PS7_SCUGIC_0_BASEADDR,0xF);
 
+	XScuGic_CPUWriteReg(IntcInstancePtr, XSCUGIC_EOI_OFFSET, INTC_DEVICE_ID);
+
 	return XST_SUCCESS;
 }
 
@@ -170,13 +172,6 @@ static int xadcSetupInterruptSystem(XScuGic *IntcInstancePtr, XSysMon *XAdcPtr, 
  * Enables XADC sample capture timer and XADC EOC interrupts.
  */
 int xadcEnableSampling(u8 streamSetting) {
-	//check that XADC has been initialized
-	if(xadcInitStatus == 0) {
-		if(DEBUG)
-			xil_printf("SAMP> XADC not init. calling xadcInit()\r\n");
-		xadcInit();
-		xadcInitStatus = 1;
-	}
 
 	shared_clearSampleCount();
 
@@ -192,9 +187,7 @@ int xadcEnableSampling(u8 streamSetting) {
 
 	//start XADC driver timer and enable interrupts to begin sampling
 	XTmrCtr_Start(&TimerCounterInst, TIMER_CNTR_0);
-	xil_printf("SAMP> xadcEnableSampling got 1\r\n");
 	XSysMon_IntrGlobalEnable(SysMonInstPtr);
-	xil_printf("SAMP> xadcEnableSampling got 2\r\n");
 
 	return 0;
 }
@@ -299,21 +292,19 @@ int xadcProcessSamples() {
  * ISR triggers on XADC end-of-capture, stores sample to buffer
  */
 void xadcInterruptHandler(void *CallBackRef) {
-	xil_printf("SAMP> xadc interrupt!\r\n");
 	// Clear Interrupt bits
 	u32 ControlStatusReg = XTmrCtr_ReadReg(TimerCounterInst.BaseAddress,
 										   TIMER_CNTR_0, XTC_TCSR_OFFSET);
 	XTmrCtr_WriteReg(TimerCounterInst.BaseAddress, TIMER_CNTR_0, XTC_TCSR_OFFSET,
 					 ControlStatusReg | XTC_CSR_INT_OCCURED_MASK);
 	XSysMon_IntrClear(&SysMonInst, XSM_IPIXR_EOC_MASK);
-	xil_printf("SAMP> xadc interrupt got 1\r\n");
 
 	volatile u32 *xadcSampleCount = shared_GetSampleCount();
-	xil_printf("SAMP> xadc interrupt got 2\r\n");
+	xil_printf("SAMP> XADC interrupt count: %d\r\n", *xadcSampleCount);
 	if ((*xadcSampleCount) < SAMPLE_BUFFER_SIZE ) {
-		xil_printf("SAMP> xadc interrupt got 3\r\n");
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
 		(*xadcSampleCount)++;
+		xil_printf("SAMP> Updated XADC interrupt count: %d\r\n", *xadcSampleCount);
 
 	} else if(streamingEnabled) {
 		(*xadcSampleCount) = 0;

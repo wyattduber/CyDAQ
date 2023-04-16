@@ -463,8 +463,8 @@ proc create_root_design { parentCell } {
    CONFIG.PCW_GP1_NUM_WRITE_THREADS {4} \
    CONFIG.PCW_GPIO_BASEADDR {0xE000A000} \
    CONFIG.PCW_GPIO_EMIO_GPIO_ENABLE {1} \
-   CONFIG.PCW_GPIO_EMIO_GPIO_IO {64} \
-   CONFIG.PCW_GPIO_EMIO_GPIO_WIDTH {64} \
+   CONFIG.PCW_GPIO_EMIO_GPIO_IO {1} \
+   CONFIG.PCW_GPIO_EMIO_GPIO_WIDTH {1} \
    CONFIG.PCW_GPIO_HIGHADDR {0xE000AFFF} \
    CONFIG.PCW_GPIO_MIO_GPIO_ENABLE {1} \
    CONFIG.PCW_GPIO_MIO_GPIO_IO {MIO} \
@@ -1074,14 +1074,14 @@ proc create_root_design { parentCell } {
   # Create instance: xadc_wiz_0, and set properties
   set xadc_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xadc_wiz:3.3 xadc_wiz_0 ]
   set_property -dict [ list \
-   CONFIG.ADC_CONVERSION_RATE {1000} \
+   CONFIG.ADC_CONVERSION_RATE {500} \
    CONFIG.CHANNEL_AVERAGING {None} \
    CONFIG.CHANNEL_ENABLE_CALIBRATION {false} \
    CONFIG.CHANNEL_ENABLE_TEMPERATURE {false} \
-   CONFIG.CHANNEL_ENABLE_VAUXP14_VAUXN14 {false} \
+   CONFIG.CHANNEL_ENABLE_VAUXP14_VAUXN14 {true} \
    CONFIG.CHANNEL_ENABLE_VAUXP15_VAUXN15 {false} \
    CONFIG.CHANNEL_ENABLE_VAUXP6_VAUXN6 {false} \
-   CONFIG.CHANNEL_ENABLE_VAUXP7_VAUXN7 {false} \
+   CONFIG.CHANNEL_ENABLE_VAUXP7_VAUXN7 {true} \
    CONFIG.CHANNEL_ENABLE_VBRAM {false} \
    CONFIG.CHANNEL_ENABLE_VCCAUX {false} \
    CONFIG.CHANNEL_ENABLE_VCCDDRO {false} \
@@ -1091,24 +1091,28 @@ proc create_root_design { parentCell } {
    CONFIG.CHANNEL_ENABLE_VP_VN {false} \
    CONFIG.CHANNEL_ENABLE_VREFN {false} \
    CONFIG.CHANNEL_ENABLE_VREFP {false} \
-   CONFIG.DCLK_FREQUENCY {104} \
+   CONFIG.DCLK_FREQUENCY {100} \
    CONFIG.ENABLE_AXI4STREAM {true} \
+   CONFIG.ENABLE_CALIBRATION_AVERAGING {false} \
    CONFIG.ENABLE_RESET {false} \
-   CONFIG.ENABLE_VCCDDRO_ALARM {true} \
+   CONFIG.ENABLE_VCCDDRO_ALARM {false} \
    CONFIG.ENABLE_VCCPAUX_ALARM {true} \
    CONFIG.ENABLE_VCCPINT_ALARM {true} \
    CONFIG.EXTERNAL_MUX_CHANNEL {VP_VN} \
    CONFIG.INTERFACE_SELECTION {Enable_AXI} \
-   CONFIG.OT_ALARM {false} \
-   CONFIG.SEQUENCER_MODE {Off} \
+   CONFIG.OT_ALARM {true} \
+   CONFIG.SEQUENCER_MODE {Continuous} \
    CONFIG.SINGLE_CHANNEL_SELECTION {TEMPERATURE} \
+   CONFIG.TIMING_MODE {Event} \
    CONFIG.USER_TEMP_ALARM {true} \
    CONFIG.VCCAUX_ALARM {true} \
-   CONFIG.VCCINT_ALARM {true} \
-   CONFIG.XADC_STARUP_SELECTION {single_channel} \
+   CONFIG.VCCINT_ALARM {false} \
+   CONFIG.XADC_STARUP_SELECTION {channel_sequencer} \
  ] $xadc_wiz_0
 
   # Create interface connections
+  connect_bd_intf_net -intf_net Vaux14_0_1 [get_bd_intf_ports Vaux14_0] [get_bd_intf_pins xadc_wiz_0/Vaux14]
+  connect_bd_intf_net -intf_net Vaux7_0_1 [get_bd_intf_ports Vaux7_0] [get_bd_intf_pins xadc_wiz_0/Vaux7]
   connect_bd_intf_net -intf_net Vp_Vn_0_1 [get_bd_intf_ports Vp_Vn_0] [get_bd_intf_pins xadc_wiz_0/Vp_Vn]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_S2MM [get_bd_intf_pins axi_dma_0/M_AXI_S2MM] [get_bd_intf_pins axi_mem_intercon_HP0/S00_AXI]
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO2 [get_bd_intf_ports je] [get_bd_intf_pins axi_gpio_0/GPIO2]
@@ -1132,10 +1136,12 @@ proc create_root_design { parentCell } {
 
   # Create port connections
   connect_bd_net -net axi_iic_0_gpo [get_bd_ports ir_gpo] [get_bd_pins axi_iic_0/gpo]
+  connect_bd_net -net axi_timer_0_interrupt [get_bd_pins axi_timer_0/interrupt] [get_bd_pins xadc_wiz_0/convst_in]
   connect_bd_net -net axi_timer_1_pwm0 [get_bd_ports servo_pwm] [get_bd_pins axi_timer_1/pwm0]
   connect_bd_net -net gpio_io_i_0_1 [get_bd_ports btns_4bits] [get_bd_pins axi_gpio_0/gpio_io_i]
   connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_gpio_eth/s_axi_aclk] [get_bd_pins axi_iic_0/s_axi_aclk] [get_bd_pins axi_mem_intercon_HP0/ACLK] [get_bd_pins axi_mem_intercon_HP0/M00_ACLK] [get_bd_pins axi_mem_intercon_HP0/S00_ACLK] [get_bd_pins axi_mem_intercon_HP0/S01_ACLK] [get_bd_pins axi_quad_spi_0/ext_spi_clk] [get_bd_pins axi_quad_spi_0/s_axi_aclk] [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins axi_timer_1/s_axi_aclk] [get_bd_pins axis_subset_converter_0/aclk] [get_bd_pins processing_system7_0/DMA0_ACLK] [get_bd_pins processing_system7_0/DMA1_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M00_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M01_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M02_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M03_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M04_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M05_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M06_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/M07_ACLK] [get_bd_pins ps7_0_axi_periph_GP0/S00_ACLK] [get_bd_pins rst_ps7_0_100M/slowest_sync_clk] [get_bd_pins xadc_wiz_0/s_axi_aclk] [get_bd_pins xadc_wiz_0/s_axis_aclk]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_ps7_0_100M/ext_reset_in]
+  connect_bd_net -net processing_system7_0_GPIO_O [get_bd_pins axi_timer_0/freeze] [get_bd_pins processing_system7_0/GPIO_O]
   connect_bd_net -net rst_ps7_0_100M_interconnect_aresetn [get_bd_pins ps7_0_axi_periph_GP0/ARESETN] [get_bd_pins rst_ps7_0_100M/interconnect_aresetn]
   connect_bd_net -net rst_ps7_0_100M_peripheral_aresetn [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_gpio_eth/s_axi_aresetn] [get_bd_pins axi_iic_0/s_axi_aresetn] [get_bd_pins axi_mem_intercon_HP0/ARESETN] [get_bd_pins axi_mem_intercon_HP0/M00_ARESETN] [get_bd_pins axi_mem_intercon_HP0/S00_ARESETN] [get_bd_pins axi_mem_intercon_HP0/S01_ARESETN] [get_bd_pins axi_quad_spi_0/s_axi_aresetn] [get_bd_pins axi_timer_0/s_axi_aresetn] [get_bd_pins axi_timer_1/s_axi_aresetn] [get_bd_pins axis_subset_converter_0/aresetn] [get_bd_pins ps7_0_axi_periph_GP0/M00_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M01_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M02_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M03_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M04_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M05_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M06_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/M07_ARESETN] [get_bd_pins ps7_0_axi_periph_GP0/S00_ARESETN] [get_bd_pins rst_ps7_0_100M/peripheral_aresetn] [get_bd_pins xadc_wiz_0/s_axi_aresetn]
   connect_bd_net -net xadc_wiz_0_ip2intc_irpt [get_bd_pins processing_system7_0/Core1_nIRQ] [get_bd_pins xadc_wiz_0/ip2intc_irpt]

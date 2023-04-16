@@ -2,8 +2,8 @@
 # Vivado v2020.1 (64-bit)
 # SW Build 2902540 on Wed May 27 19:54:35 MDT 2020
 # IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
-# Start of session at: Sun Apr 16 01:21:26 2023
-# Process ID: 28694
+# Start of session at: Sun Apr 16 14:52:22 2023
+# Process ID: 12518
 # Current directory: /home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1
 # Command line: vivado -log system_wrapper.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source system_wrapper.tcl
 # Log file: /home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/system_wrapper.vds
@@ -20,68 +20,68 @@ INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z010
 INFO: [Device 21-403] Loading part xc7z010clg400-1
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 28738
+INFO: [Synth 8-7075] Helper process launched with PID 12555
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 2141.199 ; gain = 3.883 ; free physical = 4712 ; free virtual = 13895
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 2149.227 ; gain = 0.000 ; free physical = 8759 ; free virtual = 13102
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-638] synthesizing module 'system_wrapper' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:53]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'eth_rst_b_tri_iobuf_0' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:141]
+INFO: [Synth 8-638] synthesizing module 'system_wrapper' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:57]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'eth_rst_b_tri_iobuf_0' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:149]
 INFO: [Synth 8-6157] synthesizing module 'IOBUF' [/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238]
 	Parameter DRIVE bound to: 12 - type: integer 
 	Parameter IBUF_LOW_PWR bound to: TRUE - type: string 
 	Parameter IOSTANDARD bound to: DEFAULT - type: string 
 	Parameter SLEW bound to: SLOW - type: string 
 INFO: [Synth 8-6155] done synthesizing module 'IOBUF' (1#1) [/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'ir_sensor_scl_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:148]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'ir_sensor_sda_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:155]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_io0_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:162]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_io1_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:169]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_sck_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:176]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_ss_iobuf_0' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:183]
-INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_ss_iobuf_1' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:190]
-INFO: [Synth 8-3491] module 'system' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4855' bound to instance 'system_i' of component 'system' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:197]
-INFO: [Synth 8-638] synthesizing module 'system' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4912]
-WARNING: [Synth 8-5640] Port 'axi_dma_tstvec' is missing in component declaration [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5153]
-INFO: [Synth 8-3491] module 'system_axi_dma_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_dma_0_0_stub.vhdl:5' bound to instance 'axi_dma_0' of component 'system_axi_dma_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5773]
-INFO: [Synth 8-638] synthesizing module 'system_axi_dma_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_dma_0_0_stub.vhdl:54]
-INFO: [Synth 8-3491] module 'system_axi_gpio_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_gpio_0_0_stub.vhdl:5' bound to instance 'axi_gpio_0' of component 'system_axi_gpio_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5818]
-INFO: [Synth 8-638] synthesizing module 'system_axi_gpio_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_gpio_0_0_stub.vhdl:32]
-INFO: [Synth 8-3491] module 'system_axi_gpio_eth_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_gpio_eth_0_stub.vhdl:5' bound to instance 'axi_gpio_eth' of component 'system_axi_gpio_eth_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5842]
-INFO: [Synth 8-638] synthesizing module 'system_axi_gpio_eth_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_gpio_eth_0_stub.vhdl:33]
-INFO: [Synth 8-3491] module 'system_axi_iic_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_iic_0_0_stub.vhdl:5' bound to instance 'axi_iic_0' of component 'system_axi_iic_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5867]
-INFO: [Synth 8-638] synthesizing module 'system_axi_iic_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_iic_0_0_stub.vhdl:38]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'ir_sensor_scl_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:156]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'ir_sensor_sda_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:163]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_io0_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:170]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_io1_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:177]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_sck_iobuf' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:184]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_ss_iobuf_0' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:191]
+INFO: [Synth 8-3491] module 'IOBUF' declared at '/tools/Xilinx/Vivado/2020.1/scripts/rt/data/unisim_comp.v:36238' bound to instance 'spi_rtl_0_ss_iobuf_1' of component 'IOBUF' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:198]
+INFO: [Synth 8-3491] module 'system' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4855' bound to instance 'system_i' of component 'system' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:205]
+INFO: [Synth 8-638] synthesizing module 'system' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4916]
+WARNING: [Synth 8-5640] Port 'axi_dma_tstvec' is missing in component declaration [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5161]
+INFO: [Synth 8-3491] module 'system_axi_dma_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_dma_0_0_stub.vhdl:5' bound to instance 'axi_dma_0' of component 'system_axi_dma_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5792]
+INFO: [Synth 8-638] synthesizing module 'system_axi_dma_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_dma_0_0_stub.vhdl:54]
+INFO: [Synth 8-3491] module 'system_axi_gpio_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_gpio_0_0_stub.vhdl:5' bound to instance 'axi_gpio_0' of component 'system_axi_gpio_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5837]
+INFO: [Synth 8-638] synthesizing module 'system_axi_gpio_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_gpio_0_0_stub.vhdl:32]
+INFO: [Synth 8-3491] module 'system_axi_gpio_eth_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_gpio_eth_0_stub.vhdl:5' bound to instance 'axi_gpio_eth' of component 'system_axi_gpio_eth_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5861]
+INFO: [Synth 8-638] synthesizing module 'system_axi_gpio_eth_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_gpio_eth_0_stub.vhdl:33]
+INFO: [Synth 8-3491] module 'system_axi_iic_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_iic_0_0_stub.vhdl:5' bound to instance 'axi_iic_0' of component 'system_axi_iic_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5886]
+INFO: [Synth 8-638] synthesizing module 'system_axi_iic_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_iic_0_0_stub.vhdl:38]
 INFO: [Synth 8-638] synthesizing module 'system_axi_mem_intercon_HP0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2829]
 INFO: [Synth 8-638] synthesizing module 'm00_couplers_imp_QHSX34' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:196]
-INFO: [Synth 8-3491] module 'system_auto_pc_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_pc_0_stub.vhdl:5' bound to instance 'auto_pc' of component 'system_auto_pc_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:563]
-INFO: [Synth 8-638] synthesizing module 'system_auto_pc_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_pc_0_stub.vhdl:90]
-INFO: [Synth 8-3491] module 'system_m00_regslice_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_m00_regslice_0_stub.vhdl:5' bound to instance 'm00_regslice' of component 'system_m00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:645]
-INFO: [Synth 8-638] synthesizing module 'system_m00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_m00_regslice_0_stub.vhdl:89]
+INFO: [Synth 8-3491] module 'system_auto_pc_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_pc_0_stub.vhdl:5' bound to instance 'auto_pc' of component 'system_auto_pc_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:563]
+INFO: [Synth 8-638] synthesizing module 'system_auto_pc_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_pc_0_stub.vhdl:90]
+INFO: [Synth 8-3491] module 'system_m00_regslice_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_m00_regslice_0_stub.vhdl:5' bound to instance 'm00_regslice' of component 'system_m00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:645]
+INFO: [Synth 8-638] synthesizing module 'system_m00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_m00_regslice_0_stub.vhdl:89]
 INFO: [Synth 8-256] done synthesizing module 'm00_couplers_imp_QHSX34' (2#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:196]
 INFO: [Synth 8-638] synthesizing module 's00_couplers_imp_T4AL1T' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1797]
-INFO: [Synth 8-3491] module 'system_auto_rs_w_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_rs_w_0_stub.vhdl:5' bound to instance 'auto_rs_w' of component 'system_auto_rs_w_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2042]
-INFO: [Synth 8-638] synthesizing module 'system_auto_rs_w_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_rs_w_0_stub.vhdl:51]
-INFO: [Synth 8-3491] module 'system_auto_us_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_us_0_stub.vhdl:5' bound to instance 'auto_us' of component 'system_auto_us_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2085]
-INFO: [Synth 8-638] synthesizing module 'system_auto_us_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_us_0_stub.vhdl:51]
-INFO: [Synth 8-3491] module 'system_s00_regslice_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_s00_regslice_0_stub.vhdl:5' bound to instance 's00_regslice' of component 'system_s00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2128]
-INFO: [Synth 8-638] synthesizing module 'system_s00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_s00_regslice_0_stub.vhdl:51]
+INFO: [Synth 8-3491] module 'system_auto_rs_w_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_rs_w_0_stub.vhdl:5' bound to instance 'auto_rs_w' of component 'system_auto_rs_w_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2042]
+INFO: [Synth 8-638] synthesizing module 'system_auto_rs_w_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_rs_w_0_stub.vhdl:51]
+INFO: [Synth 8-3491] module 'system_auto_us_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_us_0_stub.vhdl:5' bound to instance 'auto_us' of component 'system_auto_us_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2085]
+INFO: [Synth 8-638] synthesizing module 'system_auto_us_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_us_0_stub.vhdl:51]
+INFO: [Synth 8-3491] module 'system_s00_regslice_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_s00_regslice_0_stub.vhdl:5' bound to instance 's00_regslice' of component 'system_s00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2128]
+INFO: [Synth 8-638] synthesizing module 'system_s00_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_s00_regslice_0_stub.vhdl:51]
 INFO: [Synth 8-256] done synthesizing module 's00_couplers_imp_T4AL1T' (3#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1797]
 INFO: [Synth 8-638] synthesizing module 's01_couplers_imp_1J3S6TC' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2253]
-INFO: [Synth 8-3491] module 'system_s01_regslice_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_s01_regslice_0_stub.vhdl:5' bound to instance 's01_regslice' of component 'system_s01_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2473]
-INFO: [Synth 8-638] synthesizing module 'system_s01_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_s01_regslice_0_stub.vhdl:83]
+INFO: [Synth 8-3491] module 'system_s01_regslice_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_s01_regslice_0_stub.vhdl:5' bound to instance 's01_regslice' of component 'system_s01_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2473]
+INFO: [Synth 8-638] synthesizing module 'system_s01_regslice_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_s01_regslice_0_stub.vhdl:83]
 INFO: [Synth 8-256] done synthesizing module 's01_couplers_imp_1J3S6TC' (4#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2253]
-INFO: [Synth 8-3491] module 'system_xbar_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_xbar_0_stub.vhdl:5' bound to instance 'xbar' of component 'system_xbar_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:3392]
-INFO: [Synth 8-638] synthesizing module 'system_xbar_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_xbar_0_stub.vhdl:89]
+INFO: [Synth 8-3491] module 'system_xbar_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_xbar_0_stub.vhdl:5' bound to instance 'xbar' of component 'system_xbar_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:3392]
+INFO: [Synth 8-638] synthesizing module 'system_xbar_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_xbar_0_stub.vhdl:89]
 INFO: [Synth 8-256] done synthesizing module 'system_axi_mem_intercon_HP0_0' (5#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:2829]
-INFO: [Synth 8-3491] module 'system_axi_quad_spi_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_quad_spi_0_0_stub.vhdl:5' bound to instance 'axi_quad_spi_0' of component 'system_axi_quad_spi_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:5997]
-INFO: [Synth 8-638] synthesizing module 'system_axi_quad_spi_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_quad_spi_0_0_stub.vhdl:44]
-INFO: [Synth 8-3491] module 'system_axi_timer_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_timer_0_0_stub.vhdl:5' bound to instance 'axi_timer_0' of component 'system_axi_timer_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6033]
-INFO: [Synth 8-638] synthesizing module 'system_axi_timer_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_timer_0_0_stub.vhdl:37]
-INFO: [Synth 8-3491] module 'system_axi_timer_1_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_timer_1_0_stub.vhdl:5' bound to instance 'axi_timer_1' of component 'system_axi_timer_1_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6062]
-INFO: [Synth 8-638] synthesizing module 'system_axi_timer_1_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axi_timer_1_0_stub.vhdl:37]
-INFO: [Synth 8-3491] module 'system_axis_subset_converter_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axis_subset_converter_0_0_stub.vhdl:5' bound to instance 'axis_subset_converter_0' of component 'system_axis_subset_converter_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6091]
-INFO: [Synth 8-638] synthesizing module 'system_axis_subset_converter_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_axis_subset_converter_0_0_stub.vhdl:22]
-INFO: [Synth 8-3491] module 'system_processing_system7_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_processing_system7_0_0_stub.vhdl:5' bound to instance 'processing_system7_0' of component 'system_processing_system7_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6105]
-INFO: [Synth 8-638] synthesizing module 'system_processing_system7_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_processing_system7_0_0_stub.vhdl:150]
+INFO: [Synth 8-3491] module 'system_axi_quad_spi_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_quad_spi_0_0_stub.vhdl:5' bound to instance 'axi_quad_spi_0' of component 'system_axi_quad_spi_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6016]
+INFO: [Synth 8-638] synthesizing module 'system_axi_quad_spi_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_quad_spi_0_0_stub.vhdl:44]
+INFO: [Synth 8-3491] module 'system_axi_timer_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_timer_0_0_stub.vhdl:5' bound to instance 'axi_timer_0' of component 'system_axi_timer_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6052]
+INFO: [Synth 8-638] synthesizing module 'system_axi_timer_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_timer_0_0_stub.vhdl:37]
+INFO: [Synth 8-3491] module 'system_axi_timer_1_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_timer_1_0_stub.vhdl:5' bound to instance 'axi_timer_1' of component 'system_axi_timer_1_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6081]
+INFO: [Synth 8-638] synthesizing module 'system_axi_timer_1_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axi_timer_1_0_stub.vhdl:37]
+INFO: [Synth 8-3491] module 'system_axis_subset_converter_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axis_subset_converter_0_0_stub.vhdl:5' bound to instance 'axis_subset_converter_0' of component 'system_axis_subset_converter_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6110]
+INFO: [Synth 8-638] synthesizing module 'system_axis_subset_converter_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_axis_subset_converter_0_0_stub.vhdl:22]
+INFO: [Synth 8-3491] module 'system_processing_system7_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_processing_system7_0_0_stub.vhdl:5' bound to instance 'processing_system7_0' of component 'system_processing_system7_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6124]
+INFO: [Synth 8-638] synthesizing module 'system_processing_system7_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_processing_system7_0_0_stub.vhdl:150]
 INFO: [Synth 8-638] synthesizing module 'system_ps7_0_axi_periph_GP0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:3709]
 INFO: [Synth 8-638] synthesizing module 'm00_couplers_imp_ALOWHI' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:55]
 INFO: [Synth 8-256] done synthesizing module 'm00_couplers_imp_ALOWHI' (6#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:55]
@@ -100,31 +100,31 @@ INFO: [Synth 8-256] done synthesizing module 'm06_couplers_imp_WN7EZ6' (12#1) [/
 INFO: [Synth 8-638] synthesizing module 'm07_couplers_imp_1OZMSXV' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1380]
 INFO: [Synth 8-256] done synthesizing module 'm07_couplers_imp_1OZMSXV' (13#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1380]
 INFO: [Synth 8-638] synthesizing module 's00_couplers_imp_4WZP47' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1504]
-INFO: [Synth 8-3491] module 'system_auto_pc_1' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_pc_1_stub.vhdl:5' bound to instance 'auto_pc' of component 'system_auto_pc_1' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1687]
-INFO: [Synth 8-638] synthesizing module 'system_auto_pc_1' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_auto_pc_1_stub.vhdl:70]
+INFO: [Synth 8-3491] module 'system_auto_pc_1' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_pc_1_stub.vhdl:5' bound to instance 'auto_pc' of component 'system_auto_pc_1' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1687]
+INFO: [Synth 8-638] synthesizing module 'system_auto_pc_1' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_auto_pc_1_stub.vhdl:70]
 INFO: [Synth 8-256] done synthesizing module 's00_couplers_imp_4WZP47' (14#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:1504]
-INFO: [Synth 8-3491] module 'system_xbar_1' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_xbar_1_stub.vhdl:5' bound to instance 'xbar' of component 'system_xbar_1' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4688]
-INFO: [Synth 8-638] synthesizing module 'system_xbar_1' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_xbar_1_stub.vhdl:51]
+INFO: [Synth 8-3491] module 'system_xbar_1' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_xbar_1_stub.vhdl:5' bound to instance 'xbar' of component 'system_xbar_1' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4688]
+INFO: [Synth 8-638] synthesizing module 'system_xbar_1' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_xbar_1_stub.vhdl:51]
 INFO: [Synth 8-256] done synthesizing module 'system_ps7_0_axi_periph_GP0_0' (15#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:3709]
-INFO: [Synth 8-3491] module 'system_rst_ps7_0_100M_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_rst_ps7_0_100M_0_stub.vhdl:5' bound to instance 'rst_ps7_0_100M' of component 'system_rst_ps7_0_100M_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6446]
-INFO: [Synth 8-638] synthesizing module 'system_rst_ps7_0_100M_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_rst_ps7_0_100M_0_stub.vhdl:21]
-INFO: [Synth 8-3491] module 'system_xadc_wiz_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_xadc_wiz_0_0_stub.vhdl:5' bound to instance 'xadc_wiz_0' of component 'system_xadc_wiz_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6459]
-INFO: [Synth 8-638] synthesizing module 'system_xadc_wiz_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-28694-ubuntu-18/realtime/system_xadc_wiz_0_0_stub.vhdl:49]
-INFO: [Synth 8-256] done synthesizing module 'system' (16#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4912]
-INFO: [Synth 8-256] done synthesizing module 'system_wrapper' (17#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:53]
+INFO: [Synth 8-3491] module 'system_rst_ps7_0_100M_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_rst_ps7_0_100M_0_stub.vhdl:5' bound to instance 'rst_ps7_0_100M' of component 'system_rst_ps7_0_100M_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6465]
+INFO: [Synth 8-638] synthesizing module 'system_rst_ps7_0_100M_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_rst_ps7_0_100M_0_stub.vhdl:21]
+INFO: [Synth 8-3491] module 'system_xadc_wiz_0_0' declared at '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_xadc_wiz_0_0_stub.vhdl:5' bound to instance 'xadc_wiz_0' of component 'system_xadc_wiz_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:6478]
+INFO: [Synth 8-638] synthesizing module 'system_xadc_wiz_0_0' [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/.Xil/Vivado-12518-ubuntu-18/realtime/system_xadc_wiz_0_0_stub.vhdl:53]
+INFO: [Synth 8-256] done synthesizing module 'system' (16#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/synth/system.vhd:4916]
+INFO: [Synth 8-256] done synthesizing module 'system_wrapper' (17#1) [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/hdl/system_wrapper.vhd:57]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:10 . Memory (MB): peak = 2197.105 ; gain = 59.789 ; free physical = 4833 ; free virtual = 14017
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2197.109 ; gain = 47.883 ; free physical = 8810 ; free virtual = 13154
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:08 ; elapsed = 00:00:10 . Memory (MB): peak = 2211.949 ; gain = 74.633 ; free physical = 4832 ; free virtual = 14016
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 2211.953 ; gain = 62.727 ; free physical = 8809 ; free virtual = 13153
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:10 . Memory (MB): peak = 2211.949 ; gain = 74.633 ; free physical = 4832 ; free virtual = 14016
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 2211.953 ; gain = 62.727 ; free physical = 8809 ; free virtual = 13153
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.05 . Memory (MB): peak = 2222.855 ; gain = 0.000 ; free physical = 4822 ; free virtual = 14006
+Netlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 2220.859 ; gain = 0.000 ; free physical = 8801 ; free virtual = 13145
 INFO: [Netlist 29-17] Analyzing 8 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -173,34 +173,29 @@ Finished Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1
 Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_auto_pc_1/system_auto_pc_1/system_auto_pc_1_in_context.xdc] for cell 'system_i/ps7_0_axi_periph_GP0/s00_couplers/auto_pc'
 Finished Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_auto_pc_1/system_auto_pc_1/system_auto_pc_1_in_context.xdc] for cell 'system_i/ps7_0_axi_periph_GP0/s00_couplers/auto_pc'
 Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc]
-WARNING: [Vivado 12-584] No ports matched 'Vaux14_v_p'. [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc:110]
-WARNING: [Vivado 12-584] No ports matched 'Vaux7_0_v_p'. [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc:111]
-WARNING: [Vivado 12-584] No ports matched 'Vaux14_0_v_n'. [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc:114]
-WARNING: [Vivado 12-584] No ports matched 'Vaux7_0_v_n'. [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc:115]
 Finished Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc]
-WARNING: [Project 1-498] One or more constraints failed evaluation while reading constraint file [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc] and the design contains unresolved black boxes. These constraints will be read post-synthesis (as long as their source constraint file is marked as used_in_implementation) and should be applied correctly then. You should review the constraints listed in the file [.Xil/system_wrapper_propImpl.xdc] and check the run log file to verify that these constraints were correctly applied.
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/longz/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/system_wrapper_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/system_wrapper_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/dont_touch.xdc]
 Finished Parsing XDC File [/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/dont_touch.xdc]
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2327.691 ; gain = 0.000 ; free physical = 4728 ; free virtual = 13913
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2325.695 ; gain = 0.000 ; free physical = 8709 ; free virtual = 13053
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 8 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 8 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2327.691 ; gain = 0.000 ; free physical = 4729 ; free virtual = 13913
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2325.695 ; gain = 0.000 ; free physical = 8709 ; free virtual = 13053
 WARNING: [Timing 38-316] Clock period '20.000' specified during out-of-context synthesis of instance 'system_i/axi_quad_spi_0' at clock pin 'ext_spi_clk' is different from the actual clock period '10.000', this can lead to different synthesis results.
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:16 ; elapsed = 00:00:21 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4805 ; free virtual = 13990
+Finished Constraint Validation : Time (s): cpu = 00:00:14 ; elapsed = 00:00:18 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8767 ; free virtual = 13111
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7z010clg400-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:16 ; elapsed = 00:00:21 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4805 ; free virtual = 13990
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:14 ; elapsed = 00:00:18 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8767 ; free virtual = 13111
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
@@ -489,10 +484,10 @@ Applied set_property DONT_TOUCH = true for system_i/axi_mem_intercon_HP0/m00_cou
 Applied set_property DONT_TOUCH = true for system_i/axi_mem_intercon_HP0/m00_couplers/auto_pc. (constraint file  auto generated constraint, line ).
 Applied set_property DONT_TOUCH = true for system_i/ps7_0_axi_periph_GP0/s00_couplers/auto_pc. (constraint file  auto generated constraint, line ).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:17 ; elapsed = 00:00:21 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4810 ; free virtual = 13994
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:15 ; elapsed = 00:00:19 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8770 ; free virtual = 13114
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:17 ; elapsed = 00:00:22 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4808 ; free virtual = 13994
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:15 ; elapsed = 00:00:19 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8784 ; free virtual = 13129
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -514,25 +509,25 @@ Finished Part Resource Summary
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:18 ; elapsed = 00:00:23 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4804 ; free virtual = 13993
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:16 ; elapsed = 00:00:20 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8780 ; free virtual = 13128
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:27 ; elapsed = 00:00:32 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4682 ; free virtual = 13871
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:24 ; elapsed = 00:00:29 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8658 ; free virtual = 13007
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:27 ; elapsed = 00:00:32 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4682 ; free virtual = 13871
+Finished Timing Optimization : Time (s): cpu = 00:00:24 ; elapsed = 00:00:29 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8658 ; free virtual = 13007
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:27 ; elapsed = 00:00:33 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4680 ; free virtual = 13869
+Finished Technology Mapping : Time (s): cpu = 00:00:24 ; elapsed = 00:00:29 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8659 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -550,37 +545,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished IO Insertion : Time (s): cpu = 00:00:27 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8659 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:27 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8659 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:27 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8660 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:27 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8660 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:28 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8660 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:28 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8660 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -636,33 +631,33 @@ Report Cell Usage:
 |18    |system_xadc_wiz_0_0_bbox              |     1|
 |19    |system_xbar_0_bbox                    |     1|
 |20    |system_xbar_1_bbox                    |     1|
-|21    |IBUF                                  |     6|
+|21    |IBUF                                  |    10|
 |22    |IOBUF                                 |     8|
 |23    |OBUF                                  |    10|
 +------+--------------------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4678 ; free virtual = 13868
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:28 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8660 ; free virtual = 13008
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:28 ; elapsed = 00:00:33 . Memory (MB): peak = 2330.660 ; gain = 74.633 ; free physical = 4737 ; free virtual = 13926
-Synthesis Optimization Complete : Time (s): cpu = 00:00:31 ; elapsed = 00:00:37 . Memory (MB): peak = 2330.660 ; gain = 193.344 ; free physical = 4737 ; free virtual = 13926
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:25 ; elapsed = 00:00:30 . Memory (MB): peak = 2328.664 ; gain = 62.727 ; free physical = 8714 ; free virtual = 13063
+Synthesis Optimization Complete : Time (s): cpu = 00:00:28 ; elapsed = 00:00:33 . Memory (MB): peak = 2328.664 ; gain = 179.438 ; free physical = 8714 ; free virtual = 13063
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 2330.660 ; gain = 0.000 ; free physical = 4810 ; free virtual = 13999
+Netlist sorting complete. Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 2328.664 ; gain = 0.000 ; free physical = 8785 ; free virtual = 13134
 INFO: [Netlist 29-17] Analyzing 8 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2330.660 ; gain = 0.000 ; free physical = 4748 ; free virtual = 13937
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2328.664 ; gain = 0.000 ; free physical = 8725 ; free virtual = 13074
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 8 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 8 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-103 Infos, 8 Warnings, 0 Critical Warnings and 0 Errors encountered.
+103 Infos, 3 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:43 ; elapsed = 00:00:47 . Memory (MB): peak = 2330.660 ; gain = 193.430 ; free physical = 4877 ; free virtual = 14066
+synth_design: Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 2328.664 ; gain = 179.523 ; free physical = 8855 ; free virtual = 13203
 WARNING: [Constraints 18-5210] No constraints selected for write.
 Resolution: This message can indicate that there are no constraints for the design, or it can indicate that the used_in flags are set such that the constraints are ignored. This later case is used when running synth_design to not write synthesis constraints to the resulting checkpoint. Instead, project constraints are read when the synthesized design is opened.
 INFO: [Common 17-1381] The checkpoint '/home/longz/sdmay23-47/petalinux/hw/hw.runs/synth_1/system_wrapper.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file system_wrapper_utilization_synth.rpt -pb system_wrapper_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Sun Apr 16 01:22:36 2023...
+INFO: [Common 17-206] Exiting Vivado at Sun Apr 16 14:53:21 2023...

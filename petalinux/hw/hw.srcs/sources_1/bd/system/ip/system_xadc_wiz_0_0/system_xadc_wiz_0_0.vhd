@@ -1,3 +1,4 @@
+ 
 
 -- file: system_xadc_wiz_0_0.vhd
 -- (c) Copyright 2009 - 2013 Xilinx, Inc. All rights reserved.
@@ -88,15 +89,19 @@ entity system_xadc_wiz_0_0 is
     m_axis_tvalid   : out std_logic;
     m_axis_tid      : out std_logic_vector(4 downto 0);
     m_axis_tready   : in  std_logic;
+    convst_in       : in  STD_LOGIC;                         -- Convert Start Input
+    vauxp7          : in  STD_LOGIC;                         -- Auxiliary Channel 7
+    vauxn7          : in  STD_LOGIC;
+    vauxp14         : in  STD_LOGIC;                         -- Auxiliary Channel 14
+    vauxn14         : in  STD_LOGIC;
     busy_out        : out  STD_LOGIC;                        -- ADC Busy signal
     channel_out     : out  STD_LOGIC_VECTOR (4 downto 0);    -- Channel Selection Outputs
     eoc_out         : out  STD_LOGIC;                        -- End of Conversion Signal
     eos_out         : out  STD_LOGIC;                        -- End of Sequence Signal
-    vccddro_alarm_out : out  STD_LOGIC;                        -- VCCDDRO-sensor alarm output
+    ot_out          : out  STD_LOGIC;                        -- Over-Temperature alarm output
     vccpint_alarm_out : out  STD_LOGIC;                        -- VCCPINT-sensor alarm output
     vccpaux_alarm_out : out  STD_LOGIC;                        -- VCCPAUX-sensor alarm output
     vccaux_alarm_out : out  STD_LOGIC;                        -- VCCAUX-sensor alarm output
-    vccint_alarm_out : out  STD_LOGIC;                        -- VCCINT-sensor alarm output
     user_temp_alarm_out : out  STD_LOGIC;                        -- Temperature-sensor alarm output
     alarm_out       : out STD_LOGIC;                         -- OR'ed output of all the Alarms
     vp_in           : in  STD_LOGIC;                         -- Dedicated Analog Input Pair
@@ -107,7 +112,7 @@ end system_xadc_wiz_0_0;
 architecture xilinx of system_xadc_wiz_0_0 is
 
   attribute CORE_GENERATION_INFO : string;
-  attribute CORE_GENERATION_INFO of xilinx : architecture is "system_xadc_wiz_0_0,xadc_wiz_v3_3_8,{component_name=system_xadc_wiz_0_0,enable_axi=true,enable_axi4stream=true,dclk_frequency=104,enable_busy=true,enable_convst=false,enable_convstclk=false,enable_dclk=true,enable_drp=false,enable_eoc=true,enable_eos=true,enable_vbram_alaram=false,enable_vccddro_alaram=true,enable_Vccint_Alaram=true,enable_Vccaux_alaram=trueenable_vccpaux_alaram=true,enable_vccpint_alaram=true,ot_alaram=false,user_temp_alaram=true,timing_mode=continuous,channel_averaging=None,sequencer_mode=off,startup_channel_selection=single_channel}";
+  attribute CORE_GENERATION_INFO of xilinx : architecture is "system_xadc_wiz_0_0,xadc_wiz_v3_3_8,{component_name=system_xadc_wiz_0_0,enable_axi=true,enable_axi4stream=true,dclk_frequency=100,enable_busy=true,enable_convst=true,enable_convstclk=false,enable_dclk=true,enable_drp=false,enable_eoc=true,enable_eos=true,enable_vbram_alaram=false,enable_vccddro_alaram=false,enable_Vccint_Alaram=false,enable_Vccaux_alaram=trueenable_vccpaux_alaram=true,enable_vccpint_alaram=true,ot_alaram=true,user_temp_alaram=true,timing_mode=event_driven,channel_averaging=None,sequencer_mode=on,startup_channel_selection=contineous_sequence}";
 
 
   component system_xadc_wiz_0_0_axi_xadc 
@@ -166,10 +171,16 @@ architecture xilinx of system_xadc_wiz_0_0 is
    -- XADC External interface signals
 
     -- Conversion start control signal for Event driven mode
+    convst_in       : in  STD_LOGIC;                         -- Convert Start Input
+    vauxp7          : in  STD_LOGIC;                         -- Auxiliary Channel 7
+    vauxn7          : in  STD_LOGIC;
+    vauxp14         : in  STD_LOGIC;                         -- Auxiliary Channel 14
+    vauxn14         : in  STD_LOGIC;
     busy_out        : out  STD_LOGIC;                        -- ADC Busy signal
     channel_out     : out  STD_LOGIC_VECTOR (4 downto 0);    -- Channel Selection Outputs
     eoc_out         : out  STD_LOGIC;                        -- End of Conversion Signal
     eos_out         : out  STD_LOGIC;                        -- End of Sequence Signal
+    ot_out          : out  STD_LOGIC;                        -- Over-Temperature alarm output
     alarm_out       : out STD_LOGIC_VECTOR(7 downto 0);
     vp_in           : in  STD_LOGIC;                         -- Dedicated Analog Input Pair
     vn_in           : in  STD_LOGIC
@@ -181,11 +192,9 @@ architecture xilinx of system_xadc_wiz_0_0 is
 begin
 
        alarm_out <= alm_int(7);
-       vccddro_alarm_out <= alm_int(6);
        vccpaux_alarm_out <= alm_int(5);
        vccpint_alarm_out <= alm_int(4);
        vccaux_alarm_out <= alm_int(2);
-       vccint_alarm_out <= alm_int(1);
        user_temp_alarm_out <= alm_int(0);
 
    U0 : system_xadc_wiz_0_0_axi_xadc 
@@ -225,10 +234,16 @@ begin
     m_axis_tvalid   => m_axis_tvalid,
     m_axis_tid      => m_axis_tid,
     m_axis_tready   => m_axis_tready,
+    convst_in => convst_in, 
+    vauxp7 => vauxp7,
+    vauxn7 => vauxn7,
+    vauxp14 => vauxp14,
+    vauxn14 => vauxn14,
     busy_out => busy_out,
     channel_out => channel_out,
     eoc_out => eoc_out,
     eos_out => eos_out,
+    ot_out => ot_out,
     alarm_out  => alm_int,
     vp_in => vp_in,
     vn_in => vn_in

@@ -1,7 +1,7 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
 --Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
---Date        : Sun Apr 16 01:18:53 2023
+--Date        : Sun Apr 16 14:51:00 2023
 --Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 --Command     : generate_target system.bd
 --Design      : system
@@ -4875,6 +4875,10 @@ entity system is
     FIXED_IO_ps_clk : inout STD_LOGIC;
     FIXED_IO_ps_porb : inout STD_LOGIC;
     FIXED_IO_ps_srstb : inout STD_LOGIC;
+    Vaux14_0_v_n : in STD_LOGIC;
+    Vaux14_0_v_p : in STD_LOGIC;
+    Vaux7_0_v_n : in STD_LOGIC;
+    Vaux7_0_v_p : in STD_LOGIC;
     Vp_Vn_0_v_n : in STD_LOGIC;
     Vp_Vn_0_v_p : in STD_LOGIC;
     btns_4bits : in STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -4938,9 +4942,9 @@ architecture STRUCTURE of system is
   end component system_axi_gpio_eth_0;
   component system_processing_system7_0_0 is
   port (
-    GPIO_I : in STD_LOGIC_VECTOR ( 63 downto 0 );
-    GPIO_O : out STD_LOGIC_VECTOR ( 63 downto 0 );
-    GPIO_T : out STD_LOGIC_VECTOR ( 63 downto 0 );
+    GPIO_I : in STD_LOGIC_VECTOR ( 0 to 0 );
+    GPIO_O : out STD_LOGIC_VECTOR ( 0 to 0 );
+    GPIO_T : out STD_LOGIC_VECTOR ( 0 to 0 );
     I2C1_SDA_I : in STD_LOGIC;
     I2C1_SDA_O : out STD_LOGIC;
     I2C1_SDA_T : out STD_LOGIC;
@@ -5120,14 +5124,18 @@ architecture STRUCTURE of system is
     s_axi_rvalid : out STD_LOGIC;
     s_axi_rready : in STD_LOGIC;
     ip2intc_irpt : out STD_LOGIC;
+    convst_in : in STD_LOGIC;
     vp_in : in STD_LOGIC;
     vn_in : in STD_LOGIC;
+    vauxp7 : in STD_LOGIC;
+    vauxn7 : in STD_LOGIC;
+    vauxp14 : in STD_LOGIC;
+    vauxn14 : in STD_LOGIC;
     user_temp_alarm_out : out STD_LOGIC;
-    vccint_alarm_out : out STD_LOGIC;
     vccaux_alarm_out : out STD_LOGIC;
     vccpint_alarm_out : out STD_LOGIC;
     vccpaux_alarm_out : out STD_LOGIC;
-    vccddro_alarm_out : out STD_LOGIC;
+    ot_out : out STD_LOGIC;
     channel_out : out STD_LOGIC_VECTOR ( 4 downto 0 );
     eoc_out : out STD_LOGIC;
     alarm_out : out STD_LOGIC;
@@ -5349,6 +5357,10 @@ architecture STRUCTURE of system is
     gpo : out STD_LOGIC_VECTOR ( 0 to 0 )
   );
   end component system_axi_iic_0_0;
+  signal Vaux14_0_1_V_N : STD_LOGIC;
+  signal Vaux14_0_1_V_P : STD_LOGIC;
+  signal Vaux7_0_1_V_N : STD_LOGIC;
+  signal Vaux7_0_1_V_P : STD_LOGIC;
   signal Vp_Vn_0_1_V_N : STD_LOGIC;
   signal Vp_Vn_0_1_V_P : STD_LOGIC;
   signal axi_dma_0_M_AXI_S2MM_AWADDR : STD_LOGIC_VECTOR ( 31 downto 0 );
@@ -5428,6 +5440,7 @@ architecture STRUCTURE of system is
   signal axi_quad_spi_0_SPI_0_SS_I : STD_LOGIC_VECTOR ( 1 downto 0 );
   signal axi_quad_spi_0_SPI_0_SS_O : STD_LOGIC_VECTOR ( 1 downto 0 );
   signal axi_quad_spi_0_SPI_0_SS_T : STD_LOGIC;
+  signal axi_timer_0_interrupt : STD_LOGIC;
   signal axi_timer_1_pwm0 : STD_LOGIC;
   signal axis_subset_converter_0_M_AXIS_TDATA : STD_LOGIC_VECTOR ( 15 downto 0 );
   signal axis_subset_converter_0_M_AXIS_TLAST : STD_LOGIC;
@@ -5457,6 +5470,7 @@ architecture STRUCTURE of system is
   signal processing_system7_0_FIXED_IO_PS_CLK : STD_LOGIC;
   signal processing_system7_0_FIXED_IO_PS_PORB : STD_LOGIC;
   signal processing_system7_0_FIXED_IO_PS_SRSTB : STD_LOGIC;
+  signal processing_system7_0_GPIO_O : STD_LOGIC_VECTOR ( 0 to 0 );
   signal processing_system7_0_M_AXI_GP0_ARADDR : STD_LOGIC_VECTOR ( 31 downto 0 );
   signal processing_system7_0_M_AXI_GP0_ARBURST : STD_LOGIC_VECTOR ( 1 downto 0 );
   signal processing_system7_0_M_AXI_GP0_ARCACHE : STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -5652,7 +5666,6 @@ architecture STRUCTURE of system is
   signal NLW_axi_quad_spi_0_ip2intc_irpt_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_timer_0_generateout0_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_timer_0_generateout1_UNCONNECTED : STD_LOGIC;
-  signal NLW_axi_timer_0_interrupt_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_timer_0_pwm0_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_timer_1_generateout0_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_timer_1_generateout1_UNCONNECTED : STD_LOGIC;
@@ -5672,8 +5685,7 @@ architecture STRUCTURE of system is
   signal NLW_processing_system7_0_USB0_VBUS_PWRSELECT_UNCONNECTED : STD_LOGIC;
   signal NLW_processing_system7_0_DMA0_DATYPE_UNCONNECTED : STD_LOGIC_VECTOR ( 1 downto 0 );
   signal NLW_processing_system7_0_DMA1_DATYPE_UNCONNECTED : STD_LOGIC_VECTOR ( 1 downto 0 );
-  signal NLW_processing_system7_0_GPIO_O_UNCONNECTED : STD_LOGIC_VECTOR ( 63 downto 0 );
-  signal NLW_processing_system7_0_GPIO_T_UNCONNECTED : STD_LOGIC_VECTOR ( 63 downto 0 );
+  signal NLW_processing_system7_0_GPIO_T_UNCONNECTED : STD_LOGIC_VECTOR ( 0 to 0 );
   signal NLW_processing_system7_0_S_AXI_HP0_RACOUNT_UNCONNECTED : STD_LOGIC_VECTOR ( 2 downto 0 );
   signal NLW_processing_system7_0_S_AXI_HP0_RCOUNT_UNCONNECTED : STD_LOGIC_VECTOR ( 7 downto 0 );
   signal NLW_processing_system7_0_S_AXI_HP0_WACOUNT_UNCONNECTED : STD_LOGIC_VECTOR ( 5 downto 0 );
@@ -5686,10 +5698,9 @@ architecture STRUCTURE of system is
   signal NLW_xadc_wiz_0_busy_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_eoc_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_eos_out_UNCONNECTED : STD_LOGIC;
+  signal NLW_xadc_wiz_0_ot_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_user_temp_alarm_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_vccaux_alarm_out_UNCONNECTED : STD_LOGIC;
-  signal NLW_xadc_wiz_0_vccddro_alarm_out_UNCONNECTED : STD_LOGIC;
-  signal NLW_xadc_wiz_0_vccint_alarm_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_vccpaux_alarm_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_vccpint_alarm_out_UNCONNECTED : STD_LOGIC;
   signal NLW_xadc_wiz_0_channel_out_UNCONNECTED : STD_LOGIC_VECTOR ( 4 downto 0 );
@@ -5710,6 +5721,10 @@ architecture STRUCTURE of system is
   attribute X_INTERFACE_INFO of FIXED_IO_ps_clk : signal is "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_CLK";
   attribute X_INTERFACE_INFO of FIXED_IO_ps_porb : signal is "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_PORB";
   attribute X_INTERFACE_INFO of FIXED_IO_ps_srstb : signal is "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_SRSTB";
+  attribute X_INTERFACE_INFO of Vaux14_0_v_n : signal is "xilinx.com:interface:diff_analog_io:1.0 Vaux14_0 V_N";
+  attribute X_INTERFACE_INFO of Vaux14_0_v_p : signal is "xilinx.com:interface:diff_analog_io:1.0 Vaux14_0 V_P";
+  attribute X_INTERFACE_INFO of Vaux7_0_v_n : signal is "xilinx.com:interface:diff_analog_io:1.0 Vaux7_0 V_N";
+  attribute X_INTERFACE_INFO of Vaux7_0_v_p : signal is "xilinx.com:interface:diff_analog_io:1.0 Vaux7_0 V_P";
   attribute X_INTERFACE_INFO of Vp_Vn_0_v_n : signal is "xilinx.com:interface:diff_analog_io:1.0 Vp_Vn_0 V_N";
   attribute X_INTERFACE_INFO of Vp_Vn_0_v_p : signal is "xilinx.com:interface:diff_analog_io:1.0 Vp_Vn_0 V_P";
   attribute X_INTERFACE_INFO of ir_sensor_scl_i : signal is "xilinx.com:interface:iic:1.0 ir_sensor SCL_I";
@@ -5743,6 +5758,10 @@ architecture STRUCTURE of system is
   attribute X_INTERFACE_INFO of spi_rtl_0_ss_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_I";
   attribute X_INTERFACE_INFO of spi_rtl_0_ss_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_O";
 begin
+  Vaux14_0_1_V_N <= Vaux14_0_v_n;
+  Vaux14_0_1_V_P <= Vaux14_0_v_p;
+  Vaux7_0_1_V_N <= Vaux7_0_v_n;
+  Vaux7_0_1_V_P <= Vaux7_0_v_p;
   Vp_Vn_0_1_V_N <= Vp_Vn_0_v_n;
   Vp_Vn_0_1_V_P <= Vp_Vn_0_v_p;
   axi_gpio_eth_GPIO_TRI_I(0) <= eth_rst_b_tri_i(0);
@@ -6034,10 +6053,10 @@ axi_timer_0: component system_axi_timer_0_0
      port map (
       capturetrig0 => '0',
       capturetrig1 => '0',
-      freeze => '0',
+      freeze => processing_system7_0_GPIO_O(0),
       generateout0 => NLW_axi_timer_0_generateout0_UNCONNECTED,
       generateout1 => NLW_axi_timer_0_generateout1_UNCONNECTED,
-      interrupt => NLW_axi_timer_0_interrupt_UNCONNECTED,
+      interrupt => axi_timer_0_interrupt,
       pwm0 => NLW_axi_timer_0_pwm0_UNCONNECTED,
       s_axi_aclk => processing_system7_0_FCLK_CLK0,
       s_axi_araddr(4 downto 0) => ps7_0_axi_periph_GP0_M05_AXI_ARADDR(4 downto 0),
@@ -6140,9 +6159,9 @@ processing_system7_0: component system_processing_system7_0_0
       DMA1_DRVALID => '0',
       FCLK_CLK0 => processing_system7_0_FCLK_CLK0,
       FCLK_RESET0_N => processing_system7_0_FCLK_RESET0_N,
-      GPIO_I(63 downto 0) => B"0000000000000000000000000000000000000000000000000000000000000000",
-      GPIO_O(63 downto 0) => NLW_processing_system7_0_GPIO_O_UNCONNECTED(63 downto 0),
-      GPIO_T(63 downto 0) => NLW_processing_system7_0_GPIO_T_UNCONNECTED(63 downto 0),
+      GPIO_I(0) => '0',
+      GPIO_O(0) => processing_system7_0_GPIO_O(0),
+      GPIO_T(0) => NLW_processing_system7_0_GPIO_T_UNCONNECTED(0),
       I2C1_SCL_I => '0',
       I2C1_SCL_O => NLW_processing_system7_0_I2C1_SCL_O_UNCONNECTED,
       I2C1_SCL_T => NLW_processing_system7_0_I2C1_SCL_T_UNCONNECTED,
@@ -6461,6 +6480,7 @@ xadc_wiz_0: component system_xadc_wiz_0_0
       alarm_out => NLW_xadc_wiz_0_alarm_out_UNCONNECTED,
       busy_out => NLW_xadc_wiz_0_busy_out_UNCONNECTED,
       channel_out(4 downto 0) => NLW_xadc_wiz_0_channel_out_UNCONNECTED(4 downto 0),
+      convst_in => axi_timer_0_interrupt,
       eoc_out => NLW_xadc_wiz_0_eoc_out_UNCONNECTED,
       eos_out => NLW_xadc_wiz_0_eos_out_UNCONNECTED,
       ip2intc_irpt => xadc_wiz_0_ip2intc_irpt,
@@ -6468,6 +6488,7 @@ xadc_wiz_0: component system_xadc_wiz_0_0
       m_axis_tid(4 downto 0) => xadc_wiz_0_M_AXIS_TID(4 downto 0),
       m_axis_tready => xadc_wiz_0_M_AXIS_TREADY,
       m_axis_tvalid => xadc_wiz_0_M_AXIS_TVALID,
+      ot_out => NLW_xadc_wiz_0_ot_out_UNCONNECTED,
       s_axi_aclk => processing_system7_0_FCLK_CLK0,
       s_axi_araddr(10 downto 0) => ps7_0_axi_periph_GP0_M01_AXI_ARADDR(10 downto 0),
       s_axi_aresetn => rst_ps7_0_100M_peripheral_aresetn(0),
@@ -6489,9 +6510,11 @@ xadc_wiz_0: component system_xadc_wiz_0_0
       s_axi_wvalid => ps7_0_axi_periph_GP0_M01_AXI_WVALID,
       s_axis_aclk => processing_system7_0_FCLK_CLK0,
       user_temp_alarm_out => NLW_xadc_wiz_0_user_temp_alarm_out_UNCONNECTED,
+      vauxn14 => Vaux14_0_1_V_N,
+      vauxn7 => Vaux7_0_1_V_N,
+      vauxp14 => Vaux14_0_1_V_P,
+      vauxp7 => Vaux7_0_1_V_P,
       vccaux_alarm_out => NLW_xadc_wiz_0_vccaux_alarm_out_UNCONNECTED,
-      vccddro_alarm_out => NLW_xadc_wiz_0_vccddro_alarm_out_UNCONNECTED,
-      vccint_alarm_out => NLW_xadc_wiz_0_vccint_alarm_out_UNCONNECTED,
       vccpaux_alarm_out => NLW_xadc_wiz_0_vccpaux_alarm_out_UNCONNECTED,
       vccpint_alarm_out => NLW_xadc_wiz_0_vccpint_alarm_out_UNCONNECTED,
       vn_in => Vp_Vn_0_1_V_N,

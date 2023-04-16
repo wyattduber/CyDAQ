@@ -1,7 +1,7 @@
 -- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
--- Date        : Sun Apr 16 01:21:20 2023
+-- Date        : Sun Apr 16 14:42:53 2023
 -- Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 -- Command     : write_vhdl -force -mode funcsim
 --               /home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.vhdl
@@ -70,9 +70,9 @@ entity system_processing_system7_0_0_processing_system7_v5_5_processing_system7 
     ENET1_MDIO_I : in STD_LOGIC;
     ENET1_EXT_INTIN : in STD_LOGIC;
     ENET1_GMII_RXD : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    GPIO_I : in STD_LOGIC_VECTOR ( 63 downto 0 );
-    GPIO_O : out STD_LOGIC_VECTOR ( 63 downto 0 );
-    GPIO_T : out STD_LOGIC_VECTOR ( 63 downto 0 );
+    GPIO_I : in STD_LOGIC_VECTOR ( 0 to 0 );
+    GPIO_O : out STD_LOGIC_VECTOR ( 0 to 0 );
+    GPIO_T : out STD_LOGIC_VECTOR ( 0 to 0 );
     I2C0_SDA_I : in STD_LOGIC;
     I2C0_SDA_O : out STD_LOGIC;
     I2C0_SDA_T : out STD_LOGIC;
@@ -709,7 +709,7 @@ entity system_processing_system7_0_0_processing_system7_v5_5_processing_system7 
   attribute C_DQ_WIDTH : integer;
   attribute C_DQ_WIDTH of system_processing_system7_0_0_processing_system7_v5_5_processing_system7 : entity is 32;
   attribute C_EMIO_GPIO_WIDTH : integer;
-  attribute C_EMIO_GPIO_WIDTH of system_processing_system7_0_0_processing_system7_v5_5_processing_system7 : entity is 64;
+  attribute C_EMIO_GPIO_WIDTH of system_processing_system7_0_0_processing_system7_v5_5_processing_system7 : entity is 1;
   attribute C_EN_EMIO_ENET0 : integer;
   attribute C_EN_EMIO_ENET0 of system_processing_system7_0_0_processing_system7_v5_5_processing_system7 : entity is 0;
   attribute C_EN_EMIO_ENET1 : integer;
@@ -901,7 +901,7 @@ architecture STRUCTURE of system_processing_system7_0_0_processing_system7_v5_5_
   signal buffered_PS_CLK : STD_LOGIC;
   signal buffered_PS_PORB : STD_LOGIC;
   signal buffered_PS_SRSTB : STD_LOGIC;
-  signal gpio_out_t_n : STD_LOGIC_VECTOR ( 63 downto 0 );
+  signal gpio_out_t_n : STD_LOGIC;
   signal NLW_PS7_i_EMIOENET0GMIITXEN_UNCONNECTED : STD_LOGIC;
   signal NLW_PS7_i_EMIOENET0GMIITXER_UNCONNECTED : STD_LOGIC;
   signal NLW_PS7_i_EMIOENET1GMIITXEN_UNCONNECTED : STD_LOGIC;
@@ -911,6 +911,8 @@ architecture STRUCTURE of system_processing_system7_0_0_processing_system7_v5_5_
   signal NLW_PS7_i_EMIOTRACECTL_UNCONNECTED : STD_LOGIC;
   signal NLW_PS7_i_EMIOENET0GMIITXD_UNCONNECTED : STD_LOGIC_VECTOR ( 7 downto 0 );
   signal NLW_PS7_i_EMIOENET1GMIITXD_UNCONNECTED : STD_LOGIC_VECTOR ( 7 downto 0 );
+  signal NLW_PS7_i_EMIOGPIOO_UNCONNECTED : STD_LOGIC_VECTOR ( 63 downto 1 );
+  signal NLW_PS7_i_EMIOGPIOTN_UNCONNECTED : STD_LOGIC_VECTOR ( 63 downto 1 );
   signal NLW_PS7_i_EMIOTRACEDATA_UNCONNECTED : STD_LOGIC_VECTOR ( 31 downto 0 );
   attribute BOX_TYPE : string;
   attribute BOX_TYPE of DDR_CAS_n_BIBUF : label is "PRIMITIVE";
@@ -1158,512 +1160,8 @@ GND: unisim.vcomponents.GND
       INIT => X"1"
     )
         port map (
-      I0 => gpio_out_t_n(0),
+      I0 => gpio_out_t_n,
       O => GPIO_T(0)
-    );
-\GPIO_T[10]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(10),
-      O => GPIO_T(10)
-    );
-\GPIO_T[11]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(11),
-      O => GPIO_T(11)
-    );
-\GPIO_T[12]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(12),
-      O => GPIO_T(12)
-    );
-\GPIO_T[13]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(13),
-      O => GPIO_T(13)
-    );
-\GPIO_T[14]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(14),
-      O => GPIO_T(14)
-    );
-\GPIO_T[15]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(15),
-      O => GPIO_T(15)
-    );
-\GPIO_T[16]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(16),
-      O => GPIO_T(16)
-    );
-\GPIO_T[17]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(17),
-      O => GPIO_T(17)
-    );
-\GPIO_T[18]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(18),
-      O => GPIO_T(18)
-    );
-\GPIO_T[19]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(19),
-      O => GPIO_T(19)
-    );
-\GPIO_T[1]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(1),
-      O => GPIO_T(1)
-    );
-\GPIO_T[20]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(20),
-      O => GPIO_T(20)
-    );
-\GPIO_T[21]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(21),
-      O => GPIO_T(21)
-    );
-\GPIO_T[22]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(22),
-      O => GPIO_T(22)
-    );
-\GPIO_T[23]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(23),
-      O => GPIO_T(23)
-    );
-\GPIO_T[24]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(24),
-      O => GPIO_T(24)
-    );
-\GPIO_T[25]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(25),
-      O => GPIO_T(25)
-    );
-\GPIO_T[26]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(26),
-      O => GPIO_T(26)
-    );
-\GPIO_T[27]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(27),
-      O => GPIO_T(27)
-    );
-\GPIO_T[28]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(28),
-      O => GPIO_T(28)
-    );
-\GPIO_T[29]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(29),
-      O => GPIO_T(29)
-    );
-\GPIO_T[2]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(2),
-      O => GPIO_T(2)
-    );
-\GPIO_T[30]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(30),
-      O => GPIO_T(30)
-    );
-\GPIO_T[31]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(31),
-      O => GPIO_T(31)
-    );
-\GPIO_T[32]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(32),
-      O => GPIO_T(32)
-    );
-\GPIO_T[33]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(33),
-      O => GPIO_T(33)
-    );
-\GPIO_T[34]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(34),
-      O => GPIO_T(34)
-    );
-\GPIO_T[35]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(35),
-      O => GPIO_T(35)
-    );
-\GPIO_T[36]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(36),
-      O => GPIO_T(36)
-    );
-\GPIO_T[37]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(37),
-      O => GPIO_T(37)
-    );
-\GPIO_T[38]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(38),
-      O => GPIO_T(38)
-    );
-\GPIO_T[39]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(39),
-      O => GPIO_T(39)
-    );
-\GPIO_T[3]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(3),
-      O => GPIO_T(3)
-    );
-\GPIO_T[40]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(40),
-      O => GPIO_T(40)
-    );
-\GPIO_T[41]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(41),
-      O => GPIO_T(41)
-    );
-\GPIO_T[42]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(42),
-      O => GPIO_T(42)
-    );
-\GPIO_T[43]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(43),
-      O => GPIO_T(43)
-    );
-\GPIO_T[44]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(44),
-      O => GPIO_T(44)
-    );
-\GPIO_T[45]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(45),
-      O => GPIO_T(45)
-    );
-\GPIO_T[46]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(46),
-      O => GPIO_T(46)
-    );
-\GPIO_T[47]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(47),
-      O => GPIO_T(47)
-    );
-\GPIO_T[48]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(48),
-      O => GPIO_T(48)
-    );
-\GPIO_T[49]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(49),
-      O => GPIO_T(49)
-    );
-\GPIO_T[4]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(4),
-      O => GPIO_T(4)
-    );
-\GPIO_T[50]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(50),
-      O => GPIO_T(50)
-    );
-\GPIO_T[51]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(51),
-      O => GPIO_T(51)
-    );
-\GPIO_T[52]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(52),
-      O => GPIO_T(52)
-    );
-\GPIO_T[53]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(53),
-      O => GPIO_T(53)
-    );
-\GPIO_T[54]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(54),
-      O => GPIO_T(54)
-    );
-\GPIO_T[55]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(55),
-      O => GPIO_T(55)
-    );
-\GPIO_T[56]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(56),
-      O => GPIO_T(56)
-    );
-\GPIO_T[57]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(57),
-      O => GPIO_T(57)
-    );
-\GPIO_T[58]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(58),
-      O => GPIO_T(58)
-    );
-\GPIO_T[59]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(59),
-      O => GPIO_T(59)
-    );
-\GPIO_T[5]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(5),
-      O => GPIO_T(5)
-    );
-\GPIO_T[60]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(60),
-      O => GPIO_T(60)
-    );
-\GPIO_T[61]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(61),
-      O => GPIO_T(61)
-    );
-\GPIO_T[62]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(62),
-      O => GPIO_T(62)
-    );
-\GPIO_T[63]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(63),
-      O => GPIO_T(63)
-    );
-\GPIO_T[6]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(6),
-      O => GPIO_T(6)
-    );
-\GPIO_T[7]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(7),
-      O => GPIO_T(7)
-    );
-\GPIO_T[8]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(8),
-      O => GPIO_T(8)
-    );
-\GPIO_T[9]_INST_0\: unisim.vcomponents.LUT1
-    generic map(
-      INIT => X"1"
-    )
-        port map (
-      I0 => gpio_out_t_n(9),
-      O => GPIO_T(9)
     );
 I2C0_SCL_T_INST_0: unisim.vcomponents.LUT1
     generic map(
@@ -1807,9 +1305,12 @@ PS7_i: unisim.vcomponents.PS7
       EMIOENET1PTPSYNCFRAMETX => ENET1_PTP_SYNC_FRAME_TX,
       EMIOENET1SOFRX => ENET1_SOF_RX,
       EMIOENET1SOFTX => ENET1_SOF_TX,
-      EMIOGPIOI(63 downto 0) => GPIO_I(63 downto 0),
-      EMIOGPIOO(63 downto 0) => GPIO_O(63 downto 0),
-      EMIOGPIOTN(63 downto 0) => gpio_out_t_n(63 downto 0),
+      EMIOGPIOI(63 downto 1) => B"000000000000000000000000000000000000000000000000000000000000000",
+      EMIOGPIOI(0) => GPIO_I(0),
+      EMIOGPIOO(63 downto 1) => NLW_PS7_i_EMIOGPIOO_UNCONNECTED(63 downto 1),
+      EMIOGPIOO(0) => GPIO_O(0),
+      EMIOGPIOTN(63 downto 1) => NLW_PS7_i_EMIOGPIOTN_UNCONNECTED(63 downto 1),
+      EMIOGPIOTN(0) => gpio_out_t_n,
       EMIOI2C0SCLI => I2C0_SCL_I,
       EMIOI2C0SCLO => I2C0_SCL_O,
       EMIOI2C0SCLTN => I2C0_SCL_T_n,
@@ -3326,9 +2827,9 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity system_processing_system7_0_0 is
   port (
-    GPIO_I : in STD_LOGIC_VECTOR ( 63 downto 0 );
-    GPIO_O : out STD_LOGIC_VECTOR ( 63 downto 0 );
-    GPIO_T : out STD_LOGIC_VECTOR ( 63 downto 0 );
+    GPIO_I : in STD_LOGIC_VECTOR ( 0 to 0 );
+    GPIO_O : out STD_LOGIC_VECTOR ( 0 to 0 );
+    GPIO_T : out STD_LOGIC_VECTOR ( 0 to 0 );
     I2C1_SDA_I : in STD_LOGIC;
     I2C1_SDA_O : out STD_LOGIC;
     I2C1_SDA_T : out STD_LOGIC;
@@ -3745,7 +3246,7 @@ architecture STRUCTURE of system_processing_system7_0_0 is
   attribute C_DQ_WIDTH : integer;
   attribute C_DQ_WIDTH of inst : label is 32;
   attribute C_EMIO_GPIO_WIDTH : integer;
-  attribute C_EMIO_GPIO_WIDTH of inst : label is 64;
+  attribute C_EMIO_GPIO_WIDTH of inst : label is 1;
   attribute C_EN_EMIO_ENET0 : integer;
   attribute C_EN_EMIO_ENET0 of inst : label is 0;
   attribute C_EN_EMIO_ENET1 : integer;
@@ -4161,9 +3662,9 @@ inst: entity work.system_processing_system7_0_0_processing_system7_v5_5_processi
       FTMT_P2F_TRIG_1 => NLW_inst_FTMT_P2F_TRIG_1_UNCONNECTED,
       FTMT_P2F_TRIG_2 => NLW_inst_FTMT_P2F_TRIG_2_UNCONNECTED,
       FTMT_P2F_TRIG_3 => NLW_inst_FTMT_P2F_TRIG_3_UNCONNECTED,
-      GPIO_I(63 downto 0) => GPIO_I(63 downto 0),
-      GPIO_O(63 downto 0) => GPIO_O(63 downto 0),
-      GPIO_T(63 downto 0) => GPIO_T(63 downto 0),
+      GPIO_I(0) => GPIO_I(0),
+      GPIO_O(0) => GPIO_O(0),
+      GPIO_T(0) => GPIO_T(0),
       I2C0_SCL_I => '0',
       I2C0_SCL_O => NLW_inst_I2C0_SCL_O_UNCONNECTED,
       I2C0_SCL_T => NLW_inst_I2C0_SCL_T_UNCONNECTED,

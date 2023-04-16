@@ -223,7 +223,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		} else if (cmd == FETCH_SAMPLES) {
 			//acknowledge command before returning samples
 			xil_printf("%cACK%c", COMM_START_CHAR, COMM_STOP_CHAR);
-
+			xil_printf("activeAdc: %d", ADC_XADC);
 			switch (activeAdc) {
 			case ADC_XADC:
 				xadcProcessSamples();

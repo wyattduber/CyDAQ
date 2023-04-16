@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
-| Date             : Sun Apr 16 01:25:57 2023
+| Date             : Sun Apr 16 14:56:00 2023
 | Host             : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 | Command          : report_power -file system_wrapper_power_routed.rpt -pb system_wrapper_power_summary_routed.pb -rpx system_wrapper_power_routed.rpx
 | Design           : system_wrapper
@@ -33,7 +33,7 @@ Table of Contents
 | Total On-Chip Power (W)  | 1.563        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 1.442        |
+| Dynamic (W)              | 1.441        |
 | Device Static (W)        | 0.121        |
 | Effective TJA (C/W)      | 11.5         |
 | Max Ambient (C)          | 67.0         |
@@ -53,17 +53,17 @@ Table of Contents
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
 | Clocks                   |     0.021 |        3 |       --- |             --- |
-| Slice Logic              |     0.006 |    11250 |       --- |             --- |
-|   LUT as Logic           |     0.006 |     3850 |     17600 |           21.88 |
+| Slice Logic              |     0.006 |    11260 |       --- |             --- |
+|   LUT as Logic           |     0.005 |     3873 |     17600 |           22.01 |
 |   CARRY4                 |    <0.001 |      185 |      4400 |            4.20 |
-|   Register               |    <0.001 |     5174 |     35200 |           14.70 |
+|   Register               |    <0.001 |     5177 |     35200 |           14.71 |
 |   LUT as Distributed RAM |    <0.001 |       38 |      6000 |            0.63 |
 |   LUT as Shift Register  |    <0.001 |      162 |      6000 |            2.70 |
 |   F7/F8 Muxes            |    <0.001 |       12 |     17600 |            0.07 |
 |   Others                 |     0.000 |      641 |       --- |             --- |
-| Signals                  |     0.008 |     7655 |       --- |             --- |
+| Signals                  |     0.007 |     7669 |       --- |             --- |
 | Block RAM                |    <0.001 |        3 |        60 |            5.00 |
-| I/O                      |    <0.001 |       22 |       100 |           22.00 |
+| I/O                      |    <0.001 |       26 |       100 |           26.00 |
 | XADC                     |     0.002 |        1 |       --- |             --- |
 | PS7                      |     1.404 |        1 |       --- |             --- |
 | Static Power             |     0.121 |          |           |                 |
@@ -153,7 +153,7 @@ Table of Contents
 +--------------------------+-----------+
 | Name                     | Power (W) |
 +--------------------------+-----------+
-| system_wrapper           |     1.442 |
+| system_wrapper           |     1.441 |
 |   system_i               |     1.441 |
 |     axi_dma_0            |     0.006 |
 |       U0                 |     0.006 |
@@ -169,9 +169,9 @@ Table of Contents
 |       U0                 |     0.003 |
 |     axi_timer_1          |     0.003 |
 |       U0                 |     0.003 |
-|     processing_system7_0 |     1.405 |
-|       inst               |     1.405 |
-|     ps7_0_axi_periph_GP0 |     0.006 |
+|     processing_system7_0 |     1.406 |
+|       inst               |     1.406 |
+|     ps7_0_axi_periph_GP0 |     0.005 |
 |       s00_couplers       |     0.004 |
 |       xbar               |     0.001 |
 |     xadc_wiz_0           |     0.004 |

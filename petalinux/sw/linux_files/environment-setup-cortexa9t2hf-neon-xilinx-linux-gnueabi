@@ -11,14 +11,14 @@ if [ ! -z "$LD_LIBRARY_PATH" ]; then
     echo "  http://xahlee.info/UnixResource_dir/_/ldpath.html"
     return 1
 fi
-export SDKTARGETSYSROOT=/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/cortexa9t2hf-neon-xilinx-linux-gnueabi
-export PATH=/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin:/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/sbin:/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/bin:/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/sbin:/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin/../x86_64-petalinux-linux/bin:/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin/arm-xilinx-linux-gnueabi:/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin/arm-xilinx-linux-musl:$PATH
+export SDKTARGETSYSROOT=/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/cortexa9t2hf-neon-xilinx-linux-gnueabi
+export PATH=/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin:/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/sbin:/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/bin:/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/sbin:/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin/../x86_64-petalinux-linux/bin:/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin/arm-xilinx-linux-gnueabi:/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/bin/arm-xilinx-linux-musl:$PATH
 export PKG_CONFIG_SYSROOT_DIR=$SDKTARGETSYSROOT
 export PKG_CONFIG_PATH=$SDKTARGETSYSROOT/usr/lib/pkgconfig:$SDKTARGETSYSROOT/usr/share/pkgconfig
-export CONFIG_SITE=/home/corbin/sdmay23-47/petalinux/sw/linux_files/site-config-cortexa9t2hf-neon-xilinx-linux-gnueabi
-export OECORE_NATIVE_SYSROOT="/home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux"
+export CONFIG_SITE=/home/longz/sdmay23-47/petalinux/sw/linux_files/site-config-cortexa9t2hf-neon-xilinx-linux-gnueabi
+export OECORE_NATIVE_SYSROOT="/home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux"
 export OECORE_TARGET_SYSROOT="$SDKTARGETSYSROOT"
-export OECORE_ACLOCAL_OPTS="-I /home/corbin/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/share/aclocal"
+export OECORE_ACLOCAL_OPTS="-I /home/longz/sdmay23-47/petalinux/sw/linux_files/sysroots/x86_64-petalinux-linux/usr/share/aclocal"
 export OECORE_BASELIB="lib"
 export OECORE_TARGET_ARCH="arm"
 export OECORE_TARGET_OS="linux-gnueabi"

@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------
 | Tool Version              : Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
-| Date                      : Sun Apr 16 01:25:02 2023
+| Date                      : Sun Apr 16 14:55:10 2023
 | Host                      : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 | Command                   : report_io -file system_wrapper_io_placed.rpt
 | Design                    : system_wrapper
@@ -25,7 +25,7 @@ Table of Contents
 +---------------+
 | Total User IO |
 +---------------+
-|           154 |
+|           158 |
 +---------------+
 
 
@@ -248,8 +248,8 @@ Table of Contents
 | L11        |                     |            | VCCAUX                  | VCCAUX        |                    |         |            |      |                     |                      |    1.80 |            |           |          |      |                  |              |                   |              |
 | L12        |                     |            | GND                     | GND           |                    |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
 | L13        |                     |            | VCCINT                  | VCCINT        |                    |         |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
-| L14        |                     | High Range | IO_L22P_T3_AD7P_35      | User IO       |                    |      35 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
-| L15        |                     | High Range | IO_L22N_T3_AD7N_35      | User IO       |                    |      35 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
+| L14        | Vaux7_0_v_p         | High Range | IO_L22P_T3_AD7P_35      | INPUT         | LVCMOS33           |      35 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
+| L15        | Vaux7_0_v_n         | High Range | IO_L22N_T3_AD7N_35      | INPUT         | LVCMOS33           |      35 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
 | L16        |                     | High Range | IO_L11P_T1_SRCC_35      | User IO       |                    |      35 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | L17        |                     | High Range | IO_L11N_T1_SRCC_35      | User IO       |                    |      35 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | L18        |                     |            | GND                     | GND           |                    |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
@@ -289,8 +289,8 @@ Table of Contents
 | N12        |                     |            | GND                     | GND           |                    |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
 | N13        |                     |            | VCCINT                  | VCCINT        |                    |         |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | N14        |                     |            | GND                     | GND           |                    |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
-| N15        |                     | High Range | IO_L21P_T3_DQS_AD14P_35 | User IO       |                    |      35 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
-| N16        |                     | High Range | IO_L21N_T3_DQS_AD14N_35 | User IO       |                    |      35 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
+| N15        | Vaux14_0_v_p        | High Range | IO_L21P_T3_DQS_AD14P_35 | INPUT         | LVCMOS33           |      35 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
+| N16        | Vaux14_0_v_n        | High Range | IO_L21N_T3_DQS_AD14N_35 | INPUT         | LVCMOS33           |      35 |            |      |                     |                 NONE |         | FIXED      |           |          |      | NONE             |              |                   |              |
 | N17        |                     | High Range | IO_L23P_T3_34           | User IO       |                    |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | N18        |                     | High Range | IO_L13P_T2_MRCC_34      | User IO       |                    |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | N19        |                     | High Range | VCCO_34                 | VCCO          |                    |      34 |            |      |                     |                      |    3.30 |            |           |          |      |                  |              |                   |              |

@@ -196,9 +196,9 @@ PS_SRSTB,
 PS_CLK, 
 PS_PORB 
 );
-input [63 : 0] GPIO_I;
-output [63 : 0] GPIO_O;
-output [63 : 0] GPIO_T;
+input [0 : 0] GPIO_I;
+output [0 : 0] GPIO_O;
+output [0 : 0] GPIO_T;
 input I2C1_SDA_I;
 output I2C1_SDA_O;
 output I2C1_SDA_T;
