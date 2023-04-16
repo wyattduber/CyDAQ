@@ -179,7 +179,7 @@ public:
   sc_core::sc_in< sc_dt::sc_bv<6> > S_AXI_HP0_WID;
   sc_core::sc_in< sc_dt::sc_bv<64> > S_AXI_HP0_WDATA;
   sc_core::sc_in< sc_dt::sc_bv<8> > S_AXI_HP0_WSTRB;
-  sc_core::sc_in< sc_dt::sc_bv<6> > IRQ_F2P;
+  sc_core::sc_in< bool > Core1_nIRQ;
   sc_core::sc_out< sc_dt::sc_bv<2> > DMA0_DATYPE;
   sc_core::sc_out< bool > DMA0_DAVALID;
   sc_core::sc_out< bool > DMA0_DRREADY;
@@ -370,7 +370,7 @@ public:
   sc_core::sc_in< sc_dt::sc_bv<6> > S_AXI_HP0_WID;
   sc_core::sc_in< sc_dt::sc_bv<64> > S_AXI_HP0_WDATA;
   sc_core::sc_in< sc_dt::sc_bv<8> > S_AXI_HP0_WSTRB;
-  sc_core::sc_in< sc_dt::sc_bv<6> > IRQ_F2P;
+  sc_core::sc_in< bool > Core1_nIRQ;
   sc_core::sc_out< sc_dt::sc_bv<2> > DMA0_DATYPE;
   sc_core::sc_out< bool > DMA0_DAVALID;
   sc_core::sc_out< bool > DMA0_DRREADY;
@@ -561,7 +561,7 @@ public:
   sc_core::sc_in< sc_dt::sc_bv<6> > S_AXI_HP0_WID;
   sc_core::sc_in< sc_dt::sc_bv<64> > S_AXI_HP0_WDATA;
   sc_core::sc_in< sc_dt::sc_bv<8> > S_AXI_HP0_WSTRB;
-  sc_core::sc_in< sc_dt::sc_bv<6> > IRQ_F2P;
+  sc_core::sc_in< bool > Core1_nIRQ;
   sc_core::sc_out< sc_dt::sc_bv<2> > DMA0_DATYPE;
   sc_core::sc_out< bool > DMA0_DAVALID;
   sc_core::sc_out< bool > DMA0_DRREADY;
@@ -760,7 +760,7 @@ public:
   sc_core::sc_in< sc_dt::sc_bv<6> > S_AXI_HP0_WID;
   sc_core::sc_in< sc_dt::sc_bv<64> > S_AXI_HP0_WDATA;
   sc_core::sc_in< sc_dt::sc_bv<8> > S_AXI_HP0_WSTRB;
-  sc_core::sc_in< sc_dt::sc_bv<6> > IRQ_F2P;
+  sc_core::sc_in< bool > Core1_nIRQ;
   sc_core::sc_out< sc_dt::sc_bv<2> > DMA0_DATYPE;
   sc_core::sc_out< bool > DMA0_DAVALID;
   sc_core::sc_out< bool > DMA0_DRREADY;
@@ -971,7 +971,7 @@ public:
   sc_core::sc_in< sc_dt::sc_bv<6> > S_AXI_HP0_WID;
   sc_core::sc_in< sc_dt::sc_bv<64> > S_AXI_HP0_WDATA;
   sc_core::sc_in< sc_dt::sc_bv<8> > S_AXI_HP0_WSTRB;
-  sc_core::sc_in< sc_dt::sc_bv<6> > IRQ_F2P;
+  sc_core::sc_in< bool > Core1_nIRQ;
   sc_core::sc_out< sc_dt::sc_bv<2> > DMA0_DATYPE;
   sc_core::sc_out< bool > DMA0_DAVALID;
   sc_core::sc_out< bool > DMA0_DRREADY;

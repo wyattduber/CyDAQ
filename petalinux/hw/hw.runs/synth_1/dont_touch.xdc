@@ -30,9 +30,6 @@ set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==system_rst_ps7_
 # IP: bd/system/ip/system_xadc_wiz_0_0/system_xadc_wiz_0_0.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==system_xadc_wiz_0_0 || ORIG_REF_NAME==system_xadc_wiz_0_0} -quiet] -quiet
 
-# IP: bd/system/ip/system_xlconcat_0_0/system_xlconcat_0_0.xci
-set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==system_xlconcat_0_0 || ORIG_REF_NAME==system_xlconcat_0_0} -quiet] -quiet
-
 # IP: bd/system/ip/system_axis_subset_converter_0_0/system_axis_subset_converter_0_0.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==system_axis_subset_converter_0_0 || ORIG_REF_NAME==system_axis_subset_converter_0_0} -quiet] -quiet
 

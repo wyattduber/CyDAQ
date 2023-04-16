@@ -155,7 +155,7 @@ S_AXI_HP0_AWID,
 S_AXI_HP0_WID, 
 S_AXI_HP0_WDATA, 
 S_AXI_HP0_WSTRB, 
-IRQ_F2P, 
+Core1_nIRQ, 
 DMA0_DATYPE, 
 DMA0_DAVALID, 
 DMA0_DRREADY, 
@@ -295,7 +295,7 @@ input [5 : 0] S_AXI_HP0_AWID;
 input [5 : 0] S_AXI_HP0_WID;
 input [63 : 0] S_AXI_HP0_WDATA;
 input [7 : 0] S_AXI_HP0_WSTRB;
-input [5 : 0] IRQ_F2P;
+input Core1_nIRQ;
 output [1 : 0] DMA0_DATYPE;
 output DMA0_DAVALID;
 output DMA0_DRREADY;
@@ -724,7 +724,7 @@ input PS_PORB;
     .FCLK_RESET1_N(),
     .FCLK_RESET2_N(),
     .FCLK_RESET3_N(),
-    .IRQ_F2P(IRQ_F2P),
+    .IRQ_F2P(16'B0),
     .PS_SRSTB(PS_SRSTB),
     .PS_CLK(PS_CLK),
     .PS_PORB(PS_PORB)

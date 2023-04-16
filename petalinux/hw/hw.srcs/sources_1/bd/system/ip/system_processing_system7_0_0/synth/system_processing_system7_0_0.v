@@ -157,7 +157,7 @@ module system_processing_system7_0_0 (
   S_AXI_HP0_WID,
   S_AXI_HP0_WDATA,
   S_AXI_HP0_WSTRB,
-  IRQ_F2P,
+  Core1_nIRQ,
   DMA0_DATYPE,
   DMA0_DAVALID,
   DMA0_DRREADY,
@@ -400,9 +400,9 @@ input wire [63 : 0] S_AXI_HP0_WDATA;
  1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S_AXI_HP0 WSTRB" *)
 input wire [7 : 0] S_AXI_HP0_WSTRB;
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME IRQ_F2P, SENSITIVITY LEVEL_HIGH:NULL:NULL:NULL:NULL:NULL, PortWidth 6" *)
-(* X_INTERFACE_INFO = "xilinx.com:signal:interrupt:1.0 IRQ_F2P INTERRUPT" *)
-input wire [5 : 0] IRQ_F2P;
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME Core1_nIRQ, SENSITIVITY LEVEL_HIGH, PortWidth 1" *)
+(* X_INTERFACE_INFO = "xilinx.com:signal:interrupt:1.0 Core1_nIRQ INTERRUPT" *)
+input wire Core1_nIRQ;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 DMA0_ACK TUSER" *)
 output wire [1 : 0] DMA0_DATYPE;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 DMA0_ACK TVALID" *)
@@ -1124,11 +1124,11 @@ inout wire PS_PORB;
     .IRQ_P2F_SPI1(),
     .IRQ_P2F_UART1(),
     .IRQ_P2F_CAN1(),
-    .IRQ_F2P(IRQ_F2P),
+    .IRQ_F2P(6'B0),
     .Core0_nFIQ(1'B0),
     .Core0_nIRQ(1'B0),
     .Core1_nFIQ(1'B0),
-    .Core1_nIRQ(1'B0),
+    .Core1_nIRQ(Core1_nIRQ),
     .DMA0_DATYPE(DMA0_DATYPE),
     .DMA0_DAVALID(DMA0_DAVALID),
     .DMA0_DRREADY(DMA0_DRREADY),

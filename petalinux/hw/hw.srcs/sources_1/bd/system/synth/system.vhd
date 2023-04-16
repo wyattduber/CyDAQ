@@ -1,8 +1,8 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
 --Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
---Date        : Wed Apr 12 23:17:23 2023
---Host        : Ubuntu-18-04 running 64-bit Ubuntu 18.04.6 LTS
+--Date        : Sun Apr 16 01:18:53 2023
+--Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 --Command     : generate_target system.bd
 --Design      : system
 --Purpose     : IP block netlist
@@ -4904,7 +4904,7 @@ entity system is
     spi_rtl_0_ss_t : out STD_LOGIC
   );
   attribute CORE_GENERATION_INFO : string;
-  attribute CORE_GENERATION_INFO of system : entity is "system,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=system,x_ipVersion=1.00.a,x_ipLanguage=VHDL,numBlks=35,numReposBlks=21,numNonXlnxBlks=0,numHierBlks=14,maxHierDepth=0,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=0,numPkgbdBlks=0,bdsource=USER,da_axi4_cnt=8,da_clkrst_cnt=3,synth_mode=OOC_per_IP}";
+  attribute CORE_GENERATION_INFO of system : entity is "system,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=system,x_ipVersion=1.00.a,x_ipLanguage=VHDL,numBlks=34,numReposBlks=20,numNonXlnxBlks=0,numHierBlks=14,maxHierDepth=0,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=0,numPkgbdBlks=0,bdsource=USER,da_axi4_cnt=8,da_clkrst_cnt=3,synth_mode=OOC_per_IP}";
   attribute HW_HANDOFF : string;
   attribute HW_HANDOFF of system : entity is "system.hwdef";
 end system;
@@ -5037,7 +5037,7 @@ architecture STRUCTURE of system is
     S_AXI_HP0_WID : in STD_LOGIC_VECTOR ( 5 downto 0 );
     S_AXI_HP0_WDATA : in STD_LOGIC_VECTOR ( 63 downto 0 );
     S_AXI_HP0_WSTRB : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    IRQ_F2P : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    Core1_nIRQ : in STD_LOGIC;
     DMA0_DATYPE : out STD_LOGIC_VECTOR ( 1 downto 0 );
     DMA0_DAVALID : out STD_LOGIC;
     DMA0_DRREADY : out STD_LOGIC;
@@ -5135,17 +5135,6 @@ architecture STRUCTURE of system is
     busy_out : out STD_LOGIC
   );
   end component system_xadc_wiz_0_0;
-  component system_xlconcat_0_0 is
-  port (
-    In0 : in STD_LOGIC_VECTOR ( 0 to 0 );
-    In1 : in STD_LOGIC_VECTOR ( 0 to 0 );
-    In2 : in STD_LOGIC_VECTOR ( 0 to 0 );
-    In3 : in STD_LOGIC_VECTOR ( 0 to 0 );
-    In4 : in STD_LOGIC_VECTOR ( 0 to 0 );
-    In5 : in STD_LOGIC_VECTOR ( 0 to 0 );
-    dout : out STD_LOGIC_VECTOR ( 5 downto 0 )
-  );
-  end component system_xlconcat_0_0;
   component system_axis_subset_converter_0_0 is
   port (
     aclk : in STD_LOGIC;
@@ -5648,7 +5637,6 @@ architecture STRUCTURE of system is
   signal xadc_wiz_0_M_AXIS_TREADY : STD_LOGIC;
   signal xadc_wiz_0_M_AXIS_TVALID : STD_LOGIC;
   signal xadc_wiz_0_ip2intc_irpt : STD_LOGIC;
-  signal xlconcat_0_dout : STD_LOGIC_VECTOR ( 5 downto 0 );
   signal NLW_axi_dma_0_s2mm_introut_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_dma_0_s2mm_prmry_reset_out_n_UNCONNECTED : STD_LOGIC;
   signal NLW_axi_iic_0_iic2intc_irpt_UNCONNECTED : STD_LOGIC;
@@ -6116,6 +6104,7 @@ axis_subset_converter_0: component system_axis_subset_converter_0_0
     );
 processing_system7_0: component system_processing_system7_0_0
      port map (
+      Core1_nIRQ => xadc_wiz_0_ip2intc_irpt,
       DDR_Addr(14 downto 0) => DDR_addr(14 downto 0),
       DDR_BankAddr(2 downto 0) => DDR_ba(2 downto 0),
       DDR_CAS_n => DDR_cas_n,
@@ -6160,7 +6149,6 @@ processing_system7_0: component system_processing_system7_0_0
       I2C1_SDA_I => '0',
       I2C1_SDA_O => NLW_processing_system7_0_I2C1_SDA_O_UNCONNECTED,
       I2C1_SDA_T => NLW_processing_system7_0_I2C1_SDA_T_UNCONNECTED,
-      IRQ_F2P(5 downto 0) => xlconcat_0_dout(5 downto 0),
       MIO(53 downto 0) => FIXED_IO_mio(53 downto 0),
       M_AXI_GP0_ACLK => processing_system7_0_FCLK_CLK0,
       M_AXI_GP0_ARADDR(31 downto 0) => processing_system7_0_M_AXI_GP0_ARADDR(31 downto 0),
@@ -6508,15 +6496,5 @@ xadc_wiz_0: component system_xadc_wiz_0_0
       vccpint_alarm_out => NLW_xadc_wiz_0_vccpint_alarm_out_UNCONNECTED,
       vn_in => Vp_Vn_0_1_V_N,
       vp_in => Vp_Vn_0_1_V_P
-    );
-xlconcat_0: component system_xlconcat_0_0
-     port map (
-      In0(0) => '0',
-      In1(0) => '0',
-      In2(0) => '0',
-      In3(0) => '0',
-      In4(0) => '0',
-      In5(0) => xadc_wiz_0_ip2intc_irpt,
-      dout(5 downto 0) => xlconcat_0_dout(5 downto 0)
     );
 end STRUCTURE;

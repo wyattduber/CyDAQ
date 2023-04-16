@@ -20,7 +20,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='/home/corbin/sdmay23-47/petalinux/hw/hw.runs/impl_1'
+HD_PWD='/home/longz/sdmay23-47/petalinux/hw/hw.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

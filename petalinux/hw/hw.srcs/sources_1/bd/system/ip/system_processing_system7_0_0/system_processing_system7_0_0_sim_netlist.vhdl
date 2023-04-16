@@ -1,10 +1,10 @@
 -- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
--- Date        : Wed Apr 12 23:19:12 2023
--- Host        : Ubuntu-18-04 running 64-bit Ubuntu 18.04.6 LTS
+-- Date        : Sun Apr 16 01:21:20 2023
+-- Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 -- Command     : write_vhdl -force -mode funcsim
---               /home/corbin/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.vhdl
+--               /home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.vhdl
 -- Design      : system_processing_system7_0_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -3425,7 +3425,7 @@ entity system_processing_system7_0_0 is
     S_AXI_HP0_WID : in STD_LOGIC_VECTOR ( 5 downto 0 );
     S_AXI_HP0_WDATA : in STD_LOGIC_VECTOR ( 63 downto 0 );
     S_AXI_HP0_WSTRB : in STD_LOGIC_VECTOR ( 7 downto 0 );
-    IRQ_F2P : in STD_LOGIC_VECTOR ( 5 downto 0 );
+    Core1_nIRQ : in STD_LOGIC;
     DMA0_DATYPE : out STD_LOGIC_VECTOR ( 1 downto 0 );
     DMA0_DAVALID : out STD_LOGIC;
     DMA0_DRREADY : out STD_LOGIC;
@@ -3855,6 +3855,9 @@ architecture STRUCTURE of system_processing_system7_0_0 is
   attribute USE_TRACE_DATA_EDGE_DETECTOR : integer;
   attribute USE_TRACE_DATA_EDGE_DETECTOR of inst : label is 0;
   attribute X_INTERFACE_INFO : string;
+  attribute X_INTERFACE_INFO of Core1_nIRQ : signal is "xilinx.com:signal:interrupt:1.0 Core1_nIRQ INTERRUPT";
+  attribute X_INTERFACE_PARAMETER : string;
+  attribute X_INTERFACE_PARAMETER of Core1_nIRQ : signal is "XIL_INTERFACENAME Core1_nIRQ, SENSITIVITY LEVEL_HIGH, PortWidth 1";
   attribute X_INTERFACE_INFO of DDR_CAS_n : signal is "xilinx.com:interface:ddrx:1.0 DDR CAS_N";
   attribute X_INTERFACE_INFO of DDR_CKE : signal is "xilinx.com:interface:ddrx:1.0 DDR CKE";
   attribute X_INTERFACE_INFO of DDR_CS_n : signal is "xilinx.com:interface:ddrx:1.0 DDR CS_N";
@@ -3867,7 +3870,6 @@ architecture STRUCTURE of system_processing_system7_0_0 is
   attribute X_INTERFACE_INFO of DDR_VRP : signal is "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO DDR_VRP";
   attribute X_INTERFACE_INFO of DDR_WEB : signal is "xilinx.com:interface:ddrx:1.0 DDR WE_N";
   attribute X_INTERFACE_INFO of DMA0_ACLK : signal is "xilinx.com:signal:clock:1.0 DMA0_ACLK CLK";
-  attribute X_INTERFACE_PARAMETER : string;
   attribute X_INTERFACE_PARAMETER of DMA0_ACLK : signal is "XIL_INTERFACENAME DMA0_ACLK, ASSOCIATED_BUSIF DMA0_ACK:DMA0_REQ, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.000, CLK_DOMAIN system_processing_system7_0_0_FCLK_CLK0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of DMA0_DAREADY : signal is "xilinx.com:interface:axis:1.0 DMA0_ACK TREADY";
   attribute X_INTERFACE_PARAMETER of DMA0_DAREADY : signal is "XIL_INTERFACENAME DMA0_ACK, TDATA_NUM_BYTES 0, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 2, HAS_TREADY 1, HAS_TSTRB 0, HAS_TKEEP 0, HAS_TLAST 0, FREQ_HZ 100000000, PHASE 0.000, CLK_DOMAIN system_processing_system7_0_0_FCLK_CLK0, LAYERED_METADATA undef, INSERT_VIP 0";
@@ -3945,8 +3947,6 @@ architecture STRUCTURE of system_processing_system7_0_0 is
   attribute X_INTERFACE_INFO of GPIO_I : signal is "xilinx.com:interface:gpio:1.0 GPIO_0 TRI_I";
   attribute X_INTERFACE_INFO of GPIO_O : signal is "xilinx.com:interface:gpio:1.0 GPIO_0 TRI_O";
   attribute X_INTERFACE_INFO of GPIO_T : signal is "xilinx.com:interface:gpio:1.0 GPIO_0 TRI_T";
-  attribute X_INTERFACE_INFO of IRQ_F2P : signal is "xilinx.com:signal:interrupt:1.0 IRQ_F2P INTERRUPT";
-  attribute X_INTERFACE_PARAMETER of IRQ_F2P : signal is "XIL_INTERFACENAME IRQ_F2P, SENSITIVITY LEVEL_HIGH:NULL:NULL:NULL:NULL:NULL, PortWidth 6";
   attribute X_INTERFACE_INFO of MIO : signal is "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO MIO";
   attribute X_INTERFACE_INFO of M_AXI_GP0_ARADDR : signal is "xilinx.com:interface:aximm:1.0 M_AXI_GP0 ARADDR";
   attribute X_INTERFACE_INFO of M_AXI_GP0_ARBURST : signal is "xilinx.com:interface:aximm:1.0 M_AXI_GP0 ARBURST";
@@ -4017,7 +4017,7 @@ inst: entity work.system_processing_system7_0_0_processing_system7_v5_5_processi
       Core0_nFIQ => '0',
       Core0_nIRQ => '0',
       Core1_nFIQ => '0',
-      Core1_nIRQ => '0',
+      Core1_nIRQ => Core1_nIRQ,
       DDR_ARB(3 downto 0) => B"0000",
       DDR_Addr(14 downto 0) => DDR_Addr(14 downto 0),
       DDR_BankAddr(2 downto 0) => DDR_BankAddr(2 downto 0),
@@ -4176,7 +4176,7 @@ inst: entity work.system_processing_system7_0_0_processing_system7_v5_5_processi
       I2C1_SDA_I => I2C1_SDA_I,
       I2C1_SDA_O => I2C1_SDA_O,
       I2C1_SDA_T => I2C1_SDA_T,
-      IRQ_F2P(5 downto 0) => IRQ_F2P(5 downto 0),
+      IRQ_F2P(5 downto 0) => B"000000",
       IRQ_P2F_CAN0 => NLW_inst_IRQ_P2F_CAN0_UNCONNECTED,
       IRQ_P2F_CAN1 => NLW_inst_IRQ_P2F_CAN1_UNCONNECTED,
       IRQ_P2F_CTI => NLW_inst_IRQ_P2F_CTI_UNCONNECTED,

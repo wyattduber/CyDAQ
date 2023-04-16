@@ -1,10 +1,10 @@
 // Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
-// Date        : Wed Apr 12 23:19:12 2023
-// Host        : Ubuntu-18-04 running 64-bit Ubuntu 18.04.6 LTS
+// Date        : Sun Apr 16 01:21:20 2023
+// Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 // Command     : write_verilog -force -mode funcsim
-//               /home/corbin/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.v
+//               /home/longz/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.v
 // Design      : system_processing_system7_0_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -114,7 +114,7 @@ module system_processing_system7_0_0
     S_AXI_HP0_WID,
     S_AXI_HP0_WDATA,
     S_AXI_HP0_WSTRB,
-    IRQ_F2P,
+    Core1_nIRQ,
     DMA0_DATYPE,
     DMA0_DAVALID,
     DMA0_DRREADY,
@@ -253,7 +253,7 @@ module system_processing_system7_0_0
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S_AXI_HP0 WID" *) input [5:0]S_AXI_HP0_WID;
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S_AXI_HP0 WDATA" *) input [63:0]S_AXI_HP0_WDATA;
   (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 S_AXI_HP0 WSTRB" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME S_AXI_HP0, NUM_WRITE_OUTSTANDING 8, NUM_READ_OUTSTANDING 8, DATA_WIDTH 64, PROTOCOL AXI3, FREQ_HZ 100000000, ID_WIDTH 6, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 1, HAS_LOCK 1, HAS_PROT 1, HAS_CACHE 1, HAS_QOS 1, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 1, MAX_BURST_LENGTH 16, PHASE 0.000, CLK_DOMAIN system_processing_system7_0_0_FCLK_CLK0, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *) input [7:0]S_AXI_HP0_WSTRB;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:interrupt:1.0 IRQ_F2P INTERRUPT" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME IRQ_F2P, SENSITIVITY LEVEL_HIGH:NULL:NULL:NULL:NULL:NULL, PortWidth 6" *) input [5:0]IRQ_F2P;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:interrupt:1.0 Core1_nIRQ INTERRUPT" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME Core1_nIRQ, SENSITIVITY LEVEL_HIGH, PortWidth 1" *) input Core1_nIRQ;
   (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 DMA0_ACK TUSER" *) output [1:0]DMA0_DATYPE;
   (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 DMA0_ACK TVALID" *) output DMA0_DAVALID;
   (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 DMA0_REQ TREADY" *) output DMA0_DRREADY;
@@ -294,6 +294,7 @@ module system_processing_system7_0_0
   (* X_INTERFACE_INFO = "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_CLK" *) inout PS_CLK;
   (* X_INTERFACE_INFO = "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_PORB" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME FIXED_IO, CAN_DEBUG false" *) inout PS_PORB;
 
+  wire Core1_nIRQ;
   wire [14:0]DDR_Addr;
   wire [2:0]DDR_BankAddr;
   wire DDR_CAS_n;
@@ -338,7 +339,6 @@ module system_processing_system7_0_0
   wire I2C1_SDA_I;
   wire I2C1_SDA_O;
   wire I2C1_SDA_T;
-  wire [5:0]IRQ_F2P;
   wire [53:0]MIO;
   wire M_AXI_GP0_ACLK;
   wire [31:0]M_AXI_GP0_ARADDR;
@@ -761,7 +761,7 @@ module system_processing_system7_0_0
         .Core0_nFIQ(1'b0),
         .Core0_nIRQ(1'b0),
         .Core1_nFIQ(1'b0),
-        .Core1_nIRQ(1'b0),
+        .Core1_nIRQ(Core1_nIRQ),
         .DDR_ARB({1'b0,1'b0,1'b0,1'b0}),
         .DDR_Addr(DDR_Addr),
         .DDR_BankAddr(DDR_BankAddr),
@@ -920,7 +920,7 @@ module system_processing_system7_0_0
         .I2C1_SDA_I(I2C1_SDA_I),
         .I2C1_SDA_O(I2C1_SDA_O),
         .I2C1_SDA_T(I2C1_SDA_T),
-        .IRQ_F2P(IRQ_F2P),
+        .IRQ_F2P({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0}),
         .IRQ_P2F_CAN0(NLW_inst_IRQ_P2F_CAN0_UNCONNECTED),
         .IRQ_P2F_CAN1(NLW_inst_IRQ_P2F_CAN1_UNCONNECTED),
         .IRQ_P2F_CTI(NLW_inst_IRQ_P2F_CTI_UNCONNECTED),

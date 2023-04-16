@@ -1,8 +1,8 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
-| Date             : Wed Apr 12 23:22:34 2023
-| Host             : Ubuntu-18-04 running 64-bit Ubuntu 18.04.6 LTS
+| Date             : Sun Apr 16 01:25:57 2023
+| Host             : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 | Command          : report_power -file system_wrapper_power_routed.rpt -pb system_wrapper_power_summary_routed.pb -rpx system_wrapper_power_routed.rpx
 | Design           : system_wrapper
 | Device           : xc7z010clg400-1
@@ -54,7 +54,7 @@ Table of Contents
 +--------------------------+-----------+----------+-----------+-----------------+
 | Clocks                   |     0.021 |        3 |       --- |             --- |
 | Slice Logic              |     0.006 |    11250 |       --- |             --- |
-|   LUT as Logic           |     0.006 |     3855 |     17600 |           21.90 |
+|   LUT as Logic           |     0.006 |     3850 |     17600 |           21.88 |
 |   CARRY4                 |    <0.001 |      185 |      4400 |            4.20 |
 |   Register               |    <0.001 |     5174 |     35200 |           14.70 |
 |   LUT as Distributed RAM |    <0.001 |       38 |      6000 |            0.63 |
@@ -169,8 +169,8 @@ Table of Contents
 |       U0                 |     0.003 |
 |     axi_timer_1          |     0.003 |
 |       U0                 |     0.003 |
-|     processing_system7_0 |     1.406 |
-|       inst               |     1.406 |
+|     processing_system7_0 |     1.405 |
+|       inst               |     1.405 |
 |     ps7_0_axi_periph_GP0 |     0.006 |
 |       s00_couplers       |     0.004 |
 |       xbar               |     0.001 |
