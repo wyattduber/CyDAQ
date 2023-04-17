@@ -224,7 +224,7 @@ QPushButton {
       </size>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <item>
       <property name="text">
@@ -238,32 +238,12 @@ QPushButton {
      </item>
      <item>
       <property name="text">
-       <string>1.8 Volt</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Analog In</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Audio In</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Digital I2C Bus</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Digital SPI Bus</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Digital UART</string>
       </property>
      </item>
     </widget>

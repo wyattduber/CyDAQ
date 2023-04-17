@@ -5,10 +5,10 @@ import serial
 import serial.tools.list_ports
 
 # Old firmware
-# COMM_PORT_DESCRIPTION = "USB Serial Port"
+COMM_PORT_DESCRIPTION = "USB Serial Port"
 
 # New firmware
-COMM_PORT_DESCRIPTION = "USB Serial Device"
+# COMM_PORT_DESCRIPTION = "USB Serial Device"
 
 class ctrl_comm:
     """
