@@ -1,6 +1,10 @@
 /*
  *
  */
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "comm.h"
 #include "rpc.h"
 
@@ -168,10 +172,11 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			return err;
 		}
 
-		if(samplingEnabled){
-			err = true;
-			return err;
-		}
+
+//		if(samplingEnabled){
+//			err = true;
+//			return err;
+//		}
 
 		/*	---Set XADC and external ADC Sample Rates---  */
 		if (cmd == SAMPLE_RATE_SET) {
@@ -287,8 +292,91 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 			/*  ---Print Samples---  */
 		} else if (cmd == FETCH_SAMPLES) { //TODO not supported yet
+
+			//TODO just copied from stop sampling for now, make a function?
+			samplingEnabled = false;
+			switch (activeAdc) {
+			case ADC_XADC:
+				printf("COMM> disabling xadc sampling\r\n");
+				rpc_data[0] = RPC_MESSAGE_XADC_DISABLE_SAMPLING;
+				rpc_data[1] = 0; //useStreaming - not implemented
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> disabling xadc sampling failed!\r\n");
+					err = true;
+				}
+//				xadcDisableSampling();//TODO delete
+				break;
+			case ADC_SPI_EXTERNAL:
+				printf("COMM> disabling ads7047 sampling\r\n");
+				rpc_data[0] = RPC_MESSAGE_ADS_DISABLE_SAMPLING;
+				rpc_data[1] = 0; //useStreaming - not implemented
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> disabling ads7047 sampling failed!\r\n");
+					err = true;
+				}
+//				ads7047_DisableSampling();//TODO delete
+				break;
+			default:
+				printf("COMM> active adc set incorrectly\r\n");
+				err = true;
+				break;
+			}
+			/////////////////////////////
+
+			//TODO move this to seperate function
+
+			//testing
+			int fd = open("/dev/mem", O_RDWR | O_SYNC);
+			if (fd < 0) {
+				perror("COMM> open");
+				exit(1);
+			}
+
+			rpc_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
+			rpc_send_message(MSG_TYPE_REQUEST, rpc_data, 1);
+			int count = rpc_recieve_int_response();
+			printf("COMM> got last sample count: %d\r\n", count);
+
+			size_t size = sizeof(u16) * count;
+			off_t offset = 0x38800000; // starting point TODO make constant
+			printf("COMM> size of sample data to write to comm: %d\r\n", size);
+
+			u16 *ptr = (u16 *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
+			if (ptr == MAP_FAILED) {
+				perror("COMM> mmap");
+				exit(1); //TODO clean up rpc stuff before exiting or return error?
+			}
+
+			for (int i = 0; i < 100; i++) {
+				printf("%d ", ptr[i]); // print the first 100 for testing
+			}
+			printf("\n");
+
+			//send data to remote pc, starting with @ and ending with !
+			char* test1 = "@";
+			commUartSend(test1, 1);
+			commUartSend(ptr, size); //send the whole buffer over uart to the host pc. Hope they are ready for it!
+			usleep(100);
+			char* test2 = "00000000"; //had it in the old code, so included it. Can probably remove
+			commUartSend(test2, 8);
+			usleep(50000);
+			char* test3 = "!";
+			commUartSend(test3, 1);
+			printf("COMM> done\r\n");
+
+			if (munmap(ptr, size) == -1) {
+				perror("COMM> munmap");
+				exit(1); //TODO clean up rpc stuff before exiting or return error?
+			}
+
+			close(fd);
+
 			//acknowledge command before returning samples
-			respond_ack(serial_port);
+//			respond_ack(serial_port);
 
 			switch (activeAdc) {
 			case ADC_XADC:
@@ -345,6 +433,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 			/*  ---Stop Sampling---  */
 		} else if (cmd == STOP_SAMPLING) { //TODO not supported yet
+			printf("COMM> stop sampling!\r\n");
 			samplingEnabled = false;
 			switch (activeAdc) {
 			case ADC_XADC:

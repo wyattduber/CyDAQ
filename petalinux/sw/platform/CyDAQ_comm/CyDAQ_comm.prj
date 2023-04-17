@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="CyDAQ_comm" location="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_comm" platform="/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/CyDAQ_platform.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" systemProject="CyDAQ_comm_system" sysConfig="CyDAQ_platform" runtime="C/C++" cpu="linux_domain" cpuInstance="" os="linux">
+<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="CyDAQ_comm" location="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_comm" platform="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_platform/export/CyDAQ_platform/CyDAQ_platform.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" systemProject="CyDAQ_comm_system" sysConfig="CyDAQ_platform" runtime="C/C++" cpu="linux_domain" cpuInstance="cortex-a9" os="linux">
   <configuration name="Debug" id="xilinx.gnu.armv7.linux.exe.debug.1536535387">
     <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
     <lastBuildOptions xsi:type="sdkproject:SdkOptions"/>

@@ -99,6 +99,17 @@ int rpc_recieve_ack(){
 	}
 }
 
+/*
+ * Blocking - waits for an rpc message, returns data[1] for it.
+ */
+int rpc_recieve_int_response(){
+	rpc_recieve_message();
+
+	//TODO verify it's not an error?
+	return receive_payload->data[1];
+
+}
+
 int rpc_setup(){
 	int ret;
 	char *rpmsg_dev="virtio0.rpmsg-openamp-demo-channel.-1.0";

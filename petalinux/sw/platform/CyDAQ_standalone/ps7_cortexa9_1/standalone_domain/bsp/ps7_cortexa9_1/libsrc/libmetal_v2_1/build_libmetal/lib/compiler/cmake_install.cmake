@@ -1,4 +1,4 @@
-# Install script for directory: /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal/lib/compiler
+# Install script for directory: /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal/lib/compiler
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -29,8 +29,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/lib/compiler/gcc/cmake_install.cmake")
-  include("/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/lib/compiler/iar/cmake_install.cmake")
+  include("/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/lib/compiler/gcc/cmake_install.cmake")
+  include("/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/lib/compiler/iar/cmake_install.cmake")
 
 endif()
 

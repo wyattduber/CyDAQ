@@ -51,10 +51,10 @@ RM = /tools/Xilinx/Vitis/2020.1/tps/lnx64/cmake-3.3.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp
+CMAKE_SOURCE_DIR = /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp
+CMAKE_BINARY_DIR = /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -138,14 +138,14 @@ install/strip/fast: install/strip
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -E cmake_progress_start /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/lib/CMakeFiles/progress.marks
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles 0
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -E cmake_progress_start /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/lib/CMakeFiles/progress.marks
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/clean
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/clean
 .PHONY : clean
 
 # The main clean target
@@ -155,22 +155,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 lib/CMakeFiles/open_amp-static.dir/rule:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/CMakeFiles/open_amp-static.dir/rule
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/CMakeFiles/open_amp-static.dir/rule
 .PHONY : lib/CMakeFiles/open_amp-static.dir/rule
 
 # Convenience name for target.
@@ -180,7 +180,7 @@ open_amp-static: lib/CMakeFiles/open_amp-static.dir/rule
 
 # fast build rule for target.
 open_amp-static/fast:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/build
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/build
 .PHONY : open_amp-static/fast
 
 proxy/rpmsg_retarget.obj: proxy/rpmsg_retarget.c.obj
@@ -189,7 +189,7 @@ proxy/rpmsg_retarget.obj: proxy/rpmsg_retarget.c.obj
 
 # target to build an object file
 proxy/rpmsg_retarget.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/proxy/rpmsg_retarget.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/proxy/rpmsg_retarget.c.obj
 .PHONY : proxy/rpmsg_retarget.c.obj
 
 proxy/rpmsg_retarget.i: proxy/rpmsg_retarget.c.i
@@ -198,7 +198,7 @@ proxy/rpmsg_retarget.i: proxy/rpmsg_retarget.c.i
 
 # target to preprocess a source file
 proxy/rpmsg_retarget.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/proxy/rpmsg_retarget.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/proxy/rpmsg_retarget.c.i
 .PHONY : proxy/rpmsg_retarget.c.i
 
 proxy/rpmsg_retarget.s: proxy/rpmsg_retarget.c.s
@@ -207,7 +207,7 @@ proxy/rpmsg_retarget.s: proxy/rpmsg_retarget.c.s
 
 # target to generate assembly for a file
 proxy/rpmsg_retarget.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/proxy/rpmsg_retarget.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/proxy/rpmsg_retarget.c.s
 .PHONY : proxy/rpmsg_retarget.c.s
 
 remoteproc/elf_loader.obj: remoteproc/elf_loader.c.obj
@@ -216,7 +216,7 @@ remoteproc/elf_loader.obj: remoteproc/elf_loader.c.obj
 
 # target to build an object file
 remoteproc/elf_loader.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/elf_loader.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/elf_loader.c.obj
 .PHONY : remoteproc/elf_loader.c.obj
 
 remoteproc/elf_loader.i: remoteproc/elf_loader.c.i
@@ -225,7 +225,7 @@ remoteproc/elf_loader.i: remoteproc/elf_loader.c.i
 
 # target to preprocess a source file
 remoteproc/elf_loader.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/elf_loader.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/elf_loader.c.i
 .PHONY : remoteproc/elf_loader.c.i
 
 remoteproc/elf_loader.s: remoteproc/elf_loader.c.s
@@ -234,7 +234,7 @@ remoteproc/elf_loader.s: remoteproc/elf_loader.c.s
 
 # target to generate assembly for a file
 remoteproc/elf_loader.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/elf_loader.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/elf_loader.c.s
 .PHONY : remoteproc/elf_loader.c.s
 
 remoteproc/remoteproc.obj: remoteproc/remoteproc.c.obj
@@ -243,7 +243,7 @@ remoteproc/remoteproc.obj: remoteproc/remoteproc.c.obj
 
 # target to build an object file
 remoteproc/remoteproc.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc.c.obj
 .PHONY : remoteproc/remoteproc.c.obj
 
 remoteproc/remoteproc.i: remoteproc/remoteproc.c.i
@@ -252,7 +252,7 @@ remoteproc/remoteproc.i: remoteproc/remoteproc.c.i
 
 # target to preprocess a source file
 remoteproc/remoteproc.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc.c.i
 .PHONY : remoteproc/remoteproc.c.i
 
 remoteproc/remoteproc.s: remoteproc/remoteproc.c.s
@@ -261,7 +261,7 @@ remoteproc/remoteproc.s: remoteproc/remoteproc.c.s
 
 # target to generate assembly for a file
 remoteproc/remoteproc.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc.c.s
 .PHONY : remoteproc/remoteproc.c.s
 
 remoteproc/remoteproc_virtio.obj: remoteproc/remoteproc_virtio.c.obj
@@ -270,7 +270,7 @@ remoteproc/remoteproc_virtio.obj: remoteproc/remoteproc_virtio.c.obj
 
 # target to build an object file
 remoteproc/remoteproc_virtio.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc_virtio.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc_virtio.c.obj
 .PHONY : remoteproc/remoteproc_virtio.c.obj
 
 remoteproc/remoteproc_virtio.i: remoteproc/remoteproc_virtio.c.i
@@ -279,7 +279,7 @@ remoteproc/remoteproc_virtio.i: remoteproc/remoteproc_virtio.c.i
 
 # target to preprocess a source file
 remoteproc/remoteproc_virtio.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc_virtio.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc_virtio.c.i
 .PHONY : remoteproc/remoteproc_virtio.c.i
 
 remoteproc/remoteproc_virtio.s: remoteproc/remoteproc_virtio.c.s
@@ -288,7 +288,7 @@ remoteproc/remoteproc_virtio.s: remoteproc/remoteproc_virtio.c.s
 
 # target to generate assembly for a file
 remoteproc/remoteproc_virtio.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc_virtio.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/remoteproc_virtio.c.s
 .PHONY : remoteproc/remoteproc_virtio.c.s
 
 remoteproc/rsc_table_parser.obj: remoteproc/rsc_table_parser.c.obj
@@ -297,7 +297,7 @@ remoteproc/rsc_table_parser.obj: remoteproc/rsc_table_parser.c.obj
 
 # target to build an object file
 remoteproc/rsc_table_parser.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/rsc_table_parser.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/rsc_table_parser.c.obj
 .PHONY : remoteproc/rsc_table_parser.c.obj
 
 remoteproc/rsc_table_parser.i: remoteproc/rsc_table_parser.c.i
@@ -306,7 +306,7 @@ remoteproc/rsc_table_parser.i: remoteproc/rsc_table_parser.c.i
 
 # target to preprocess a source file
 remoteproc/rsc_table_parser.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/rsc_table_parser.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/rsc_table_parser.c.i
 .PHONY : remoteproc/rsc_table_parser.c.i
 
 remoteproc/rsc_table_parser.s: remoteproc/rsc_table_parser.c.s
@@ -315,7 +315,7 @@ remoteproc/rsc_table_parser.s: remoteproc/rsc_table_parser.c.s
 
 # target to generate assembly for a file
 remoteproc/rsc_table_parser.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/rsc_table_parser.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/remoteproc/rsc_table_parser.c.s
 .PHONY : remoteproc/rsc_table_parser.c.s
 
 rpmsg/rpmsg.obj: rpmsg/rpmsg.c.obj
@@ -324,7 +324,7 @@ rpmsg/rpmsg.obj: rpmsg/rpmsg.c.obj
 
 # target to build an object file
 rpmsg/rpmsg.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg.c.obj
 .PHONY : rpmsg/rpmsg.c.obj
 
 rpmsg/rpmsg.i: rpmsg/rpmsg.c.i
@@ -333,7 +333,7 @@ rpmsg/rpmsg.i: rpmsg/rpmsg.c.i
 
 # target to preprocess a source file
 rpmsg/rpmsg.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg.c.i
 .PHONY : rpmsg/rpmsg.c.i
 
 rpmsg/rpmsg.s: rpmsg/rpmsg.c.s
@@ -342,7 +342,7 @@ rpmsg/rpmsg.s: rpmsg/rpmsg.c.s
 
 # target to generate assembly for a file
 rpmsg/rpmsg.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg.c.s
 .PHONY : rpmsg/rpmsg.c.s
 
 rpmsg/rpmsg_virtio.obj: rpmsg/rpmsg_virtio.c.obj
@@ -351,7 +351,7 @@ rpmsg/rpmsg_virtio.obj: rpmsg/rpmsg_virtio.c.obj
 
 # target to build an object file
 rpmsg/rpmsg_virtio.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg_virtio.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg_virtio.c.obj
 .PHONY : rpmsg/rpmsg_virtio.c.obj
 
 rpmsg/rpmsg_virtio.i: rpmsg/rpmsg_virtio.c.i
@@ -360,7 +360,7 @@ rpmsg/rpmsg_virtio.i: rpmsg/rpmsg_virtio.c.i
 
 # target to preprocess a source file
 rpmsg/rpmsg_virtio.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg_virtio.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg_virtio.c.i
 .PHONY : rpmsg/rpmsg_virtio.c.i
 
 rpmsg/rpmsg_virtio.s: rpmsg/rpmsg_virtio.c.s
@@ -369,7 +369,7 @@ rpmsg/rpmsg_virtio.s: rpmsg/rpmsg_virtio.c.s
 
 # target to generate assembly for a file
 rpmsg/rpmsg_virtio.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg_virtio.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/rpmsg/rpmsg_virtio.c.s
 .PHONY : rpmsg/rpmsg_virtio.c.s
 
 virtio/virtio.obj: virtio/virtio.c.obj
@@ -378,7 +378,7 @@ virtio/virtio.obj: virtio/virtio.c.obj
 
 # target to build an object file
 virtio/virtio.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtio.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtio.c.obj
 .PHONY : virtio/virtio.c.obj
 
 virtio/virtio.i: virtio/virtio.c.i
@@ -387,7 +387,7 @@ virtio/virtio.i: virtio/virtio.c.i
 
 # target to preprocess a source file
 virtio/virtio.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtio.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtio.c.i
 .PHONY : virtio/virtio.c.i
 
 virtio/virtio.s: virtio/virtio.c.s
@@ -396,7 +396,7 @@ virtio/virtio.s: virtio/virtio.c.s
 
 # target to generate assembly for a file
 virtio/virtio.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtio.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtio.c.s
 .PHONY : virtio/virtio.c.s
 
 virtio/virtqueue.obj: virtio/virtqueue.c.obj
@@ -405,7 +405,7 @@ virtio/virtqueue.obj: virtio/virtqueue.c.obj
 
 # target to build an object file
 virtio/virtqueue.c.obj:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtqueue.c.obj
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtqueue.c.obj
 .PHONY : virtio/virtqueue.c.obj
 
 virtio/virtqueue.i: virtio/virtqueue.c.i
@@ -414,7 +414,7 @@ virtio/virtqueue.i: virtio/virtqueue.c.i
 
 # target to preprocess a source file
 virtio/virtqueue.c.i:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtqueue.c.i
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtqueue.c.i
 .PHONY : virtio/virtqueue.c.i
 
 virtio/virtqueue.s: virtio/virtqueue.c.s
@@ -423,7 +423,7 @@ virtio/virtqueue.s: virtio/virtqueue.c.s
 
 # target to generate assembly for a file
 virtio/virtqueue.c.s:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtqueue.c.s
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f lib/CMakeFiles/open_amp-static.dir/build.make lib/CMakeFiles/open_amp-static.dir/virtio/virtqueue.c.s
 .PHONY : virtio/virtqueue.c.s
 
 # Help Target
@@ -478,6 +478,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -51,10 +51,10 @@ RM = /tools/Xilinx/Vitis/2020.1/tps/lnx64/cmake-3.3.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp
+CMAKE_SOURCE_DIR = /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp
+CMAKE_BINARY_DIR = /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -138,14 +138,14 @@ install/strip/fast: install/strip
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -E cmake_progress_start /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/lib/rpmsg/CMakeFiles/progress.marks
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles 0
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -E cmake_progress_start /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/lib/rpmsg/CMakeFiles/progress.marks
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/clean
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/clean
 .PHONY : clean
 
 # The main clean target
@@ -155,17 +155,17 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/preinstall
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/preinstall
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(MAKE) -f CMakeFiles/Makefile2 lib/rpmsg/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Help Target
@@ -192,6 +192,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/build_openamp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

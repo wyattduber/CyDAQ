@@ -1,4 +1,4 @@
-# Install script for directory: /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/proxy
+# Install script for directory: /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/proxy
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -4,6 +4,7 @@
 
 #include "platform_info.h"
 #include "rpc.h"
+#include "../hardware/shared_definitions.h"
 
 #define LPRINTF(format, ...) xil_printf(format, ##__VA_ARGS__)
 #define LPERROR(format, ...) LPRINTF("ERROR: " format, ##__VA_ARGS__)
@@ -60,80 +61,85 @@ int send_ack(struct rpmsg_endpoint *ept){
 }
 
 int handle_message(struct _payload* payload){
-	int message = payload->message;
 	int* data = payload->data;
 	int data_len = payload->data_len;
-	int message_type = MSG_TYPE_INVALID;
+	int message_type = payload->message;
+	int ret = -1;
 
-	//check the message type
-	switch(message){
-		case COMM_COMMAND_MSG:
-			message_type = MSG_TYPE_COMMAND;
-			break;
-		default:
-			message_type = MSG_TYPE_INVALID;
-			break;
-
-	}
-
-	//command message handling
+	//command message handling TODO move to switch
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
-			return xadcSetSampleRate(data[1]);
+			ret = xadcSetSampleRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){ //TODO not implemented yet
-			return xadcProcessSamples();
+			ret =  xadcProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){ //TODO not implemented yet
-			return xadcEnableSampling(data[1]);//0 = normal, 1 = stream
+			ret =  xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){ //TODO not implemented yet
-			return xadcDisableSampling();
+			ret =  xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){ //TODO not implemented yet
 
 		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){ //TODO not implemented yet
-			return ads7047_ProcessSamples();
+			ret =  ads7047_ProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){ //TODO not implemented yet
-			return ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
+			ret =  ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
 
 		}else if(data[0] == RPC_MESSAGE_ADS_DISABLE_SAMPLING){ //TODO not implemented yet
-			return ads7047_DisableSampling();
+			ret =  ads7047_DisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_MUX_SET_INPUT_PINS){
-			return muxSetInputPins(data[1]);
+			ret =  muxSetInputPins(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_SET_ACTIVE_FILTER){
-			return muxSetActiveFilter(data[1]);
+			ret =  muxSetActiveFilter(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_TUNE_FILTER){
 			//data[2] = lower
 			//data[3] = upper
-			return tuneFilter(50,data[2],data[3]);
+			ret =  tuneFilter(50,data[2],data[3]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
-			return dac80501_SetNumRepetitions(data[1]);
+			ret =  dac80501_SetNumRepetitions(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
-			return dac80501_SetGenerationRate(data[1]);
+			ret =  dac80501_SetGenerationRate(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
-			return dac80501_ReceiveDataset(data[1]);
+			ret =  dac80501_ReceiveDataset(data[1]);
 
 		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
-			return dac80501_EnableGeneration();
+			ret =  dac80501_EnableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
-			return dac80501_DisableGeneration();
+			ret =  dac80501_DisableGeneration();
 
 		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
-			return ballbeamStart(); //TODO this is blocking...
+			ret =  ballbeamStart(); //TODO this is blocking...
 
 		}else{
-			LPRINTF("SAMP> Unknown message, type: %d, command: %d, data: %d\r\n", message,data[0],data[1]);
+			LPRINTF("SAMP> Unknown message, type: %d, command: %d, data: %d\r\n", message_type, data[0],data[1]);
+			//TODO send fail
+			return -1;
 		}
+		send_ack(&lept); //TODO send fail if failed
+		return ret;
 
+	}else if(message_type == MSG_TYPE_REQUEST){
+		int *response_data = {0};
+		volatile u32 *sample_count;
+		switch(data[0]){
+		case RPC_MESSAGE_GET_SAMPLE_COUNT:
+			sample_count = shared_GetSampleCount();
+			response_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
+			response_data[1] = *sample_count;
+			if (rpc_send_message(&lept, MSG_TYPE_REQUEST, response_data, 2) < 0) {
+				xil_printf("SAMP> respond to get sample count failed!\n");
+			}
+		}
 	}
 
 }
@@ -155,8 +161,7 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 		return RPMSG_SUCCESS;
 	}
 
-	int ret = handle_message((struct _payload*)data); //TODO handle error message from this function call
-	send_ack(ept); //TODO send fail if failed
+	int ret = handle_message((struct _payload*)data);
 
 	/* Send data back to master */ //TODO change this to just ACK later on
 //	if (rpmsg_send(ept, data, len) < 0) {

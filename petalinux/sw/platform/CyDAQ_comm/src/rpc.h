@@ -26,6 +26,14 @@
 #define RPC_MESSAGE_DAC_DISABLE_GENERATION	15
 #define RPC_MESSAGE_DAC_BALL_BEAM_START		16
 
+//request function calls
+#define RPC_MESSAGE_GET_SAMPLE_COUNT		17
+
+//number message type
+#define MSG_TYPE_INVALID -1
+#define MSG_TYPE_COMMAND 0
+#define MSG_TYPE_REQUEST 1
+
 #define PAYLOAD_DATA_LEN 64
 struct _payload {
 	int message;
@@ -49,3 +57,4 @@ int rpc_send_message(int message, int data[], int data_len);
 int rpc_recieve_message();
 void rpc_teardown();
 int rpc_recieve_ack();
+int rpc_recieve_int_response();

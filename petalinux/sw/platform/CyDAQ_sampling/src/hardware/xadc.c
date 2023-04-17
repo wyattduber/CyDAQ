@@ -15,6 +15,7 @@
 #define INTC_DEVICE_INT_ID	 	XPAR_INTC_0_TMRCTR_0_VEC_ID
 #define TMRCTR_DEVICE_ID		XPAR_TMRCTR_0_DEVICE_ID
 #define TIMER_CNTR_0	 		0
+#define SHARED_MEM				(u16*)0x38800000 //location of shared memory space carved out in petalinux. Put data here for petalinux to read
 
 /* Function definitions */
 static int xadcSetupInterruptSystem(XScuGic *IntcInstancePtr, XSysMon *XAdcPtr, u16 IntrId);
@@ -27,7 +28,7 @@ extern bool streamingEnabled;
 static XSysMon SysMonInst;
 static XSysMon *SysMonInstPtr = &SysMonInst;
 static XTmrCtr TimerCounterInst;
-static SAMPLE_TYPE *xadcSampleBuffer = NULL;
+static SAMPLE_TYPE *xadcSampleBuffer = SHARED_MEM;
 
 u8 xadcInitStatus = 0; //whether XADC has been initialized
 static u32 xadcSampleRate = 0; //stores current sample rate (samples/s)
@@ -121,7 +122,8 @@ u8 xadcInit() {
 		XTmrCtr_SetResetValue(&TimerCounterInst, TIMER_CNTR_0, (u32) resetValue);
 
 		//save reference to shared sample buffer
-		xadcSampleBuffer = shared_GetSampleBuffer();
+//		xadcSampleBuffer = shared_GetSampleBuffer(); //TODO delete, don't need anymore?
+
 
 		xadcInitStatus = 1;
 
@@ -196,7 +198,7 @@ int xadcEnableSampling(u8 streamSetting) {
  * Disables XADC sample capture timer and XADC EOC interrupts.
  */
 int xadcDisableSampling() {
-	xil_printf("SAMP> stopping xadc sampling\r\n");
+	xil_printf("SAMP> stopping xadc sampling. Total sample count: %d\r\n", *shared_GetSampleCount());
 	//stop XADC driver timer and disable sampling interrupts
 	XTmrCtr_Stop(&TimerCounterInst, TIMER_CNTR_0);
 	XSysMon_IntrGlobalDisable(&SysMonInst);
@@ -300,17 +302,25 @@ void xadcInterruptHandler(void *CallBackRef) {
 	XSysMon_IntrClear(&SysMonInst, XSM_IPIXR_EOC_MASK);
 
 	volatile u32 *xadcSampleCount = shared_GetSampleCount();
-	xil_printf("SAMP> XADC interrupt count: %d\r\n", *xadcSampleCount);
+	if(!samplingEnabled){
+		xil_printf("SAMP> disabling interrupt. Total sample count: %d\r\n", *xadcSampleCount);
+		samplingEnabled = false;
+		XSysMon_IntrGlobalDisable(SysMonInstPtr);
+		return;
+	}
+
+	if(DEBUG && *xadcSampleCount % 100000 == 0)
+		xil_printf("SAMP> XADC interrupt count: %d\r\n", *xadcSampleCount);
+
 	if ((*xadcSampleCount) < SAMPLE_BUFFER_SIZE ) {
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
 		(*xadcSampleCount)++;
-		xil_printf("SAMP> Updated XADC interrupt count: %d\r\n", *xadcSampleCount);
 
 	} else if(streamingEnabled) {
 		(*xadcSampleCount) = 0;
 
 	} else {
-		xil_printf("SAMP> disabling interrupt\r\n");
+		xil_printf("SAMP> disabling interrupt. Total sample count: %d\r\n", *xadcSampleCount);
 		samplingEnabled = false;
 		XSysMon_IntrGlobalDisable(SysMonInstPtr);
 	}

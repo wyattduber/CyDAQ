@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<systemproject:SystemProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdsproject="http://www.xilinx.com/sdsproject" xmlns:systemproject="http://www.xilinx.com/systemproject" name="CyDAQ_sampling_system" platform="/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/export/CyDAQ_standalone/CyDAQ_standalone.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" sysConfig="CyDAQ_standalone" runtime="C/C++" dimmRepoPath="" rootFSLocation="" linuxImage="" sysroot="">
+<systemproject:SystemProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdsproject="http://www.xilinx.com/sdsproject" xmlns:systemproject="http://www.xilinx.com/systemproject" name="CyDAQ_sampling_system" platform="/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/export/CyDAQ_standalone/CyDAQ_standalone.xpfm" platformUID="xilinx:zybo-z7-10::0.0(custom)" sysConfig="CyDAQ_standalone" runtime="C/C++" rootFSLocation="" linuxImage="" sysroot="">
   <configuration name="Debug">
     <configBuildOptions xsi:type="systemproject:SystemOptions">
       <applications name="CyDAQ_sampling" domainName="standalone_domain" domainPrettyName="standalone on ps7_cortexa9_1" appBuildConfig="Debug"/>

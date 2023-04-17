@@ -48,13 +48,17 @@
 #define RPC_MESSAGE_DAC_DISABLE_GENERATION	15
 #define RPC_MESSAGE_DAC_BALL_BEAM_START		16
 
+//request function calls
+#define RPC_MESSAGE_GET_SAMPLE_COUNT		17
+
 //Message type from comm
-#define COMM_COMMAND_MSG 0
+//#define COMM_COMMAND_MSG 0
 #define COMM_SAMPLE_MSG 1
 
 //number message type
 #define MSG_TYPE_INVALID -1
 #define MSG_TYPE_COMMAND 0
+#define MSG_TYPE_REQUEST 1
 
 
 //Payload
