@@ -454,7 +454,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 //				dac80501_SetNumRepetitions(num);
 				rpc_data[0] = RPC_MESSAGE_DAC_SET_NUM_REPETITIONS;
 				rpc_data[1] = num;
-				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+//				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
 			/*  ---Set DAC Generation Rate (Sampling Rate)---  */
@@ -471,7 +471,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 //				err = dac80501_SetGenerationRate(rate);
 				rpc_data[0] = RPC_MESSAGE_DAC_SET_GEN_RATE;
 				rpc_data[1] = rate;
-				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+//				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
 			/*  ---Receive New Dataset Sent from PC---  */
@@ -482,24 +482,24 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 //			err = dac80501_ReceiveDataset(dsSize);
 			rpc_data[0] = RPC_MESSAGE_DAC_RECEIVE_DATASET;
 			rpc_data[1] = dsSize;
-			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Start Waveform Generation---  */
 		} else if (cmd == START_GENERATION) { //TODO not finished yet
 //			dac80501_EnableGeneration();
 			rpc_data[0] = RPC_MESSAGE_DAC_ENABLE_GENERATION;
-			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Stop Waveform Generation---  */
 		} else if (cmd == STOP_GENERATION) { //TODO not finished yet
 //			dac80501_DisableGeneration();
 			rpc_data[0] = RPC_MESSAGE_DAC_DISABLE_GENERATION;
-			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Ball & Beam Controller---  */
 		} else if (cmd == START_CONTROLLER) { //TODO not finished yet
 //			ballbeamStart(); //TODO
 			rpc_data[0] = RPC_MESSAGE_DAC_BALL_BEAM_START;
-			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Unsupported Command---  */
 		} else {
 			if(DEBUG)

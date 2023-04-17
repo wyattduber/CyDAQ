@@ -81,8 +81,8 @@ int rpc_recieve_message(){
 		usleep(10000);
 		bytes_rcvd = read(fd, receive_payload, PAYLOAD_TOTAL_LEN);
 	}
-//	if(DEBUG)
-//		printf("COMM> Received payload. Read %d bytes\r\n", bytes_rcvd);
+	if(DEBUG)
+		printf("COMM> Received payload. Read %d bytes\r\n", bytes_rcvd);
 	return 0;
 }
 
@@ -104,6 +104,11 @@ int rpc_recieve_ack(){
  */
 int rpc_recieve_int_response(){
 	rpc_recieve_message();
+	rpc_print_payload(receive_payload);
+
+	if(receive_payload->data_len != 2){
+		printf("COMM> Unexpected payload in rpc_recieve_int_response!\r\n");
+	}
 
 	//TODO verify it's not an error?
 	return receive_payload->data[1];

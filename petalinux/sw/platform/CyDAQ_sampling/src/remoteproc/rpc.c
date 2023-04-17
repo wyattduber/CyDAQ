@@ -134,6 +134,8 @@ int handle_message(struct _payload* payload){
 		switch(data[0]){
 		case RPC_MESSAGE_GET_SAMPLE_COUNT:
 			sample_count = shared_GetSampleCount();
+			if(DEBUG)
+				xil_printf("SAMP> got request for sample count, responding with: %d\r\n", *sample_count);
 			response_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
 			response_data[1] = *sample_count;
 			if (rpc_send_message(&lept, MSG_TYPE_REQUEST, response_data, 2) < 0) {
