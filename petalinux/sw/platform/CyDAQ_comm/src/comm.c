@@ -138,6 +138,63 @@ void commRXTask() {
 }
 
 /*
+ * Writes samples stored in shared memory to PC via COMM
+ * Returns true if error, false otherwise
+ */
+bool writeSamplesToComm(){
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
+
+	int fd = open("/dev/mem", O_RDWR | O_SYNC);
+	if (fd < 0) {
+		perror("COMM> open");
+		return true;
+	}
+
+	rpc_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
+	rpc_send_message(MSG_TYPE_REQUEST, rpc_data, 1);
+	int count = rpc_recieve_int_response();
+	if(DEBUG)
+		printf("COMM> SAMP reported %d samples in buffer\r\n", count);
+
+	size_t size = sizeof(u16) * count;
+	off_t offset = 0x38800000; // starting point TODO make constant
+	printf("COMM> size of sample data to write to comm: %d\r\n", size);
+
+	u16 *ptr = (u16 *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
+	if (ptr == MAP_FAILED) {
+		perror("COMM> mmap");
+		return true;
+	}
+
+	//TODO delete
+	for (int i = 0; i < 100; i++) {
+		printf("%d ", ptr[i]); // print the first 100 for testing
+	}
+	printf("\n");
+
+	//send data to remote pc, starting with @ and ending with !
+	char* test1 = "@";
+	commUartSend(test1, 1);
+	commUartSend(ptr, size); //send the whole buffer over uart to the host pc. Hope they are ready for it!
+	usleep(100);
+	char* test2 = "00000000"; //had it in the old code, so included it. Can probably remove
+	commUartSend(test2, 8);
+	usleep(50000);
+	char* test3 = "!";
+	commUartSend(test3, 1);
+	if(DEBUG)
+		printf("COMM> done writing samples\r\n");
+
+	if (munmap(ptr, size) == -1) {
+		perror("COMM> munmap");
+		return true;
+	}
+
+	close(fd);
+	return false;
+}
+
+/*
  * Sends the necessary message(s) to the remote cpu to stop sampling
  * returns true if an error occurred, false otherwise
  */
@@ -329,72 +386,12 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 
 			/*  ---Print Samples---  */
-		} else if (cmd == FETCH_SAMPLES) { //TODO not supported yet
-
+		} else if (cmd == FETCH_SAMPLES) {
 			err = stopSampling();
-
-			//TODO move this to seperate function
-
-			//testing
-			int fd = open("/dev/mem", O_RDWR | O_SYNC);
-			if (fd < 0) {
-				perror("COMM> open");
-				exit(1);
+			if(err){
+				return err;
 			}
-
-			rpc_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
-			rpc_send_message(MSG_TYPE_REQUEST, rpc_data, 1);
-			int count = rpc_recieve_int_response();
-			printf("COMM> got last sample count: %d\r\n", count);
-
-			size_t size = sizeof(u16) * count;
-			off_t offset = 0x38800000; // starting point TODO make constant
-			printf("COMM> size of sample data to write to comm: %d\r\n", size);
-
-			u16 *ptr = (u16 *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
-			if (ptr == MAP_FAILED) {
-				perror("COMM> mmap");
-				exit(1); //TODO clean up rpc stuff before exiting or return error?
-			}
-
-			for (int i = 0; i < 100; i++) {
-				printf("%d ", ptr[i]); // print the first 100 for testing
-			}
-			printf("\n");
-
-			//send data to remote pc, starting with @ and ending with !
-			char* test1 = "@";
-			commUartSend(test1, 1);
-			commUartSend(ptr, size); //send the whole buffer over uart to the host pc. Hope they are ready for it!
-			usleep(100);
-			char* test2 = "00000000"; //had it in the old code, so included it. Can probably remove
-			commUartSend(test2, 8);
-			usleep(50000);
-			char* test3 = "!";
-			commUartSend(test3, 1);
-			printf("COMM> done\r\n");
-
-			if (munmap(ptr, size) == -1) {
-				perror("COMM> munmap");
-				exit(1); //TODO clean up rpc stuff before exiting or return error?
-			}
-
-			close(fd);
-
-			//acknowledge command before returning samples
-//			respond_ack(serial_port);
-
-			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcProcessSamples();
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_ProcessSamples();
-				break;
-			default:
-				err = true;
-				break;
-			}
+			err = writeSamplesToComm();
 
 			/*  ---Start Sampling---  */
 		} else if (cmd == START_SAMPLING) {
@@ -437,7 +434,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 
 		} else if (cmd == STOP_SAMPLING) {
 			printf("COMM> stop sampling!\r\n");
-			stopSampling(); //moved to seperate function because it needs to also happen in fetch command
+			stopSampling(); //moved to separate function because it needs to also happen in fetch command
 
 			/*  ---Select DAC Operating Mode---  */
 		} else if (cmd == DAC_MODE_SELECT) {
@@ -527,31 +524,6 @@ u32 commUartSend(u8 *bufferPtr, u32 numBytes) {
 	return write(serial_port, bufferPtr, numBytes);
 }
 
-/**
- * Exposes UART isTransmitFull command to libraries without need for global UART pointer.
- */
-//u32 commUartIsTransmitFull(void) {
-//	return XUartPs_IsTransmitFull(UART1.Config.BaseAddress);
-//}
-
-/**
- * Exposes blocking UART receive command to libraries without need for global UART pointer.
- */
-u32 commUartWaitReceive(u8 *bufferPtr, char endChar1, char endChar2) {
-	u32 byteCount = 0;
-
-	while (bufferPtr[byteCount - 1] != endChar1
-			&& bufferPtr[byteCount - 1] != endChar2) {
-		byteCount += commUartRecv(bufferPtr, 1);
-	}
-
-	return byteCount;
-}
-
-//XUartPs* commGetUartPtr() {
-//	return &UART1;
-//}
-
 void respond_ack(int serial_port){
 	char * message = "@ACK!";
 	write(serial_port, message, 6);
@@ -562,27 +534,3 @@ void respond_err(int serial_port){
 	write(serial_port, message, 6);
 }
 
-//TODO delete when done
-void commReadTest(){
-	int n = 0, spot = 0;
-	char buf = '\0';
-
-	char response[1024];
-	memset(response, '\0', sizeof response);
-
-	do {
-	    n = read( serial_port, &buf, 1 );
-	    sprintf( &response[spot], "%c", buf );
-	    spot += n;
-	} while( buf != '\n' && n > 0);
-
-	if (n < 0) {
-	    printf("error reading\n");
-	}
-	else if (n == 0) {
-	    printf("read nothing\n");
-	}
-	else {
-	    printf("Response: %s\n", response);
-	}
-}
