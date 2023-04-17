@@ -292,7 +292,7 @@ class Ui_BasicOpetaionWidget(object):
         self.lessThan2.setText(_translate("BasicOpetaionWidget", "≤"))
         self.mid_corner_max_btn.setText(_translate("BasicOpetaionWidget", "40,000"))
         self.low_corner_label.setText(_translate("BasicOpetaionWidget", "Low Corner"))
-        self.low_corner_min_btn.setText(_translate("BasicOpetaionWidget", "100"))
+        self.low_corner_min_btn.setText(_translate("BasicOpetaionWidget", "200"))
         self.label_2.setText(_translate("BasicOpetaionWidget", "≤"))
         self.label_3.setText(_translate("BasicOpetaionWidget", "≤"))
         self.low_corner_max_btn.setText(_translate("BasicOpetaionWidget", "20,000"))

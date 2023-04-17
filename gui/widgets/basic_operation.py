@@ -68,7 +68,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
 
         # Corner Input Validation
-        validator = QDoubleValidator(100, 20000, 4)
+        validator = QDoubleValidator(200, 20000, 4)
         self.low_corner_input.setValidator(validator)
 
         validator = QDoubleValidator(100, 40000, 4)

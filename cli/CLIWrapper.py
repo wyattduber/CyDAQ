@@ -17,7 +17,7 @@ INPUT_CHAR = ">"
 NOT_CONNECTED = "Zybo not connected"
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
-TIMEOUT = 10
+TIMEOUT = 20
 
 
 class CLI:
