@@ -1,5 +1,6 @@
 import struct
 import serial
+import time
 
 from cli.master_enum import enum_commands, sig_serial
 
@@ -48,34 +49,53 @@ print(ser)
     # NOTCH = 6
     # NO_FILTER = 7
 
-filter_select = 1
-ser.write(sig_serial.START_BYTE.value.encode())
-ser.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
-ser.write(sig_serial.END_BYTE.value.encode())
+# filter_select = 1
+# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
+# ser.write(sig_serial.END_BYTE.value.encode())
 
 #=========== Corner Freq ====================
-val_to_write = None
-u_corner_freq=2000
-l_corner_freq=100
-corner_freq= 100
-filter = "2nd Order Band Pass"
-if filter == "2nd Order Band Pass" or filter == "6th Order Band Pass":
-    val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
-                                int(u_corner_freq))
-    # print("1) Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
-elif filter == "1st Order Low Pass" or filter == "6th Order Low Pass":
-    val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
-    # print("2) Corner Frequency = " + str(corner_freq) + " / " + str(0))
-elif filter == "1st Order High Pass" or filter == "6th Order High Pass":
-    val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
-    # print("3) Corner Frequency = " + str(corner_freq) + " / " + str(0))
-else:
-    val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
-                                int(u_corner_freq))
-    # print("4) Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
+# val_to_write = None
+# u_corner_freq=2000
+# l_corner_freq=100
+# corner_freq= 100
+# filter = "2nd Order Band Pass"
+# if filter == "2nd Order Band Pass" or filter == "6th Order Band Pass":
+#     val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
+#                                 int(u_corner_freq))
+#     # print("1) Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
+# elif filter == "1st Order Low Pass" or filter == "6th Order Low Pass":
+#     val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
+#     # print("2) Corner Frequency = " + str(corner_freq) + " / " + str(0))
+# elif filter == "1st Order High Pass" or filter == "6th Order High Pass":
+#     val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(corner_freq), 0)
+#     # print("3) Corner Frequency = " + str(corner_freq) + " / " + str(0))
+# else:
+#     val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
+#                                 int(u_corner_freq))
+#     # print("4) Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
+# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(val_to_write)
+# ser.write(sig_serial.END_BYTE.value.encode())
+
+# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
+# ser.write(struct.pack('!B', int(input_set)))
+# ser.write(sig_serial.END_BYTE.value.encode())
+
 ser.write(sig_serial.START_BYTE.value.encode())
-ser.write(val_to_write)
+ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
+ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
 ser.write(sig_serial.END_BYTE.value.encode())
+
+time.sleep(.1)
+
+print("after start: ", ser.read_all())
+
+ser.write(sig_serial.START_BYTE.value.encode())
+ser.write(struct.pack('!B', enum_commands.FETCH_SAMPLES.value))
+ser.write(sig_serial.END_BYTE.value.encode())
+
 
 while True:
     data = ser.read_all()
