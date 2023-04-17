@@ -223,8 +223,11 @@ QPushButton {
        <height>30</height>
       </size>
      </property>
+     <property name="currentText">
+      <string>Analog In</string>
+     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <item>
       <property name="text">
@@ -351,7 +354,7 @@ QPushButton {
         </size>
        </property>
        <property name="text">
-        <string>100</string>
+        <string>200</string>
        </property>
       </widget>
      </item>

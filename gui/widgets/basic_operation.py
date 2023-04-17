@@ -71,7 +71,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         validator = QDoubleValidator(200, 20000, 4)
         self.low_corner_input.setValidator(validator)
 
-        validator = QDoubleValidator(100, 40000, 4)
+        validator = QDoubleValidator(200, 40000, 4)
         self.mid_corner_input_box.setValidator(validator)
 
         validator = QDoubleValidator(2000, 40000, 4)

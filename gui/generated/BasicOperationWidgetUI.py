@@ -251,7 +251,7 @@ class Ui_BasicOpetaionWidget(object):
 
         self.retranslateUi(BasicOpetaionWidget)
         self.sample_rate_input_box.setCurrentIndex(1)
-        self.input_input_box.setCurrentIndex(0)
+        self.input_input_box.setCurrentIndex(2)
         self.mid_corner_input_box.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(BasicOpetaionWidget)
 
@@ -270,6 +270,7 @@ class Ui_BasicOpetaionWidget(object):
         self.lessThan2Sample.setText(_translate("BasicOpetaionWidget", "≤"))
         self.sample_rate_max_btn.setText(_translate("BasicOpetaionWidget", "50,000"))
         self.input_label.setText(_translate("BasicOpetaionWidget", "Input"))
+        self.input_input_box.setCurrentText(_translate("BasicOpetaionWidget", "Analog In"))
         self.input_input_box.setItemText(0, _translate("BasicOpetaionWidget", "5 Volt"))
         self.input_input_box.setItemText(1, _translate("BasicOpetaionWidget", "3.3 Volt"))
         self.input_input_box.setItemText(2, _translate("BasicOpetaionWidget", "Analog In"))
@@ -284,7 +285,7 @@ class Ui_BasicOpetaionWidget(object):
         self.filter_input_box.setItemText(6, _translate("BasicOpetaionWidget", "2nd Order Band Pass"))
         self.filter_input_box.setItemText(7, _translate("BasicOpetaionWidget", "6th Order Band Pass"))
         self.mid_corner_label.setText(_translate("BasicOpetaionWidget", "Mid Corner"))
-        self.mid_corner_min_btn.setText(_translate("BasicOpetaionWidget", "100"))
+        self.mid_corner_min_btn.setText(_translate("BasicOpetaionWidget", "200"))
         self.lessThan1.setText(_translate("BasicOpetaionWidget", "≤"))
         self.mid_corner_input_box.setItemText(0, _translate("BasicOpetaionWidget", "100"))
         self.mid_corner_input_box.setItemText(1, _translate("BasicOpetaionWidget", "1000"))
