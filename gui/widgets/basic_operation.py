@@ -283,6 +283,9 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.shouldTimeout = False
         self.sampling = False
 
+        if not os.path.exists("C:\Temp"):
+            os.makedirs("C:\Temp")
+
         # Set the filename to a temp filename in the user's temp directory for writing
         self.temp_filename = 'C:\Temp\sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
 
