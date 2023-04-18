@@ -388,9 +388,6 @@ class CyDAQ_CLI:
         listening = True
         while listening:
             res.extend(comm_obj.read_all())
-            if b"!" in res:
-                listening = False
-            # print(res)
             if len(res) < 2:
                 continue
             while len(res) >= 2:
@@ -398,7 +395,8 @@ class CyDAQ_CLI:
                 if res[0:2] == b'@A' or res[0:2] == b'CK':
                     res.pop(0)
                     res.pop(0)
-                    continue
+                    listening = False
+                    break
 
                 # grab next two bytes and convert to uint16
                 raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
@@ -408,6 +406,7 @@ class CyDAQ_CLI:
 
                 # hacky fix for bad data. Need firmware to fix though
                 if volts > 12:
+                    print("skipping volt: ", volts)
                     continue
 
                 if extension == ".csv":
