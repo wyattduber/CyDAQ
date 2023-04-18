@@ -28,7 +28,7 @@ extern bool streamingEnabled;
 static XSysMon SysMonInst;
 static XSysMon *SysMonInstPtr = &SysMonInst;
 static XTmrCtr TimerCounterInst;
-static SAMPLE_TYPE *xadcSampleBuffer = SHARED_MEM;
+volatile SAMPLE_TYPE *xadcSampleBuffer = SHARED_MEM;
 
 u8 xadcInitStatus = 0; //whether XADC has been initialized
 static u32 xadcSampleRate = 0; //stores current sample rate (samples/s)

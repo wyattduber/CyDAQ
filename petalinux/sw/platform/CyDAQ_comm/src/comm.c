@@ -126,6 +126,7 @@ void commRXTask() {
  */
 bool writeSamplesToComm(){
 	int rpc_data[PAYLOAD_DATA_LEN] = {};
+	volatile u16 *ptr;
 
 	int fd = open("/dev/mem", O_RDWR | O_SYNC);
 	if (fd < 0) {
@@ -143,7 +144,7 @@ bool writeSamplesToComm(){
 	off_t offset = 0x38800000; // starting point TODO make constant
 	printf("COMM> size of sample data to write to comm: %d\r\n", size);
 
-	volatile u16 *ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
+	ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
 	if (ptr == MAP_FAILED) {
 		perror("COMM> mmap");
 		return true;
