@@ -184,8 +184,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         shutil.copyfile(self.temp_filename, self.filename)
 
         # Delete the old temp file
-        os.remove(self.temp_filename)
-
+        try:
+            os.remove(self.temp_filename)
+        except PermissionError:
+            print("Unable to delete temp file!! ", self.temp_filename)
+            
         # Reset the temp filename and the existing filename
         # Causes an ask for filename every sample
         self.filename = self.temp_filename = None

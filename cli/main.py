@@ -390,11 +390,14 @@ class CyDAQ_CLI:
             res.extend(comm_obj.read_all())
             if len(res) < 2:
                 continue
+            # print(res)
+
             while len(res) >= 2:
-                # for some reason @ACK is sent at the end of data. Filter it out...
-                if res[0:2] == b'@A' or res[0:2] == b'CK':
-                    res.pop(0)
-                    res.pop(0)
+                # old firmware sent data in the following format: @[DATA]00000000@ACK!
+                # where [DATA] is two byte sensor values
+                # new firmware mimics this, but can be changed
+                # Note: the @ at the start has already been read at this point
+                if len(res)<=6 and b'@ACK!' in res:
                     listening = False
                     break
 
@@ -405,9 +408,10 @@ class CyDAQ_CLI:
                 volts = self._adc_raw_to_volts(raw_num)
 
                 # hacky fix for bad data. Need firmware to fix though
-                if volts > 12:
-                    print("skipping volt: ", volts)
-                    continue
+                # leaving commented out for now...
+                # if volts > 12:
+                #     print("skipping volt: ", volts)
+                #     continue
 
                 if extension == ".csv":
                     writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
