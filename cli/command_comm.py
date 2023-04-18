@@ -553,7 +553,7 @@ class cmd:
 
     ### Balance Beam Commands ###
 
-    def start_bb(self):
+    def start_bb(self, kp=None, ki=None, kd=None, N=None, set=None):
         """
         Sends the start command to the CyDAQ
         """
@@ -570,9 +570,13 @@ class cmd:
         else:
             self.__throw_exception('Starting balance beam mode failed')
 
-        # Set Default Values on Startup
-        self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
-        self.update_set(DEFAULT_SET)
+        # Set Default Values on Startup or Use Given Values
+        if not [x for x in (kp, ki, kd, N, set) if x is None]:
+            self.update_constants(kp, ki, kd, N)
+            self.update_set(N)
+        else:
+            self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
+            self.update_set(DEFAULT_SET)
 
     def stop_bb(self):
         """

@@ -99,7 +99,10 @@ class CLI:
                 self.running_command = False
             raise cyDAQNotConnectedException
 
-        if command != "q" and command != "bb_start":
+        if re.search('bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command):
+            print(f"Running this command: {command}")
+
+        if command != "q" and command != "bb_start" and command != "bb_offset_inc" and command != "bb_offset_dec" and not re.search('bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command) and not re.search('bb_set, [0-9]*\.[0-9]+', command):
             # Wait for response
             try:
                 self.p.expect(INPUT_CHAR)
@@ -270,14 +273,14 @@ class CLI:
 
     ### Balance Beam Wrapper Methods ###
 
-    def start_bb(self, **_):
+    def start_bb(self, kp=None, ki=None, kd=None, N=None, set=None, **_):
         """Start balance beam mode and live data streaming"""
 
         # If a ping command is running, wait for it to finish
         wait(lambda: not self.running_ping_command)
 
         # Check if the balance beam is connected before retrieving data
-        response = self._send_command("bb_start")
+        response = self._send_command(f"bb_start, {kp} {ki} {kd} {N} {set}")
         if not response == CyDAQ_CLI.BALANCE_BEAM_NOT_CONNECTED:
             self.bb_log_mode = True
             self.bb_log_thread = Thread(target=self.retrieve_bb_pos)

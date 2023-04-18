@@ -1,4 +1,5 @@
 import os
+import re
 import threading
 import time
 import serial
@@ -101,6 +102,27 @@ class ctrl_comm:
                 os.write(port, b'ACK')
                 os.write(port, b'!')
             elif res == b'SOI -1!':  # bb_offset_dec
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            # K Constant Commands
+            elif re.search('kp [0-9]+', res): # 'kp <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search('ki [0-9]+', res): # 'ki <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search('kd [0-9]+', res): # 'kd <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search('n [0-9]+', res): # 'n <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')  
+            elif re.search('r [0-9]+', res): # set <int>
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
