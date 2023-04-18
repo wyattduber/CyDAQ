@@ -401,17 +401,17 @@ class CyDAQ_CLI:
                     listening = False
                     break
 
+                # old firmware behaivor would put 8 '0' chars at the end of the data for some reaon...
+                # just filter that out
+                if res[0:2] == b'00':
+                    res.pop(0)
+                    res.pop(0)
+                    continue
+
                 # grab next two bytes and convert to uint16
                 raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
                 res.pop(0)
                 res.pop(0)
-                volts = self._adc_raw_to_volts(raw_num)
-
-                # hacky fix for bad data. Need firmware to fix though
-                # leaving commented out for now...
-                # if volts > 12:
-                #     print("skipping volt: ", volts)
-                #     continue
 
                 if extension == ".csv":
                     writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
