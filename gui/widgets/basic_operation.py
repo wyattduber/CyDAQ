@@ -1,5 +1,6 @@
 # Standard Python Packages
 import os
+import re
 import time
 import json
 import shutil
@@ -18,6 +19,7 @@ from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
+
 
 class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
@@ -39,7 +41,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.shouldTimeout = False
         self.filename = None
         self.temp_filename = None
-        self.file_error = True # Start true then change later if successful
+        self.file_error = True  # Start true then change later if successful
 
         ### Below are the methods called when buttons are pressed ###
 
@@ -153,52 +155,12 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         """When the cyDAQ is finished writing data."""
         print("writing data finished")
         # Adds the filename to the plotter window for ease of use
-        #self.mainWindow.livestream.infile_line.setText(self.filename)
+        # self.mainWindow.livestream.infile_line.setText(self.filename)
         self.writing = False
         self.mainWindow.startPingTimer()
         self.start_stop_sampling_btn.setText("Start")
 
         Thread(target=self.copyTempFile).start()
-
-        # # Flag boolean for copying file
-        # checking_file = False
-
-        # # Catch a permission error exception
-        # def handlePermissionError():
-        #     self._show_error("File is not writeable! Try again.")
-        #     self.filename = None
-
-        #     # Then open a new file dialogue and start the process over again
-        #     options = QFileDialog.Options()
-        #     self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
-        #                             DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
-        #                             options=options)
-        #     if self.filename.strip() == "":  # no file chosen
-        #         self.filename = self.temp_filename
-            
-        #     # File error did happen
-        #     self.file_error = True
-
-        # # Set the variable to false
-        # def notChecking():
-        #     checking_file = False
-
-        # # Try to copy the file. If it works, then no worries
-        # # If it throws a permission error, then let the user know and enter a new filename
-        # # Continue this until the file is valid and writeable
-        # while self.file_error:
-
-        #     # Attempt to copy the file
-        #     checking_file = True
-        #     self.cyDAQModeWidget.runInWorkerThread(
-        #         self,
-        #         func=self.copyTempFile,
-        #         finished_func=notChecking,
-        #         error_func=handlePermissionError
-        #     )
-
-        #     # Wait for file to be checked
-        #     wait(lambda: not checking_file)
 
     def copyTempFile(self):
         """
@@ -210,22 +172,23 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
 
         # Put a few checks here for if file is not writeable
         # This will throw an exception if the file is not writeable
-        # This exception is handled in the caller thread
-        if os.path.exists(self.filename):
-            f = open(self.filename, "a")
+        # It will append the file in the same place as the original filename with a _1 appended
+        # If there is already a _#, it will then append _#+1 to new file
+        try:
+            if os.path.exists(self.filename):
+                open(self.filename, 'w')
+        except PermissionError:
+            self.filename = self.filename.replace('.csv', '_1.csv')
 
         # Copy the temp file over to the new one
         shutil.copyfile(self.temp_filename, self.filename)
-        
+
         # Delete the old temp file
         os.remove(self.temp_filename)
 
         # Reset the temp filename and the existing filename
         # Causes an ask for filename every sample
         self.filename = self.temp_filename = None
-        
-        # File error did not happen
-        self.file_error = False
 
     # Function to get the data from the GUI and format it into a JSON Dictionary
     # Each try/catch statement is to determine if the input is in scientific notation
@@ -316,7 +279,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         if btn == "send_config_only":
             self.send_config_only()
 
-
     def stop_sampling(self):
         self.shouldTimeout = False
         self.sampling = False
@@ -339,11 +301,10 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # Get the filename after the user stopped sampling
         options = QFileDialog.Options()
         self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
-                                                        DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
-                                                        options=options)
+                                                       DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
+                                                       options=options)
         if self.filename.strip() == "":  # no file chosen
             self.filename = self.temp_filename
-
 
     # Method that is run both to start and stop sampling
     # Runs in a worker thread to keep the GUI from freezing and to allow use of other features
