@@ -96,13 +96,6 @@ background-color: #d9d9d9;</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
-     <widget class="QLineEdit" name="kp_output">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_4">
       <property name="text">
@@ -151,6 +144,9 @@ background-color: #d9d9d9;</string>
        <bool>true</bool>
       </property>
      </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="kp_output"/>
     </item>
    </layout>
   </widget>

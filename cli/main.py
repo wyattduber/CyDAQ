@@ -49,6 +49,7 @@ class CyDAQ_CLI:
 	generate\t\t\t\t\t\t Start/Stop DAC Generation
 	mock, (enable/disable/status)\t Enable CyDAQ serial mocking mode
 	bb_start\t\t\t\t\t\t Start Balance Beam Mode
+    \tbb_start, (kp) (ki) (kd) (N) (Set)\t Start with specific balance beam values
 	bb_stop\t\t\t\t\t\t\t Stop Balance Beam Mode
 	bb_fetch_pos\t\t\t\t\t Fetch the current position the balance beam
 	bb_const, (kp) (ki) (kd) (N)\t Send updated constants for bb calc
@@ -78,7 +79,7 @@ class CyDAQ_CLI:
         self.wrapper_mode = False
         self.mock_mode = False
         self.balance_beam_enabled = False
-        self.is_working_stop_cmd_sent = False
+        self.is_working_cmd_sent = False
         self.generating = False
         self.bb_thread = None
         self.stop_thread = True
@@ -205,11 +206,24 @@ class CyDAQ_CLI:
                     self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
                 continue
             elif command[0].lower() == 'bb_start':
-                if self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
-                    continue
-                self.bb_pos = "-9"  # Default start value for plotting
-                self._start_beam_mode()
+                if len(command) == 1:
+                    if self.balance_beam_enabled:
+                        self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
+                        continue
+                    self.bb_pos = "-9"  # Default start value for plotting
+                    self._start_beam_mode()
+                elif len(command) == 2:
+                    args = command[1].split(' ')
+                    if len(args) == 5:
+                        if self.balance_beam_enabled:
+                            self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
+                            continue
+                        self.bb_pos = "-9"  # Default start value for plotting
+                        self._start_beam_mode(args[0], args[1], args[2], args[3], args[4])
+                    else:
+                        self._print_to_output("Invalid syntax. Ex: bb_start, 0 0 0 0 0")
+                else:
+                    self._print_to_output("Invalid syntax. Ex: bb_start, 0 0 0 0 0")
                 continue
 
             # The following commands require that the balance beam mode is already enabled
@@ -219,29 +233,42 @@ class CyDAQ_CLI:
                 continue
 
             if command[0].lower() == 'bb_stop':
-                self.is_working_stop_cmd_sent = True
+                self.is_working_cmd_sent = True
                 self._stop_beam_mode()
                 continue
             elif command[0].lower() == 'bb_fetch_pos':
+                self.is_working_cmd_sent = True
                 self._print_to_output(self.bb_pos, log_level="BB_LIVE")
                 continue
             elif command[0].lower() == 'bb_const':
+                self.is_working_cmd_sent = True
                 args = command[1].split(' ')
-                self._update_constants(args[0], args[1], args[2], args[3])
+                if len(args) != 4:
+                    self._print_to_output("Invalid syntax. Ex: bb_const, 0 0 0 0")
+                else:
+                    self._update_constants(args[0], args[1], args[2], args[3])
                 continue
             elif command[0].lower() == 'bb_set':
-                self._update_set(command[1])
+                self.is_working_cmd_sent = True
+                if len(command) != 2:
+                    self._print_to_output("Invalid syntax. Ex: bb_set, 0")
+                else:
+                    self._update_set(command[1])
                 continue
             elif command[0].lower() == 'bb_offset_inc':
+                self.is_working_cmd_sent = True
                 self._offset_inc()
                 continue
             elif command[0].lower() == 'bb_offset_dec':
+                self.is_working_cmd_sent = True
                 self._offset_dec()
                 continue
             elif command[0].lower() == 'bb_pause':
+                self.is_working_cmd_sent = True
                 self._pause_bb()
                 continue
             elif command[0].lower() == 'bb_resume':
+                self.is_working_cmd_sent = True
                 self._resume_bb()
                 continue
 
@@ -524,9 +551,9 @@ class CyDAQ_CLI:
 
     ### Balance Beam Methods ###
 
-    def _start_beam_mode(self):
+    def _start_beam_mode(self, kp=None, ki=None, kd=None, N=None, set=None):
         # Start Balance Beam Mode (Send Start Command)
-        self.cmd_obj.start_bb()
+        self.cmd_obj.start_bb(kp, ki, kd, N, set)
 
         # Check and see if the buffer returns false, or a number
         # If it returns a number, balance beam is connected and functional
@@ -548,24 +575,31 @@ class CyDAQ_CLI:
         self.balance_beam_enabled = False
         self.stop_thread = True
         self.bb_thread = None
+        self.is_working_cmd_sent = False
 
     def _update_constants(self, kp, ki, kd, N):
         self.cmd_obj.update_constants(kp, ki, kd, N)
+        self.is_working_cmd_sent = False
 
     def _update_set(self, setv):
         self.cmd_obj.update_set(setv)
+        self.is_working_cmd_sent = False
 
     def _offset_inc(self):
         self.cmd_obj.offset_inc()
+        self.is_working_cmd_sent = False
 
     def _offset_dec(self):
         self.cmd_obj.offset_dec()
+        self.is_working_cmd_sent = False
 
     def _pause_bb(self):
         self.cmd_obj.pause_bb()
+        self.is_working_cmd_sent = False
 
     def _resume_bb(self):
         self.cmd_obj.resume_bb()
+        self.is_working_cmd_sent = False
 
     def _read_bb_buffer(self):
         while not self.stop_thread:
@@ -575,18 +609,20 @@ class CyDAQ_CLI:
             # Check for if the actual balance beam is not connected to the CyDAQ
             if type(buffer) == type(False):
                 if not buffer:
-                    if self.is_working_stop_cmd_sent:
+                    if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
                         continue
                     self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                     self.stop_thread = True
                     self.balance_beam_enabled = False
+                    print(f"Buffer is false for some reason! {buffer}")
                     return
             if buffer == "0xc9\r":  # Alternate balance beam not connected code
-                if self.is_working_stop_cmd_sent:
+                if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
                         continue
                 self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                 self.stop_thread = True
                 self.balance_beam_enabled = False
+                print(f"Buffer is the weird code for some reason! {buffer}")
                 return
 
             # Check if the buffer has improper syntax, and if so, throw it out
