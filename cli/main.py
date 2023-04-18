@@ -365,7 +365,11 @@ class CyDAQ_CLI:
         writeFunction = self._writeCSV
         f = None
         if extension == ".csv":
-            f = open(outFile, 'w')
+            try:
+                f = open(outFile, 'w')
+            except Exception as e:
+                self._print_to_output("Error opening file!", self.WRAPPER_ERROR)
+                return
         self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
         self.cmd_obj.send_fetch()
 

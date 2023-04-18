@@ -173,6 +173,8 @@ class CLI:
         elif message == cli_tool.BALANCE_BEAM_NOT_CONNECTED:
             self.stop_bb()
             raise BalanceBeamNotConnectedException
+        elif message == "Error opening file!": #TODO make constant
+            raise cyDAQFileException("Error opening the file specified! Is it already open in another program?")
         else:
             raise CLIException(message)
 
@@ -395,6 +397,13 @@ class cyDAQNotConnectedException(Exception):
     def __init__(self):
         super().__init__("CyDAQ is not connected properly!")
 
+class cyDAQFileException(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+    
+    def getMessage(self):
+        return self.message
 
 class BalanceBeamNotConnectedException(Exception):
     def __init__(self):

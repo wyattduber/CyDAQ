@@ -248,7 +248,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             func=self.wrapper.stop_sampling,
             func_args=self.filename,
             finished_func=self.writingDataFinished,
-            error_func=lambda: self.mainWindow.showError(x)
+            error_func=lambda x: self.mainWindow.showError(str(x[1]))
         )
 
     # Method that is run both to start and stop sampling
