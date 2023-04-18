@@ -5,10 +5,10 @@ import serial
 import serial.tools.list_ports
 
 # Old firmware
-COMM_PORT_DESCRIPTION = "USB Serial Port"
+OLD_COMM_PORT_DESCRIPTION = "USB Serial Port"
 
 # New firmware
-# COMM_PORT_DESCRIPTION = "USB Serial Device"
+NEW_COMM_PORT_DESCRIPTION = "USB Serial Device"
 
 class ctrl_comm:
     """
@@ -164,20 +164,30 @@ class ctrl_comm:
         all_ports = serial.tools.list_ports.comports()
         open_ports = []
         for element in all_ports:
-            if COMM_PORT_DESCRIPTION in element.description:
-                open_ports.append(element.device)
-            # if "USB Serial Port" in element.description:
-            #     open_ports.append(element.device)
-            # if "USB Serial Device" in element.description: 
-            #     # for new firmware. Prepend instead to it takes higher priority
-            #     open_ports = [element.device] + open_ports
-        try:
-            zybo_port = open_ports[0]
-            port = str(zybo_port)
-            # print("Zybo found on ",str(zybo_port))
-            return port
-        except:
-            # print("Zybo not connected")
+            if OLD_COMM_PORT_DESCRIPTION in element.description or NEW_COMM_PORT_DESCRIPTION in element.description:
+                open_ports.append((element.description, element.device))
+        
+        # connected device could be running old or new firmware, need to figure out which
+        # old firmware:
+        # only one USB port detected, has name "USB Serial Port"
+
+        # new firmware:
+        # only one USB port detected, has name "USB Serial Device" (basic scenario in lab) OR
+        # two USB ports detected, one is "USB Serial Port" the other is "USB Serial" (when debugging) - need to pick the "USB Serial Device" one
+        if len(open_ports) == 0:
+            return None
+        if len(open_ports) == 1:
+            return str(open_ports[0][1])
+        elif len(open_ports) == 2:
+            if NEW_COMM_PORT_DESCRIPTION in open_ports[0][0]:
+                return str(open_ports[0][1])
+            elif NEW_COMM_PORT_DESCRIPTION in open_ports[1][0]:
+                return str(open_ports[1][1])
+            else:
+                print("Couldn't find correct new firmware port. Unable to proceed!")
+                return None
+        else:
+            print("Found 3 or more viable COMM ports. Unable to proceed!")
             return None
 
     def close(self):
