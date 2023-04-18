@@ -309,11 +309,15 @@ void xadcInterruptHandler(void *CallBackRef) {
 		return;
 	}
 
-	if(DEBUG && *xadcSampleCount % 100000 == 0)
-		xil_printf("SAMP> XADC interrupt count: %d\r\n", *xadcSampleCount);
+//	if(DEBUG)
+//		xil_printf("SAMP> XADC interrupt count: %d\r\n", *xadcSampleCount);
 
 	if ((*xadcSampleCount) < SAMPLE_BUFFER_SIZE ) {
+		//TOOD these invalidate/flush might not be needed, and could impact performance. Need more testing
+		Xil_DCacheInvalidateRange(xadcSampleBuffer + *xadcSampleCount, 2);
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
+		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
+//		xil_printf("SAMP> XADC interrupt #%d, wrote: %d to address %p\r\n", *xadcSampleCount, xadcSampleBuffer[*xadcSampleCount], xadcSampleBuffer + *xadcSampleCount);
 		(*xadcSampleCount)++;
 
 	} else if(streamingEnabled) {

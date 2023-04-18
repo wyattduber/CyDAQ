@@ -143,15 +143,22 @@ bool writeSamplesToComm(){
 	off_t offset = 0x38800000; // starting point TODO make constant
 	printf("COMM> size of sample data to write to comm: %d\r\n", size);
 
-	u16 *ptr = (u16 *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
+	volatile u16 *ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
 	if (ptr == MAP_FAILED) {
 		perror("COMM> mmap");
 		return true;
 	}
 
+	// Flush the memory range to ensure we read the latest values.
+	//currently throws an error... hmm
+//	if (msync(ptr, size, MS_SYNC) == -1) {
+//		perror("COMM> msync");
+//		return true;
+//	}
+
 	//TODO delete
-//	for (int i = 0; i < size; i++) {
-//		printf("%d ", ptr[i]);
+//	for (int i = 0; i < count; i++) {
+//		printf("%d (%p) (sample #%d)\r\n", ptr[i], ptr + i, i);
 //	}
 //	printf("\n");
 

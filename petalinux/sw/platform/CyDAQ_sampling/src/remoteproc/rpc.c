@@ -134,6 +134,11 @@ int handle_message(struct _payload* payload){
 		switch(data[0]){
 		case RPC_MESSAGE_GET_SAMPLE_COUNT:
 			sample_count = shared_GetSampleCount();
+
+			//assume that petalinux is going to try to read from the shared memory at this length,
+			//flush the cache so it has the latest TODO don't actually need? idk yet
+//			Xil_DCacheFlushRange(shared_GetSampleBuffer, (int)sample_count * sizeof(u16));
+
 			if(DEBUG)
 				xil_printf("SAMP> got request for sample count, responding with: %d\r\n", *sample_count);
 			response_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
