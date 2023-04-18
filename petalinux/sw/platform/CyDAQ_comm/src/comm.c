@@ -80,8 +80,7 @@ int commInit() {
 }
 
 /**
- * Processes commands received over UART. Runs infinitely in the background, getting interrupted by ISRs
- * 	as higher-priority timers (such as the ADC sampling timer) trigger.
+ * Processes commands received over UART. Blocking.
  */
 void commRXTask() {
 	//number of bytes received over UART
@@ -102,22 +101,6 @@ void commRXTask() {
 				continue;
 			}
 			bytesReceived += len;
-		}
-
-		//TODO is this wanted anymore?
-		//stop sampling to config device
-		//TODO: instead, save configuration and apply once sampling is done
-		if (samplingEnabled == true) {
-			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcDisableSampling(); //TODO
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_DisableSampling(); //TODO
-				break;
-			default:
-				break;
-			}
 		}
 
 		//apply command
@@ -206,7 +189,7 @@ bool stopSampling(){
 		if(DEBUG)
 			printf("COMM> disabling xadc sampling\r\n");
 		rpc_data[0] = RPC_MESSAGE_XADC_DISABLE_SAMPLING;
-		rpc_data[1] = 0; //useStreaming - not implemented
+		rpc_data[1] = 0; //useStreaming=false - not implemented
 		rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 		if(rpc_recieve_ack() != 0){
 			if(DEBUG)
@@ -304,7 +287,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Select Input Source---  */
+		/*  ---Select Input Source---  */
 		} else if (cmd == INPUT_SELECT) {
 			if (payloadLength == 0) {
 				if (DEBUG)
@@ -322,7 +305,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Select Active Filter---  */
+		/*  ---Select Active Filter---  */
 		} else if (cmd == FILTER_SELECT) {
 			if (payloadLength < 1) {
 				if (DEBUG)
@@ -340,7 +323,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Set Filter Corner Frequencies---  */
+		/*  ---Set Filter Corner Frequencies---  */
 		} else if (cmd == CORNER_FREQ_SET) {
 			if (payloadLength < 4) {
 				if (DEBUG)
@@ -366,7 +349,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Select between XADC and external SPI ADC---  */
+		/*  ---Select between XADC and external SPI ADC---  */
 		} else if (cmd == ADC_SELECT) { //TODO not supported yet
 			if (payloadLength != 1) {
 				if (DEBUG)
@@ -385,7 +368,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Print Samples---  */
+		/*  ---Print Samples---  */
 		} else if (cmd == FETCH_SAMPLES) {
 			err = stopSampling();
 			if(err){
@@ -393,7 +376,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			}
 			err = writeSamplesToComm();
 
-			/*  ---Start Sampling---  */
+		/*  ---Start Sampling---  */
 		} else if (cmd == START_SAMPLING) {
 
 			if(samplingEnabled){
@@ -431,16 +414,15 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 					err = true;
 					break;
 			}
-
+		/* ---Stop Sampling--- */
 		} else if (cmd == STOP_SAMPLING) {
 			printf("COMM> stop sampling!\r\n");
 			stopSampling(); //moved to separate function because it needs to also happen in fetch command
 
-			/*  ---Select DAC Operating Mode---  */
-		} else if (cmd == DAC_MODE_SELECT) {
-			//TODO: implement me once DAC has multiple operating modes
+		/*  ---Select DAC Operating Mode---  */
+		} else if (cmd == DAC_MODE_SELECT) { //TODO: implement me once DAC has multiple operating modes
 
-			/*  ---Set DAC Generation Repetitions Count---  */
+		/*  ---Set DAC Generation Repetitions Count---  */
 		} else if (cmd == DAC_NUM_REPS_SET) { //TODO not finished yet
 			if (payloadLength < 4) {
 				if (DEBUG)
@@ -451,13 +433,12 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				u32 num = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 
-//				dac80501_SetNumRepetitions(num);
 				rpc_data[0] = RPC_MESSAGE_DAC_SET_NUM_REPETITIONS;
 				rpc_data[1] = num;
 //				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
-			/*  ---Set DAC Generation Rate (Sampling Rate)---  */
+		/*  ---Set DAC Generation Rate (Sampling Rate)---  */
 		} else if (cmd == DAC_GEN_RATE_SET) { //TODO not finished yet
 			if (payloadLength < 4) {
 				if (DEBUG)
@@ -468,13 +449,12 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 
-//				err = dac80501_SetGenerationRate(rate);
 				rpc_data[0] = RPC_MESSAGE_DAC_SET_GEN_RATE;
 				rpc_data[1] = rate;
 //				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
-			/*  ---Receive New Dataset Sent from PC---  */
+		/*  ---Receive New Dataset Sent from PC---  */
 		} else if (cmd == DAC_SEND_DATASET) { //TODO not finished yet
 			u32 dsSize = (payload[0] << 24) | (payload[1] << 16)
 					| (payload[2] << 8) | (payload[3]);
@@ -508,13 +488,6 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		}
 	}
 	return err;
-}
-
-/**
- * Exposes UART receive command to libraries without need for global UART pointer.
- */
-u32 commUartRecv(u8 *bufferPtr, u32 numBytes) {
-	return read(serial_port, bufferPtr, numBytes);
 }
 
 /**
