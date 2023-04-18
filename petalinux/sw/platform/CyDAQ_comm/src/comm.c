@@ -150,10 +150,10 @@ bool writeSamplesToComm(){
 	}
 
 	//TODO delete
-	for (int i = 0; i < 100; i++) {
-		printf("%d ", ptr[i]); // print the first 100 for testing
-	}
-	printf("\n");
+//	for (int i = 0; i < size; i++) {
+//		printf("%d ", ptr[i]);
+//	}
+//	printf("\n");
 
 	//send data to remote pc, starting with @ and ending with !
 	char* test1 = "@";
@@ -163,8 +163,8 @@ bool writeSamplesToComm(){
 	char* test2 = "00000000"; //had it in the old code, so included it. Can probably remove
 	commUartSend(test2, 8);
 	usleep(50000);
-	char* test3 = "!";
-	commUartSend(test3, 1);
+//	char* test3 = "!";
+//	commUartSend(test3, 1);
 	if(DEBUG)
 		printf("COMM> done writing samples\r\n");
 
