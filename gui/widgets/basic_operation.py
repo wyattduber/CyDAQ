@@ -1,12 +1,17 @@
 # Standard Python Packages
+import os
 import time
 import json
+import shutil
+from waiting import wait
 from threading import Thread
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 # Stuff From Project - May show as an error but it works
 from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
@@ -33,6 +38,8 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.writing = False
         self.shouldTimeout = False
         self.filename = None
+        self.temp_filename = None
+        self.file_error = True # Start true then change later if successful
 
         ### Below are the methods called when buttons are pressed ###
 
@@ -40,8 +47,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.home_btn.clicked.connect(lambda: self.pre_btn_check("home"))
 
         # Bottom Buttons
-        send_config = self.send_config_btn
-        send_config.clicked.connect(lambda: self.pre_btn_check("send_config_only"))
+        self.send_config_btn.clicked.connect(lambda: self.pre_btn_check("send_config_only"))
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -76,6 +82,9 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
 
         validator = QDoubleValidator(2000, 40000, 4)
         self.high_corner_input.setValidator(validator)
+
+        validator = QIntValidator(0, 9999)
+        self.sampling_time_input.setValidator(validator)
 
         # Sampling
         self.start_stop_sampling_btn.clicked.connect(lambda: self.pre_btn_check("start_stop_sampling"))
@@ -143,11 +152,80 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     def writingDataFinished(self):
         """When the cyDAQ is finished writing data."""
         print("writing data finished")
-        self.mainWindow.livestream.infile_line.setText(self.filename)
-        self.filename = None  # Causes an ask for filename every sample
+        # Adds the filename to the plotter window for ease of use
+        #self.mainWindow.livestream.infile_line.setText(self.filename)
         self.writing = False
         self.mainWindow.startPingTimer()
         self.start_stop_sampling_btn.setText("Start")
+
+        Thread(target=self.copyTempFile).start()
+
+        # # Flag boolean for copying file
+        # checking_file = False
+
+        # # Catch a permission error exception
+        # def handlePermissionError():
+        #     self._show_error("File is not writeable! Try again.")
+        #     self.filename = None
+
+        #     # Then open a new file dialogue and start the process over again
+        #     options = QFileDialog.Options()
+        #     self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
+        #                             DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
+        #                             options=options)
+        #     if self.filename.strip() == "":  # no file chosen
+        #         self.filename = self.temp_filename
+            
+        #     # File error did happen
+        #     self.file_error = True
+
+        # # Set the variable to false
+        # def notChecking():
+        #     checking_file = False
+
+        # # Try to copy the file. If it works, then no worries
+        # # If it throws a permission error, then let the user know and enter a new filename
+        # # Continue this until the file is valid and writeable
+        # while self.file_error:
+
+        #     # Attempt to copy the file
+        #     checking_file = True
+        #     self.cyDAQModeWidget.runInWorkerThread(
+        #         self,
+        #         func=self.copyTempFile,
+        #         finished_func=notChecking,
+        #         error_func=handlePermissionError
+        #     )
+
+        #     # Wait for file to be checked
+        #     wait(lambda: not checking_file)
+
+    def copyTempFile(self):
+        """
+        When the temp file is done being written to and the new filename
+        is input, copy the tmp file contents over and remove the old one.
+        """
+        # Wait to make sure that the filename has actually been entered
+        wait(lambda: self.filename != "" and self.filename is not None)
+
+        # Put a few checks here for if file is not writeable
+        # This will throw an exception if the file is not writeable
+        # This exception is handled in the caller thread
+        if os.path.exists(self.filename):
+            f = open(self.filename, "a")
+
+        # Copy the temp file over to the new one
+        shutil.copyfile(self.temp_filename, self.filename)
+        
+        # Delete the old temp file
+        os.remove(self.temp_filename)
+
+        # Reset the temp filename and the existing filename
+        # Causes an ask for filename every sample
+        self.filename = self.temp_filename = None
+        
+        # File error did not happen
+        self.file_error = False
 
     # Function to get the data from the GUI and format it into a JSON Dictionary
     # Each try/catch statement is to determine if the input is in scientific notation
@@ -242,14 +320,30 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     def stop_sampling(self):
         self.shouldTimeout = False
         self.sampling = False
+
+        # Set the filename to a temp filename in the user's temp directory for writing
+        self.temp_filename = 'C:\Temp\sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
+
         self.writingData()
+
+        # Then tell the cydaq to stop sampling and writing to a temp file
+        # This will happen while the user is working on the actual filename 
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.stop_sampling,
-            func_args=self.filename,
+            func_args=self.temp_filename,
             finished_func=self.writingDataFinished,
             error_func=lambda: self.mainWindow.showError(x)
         )
+
+        # Get the filename after the user stopped sampling
+        options = QFileDialog.Options()
+        self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
+                                                        DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
+                                                        options=options)
+        if self.filename.strip() == "":  # no file chosen
+            self.filename = self.temp_filename
+
 
     # Method that is run both to start and stop sampling
     # Runs in a worker thread to keep the GUI from freezing and to allow use of other features
@@ -274,15 +368,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             if s != "":
                 self.showInfo(s)
                 return
-
-            if self.filename is None or self.filename.strip() == "":
-                # get file save location
-                options = QFileDialog.Options()
-                self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
-                                                               DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
-                                                               options=options)
-                if self.filename.strip() == "":  # no file chosen
-                    return
 
             def handleError(x):
                 self.startSamplingError = True
@@ -478,7 +563,18 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
 
     def _show_error(self, message):
-        pass
+        """Private method to just show an error message box with a custom message"""
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()
 
-    def _show_message(self, message):
-        pass
+    def _show_message(self, title, message, subtext=None):
+        """Private method to just show an info message box with a custom message"""
+        messagebox = QMessageBox(self)
+        messagebox.setWindowTitle(title)
+        messagebox.setText(message)
+        messagebox.setInformativeText(subtext)
+        messagebox.setIcon(QMessageBox.Information)
+        messagebox.exec()
