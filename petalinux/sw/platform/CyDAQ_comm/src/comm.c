@@ -121,6 +121,60 @@ void commRXTask() {
 }
 
 /*
+ * Writes the samples stored in shared memory to the filesystem.
+ * Returns true if error, false otherwise
+ */
+bool writeSamplesToFile(){
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
+	volatile u16 *ptr;
+
+	int fd = open("/dev/mem", O_RDWR | O_SYNC);
+	if (fd < 0) {
+		perror("COMM> open");
+		return true;
+	}
+
+	rpc_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
+	rpc_send_message(MSG_TYPE_REQUEST, rpc_data, 1);
+	int count = rpc_recieve_int_response();
+	if(DEBUG)
+		printf("COMM> SAMP reported %d samples in buffer\r\n", count);
+
+	size_t size = sizeof(u16) * count;
+	off_t offset = 0x38800000; // starting point TODO make constant
+
+	ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
+	if (ptr == MAP_FAILED) {
+		perror("COMM> mmap");
+		return true;
+	}
+
+	FILE *fp = fopen("/tmp/sample_data.bin", "wb");
+	if(fp == NULL){
+		perror("COMM> Failed to open sample_data.bin file!\r\n");
+		return true;
+	}
+
+	size_t samples_written = fwrite(ptr, sizeof(u16), count, fp);
+	printf("COMM> Wrote %d samples to file\r\n", samples_written);
+    if (samples_written != count) {
+        perror("Failed to write data");
+        fclose(fp);
+        return true;
+    }
+
+    fclose(fp);
+
+	if (munmap(ptr, size) == -1) {
+		perror("COMM> munmap");
+		return true;
+	}
+
+	close(fd);
+	return false;
+}
+
+/*
  * Writes samples stored in shared memory to PC via COMM
  * Returns true if error, false otherwise
  */
@@ -142,20 +196,12 @@ bool writeSamplesToComm(){
 
 	size_t size = sizeof(u16) * count;
 	off_t offset = 0x38800000; // starting point TODO make constant
-	printf("COMM> size of sample data to write to comm: %d\r\n", size);
 
 	ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
 	if (ptr == MAP_FAILED) {
 		perror("COMM> mmap");
 		return true;
 	}
-
-	// Flush the memory range to ensure we read the latest values.
-	//currently throws an error... hmm
-//	if (msync(ptr, size, MS_SYNC) == -1) {
-//		perror("COMM> msync");
-//		return true;
-//	}
 
 	//TODO delete
 //	for (int i = 0; i < count; i++) {
@@ -383,6 +429,13 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				return err;
 			}
 			err = writeSamplesToComm();
+			if(err){
+				return err;
+			}
+			err = writeSamplesToFile();
+			if(err){
+				return err;
+			}
 
 		/*  ---Start Sampling---  */
 		} else if (cmd == START_SAMPLING) {
@@ -425,8 +478,14 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 		/* ---Stop Sampling--- */
 		} else if (cmd == STOP_SAMPLING) {
 			printf("COMM> stop sampling!\r\n");
-			stopSampling(); //moved to separate function because it needs to also happen in fetch command
-
+			err = stopSampling(); //moved to separate function because it needs to also happen in fetch command
+			if(err){
+				return err;
+			}
+			err = writeSamplesToFile();
+			if(err){
+				return err;
+			}
 		/*  ---Select DAC Operating Mode---  */
 		} else if (cmd == DAC_MODE_SELECT) { //TODO: implement me once DAC has multiple operating modes
 
