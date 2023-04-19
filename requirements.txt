@@ -11,3 +11,4 @@ PyQt5==5.15.9 # was having install issues with this one, tentatively reenabled
 pyqtgraph==0.13.3
 pyserial
 waiting
+paramiko

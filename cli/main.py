@@ -8,7 +8,7 @@ import os
 import json
 import time
 import traceback
-import subprocess
+import paramiko
 
 from check_params import ParameterConstructor
 
@@ -470,10 +470,21 @@ class CyDAQ_CLI:
                 os.makedirs("C:\Temp")
 
             # TODO make constants
-            remote_path = "root@169.254.7.2:/tmp/sample_data.bin"
+            remote_path = "/tmp/sample_data.bin"
             local_path = "C:\Temp\sample_data.bin"
-            scp_command = ["pscp", "-pw", "root", remote_path, local_path]
-            subprocess.run(scp_command) # TODO handle if pscp command isn't found. User needs to install putty on their systems (all lab computers have it!)
+
+            # Create an SSH client
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect("169.254.7.2", port=22, username="root", password="root") #TODO make constants
+            scp = ssh.open_sftp()
+
+            # Copy the remote file to the local machine
+            scp.get(remote_path, local_path)
+
+            # Close the SCP client and SSH connection
+            scp.close()
+            ssh.close()
 
             # read from temp data.bin, and write sample file to given file locaiton 
             with open(local_path, "rb") as temp_file:
