@@ -21,6 +21,7 @@ class ctrl_comm:
     def __init__(self, mock_mode=False):
         # print("ctrl_comm init")
         self.mock_mode = mock_mode
+        self.old_firmware = None # set to true/false once connected
         self._init_comm()
 
         if self.mock_mode:
@@ -199,8 +200,10 @@ class ctrl_comm:
         if len(open_ports) == 0:
             return None
         if len(open_ports) == 1:
+            self.old_firmware = OLD_COMM_PORT_DESCRIPTION in open_ports[0][0]
             return str(open_ports[0][1])
         elif len(open_ports) == 2:
+            self.old_firmware = False
             if NEW_COMM_PORT_DESCRIPTION in open_ports[0][0]:
                 return str(open_ports[0][1])
             elif NEW_COMM_PORT_DESCRIPTION in open_ports[1][0]:

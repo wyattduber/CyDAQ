@@ -436,6 +436,17 @@ class cmd:
             self.__throw_exception('Sending start failed')
             return False
 
+    def send_stop_sampling(self):
+        self.ctrl_comm_obj.open(self.port)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_SAMPLING.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+
+        else:
+            self.__throw_exception('Sending start failed')
+            return False
+
     def send_start_gen(self):
         self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:

@@ -7,6 +7,7 @@ import os
 import json
 import time
 import traceback
+import subprocess
 
 from check_params import ParameterConstructor
 
@@ -397,63 +398,102 @@ class CyDAQ_CLI:
             except Exception as e:
                 self._print_to_output("Error opening file!", self.WRAPPER_ERROR)
                 return
-        self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
-        self.cmd_obj.send_fetch()
+        # TODO move these to a seperate functions to keep it clean
+        if self.cmd_obj.ctrl_comm_obj.old_firmware:
+            self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
+            self.cmd_obj.send_fetch()
 
-        # open a new connection to get data
-        comm_obj = self.cmd_obj.ctrl_comm_obj
-        comm_obj.open(self.cmd_obj.port)
+            # open a new connection to get data
+            comm_obj = self.cmd_obj.ctrl_comm_obj
+            comm_obj.open(self.cmd_obj.port)
 
-        # wait for an @, which signals start of data
-        byte = b""
-        while byte != b"@":
-            byte = comm_obj.read()
+            # wait for an @, which signals start of data
+            byte = b""
+            while byte != b"@":
+                byte = comm_obj.read()
 
-        # read all from the buffer, writing it to file
-        res = bytearray(b"")
-        count = 0
-        listening = True
-        while listening:
-            res.extend(comm_obj.read_all())
-            if len(res) < 2:
-                continue
-            # print(res)
-
-            while len(res) >= 2:
-                # old firmware sent data in the following format: @[DATA]00000000@ACK!
-                # where [DATA] is two byte sensor values
-                # new firmware mimics this, but can be changed
-                # Note: the @ at the start has already been read at this point
-                if len(res)<=6 and b'@ACK!' in res:
-                    listening = False
-                    break
-
-                # old firmware behaivor would put 8 '0' chars at the end of the data for some reaon...
-                # just filter that out
-                if res[0:2] == b'00':
-                    res.pop(0)
-                    res.pop(0)
+            # read all from the buffer, writing it to file
+            res = bytearray(b"")
+            count = 0
+            listening = True
+            while listening:
+                res.extend(comm_obj.read_all())
+                if len(res) < 2:
                     continue
+                # print(res)
 
-                # grab next two bytes and convert to uint16
-                raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
-                res.pop(0)
-                res.pop(0)
+                while len(res) >= 2:
+                    # old firmware sent data in the following format: @[DATA]00000000@ACK!
+                    # where [DATA] is two byte sensor values
+                    # new firmware mimics this, but can be changed
+                    # Note: the @ at the start has already been read at this point
+                    if len(res)<=6 and b'@ACK!' in res:
+                        listening = False
+                        break
 
-                if extension == ".csv":
+                    # old firmware behaivor would put 8 '0' chars at the end of the data for some reaon...
+                    # just filter that out
+                    if res[0:2] == b'00':
+                        res.pop(0)
+                        res.pop(0)
+                        continue
+
+                    # grab next two bytes and convert to uint16
+                    raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
+                    res.pop(0)
+                    res.pop(0)
+
+                    if extension == ".csv":
+                        writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
+                    elif extension == ".mat":
+                        matDict[f"{str(time * period)}"] = self._adc_raw_to_volts(raw_num)
+                    time += 1
+                count += 1
+            # print("Batch count: ", count)
+
+            comm_obj.close()
+            self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+            if extension == ".csv":
+                f.close()
+            elif extension == ".mat":
+                savemat(outFile, matDict)
+        else:
+            # TODO handle malab files
+            # new firmware, can use scp instead
+            print("Send stop command!") 
+            self.cmd_obj.send_stop_sampling()
+            self.cmd_obj.recieve_acknowlege_zybo()
+            print("Fetching samples with scp!")
+
+            if not os.path.exists("C:\Temp"):
+                os.makedirs("C:\Temp")
+
+            # TODO make constants
+            remote_path = "root@169.254.7.2:/tmp/sample_data.bin"
+            local_path = "C:\Temp\sample_data.bin"
+            scp_command = ["pscp", "-pw", "root", remote_path, local_path]
+            subprocess.run(scp_command) # TODO handle if pscp command isn't found. User needs to install putty on their systems (all lab computers have it!)
+
+            # read from temp data.bin, and write sample file to given file locaiton 
+            with open(local_path, "rb") as temp_file:
+                while True:
+                    raw_num = temp_file.read(2)
+                    
+                    if not raw_num:
+                        break
+
+                    raw_num = int.from_bytes(raw_num, byteorder="little", signed=False)
+
                     writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
-                elif extension == ".mat":
-                    matDict[f"{str(time * period)}"] = self._adc_raw_to_volts(raw_num)
-                time += 1
-            count += 1
-        # print("Batch count: ", count)
+                    time += 1
 
-        comm_obj.close()
-        self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
-        if extension == ".csv":
+            # delete temp file
+            os.remove(local_path)
+
             f.close()
-        elif extension == ".mat":
-            savemat(outFile, matDict)
+
+            self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+
 
     def _construct(self):
         pc = ParameterConstructor()
