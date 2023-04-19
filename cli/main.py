@@ -1,4 +1,5 @@
 from copy import deepcopy
+from numpy import np
 from scipy.io import savemat
 from threading import Thread
 import datetime
@@ -443,7 +444,7 @@ class CyDAQ_CLI:
                 if extension == ".csv":
                     writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
                 elif extension == ".mat":
-                    matDict[f"{str(time * period)}"] = self._adc_raw_to_volts(raw_num)
+                    matDict[f"{str(time * period)}"] = np.array([self._adc_raw_to_volts(raw_num)])
                 time += 1
             count += 1
         # print("Batch count: ", count)
