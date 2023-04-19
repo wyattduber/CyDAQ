@@ -1,13 +1,13 @@
 nltk==3.8.1
 numpy==1.24.2
 scipy==1.10.1
-setuptools==67.5.1
-pandas
+setuptools==67.6.1
+pandas==2.0.0
 pexpect
-pglive==0.6.1
-PyInstaller==5.8.0
-pylint==2.16.4
+pglive==0.6.2
+PyInstaller==5.10.1
+pylint==2.17.2
 PyQt5==5.15.9 # was having install issues with this one, tentatively reenabled
-pyqtgraph==0.13.2
+pyqtgraph==0.13.3
 pyserial
 waiting
