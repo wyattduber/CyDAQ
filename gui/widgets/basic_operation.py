@@ -287,6 +287,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             if self.sampling:
                 self.stop_sampling()
             self.mainWindow.switchToModeSelector()
+            return
 
         # Now handle that commands that require an active CyDAQ connection
         if not self.mainWindow.connected:
@@ -296,14 +297,17 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # Send start/stop sample command
         if btn == "start_stop_sampling":
             self.startStopSampling()
+            return
 
         # Now check if already sampling
         if self.sampling:
             self._show_error("You cannot send the config when already sampling!")
+            return
 
         # Send the config only
         if btn == "send_config_only":
             self.send_config_only()
+            return
 
     def stop_sampling(self):
         self.shouldTimeout = False
