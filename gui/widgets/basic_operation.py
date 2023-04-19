@@ -173,22 +173,45 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # Put a few checks here for if file is not writeable
         # This will throw an exception if the file is not writeable
         # It will append the file in the same place as the original filename with a _1 appended
-        # If there is already a _#, it will then append _#+1 to new file
+        # If there is already a _#.csv, it will then append _#+1.csv to new file
         try:
             if os.path.exists(self.filename):
                 open(self.filename, 'w')
         except PermissionError:
-            self.filename = self.filename.replace('.csv', '_1.csv')
+            base, ext = os.path.splitext(self.filename)
 
-        # Copy the temp file over to the new one
-        shutil.copyfile(self.temp_filename, self.filename)
+            if val := re.search('_[0-9]+', base):
+                # Check for existing single/double-digit filenames
+                i = int(val.string[-1])
+                # Check for double digits
+                try:
+                    if val.string[-2].isnumeric():
+                        i = int(f"{val.string[-2]}{val.string[-1]}")
+                except IndexError:
+                    pass  # Do nothing, it's a single digit
+                new_filename = base + str(i) + ext
+            else:
+                new_filename = base + '_1' + ext
+                i = 1
+            while os.path.exists(new_filename):
+                i += 1
+                new_filename = base + f'_{i}' + ext
+            self.filename = new_filename
+
+        # If the filename is still the temp filename, no file was selected
+        # We can assume that they don't want to save the data, so skip copying
+        # and remove the temp file
+
+        if self.filename != self.temp_filename:
+            # Copy the temp file over to the new one
+            shutil.copyfile(self.temp_filename, self.filename)
 
         # Delete the old temp file
         try:
             os.remove(self.temp_filename)
         except PermissionError:
             print("Unable to delete temp file!! ", self.temp_filename)
-            
+
         # Reset the temp filename and the existing filename
         # Causes an ask for filename every sample
         self.filename = self.temp_filename = None
