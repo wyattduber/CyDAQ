@@ -538,7 +538,8 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.config_timeout = True
         self.wrapper.set_values(json.dumps(self.getData()))
         response = self.wrapper.send_config_to_cydaq()
-        print(self.wrapper.get_config())
+        if not self.wrapper.mocking:
+            print(self.wrapper.get_config())
         send_config = self.send_config_btn
         if response: # Config sent successfully
             send_config.setText("Config Sent")

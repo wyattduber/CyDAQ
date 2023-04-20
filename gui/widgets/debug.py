@@ -126,7 +126,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     def logUpdate(self):
         old_pos = self.log_textBrowser.verticalScrollBar().value()
         self.log_textBrowser.setText(self.wrapper.getLog())
-        if(old_pos == 0):
+        if old_pos == 0:
             self.snapLogScrollToTop()
         else:
             self.log_textBrowser.verticalScrollBar().setSliderPosition(old_pos)

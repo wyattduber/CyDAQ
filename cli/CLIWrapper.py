@@ -1,6 +1,6 @@
 import os
 import pexpect
-from datetime import datetime
+from sys import platform
 from pexpect import popen_spawn
 from threading import Thread
 from waiting import wait
@@ -12,16 +12,23 @@ import time
 import pandas
 
 from main import CyDAQ_CLI
+
 cli_tool = CyDAQ_CLI()
 
 CLI_MAIN_FILE_NAME = "main.py"
 INPUT_CHAR = ">"
 NOT_CONNECTED = "Zybo not connected"
-DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
 LOG_MAX_LENGTH = 10000
+
+# Log file location for different OS's (development)
+if platform == "win32":
+    DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
+else:
+    DEFAULT_LOG_FILE = f"/tmp/cydaq_current_log.log"
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
 TIMEOUT = 20
+
 
 class CLI:
     """
@@ -38,17 +45,18 @@ class CLI:
         self.running_ping_command = False
         self.bb_log_thread = None
         self.bb_log_mode = False
+        self.mocking = False
 
         # Logging
         self.log = ""
         self.log_buffer = ""
-        
+
         # Remove existing file if it exists
         if os.path.exists(DEFAULT_LOG_FILE):
             try:
                 os.remove(DEFAULT_LOG_FILE)
             except PermissionError:
-                print("Unable to delete temp file!! ", DEFAULT_LOG_FILE)
+                print("Unable to delete log file!! ", DEFAULT_LOG_FILE)
 
         # Create log file
         self.logfile = open(DEFAULT_LOG_FILE, 'a+')
@@ -117,7 +125,9 @@ class CLI:
                 self.running_command = False
             raise cyDAQNotConnectedException
 
-        if command != "q" and command != "bb_start" and command != "bb_offset_inc" and command != "bb_offset_dec" and not re.search('bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command) and not re.search('bb_set, [0-9]*\.[0-9]+', command):
+        if command != "q" and command != "bb_start" and command != "bb_offset_inc" and command != "bb_offset_dec" and not re.search(
+                'bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command) and not re.search(
+                'bb_set, [0-9]*\.[0-9]+', command):
             # Wait for response
             try:
                 self.p.expect(INPUT_CHAR)
@@ -136,10 +146,10 @@ class CLI:
             response = response.strip()
 
             self.writeLog("response", response)
-            #print(response)
-            if command != "bb_fetch_pos": # Can get a bit spammy
+            # print(response)
+            if command != "bb_fetch_pos":  # Can get a bit spammy
                 self.writeLog("cmd", command)
-                #print(f"Cmd: {command}")
+                # print(f"Cmd: {command}")
             if wrapper_mode:
                 if command == "ping":
                     self.running_ping_command = False
@@ -181,7 +191,7 @@ class CLI:
                 return message
             else:
                 raise CLIUnknownLogLevelException
-        #print(line)
+        # print(line)
         return ""
 
     def _error_parser(self, message):
@@ -191,7 +201,7 @@ class CLI:
         elif message == cli_tool.BALANCE_BEAM_NOT_CONNECTED:
             self.stop_bb()
             raise BalanceBeamNotConnectedException
-        elif message == "Error opening file!": #TODO make constant
+        elif message == "Error opening file!":  # TODO make constant
             raise cyDAQFileException("Error opening the file specified! Is it already open in another program?")
         else:
             raise CLIException(message)
@@ -209,6 +219,8 @@ class CLI:
                 raise CLIException("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? "
                                    "Is there another instance running/connected to the CyDAQ? "
                                    "Is there another program using that com port?")
+            elif response == "Error sending config!":
+                pass # Do nothing since error is already handled
             else:
                 raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
@@ -284,15 +296,18 @@ class CLI:
     def enable_mock(self, **_):
         """Enable CyDAQ serial connection mocking"""
         self._send_command("mock, enable")
+        self.mocking = True
 
     def disable_mock(self, **_):
         """Disable CyDAQ serial connection mocking"""
         self._send_command("mock, disable")
+        self.mocking = False
 
     def isMocking(self, **_):
         """Returns True if mocking a CyDAQ serial connection, False otherwise"""
         response = self._send_command("mock, status")
-        return response == "True"
+        self.mocking = response == "True"
+        return self.mocking
 
     ### Balance Beam Wrapper Methods ###
 
@@ -403,18 +418,6 @@ class CLI:
             self.log_buffer = f"Cmd: {string}\n{self.log_buffer}"
 
     def getLog(self, **_):
-        # pos = 101
-        # lines = []
-        # while len(lines) <= 100:
-        #     try:
-        #         self.logfile.seek(-pos, 2)
-        #     except IOError:
-        #         self.logfile.seek(0)
-        #         break
-        #     finally:
-        #         lines = list(self.logfile)
-        #     pos *= 2
-        # self.log = '\n'.join(map(str, lines[-100:]))
         if self.log_buffer != "":
             lines = self.log.splitlines()
             if len(lines) > LOG_MAX_LENGTH:
@@ -426,12 +429,13 @@ class CLI:
 
     def clearLog(self, **_):
         self.log = ""
-        
+
     def convertMillis(self, millis, **_):
         seconds = (millis / 1000) % 60
         minutes = (millis / (1000 * 60)) % 60
         hours = (millis / (1000 * 60 * 60)) % 24
         return seconds, minutes, hours
+
 
 class CLIException(Exception):
     """Generic exception raised for errors when using the CLI tool"""
@@ -450,17 +454,20 @@ class cyDAQNotConnectedException(Exception):
     def __init__(self):
         super().__init__("CyDAQ is not connected properly!")
 
+
 class cyDAQFileException(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
-    
+
     def getMessage(self):
         return self.message
+
 
 class BalanceBeamNotConnectedException(Exception):
     def __init__(self):
         super().__init__("The Balance Beam is not connected to the CyDAQ!")
+
 
 class CLICloseException(Exception):
     """Thrown when the CLI closes unexpectedly. The last message sent to the output should be included in this error. """
