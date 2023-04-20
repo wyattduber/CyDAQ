@@ -18,6 +18,7 @@ CLI_MAIN_FILE_NAME = "main.py"
 INPUT_CHAR = ">"
 NOT_CONNECTED = "Zybo not connected"
 DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
+LOG_MAX_LENGTH = 10000
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
 TIMEOUT = 20
@@ -232,7 +233,11 @@ class CLI:
 
     def send_config_to_cydaq(self, **_):
         """Send the current configuration stored in the CLI to the cyDAQ"""
-        self._send_command("send")
+        response = self._send_command("send")
+        if response == "Config sent successfully!":
+            return True
+        elif response == "Error sending config!":
+            return False
 
     def set_value(self, key, value, **_):
         """
@@ -412,8 +417,8 @@ class CLI:
         # self.log = '\n'.join(map(str, lines[-100:]))
         if self.log_buffer != "":
             lines = self.log.splitlines()
-            if len(lines) > 500:
-                lines = lines[0:500 - len(self.log_buffer.splitlines())]
+            if len(lines) > LOG_MAX_LENGTH:
+                lines = lines[0:LOG_MAX_LENGTH - len(self.log_buffer.splitlines())]
                 self.log = '\n'.join(lines)
             self.log = f"{self.log_buffer}\n{self.log}"
             self.log_buffer = ""

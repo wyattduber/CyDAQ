@@ -524,7 +524,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             return
 
         def resetSendConfigBtn():
-            print("Resetting Config Button!")
             time.sleep(2)
             self.send_config_btn.setText("Send Config")
             self.send_config_btn.setStyleSheet("#send_config_btn"
@@ -538,18 +537,26 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # send config
         self.config_timeout = True
         self.wrapper.set_values(json.dumps(self.getData()))
-        self.wrapper.send_config_to_cydaq()
+        response = self.wrapper.send_config_to_cydaq()
         print(self.wrapper.get_config())
         send_config = self.send_config_btn
-        send_config.setText("Config Sent")
-        send_config.setStyleSheet("#send_config_btn"
-                                  "{"
-                                  "background-color: #0ead69;"
-                                  "border-color: #0ead69;"
-                                  "color: #02324F;"
-                                  "}")
+        if response: # Config sent successfully
+            send_config.setText("Config Sent")
+            send_config.setStyleSheet("#send_config_btn"
+                                    "{"
+                                    "background-color: #0ead69;"
+                                    "border-color: #0ead69;"
+                                    "color: #02324F;"
+                                    "}")
+        else: # Config didn't send successfully
+            send_config.setText("Error Sending Config!")
+            send_config.setStyleSheet("#send_config_btn"
+                                    "{"
+                                    "background-color: #DE3C4B;"
+                                    "border-color: #DE3C4B;"
+                                    "color: #FFF;"
+                                    "}")
         Thread(target=resetSendConfigBtn).start()
-        # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
 
     def _show_error(self, message):
         """Private method to just show an error message box with a custom message"""
