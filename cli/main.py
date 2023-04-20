@@ -333,35 +333,38 @@ class CyDAQ_CLI:
 
         # TODO add config validation before sending?
 
-        def send_config_with_retry(func, *args):
+        def send_config_with_response(func, *args):
             """
 			Calls func with specified args. Func must be a cmd_obj function that sends 
 			config data to the cyDAQ. 
 			"""
-            n = 3
-            i = 0
-            while i < n:
-                func(*args)
-                if self.cmd_obj.recieve_acknowlege_zybo():
-                    break
-                i += 1
+            func(*args)
+            response = self.cmd_obj.recieve_acknowlege_zybo()
+            if not response:
+                raise Exception()
 
-        # must be sent in order? (Not 100% sure on this but the old code did so I'm rolling with it)
-        send_config_with_retry(self.cmd_obj.send_input, nameToEnum(config_send["Input"]))
-        send_config_with_retry(self.cmd_obj.send_sample_rate, config_send["Sample Rate"])
-        send_config_with_retry(self.cmd_obj.send_filter, nameToEnum(config_send["Filter"]))
+        try:
+            # must be sent in order? (Not 100% sure on this but the old code did so I'm rolling with it)
+            send_config_with_response(self.cmd_obj.send_input, nameToEnum(config_send["Input"]))
+            send_config_with_response(self.cmd_obj.send_sample_rate, config_send["Sample Rate"])
+            send_config_with_response(self.cmd_obj.send_filter, nameToEnum(config_send["Filter"]))
 
-        upper = config_send["Upper Corner"]
-        lower = config_send["Lower Corner"]
-        mid = config_send["Mid Corner"]
-        # This logic is probably wrong but it's how it was before... TODO fix?
-        if upper != 0 or lower != 0 or mid != 0:
-            send_config_with_retry(self.cmd_obj.send_corner_freq, upper, lower, mid, config_send["Filter"])
+            upper = config_send["Upper Corner"]
+            lower = config_send["Lower Corner"]
+            mid = config_send["Mid Corner"]
+            # This logic is probably wrong but it's how it was before... TODO fix?
+            if upper != 0 or lower != 0 or mid != 0:
+                send_config_with_response(self.cmd_obj.send_corner_freq, upper, lower, mid, config_send["Filter"])
 
-        # send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented
-        #  out before
-        send_config_with_retry(self.cmd_obj.send_dac_reps, config_send["Dac Reps"])
-        send_config_with_retry(self.cmd_obj.send_dac_gen_rate, config_send["Dac Generation Rate"])
+            # send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented
+            #  out before
+            send_config_with_response(self.cmd_obj.send_dac_reps, config_send["Dac Reps"])
+            send_config_with_response(self.cmd_obj.send_dac_gen_rate, config_send["Dac Generation Rate"])
+        except:
+            self._print_to_output(message="Error sending config!", log_level=self.WRAPPER_INFO)
+            return
+
+        self._print_to_output(message="Config sent successfully!", log_level=self.WRAPPER_INFO)
 
     def _update_single_config(self, key, value):
         """Updates a single entry in the config"""

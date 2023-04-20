@@ -1,0 +1,15 @@
+#-----------------------------------------------------------
+# Vivado v2020.1 (64-bit)
+# SW Build 2902540 on Wed May 27 19:54:35 MDT 2020
+# IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
+# Start of session at: Mon Mar 27 21:08:22 2023
+# Process ID: 5652
+# Current directory: /home/corbin
+# Command line: vivado
+# Log file: /home/corbin/vivado.log
+# Journal file: /home/corbin/vivado.jou
+#-----------------------------------------------------------
+start_gui
+set argv "";  source /home/corbin/test/petalinux/hw/scripts/digilent_vivado_checkout.tcl
+update_compile_order -fileset sources_1
+archive_project /home/corbin/Downloads/hw.xpr.zip -force -include_local_ip_cache

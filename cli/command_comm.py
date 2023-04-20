@@ -58,7 +58,7 @@ class cmd:
                         print('CyDAQ encountered error during configuration, contact ETG')
                         return False
                     else:
-                        # self.__throw_exception('ack was not received')
+                        self.__throw_exception('ack was not received')
                         print("'ack' was not received")
                         return False
                 else:
