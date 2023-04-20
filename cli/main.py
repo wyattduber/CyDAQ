@@ -1,4 +1,5 @@
 from copy import deepcopy
+import socket
 import numpy as np
 from scipy.io import savemat
 from threading import Thread
@@ -388,7 +389,7 @@ class CyDAQ_CLI:
 
     def _stop_sampling(self, outFile=None):
         sampleRate = self.config["Sample Rate"]
-        time = 0
+        sample_time = 0
         period = 1 / int(sampleRate)
         if outFile is None or outFile == "":
             outFile = self._generateFilename()
@@ -448,10 +449,10 @@ class CyDAQ_CLI:
                     res.pop(0)
 
                     if extension == ".csv":
-                        writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
+                        writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
                     elif extension == ".mat":
-                        matDict[f"{str(time * period)}"] = np.array([self._adc_raw_to_volts(raw_num)])
-                    time += 1
+                        matDict[f"{str(sample_time * period)}"] = np.array([self._adc_raw_to_volts(raw_num)])
+                    sample_time += 1
                 count += 1
             # print("Batch count: ", count)
 
@@ -477,9 +478,32 @@ class CyDAQ_CLI:
             local_path = "C:\Temp\sample_data.bin"
 
             # Create an SSH client
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect("169.254.7.2", port=22, username="root", password="root") #TODO make constants
+            ssh = None
+            retry_count = 10 #TODO make constant
+            ssh_count = 0
+            connected = False
+            # keep retrying the ssh connection until a timeout
+            while not connected:
+                try:
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(hostname="169.254.7.2", port=22, username="root", password="root") #TODO make constants
+                    # extra command I found that allows for an ssh session? Couldn't get it to work, but didn't spend much time on it
+                    # ssh.invoke_shell(term="vt100", width=80, height=24, width_pixels=0, height_pixels=0, environment=None)
+                    connected = True
+                    self._print_to_output("ssh connect successful!")
+                except BaseException as e:
+                    # print("base exception caught!!", e)
+                    self._print_to_output("ssh connect failed! sleeping 2 seconds") # change log to constant once added
+                    time.sleep(2) #TODO make constant
+                    ssh.close()
+                    ssh_count += 1
+                    if ssh_count > retry_count:
+                        print("max number of retry for SCP connection reached! ")
+                        break 
+
+            if ssh is None:
+                pass # TODO print error
             scp = ssh.open_sftp()
 
             # Copy the remote file to the local machine
@@ -499,8 +523,8 @@ class CyDAQ_CLI:
 
                     raw_num = int.from_bytes(raw_num, byteorder="little", signed=False)
 
-                    writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
-                    time += 1
+                    writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
+                    sample_time += 1
 
             # delete temp file
             os.remove(local_path)
@@ -701,5 +725,6 @@ if __name__ == "__main__":
         cli = CyDAQ_CLI()
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
-        cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
-        print("additional exception info: ", e)
+        # cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
+        cli._print_to_output("unhandled exception in CLI: " + e)
+        # print("additional exception info: ", e)
