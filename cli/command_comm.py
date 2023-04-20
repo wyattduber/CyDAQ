@@ -531,6 +531,7 @@ class cmd:
             cnt = 0
             while True:
                 if self.recieve_acknowlege_zybo():
+                    print("ping ack recieved")
                     return True
                 elif cnt > 10:
                     return False
