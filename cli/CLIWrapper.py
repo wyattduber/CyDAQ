@@ -17,6 +17,7 @@ cli_tool = CyDAQ_CLI()
 CLI_MAIN_FILE_NAME = "main.py"
 INPUT_CHAR = ">"
 NOT_CONNECTED = "Zybo not connected"
+DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
 
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
 TIMEOUT = 20
@@ -32,12 +33,25 @@ class CLI:
     """
 
     def __init__(self):
-        self.log = ""
-        self.logfile = open(f"C:\\Temp\\cydaq_current_log.log", 'a+')
-        sys.stdout = self.logfile
+        # Global Variables
         self.running_ping_command = False
         self.bb_log_thread = None
         self.bb_log_mode = False
+
+        # Logging
+        self.log = ""
+        self.log_buffer = ""
+        
+        # Remove existing file if it exists
+        if os.path.exists(DEFAULT_LOG_FILE):
+            try:
+                os.remove(DEFAULT_LOG_FILE)
+            except PermissionError:
+                print("Unable to delete temp file!! ", DEFAULT_LOG_FILE)
+
+        # Create log file
+        self.logfile = open(DEFAULT_LOG_FILE, 'a+')
+        sys.stdout = self.logfile
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
@@ -102,9 +116,6 @@ class CLI:
                 self.running_command = False
             raise cyDAQNotConnectedException
 
-        if re.search('bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command):
-            print(f"Running this command: {command}")
-
         if command != "q" and command != "bb_start" and command != "bb_offset_inc" and command != "bb_offset_dec" and not re.search('bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command) and not re.search('bb_set, [0-9]*\.[0-9]+', command):
             # Wait for response
             try:
@@ -124,10 +135,10 @@ class CLI:
             response = response.strip()
 
             self.writeLog("response", response)
-            print(response)
+            #print(response)
             if command != "bb_fetch_pos": # Can get a bit spammy
                 self.writeLog("cmd", command)
-                print(f"Cmd: {command}")
+                #print(f"Cmd: {command}")
             if wrapper_mode:
                 if command == "ping":
                     self.running_ping_command = False
@@ -169,7 +180,7 @@ class CLI:
                 return message
             else:
                 raise CLIUnknownLogLevelException
-        print(line)
+        #print(line)
         return ""
 
     def _error_parser(self, message):
@@ -381,24 +392,31 @@ class CLI:
     def writeLog(self, type, string, **_):
         if type == "response":
             self.logfile.write(f"{string}\n")
+            self.log_buffer = f"{string}\n{self.log_buffer}"
         elif type == "cmd":
             self.logfile.write(f"Cmd: {string}\n")
-        else:
-            self.log = f"Cmd:"
+            self.log_buffer = f"Cmd: {string}\n{self.log_buffer}"
 
     def getLog(self, **_):
-        pos = 101
-        lines = []
-        while len(lines) <= 100:
-            try:
-                self.logfile.seek(-pos, 2)
-            except IOError:
-                self.logfile.seek(0)
-                break
-            finally:
-                lines = list(self.logfile)
-            pos *= 2
-        self.log = '\n'.join(map(str, lines[-100:]))
+        # pos = 101
+        # lines = []
+        # while len(lines) <= 100:
+        #     try:
+        #         self.logfile.seek(-pos, 2)
+        #     except IOError:
+        #         self.logfile.seek(0)
+        #         break
+        #     finally:
+        #         lines = list(self.logfile)
+        #     pos *= 2
+        # self.log = '\n'.join(map(str, lines[-100:]))
+        if self.log_buffer != "":
+            lines = self.log.splitlines()
+            if len(lines) > 500:
+                lines = lines[0:500 - len(self.log_buffer.splitlines())]
+                self.log = '\n'.join(lines)
+            self.log = f"{self.log_buffer}\n{self.log}"
+            self.log_buffer = ""
         return self.log
 
     def clearLog(self, **_):
