@@ -184,6 +184,9 @@ class CLI:
     def ping(self, **_):
         """Ping cyDAQ, returns the response time in microseconds or -1 if error"""
         response = self._send_command("ping")
+        print("ping response: ", response)
+        # if response == "CyDAQ not connected": #TODO make constant
+        #     return -1
         try:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:

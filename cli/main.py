@@ -309,11 +309,14 @@ class CyDAQ_CLI:
 			True if the message was acknowleged, False if device is not connected.
 		"""
         a = datetime.datetime.now()
-        self.cmd_obj.ping_zybo()
+        success = self.cmd_obj.ping_zybo()
+        if not success:
+            self._print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
+            return False
         b = datetime.datetime.now()
         c = b - a
         self._print_to_output("CyDaq latency {} microseconds".format(c.microseconds), self.WRAPPER_INFO)
-        return 1
+        return True
 
     def _send(self):
         """
@@ -699,3 +702,4 @@ if __name__ == "__main__":
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
         cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
+        print("additional exception info: ", e)

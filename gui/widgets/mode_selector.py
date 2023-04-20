@@ -36,11 +36,3 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget):
         # liveStreamButton.setCheckable(True)
         # liveStreamButton.setText("Plotter")
         # liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
-
-    # These do nothing since the mode selector window doesn't have a status
-    # Necessary for app to function since the cydaq ping method is called on every window
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""

@@ -18,6 +18,7 @@ from widgets import BasicOperationModeWidget
 from widgets import LiveStreamModeWidget
 from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
+from widgets import ConnectionWidget
 from generated.MainWindowUI import Ui_MainWindow
 
 DEFAULT_WINDOW_WIDTH = 400
@@ -142,11 +143,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
-        
+
+        self.stack = StackedLayout() 
+        self.connectionWidget = ConnectionWidget()
+
         self.centerWidget = QtWidgets.QWidget()
+        self.centerLayout = QVBoxLayout()
+        self.centerLayout.addLayout(self.stack)
+        self.centerLayout.addWidget(self.connectionWidget)
+        self.centerWidget.setLayout(self.centerLayout)
         self.setCentralWidget(self.centerWidget)
 
-        self.stack = StackedLayout(self.centerWidget)        
         self.widgets = []
         self.widgets.append(self.mode_selector)
         self.widgets.append(self.basic_operation)
@@ -201,6 +208,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     self.updateWidgetConnectionStatus()
             else:
                 # Raise any other exceptions
+                print("trying to raise exception with message: ", traceback_msg)
                 raise extype(traceback_msg)
 
         self.runInWorkerThread(
@@ -210,11 +218,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         )
 
     def updateWidgetConnectionStatus(self):
-        for widget in self.widgets:
-            if self.connected:
-                widget.cyDaqConnected()
-            else:
-                widget.cyDaqDisconnected()
+        if self.connected:
+            print("setting green")
+            self.connectionWidget.connection_status_label.setText(
+                "<html><head/><body><p>CyDAQ Status:<span style=\" color:#0EAD69;\">⬤</span></p></body></html>"
+            )
+        else:
+            print("setting red")
+            self.connectionWidget.connection_status_label.setText(
+                "<html><head/><body><p>CyDAQ Status:<span style=\" color:#DE3C4B;\">⬤</span></p></body></html>"
+            )
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
