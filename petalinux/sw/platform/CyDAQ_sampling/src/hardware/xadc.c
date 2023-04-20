@@ -294,13 +294,6 @@ int xadcProcessSamples() {
  * ISR triggers on XADC end-of-capture, stores sample to buffer
  */
 void xadcInterruptHandler(void *CallBackRef) {
-	// Clear Interrupt bits
-	u32 ControlStatusReg = XTmrCtr_ReadReg(TimerCounterInst.BaseAddress,
-										   TIMER_CNTR_0, XTC_TCSR_OFFSET);
-	XTmrCtr_WriteReg(TimerCounterInst.BaseAddress, TIMER_CNTR_0, XTC_TCSR_OFFSET,
-					 ControlStatusReg | XTC_CSR_INT_OCCURED_MASK);
-	XSysMon_IntrClear(&SysMonInst, XSM_IPIXR_EOC_MASK);
-
 	volatile u32 *xadcSampleCount = shared_GetSampleCount();
 	if(!samplingEnabled){
 		xil_printf("SAMP> disabling interrupt. Total sample count: %d\r\n", *xadcSampleCount);
@@ -317,6 +310,16 @@ void xadcInterruptHandler(void *CallBackRef) {
 		Xil_DCacheInvalidateRange(xadcSampleBuffer + *xadcSampleCount, 2);
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
 		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
+
+		if(xadcSampleBuffer[*xadcSampleCount] == 65535 || xadcSampleBuffer[*xadcSampleCount] == 0){
+			xil_printf("SAMP> REEE writing bad data!!!\r\n");
+		}
+
+		//write and flush two more times to fix the data not getting read correctly?
+//		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
+//		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
+//		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
+//		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
 //		xil_printf("SAMP> XADC interrupt #%d, wrote: %d to address %p\r\n", *xadcSampleCount, xadcSampleBuffer[*xadcSampleCount], xadcSampleBuffer + *xadcSampleCount);
 		(*xadcSampleCount)++;
 
@@ -328,6 +331,13 @@ void xadcInterruptHandler(void *CallBackRef) {
 		samplingEnabled = false;
 		XSysMon_IntrGlobalDisable(SysMonInstPtr);
 	}
+
+	// Clear Interrupt bits
+	u32 ControlStatusReg = XTmrCtr_ReadReg(TimerCounterInst.BaseAddress,
+										   TIMER_CNTR_0, XTC_TCSR_OFFSET);
+	XTmrCtr_WriteReg(TimerCounterInst.BaseAddress, TIMER_CNTR_0, XTC_TCSR_OFFSET,
+					 ControlStatusReg | XTC_CSR_INT_OCCURED_MASK);
+	XSysMon_IntrClear(&SysMonInst, XSM_IPIXR_EOC_MASK);
 }
 
 int xadcSetPolarity(u8 setting){

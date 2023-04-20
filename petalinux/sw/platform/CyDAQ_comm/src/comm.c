@@ -143,7 +143,7 @@ bool writeSamplesToFile(){
 	size_t size = sizeof(u16) * count;
 	off_t offset = 0x38800000; // starting point TODO make constant
 
-	ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
+	ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
 	if (ptr == MAP_FAILED) {
 		perror("COMM> mmap");
 		return true;
