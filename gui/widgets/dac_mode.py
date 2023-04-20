@@ -66,17 +66,5 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         self.gen_rate_max_limit_btn.clicked.connect(
             lambda: self.gen_rate_input.setText(self.gen_rate_max_limit_btn.text()))
 
-    def cyDaqConnected(self):
-        """
-        What happens to the UI when the cyDaq changes to connected
-        """
-        pass
-
-    def cyDaqDisconnected(self):
-        """
-        What happens to the UI when the cyDaq changes to disconnected
-        """
-        pass
-
     def getData(self):
         pass

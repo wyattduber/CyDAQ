@@ -58,7 +58,7 @@ class cmd:
                         print('CyDAQ encountered error during configuration, contact ETG')
                         return False
                     else:
-                        # self.__throw_exception('ack was not received')
+                        self.__throw_exception('ack was not received')
                         print("'ack' was not received")
                         return False
                 else:
@@ -436,6 +436,17 @@ class cmd:
             self.__throw_exception('Sending start failed')
             return False
 
+    def send_stop_sampling(self):
+        self.ctrl_comm_obj.open(self.port)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_SAMPLING.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+
+        else:
+            self.__throw_exception('Sending start failed')
+            return False
+
     def send_start_gen(self):
         self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
@@ -520,6 +531,7 @@ class cmd:
             cnt = 0
             while True:
                 if self.recieve_acknowlege_zybo():
+                    print("ping ack recieved")
                     return True
                 elif cnt > 10:
                     return False
@@ -553,7 +565,7 @@ class cmd:
 
     ### Balance Beam Commands ###
 
-    def start_bb(self):
+    def start_bb(self, kp=None, ki=None, kd=None, N=None, set=None):
         """
         Sends the start command to the CyDAQ
         """
@@ -570,9 +582,13 @@ class cmd:
         else:
             self.__throw_exception('Starting balance beam mode failed')
 
-        # Set Default Values on Startup
-        self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
-        self.update_set(DEFAULT_SET)
+        # Set Default Values on Startup or Use Given Values
+        if not [x for x in (kp, ki, kd, N, set) if x is None]:
+            self.update_constants(kp, ki, kd, N)
+            self.update_set(N)
+        else:
+            self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
+            self.update_set(DEFAULT_SET)
 
     def stop_bb(self):
         """

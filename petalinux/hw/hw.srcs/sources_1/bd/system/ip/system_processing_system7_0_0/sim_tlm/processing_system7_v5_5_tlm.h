@@ -133,15 +133,9 @@ class processing_system7_v5_5_tlm : public sc_core::sc_module   {
     
     public:
     // Non-AXI ports are declared here
-    sc_core::sc_in<sc_dt::sc_bv<64> >  GPIO_I;
-    sc_core::sc_out<sc_dt::sc_bv<64> >  GPIO_O;
-    sc_core::sc_out<sc_dt::sc_bv<64> >  GPIO_T;
-    sc_core::sc_in<bool> I2C0_SDA_I;
-    sc_core::sc_out<bool> I2C0_SDA_O;
-    sc_core::sc_out<bool> I2C0_SDA_T;
-    sc_core::sc_in<bool> I2C0_SCL_I;
-    sc_core::sc_out<bool> I2C0_SCL_O;
-    sc_core::sc_out<bool> I2C0_SCL_T;
+    sc_core::sc_in<sc_dt::sc_bv<1> >  GPIO_I;
+    sc_core::sc_out<sc_dt::sc_bv<1> >  GPIO_O;
+    sc_core::sc_out<sc_dt::sc_bv<1> >  GPIO_T;
     sc_core::sc_in<bool> I2C1_SDA_I;
     sc_core::sc_out<bool> I2C1_SDA_O;
     sc_core::sc_out<bool> I2C1_SDA_T;
@@ -162,7 +156,7 @@ class processing_system7_v5_5_tlm : public sc_core::sc_module   {
     sc_core::sc_in<bool> S_AXI_HP0_ACLK;
     sc_core::sc_in<bool> S_AXI_HP0_RDISSUECAP1_EN;
     sc_core::sc_in<bool> S_AXI_HP0_WRISSUECAP1_EN;
-    sc_core::sc_in<sc_dt::sc_bv<6> >  IRQ_F2P;
+    sc_core::sc_in<bool> Core1_nIRQ;
     sc_core::sc_out<sc_dt::sc_bv<2> >  DMA0_DATYPE;
     sc_core::sc_out<bool> DMA0_DAVALID;
     sc_core::sc_out<bool> DMA0_DRREADY;
@@ -251,7 +245,6 @@ processing_system7_v5_5_tlm(sc_core::sc_module_name name,
     //FCLK_CLK0 pin written based on FCLK_CLK0_clk clock value 
     void trigger_FCLK_CLK0_pin();
     
-    void IRQ_F2P_method();
     //FCLK_RESET0 output reset pin get toggle when emio bank 2's 31th signal gets toggled
     //EMIO[2] bank 31th(GPIO[95] signal)acts as reset signal to the PL(refer Zynq UltraScale+ TRM, page no:761)
     void FCLK_RESET0_N_trigger();

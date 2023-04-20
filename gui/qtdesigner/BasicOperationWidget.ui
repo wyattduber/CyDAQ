@@ -109,7 +109,7 @@ QPushButton {
      <item>
       <widget class="QComboBox" name="sample_rate_input_box">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -223,8 +223,11 @@ QPushButton {
        <height>30</height>
       </size>
      </property>
+     <property name="currentText">
+      <string>Analog In</string>
+     </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <item>
       <property name="text">
@@ -238,32 +241,12 @@ QPushButton {
      </item>
      <item>
       <property name="text">
-       <string>1.8 Volt</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Analog In</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Audio In</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Digital I2C Bus</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Digital SPI Bus</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Digital UART</string>
       </property>
      </item>
     </widget>
@@ -371,7 +354,7 @@ QPushButton {
         </size>
        </property>
        <property name="text">
-        <string>100</string>
+        <string>200</string>
        </property>
       </widget>
      </item>
@@ -512,7 +495,7 @@ QPushButton {
         </size>
        </property>
        <property name="text">
-        <string>100</string>
+        <string>200</string>
        </property>
       </widget>
      </item>
@@ -727,8 +710,20 @@ QPushButton {
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
+     <item alignment="Qt::AlignRight">
       <widget class="QPushButton" name="send_config_btn">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>250</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Send Config</string>
        </property>
@@ -750,12 +745,18 @@ QPushButton {
        </property>
       </spacer>
      </item>
-     <item>
+     <item alignment="Qt::AlignLeft">
       <widget class="QPushButton" name="start_stop_sampling_btn">
        <property name="minimumSize">
         <size>
-         <width>190</width>
+         <width>200</width>
          <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>250</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">

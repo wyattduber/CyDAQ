@@ -1,3 +1,4 @@
+ 
 
 -------------------------------------------------------------------------------
 -- system_xadc_wiz_0_0_xadc_core_drp.vhd - entity/architecture pair
@@ -183,10 +184,16 @@ entity system_xadc_wiz_0_0_xadc_core_drp is
      m_axis_tid             : out std_logic_vector(4 downto 0);
      m_axis_tready          : in  std_logic;
      ----------------  sysmon macro interface  -------------------
+     convst_in              : in  STD_LOGIC;                         -- Convert Start Input
+     vauxp7                 : in  STD_LOGIC;                         -- Auxiliary Channel 7
+     vauxn7                 : in  STD_LOGIC;
+     vauxp14                : in  STD_LOGIC;                         -- Auxiliary Channel 14
+     vauxn14                : in  STD_LOGIC;
      busy_out               : out  STD_LOGIC;                        -- ADC Busy signal
      channel_out            : out  STD_LOGIC_VECTOR (4 downto 0);    -- Channel Selection Outputs
      eoc_out                : out  STD_LOGIC;                        -- End of Conversion Signal
      eos_out                : out  STD_LOGIC;                        -- End of Sequence Signal
+     ot_out                 : out STD_LOGIC;
      alarm_out              : out STD_LOGIC_VECTOR (7 downto 0);
      vp_in                  : in  STD_LOGIC;                         -- Dedicated Analog Input Pair
      vn_in                  : in  STD_LOGIC
@@ -589,6 +596,20 @@ end process CONVST_RST_PROCESS;
   Sysmon_IP2Bus_RdAck <= (drdy_rd_ack_i or local_reg_rdack_final);
 
 
+-------------------------------------------------------------------------------
+-- Starting conversion in event driven mode by using the "convst_reg_input"
+-- register or external CONVST input
+-------------------------------------------------------------------------------
+-- CONV_START_REG_PROCESS: Conversion Start Register (CONVSTR)
+-------------------------------------------------------------------------------
+   CONV_START_REG_PROCESS: process(Bus2IP_Clk) is
+   begin
+       if (Bus2IP_Clk'event and Bus2IP_Clk='1') then
+            convst_d1 <= convst_in;
+       end if;
+   end process CONV_START_REG_PROCESS;
+
+convst_reg <= convst_reg_input or convst_d1;
 
 -------------------------------------------------------------------------------
 -- Bus reset as well as the hard macro register reset
@@ -721,6 +742,8 @@ begin
     end if;
 end process ALARM_REG_PROCESS;
 
+-- OT out to top level port
+  ot_out <= ot_i;
 
 --------------------------
 -- OT_FALLING_EDGE_DETECT: this process is used to register the OT.
@@ -1070,8 +1093,8 @@ end process mode_change_gen;
         aux_channel_p(6) <= '0';
         aux_channel_n(6) <= '0';
 
-        aux_channel_p(7) <= '0';
-        aux_channel_n(7) <= '0';
+        aux_channel_p(7) <= vauxp7;
+        aux_channel_n(7) <= vauxn7;
 
         aux_channel_p(8) <= '0';
         aux_channel_n(8) <= '0';
@@ -1091,19 +1114,19 @@ end process mode_change_gen;
         aux_channel_p(13) <= '0';
         aux_channel_n(13) <= '0';
 
-        aux_channel_p(14) <= '0';
-        aux_channel_n(14) <= '0';
+        aux_channel_p(14) <= vauxp14;
+        aux_channel_n(14) <= vauxn14;
 
         aux_channel_p(15) <= '0';
         aux_channel_n(15) <= '0';
 
  XADC_INST : XADC
      generic map(
-        INIT_40 => X"0000", -- config reg 0
-        INIT_41 => X"31A1", -- config reg 1
-        INIT_42 => X"0400", -- config reg 2
-        INIT_48 => X"0100", -- Sequencer channel selection
-        INIT_49 => X"0000", -- Sequencer channel selection
+        INIT_40 => X"8200", -- config reg 0
+        INIT_41 => X"21A4", -- config reg 1
+        INIT_42 => X"0800", -- config reg 2
+        INIT_48 => X"0000", -- Sequencer channel selection
+        INIT_49 => X"4080", -- Sequencer channel selection
         INIT_4A => X"0000", -- Sequencer Average selection
         INIT_4B => X"0000", -- Sequencer Average selection
         INIT_4C => X"0000", -- Sequencer Bipolar selection
@@ -1131,7 +1154,7 @@ end process mode_change_gen;
         )
 
 port map (
-        CONVST              => '0',
+        CONVST              => convst_reg,
         CONVSTCLK           => '0',
         DADDR               => daddr_C(6 downto 0),            --: in (6 downto 0)
         DCLK                => Bus2IP_Clk,         --: in

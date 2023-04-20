@@ -1,3 +1,4 @@
+ 
 
 -------------------------------------------------------------------------------
 -- system_xadc_wiz_0_0_axi_xadc.vhd - entity/architecture pair
@@ -204,10 +205,16 @@ entity system_xadc_wiz_0_0_axi_xadc is
    -- XADC External interface signals
 
     -- Conversion start control signal for Event driven mode
+    convst_in       : in  STD_LOGIC;                         -- Convert Start Input
+    vauxp7          : in  STD_LOGIC;                         -- Auxiliary Channel 7
+    vauxn7          : in  STD_LOGIC;
+    vauxp14         : in  STD_LOGIC;                         -- Auxiliary Channel 14
+    vauxn14         : in  STD_LOGIC;
     busy_out        : out  STD_LOGIC;                        -- ADC Busy signal
     channel_out     : out  STD_LOGIC_VECTOR (4 downto 0);    -- Channel Selection Outputs
     eoc_out         : out  STD_LOGIC;                        -- End of Conversion Signal
     eos_out         : out  STD_LOGIC;                        -- End of Sequence Signal
+    ot_out          : out STD_LOGIC;
     alarm_out       : out STD_LOGIC_VECTOR (7 downto 0);                         -- OR'ed output of all the Alarms
     vp_in           : in  STD_LOGIC;                         -- Dedicated Analog Input Pair
     vn_in           : in  STD_LOGIC
@@ -285,10 +292,16 @@ component system_xadc_wiz_0_0_xadc_core_drp
      m_axis_tid             : out std_logic_vector(4 downto 0);
      m_axis_tready          : in  std_logic;
      ----------------  sysmon macro interface  -------------------
+     convst_in              : in  STD_LOGIC;                         -- Convert Start Input
+     vauxp7                 : in  STD_LOGIC;                         -- Auxiliary Channel 7
+     vauxn7                 : in  STD_LOGIC;
+     vauxp14                : in  STD_LOGIC;                         -- Auxiliary Channel 14
+     vauxn14                : in  STD_LOGIC;
      busy_out               : out  STD_LOGIC;                        -- ADC Busy signal
      channel_out            : out  STD_LOGIC_VECTOR (4 downto 0);    -- Channel Selection Outputs
      eoc_out                : out  STD_LOGIC;                        -- End of Conversion Signal
      eos_out                : out  STD_LOGIC;                        -- End of Sequence Signal
+     ot_out                 : out STD_LOGIC;
      alarm_out              : out STD_LOGIC_VECTOR (7 downto 0);                   
      vp_in                  : in  STD_LOGIC;                         -- Dedicated Analog Input Pair
      vn_in                  : in  STD_LOGIC
@@ -740,10 +753,16 @@ AXI_XADC_CORE_I : system_xadc_wiz_0_0_xadc_core_drp
     m_axis_tid                   => m_axis_tid, 
     m_axis_tready                => m_axis_tready, 
     --- external interface signals ------------------
+    convst_in                    => convst_in,
+    vauxp7                       => vauxp7,
+    vauxn7                       => vauxn7,
+    vauxp14                      => vauxp14,
+    vauxn14                      => vauxn14,
     busy_out                     => busy_out,
     channel_out                  => channel_out,
     eoc_out                      => eoc_out,
     eos_out                      => eos_out,
+    ot_out                       => ot_out,
     alarm_out                    => alarm_out,
     vp_in                        => vp_in,
     vn_in                        => vn_in

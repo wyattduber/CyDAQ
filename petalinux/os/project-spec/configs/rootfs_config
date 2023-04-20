@@ -2548,23 +2548,23 @@ CONFIG_ldd=y
 #
 # openamp-fw-echo-testd 
 #
-# CONFIG_openamp-fw-echo-testd is not set
-# CONFIG_openamp-fw-echo-testd-dev is not set
-# CONFIG_openamp-fw-echo-testd-dbg is not set
+CONFIG_openamp-fw-echo-testd=y
+CONFIG_openamp-fw-echo-testd-dev=y
+CONFIG_openamp-fw-echo-testd-dbg=y
 
 #
 # openamp-fw-mat-muld 
 #
-# CONFIG_openamp-fw-mat-muld is not set
-# CONFIG_openamp-fw-mat-muld-dev is not set
-# CONFIG_openamp-fw-mat-muld-dbg is not set
+CONFIG_openamp-fw-mat-muld=y
+CONFIG_openamp-fw-mat-muld-dev=y
+CONFIG_openamp-fw-mat-muld-dbg=y
 
 #
 # openamp-fw-rpc-demo 
 #
-# CONFIG_openamp-fw-rpc-demo is not set
-# CONFIG_openamp-fw-rpc-demo-dev is not set
-# CONFIG_openamp-fw-rpc-demo-dbg is not set
+CONFIG_openamp-fw-rpc-demo=y
+CONFIG_openamp-fw-rpc-demo-dev=y
+CONFIG_openamp-fw-rpc-demo-dbg=y
 
 #
 # opkg-arch-config 
@@ -3920,9 +3920,9 @@ CONFIG_bridge-utils=y
 #
 # packagegroup-petalinux-openamp 
 #
-# CONFIG_packagegroup-petalinux-openamp is not set
-# CONFIG_packagegroup-petalinux-openamp-dbg is not set
-# CONFIG_packagegroup-petalinux-openamp-dev is not set
+CONFIG_packagegroup-petalinux-openamp=y
+CONFIG_packagegroup-petalinux-openamp-dbg=y
+CONFIG_packagegroup-petalinux-openamp-dev=y
 
 #
 # packagegroup-petalinux-opencv 

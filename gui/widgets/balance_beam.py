@@ -23,6 +23,8 @@ from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
+LOG_TIMER_DEFAULT = 1000
+
 
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
@@ -144,8 +146,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
                 self.savePlotData()
             return
         elif btn == "save_step":
-            pass # TODO Not sure what save step is
-            return
+            return  # TODO Not sure what save step is
 
         # Now handle commands that require an active CyDAQ connection
         # Or balance beam mode to be enabled (Seperate checks)
@@ -203,16 +204,29 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         Starts the Balance Beam and live graphing of the data.
         """
 
+        # Get the latest version of constants from the GUI
+        self._update_constants_in_memory()
+
         # Start Balance Beam Mode from Wrapper
         try:
-            if not self.wrapper.start_bb():
+            if not self.wrapper.start_bb(self.kp, self.ki, self.kd, self.N, self.set):
+                print("Maybe")
                 self._show_error("Balance Beam Not Connected!")
                 self.checking_connection = False
+
+                # Resume the timer and log
+                self.mainWindow.startPingTimer()
+                self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
                 return
             self.checking_connection = False
+            print("Maybe not")
         except Exception:
             self._show_error("Balance Beam Not Connected!")
             self.checking_connection = False
+
+            # Resume the timer and log
+            self.mainWindow.startPingTimer()
+            self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
             return
 
         # Once balance beam is connected, start beam mode
@@ -237,14 +251,11 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         self.savemat_thread = None
         self.wrapper.stop_bb()
         self.mainWindow.startPingTimer()
-        self.mainWindow.debug.log_timer.setInterval(1000)
+        self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
 
     def sendConstants(self):
         """Send in the user-defined constants"""
-        self.kp = float(self.kp_input.text()) or 0
-        self.ki = float(self.ki_input.text()) or 0
-        self.kd = float(self.kd_input.text()) or 0
-        self.N = int(self.n_input.text()) or 0
+        self._update_constants_in_memory()
 
         self.wrapper.set_constants(self.kp, self.ki, self.kd, self.N)
 
@@ -255,7 +266,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
 
     def sendSetPoint(self):
         """Send in the user-defined set point in cm"""
-        self.setcm = int(self.set_cm_input.text()) or 0
+        self.setcm = float(self.set_cm_input.text()) or 0
         self.wrapper.send_set_point(self.setcm)
         self.set_cm_output.setText(str(self.setcm))
 
@@ -308,6 +319,13 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
         messagebox.setIcon(QMessageBox.Information)
         messagebox.exec()
 
+    def _update_constants_in_memory(self):
+        self.kp = float(self.kp_input.text()) or 0
+        self.ki = float(self.ki_input.text()) or 0
+        self.kd = float(self.kd_input.text()) or 0
+        self.N = int(self.n_input.text()) or 0
+        self.setcm = float(self.set_cm_input.text()) or 0
+
     def graph_data(self):
         """
         Method that runs the graphing, usually in another thread.
@@ -320,6 +338,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
             except Exception:
                 self._show_error("Balance Beam Not Connected!")
                 self.running = False
+
+                self.mainWindow.startPingTimer()
+                self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
                 return
 
             # Don't graph anything if paused or paused to run a command
@@ -327,10 +348,13 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
                 pass
             # Check if the data isn't actually coming through
             if current_data == "" or current_data == "-9":
-                i =+ 1
+                i = + 1
                 if i > 100:
                     self._show_error("Balance Beam Not Connected!")
                     self.running = False
+
+                    self.mainWindow.startPingTimer()
+                    self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
                     return
                 continue
 

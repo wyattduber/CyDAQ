@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 import ctypes
+import shutil
 from sys import platform
 from datetime import datetime
 
@@ -18,6 +19,7 @@ from widgets import BasicOperationModeWidget
 from widgets import LiveStreamModeWidget
 from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
+from widgets import ConnectionWidget
 from generated.MainWindowUI import Ui_MainWindow
 
 DEFAULT_WINDOW_WIDTH = 553
@@ -142,13 +144,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
-        
-        # Creating new widget inside a layout
-        # TODO Resizing automatically doesn't work need to fix
-        self.centerWidget = QtWidgets.QWidget()
-        self.stackedWidget.addWidget(self.centerWidget)
 
-        self.stack = StackedLayout(self.centerWidget)        
+        self.stack = StackedLayout() 
+        self.connectionWidget = ConnectionWidget()
+
+        self.centerWidget = QtWidgets.QWidget()
+        self.centerLayout = QVBoxLayout()
+        self.centerLayout.addLayout(self.stack)
+        self.centerLayout.addWidget(self.connectionWidget)
+        self.centerWidget.setLayout(self.centerLayout)
+        self.setCentralWidget(self.centerWidget)
+
         self.widgets = []
         self.widgets.append(self.mode_selector)
         self.widgets.append(self.basic_operation)
@@ -181,6 +187,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
 
+        # Temp Log File
+        sys.stdout = self.wrapper.logfile
+
         self.show()
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
@@ -203,6 +212,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     self.updateWidgetConnectionStatus()
             else:
                 # Raise any other exceptions
+                print("trying to raise exception with message: ", traceback_msg)
                 raise extype(traceback_msg)
 
         self.runInWorkerThread(
@@ -212,19 +222,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         )
 
     def updateWidgetConnectionStatus(self):
-        for widget in self.widgets:
-            if self.connected:
-                # widget.cyDaqConnected()
-                self.connectionIndicator.setStyleSheet("#connectionIndicator"
+        if self.connected:
+            print("setting green")
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
                                                    "{"
                                                    "color: #0EAD69;"
                                                    "}")
-            else:
-                # widget.cyDaqDisconnected()
-                self.connectionIndicator.setStyleSheet("#connectionIndicator"
+        else:
+            print("setting red")
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
                                                        "{"
                                                        "color: #DE3C4B;"
                                                        "}")
+
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
@@ -367,10 +377,6 @@ if __name__ == "__main__":
 
         # If exit wasn't normal, save debug logs to location of executable
         if currentExitCode != 0:
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
-            if main.wrapper is not None:
-                logs = main.wrapper.getLog()
-                with open(filename, 'w') as file:
-                    file.write(logs)
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
 
         app = None

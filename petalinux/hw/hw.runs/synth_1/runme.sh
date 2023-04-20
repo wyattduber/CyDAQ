@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='U:/sdmay23-47/petalinux/hw/hw/hw.runs/synth_1'
+HD_PWD='U:/sdmay23-47/petalinux/hw/hw.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

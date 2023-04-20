@@ -1,5 +1,5 @@
-set_property SRC_FILE_INFO {cfile:u:/sdmay23-47/petalinux/hw/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc rfile:../../../hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc id:1 order:EARLY scoped_inst:system_i/processing_system7_0} [current_design]
-set_property SRC_FILE_INFO {cfile:U:/sdmay23-47/petalinux/hw/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc rfile:../../../hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc id:2} [current_design]
+set_property SRC_FILE_INFO {cfile:u:/sdmay23-47/petalinux/hw/hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc rfile:../../../hw.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0/system_processing_system7_0_0_in_context.xdc id:1 order:EARLY scoped_inst:system_i/processing_system7_0} [current_design]
+set_property SRC_FILE_INFO {cfile:U:/sdmay23-47/petalinux/hw/hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc rfile:../../../hw.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc id:2} [current_design]
 current_instance system_i/processing_system7_0
 set_property src_info {type:SCOPED_XDC file:1 line:2 export:INPUT save:INPUT read:READ} [current_design]
 create_clock -period 10.000 [get_ports {}]
@@ -15,7 +15,7 @@ set_property -dict { PACKAGE_PIN Y16   IOSTANDARD LVCMOS33 } [get_ports { btns_4
 set_property src_info {type:XDC file:2 line:58 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict { PACKAGE_PIN E17   IOSTANDARD LVCMOS33 } [get_ports { eth_rst_b_tri_io }]; #IO_L3P_T0_DQS_AD1P_35 Sch=eth_rst_b
 set_property src_info {type:XDC file:2 line:110 export:INPUT save:INPUT read:READ} [current_design]
-set_property -dict { PACKAGE_PIN N15   IOSTANDARD LVCMOS33 } [get_ports Vaux14_v_p]; #IO_L21P_T3_DQS_AD14P_35 Sch=JA1_R_p
+set_property -dict { PACKAGE_PIN N15   IOSTANDARD LVCMOS33 } [get_ports Vaux14_0_v_p]; #IO_L21P_T3_DQS_AD14P_35 Sch=JA1_R_p
 set_property src_info {type:XDC file:2 line:111 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict { PACKAGE_PIN L14   IOSTANDARD LVCMOS33 } [get_ports { Vaux7_0_v_p } ]; #IO_L24P_T3_AD15P_35 Sch=JA3_R_P
 set_property src_info {type:XDC file:2 line:112 export:INPUT save:INPUT read:READ} [current_design]

@@ -1,8 +1,15 @@
 import os
+import re
 import threading
 import time
 import serial
 import serial.tools.list_ports
+
+# Old firmware
+OLD_COMM_PORT_DESCRIPTION = "USB Serial Port"
+
+# New firmware
+NEW_COMM_PORT_DESCRIPTION = "USB Serial Device"
 
 
 class ctrl_comm:
@@ -15,7 +22,10 @@ class ctrl_comm:
     def __init__(self, mock_mode=False):
         # print("ctrl_comm init")
         self.mock_mode = mock_mode
+        self.old_firmware = None  # set to true/false once connected
         self._init_comm()
+        self.bb_mode = False
+        self.bb_pause = False
 
         if self.mock_mode:
             try:
@@ -70,12 +80,39 @@ class ctrl_comm:
                 os.write(port, b'@ACK')
 
                 os.write(port, b'!')
-            # Below are Balance Beam Mock Commands
-            elif res == b'@\x16!':  # bb_start
-                time.sleep(0.01)
+            # Below is all of the default config send commands
+            # Each one of them is changed when anything in the config changes
+            # I can't be bothered to write them out for every setting... so here you go
+            elif res == b'@\x00\x01!':  # config send
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
+            elif res == b'@\x01\x00\x00\xacD!': # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x02\x07!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x03\x00\x00\x00\x00!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x0b\x00\x00\x00\x00!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x0c\x00\x00\x00\x00!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x16!':  # bb_start
+                time.sleep(0.01)
+                # os.write(port, b'@')
+                # os.write(port, b'ACK')
+                # os.write(port, b'!')
+
                 self._mock_bb_thread_running = True
                 self.mock_bb_thread.start()
             elif res == b'q!':  # bb_stop
@@ -87,6 +124,11 @@ class ctrl_comm:
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
+
+                if self.bb_pause:
+                    self.bb_pause = False
+                else:
+                    self.bb_pause = True
             elif res == b'pause off!':  # bb_resume
                 os.write(port, b'@')
                 os.write(port, b'ACK')
@@ -99,7 +141,27 @@ class ctrl_comm:
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            # TODO implement bb_const and bb_set as both of them will always have different values for commands
+            # K Constant Commands
+            elif re.search(b'kp [0-9]+', res):  # 'kp <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'ki [0-9]+', res):  # 'ki <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'kd [0-9]+', res):  # 'kd <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'n [0-9]+', res):  # 'n <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'r [0-9]+', res):  # set <int>
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
             # TODO implement other commands that need to be mocked here
             else:
                 print("Unknown command sent to mock CyDAQ serial connection! Command: ", res)
@@ -111,7 +173,9 @@ class ctrl_comm:
     # Method that runs and sends data to the mock listening port for fake balance beam data
     def _mock_bb_data(self, port):
         while self._mock_thread_running and self._mock_bb_thread_running:
-            os.write(port, b'4')
+            if self.bb_pause:
+                pass
+            os.write(port, b'0')
             os.write(port, b'.')
             os.write(port, b'0')
             os.write(port, b'0')
@@ -159,18 +223,32 @@ class ctrl_comm:
         all_ports = serial.tools.list_ports.comports()
         open_ports = []
         for element in all_ports:
-            if "USB Serial Port" in element.description:
-                open_ports.append(element.device)
-            if "USB Serial Device" in element.description: 
-                # for new firmware. Prepend instead to it takes higher priority
-                open_ports = [element.device] + open_ports
-        try:
-            zybo_port = open_ports[0]
-            port = str(zybo_port)
-            # print("Zybo found on ",str(zybo_port))
-            return port
-        except:
-            # print("Zybo not connected")
+            if OLD_COMM_PORT_DESCRIPTION in element.description or NEW_COMM_PORT_DESCRIPTION in element.description:
+                open_ports.append((element.description, element.device))
+
+        # connected device could be running old or new firmware, need to figure out which
+        # old firmware:
+        # only one USB port detected, has name "USB Serial Port"
+
+        # new firmware:
+        # only one USB port detected, has name "USB Serial Device" (basic scenario in lab) OR
+        # two USB ports detected, one is "USB Serial Port" the other is "USB Serial" (when debugging) - need to pick the "USB Serial Device" one
+        if len(open_ports) == 0:
+            return None
+        if len(open_ports) == 1:
+            self.old_firmware = OLD_COMM_PORT_DESCRIPTION in open_ports[0][0]
+            return str(open_ports[0][1])
+        elif len(open_ports) == 2:
+            self.old_firmware = False
+            if NEW_COMM_PORT_DESCRIPTION in open_ports[0][0]:
+                return str(open_ports[0][1])
+            elif NEW_COMM_PORT_DESCRIPTION in open_ports[1][0]:
+                return str(open_ports[1][1])
+            else:
+                print("Couldn't find correct new firmware port. Unable to proceed!")
+                return None
+        else:
+            print("Found 3 or more viable COMM ports. Unable to proceed!")
             return None
 
     def close(self):
@@ -228,7 +306,7 @@ class ctrl_comm:
             try:
                 self.__s_comm.write(data)
             except serial.serialutil.SerialException:
-                print("Serial exception while writing. Assuming bad connection.")
+                print("Serial exception while writing to port", self.__s_comm.port, ". Assuming bad connection.")
                 return False
             return True
         else:
@@ -256,7 +334,7 @@ class ctrl_comm:
             if len(buffer) >= 2:
                 self.__throw_exception('SerialReadTimeout')
             elif not len(buffer):
-                #print("Nothing Received over Comm Port")
+                # print("Nothing Received over Comm Port")
                 return False
             try:
                 buffer1 = buffer.decode('ascii')

@@ -1,4 +1,6 @@
 from copy import deepcopy
+import socket
+import numpy as np
 from scipy.io import savemat
 from threading import Thread
 import datetime
@@ -7,6 +9,7 @@ import os
 import json
 import time
 import traceback
+import paramiko
 
 from check_params import ParameterConstructor
 
@@ -49,6 +52,7 @@ class CyDAQ_CLI:
 	generate\t\t\t\t\t\t Start/Stop DAC Generation
 	mock, (enable/disable/status)\t Enable CyDAQ serial mocking mode
 	bb_start\t\t\t\t\t\t Start Balance Beam Mode
+    \tbb_start, (kp) (ki) (kd) (N) (Set)\t Start with specific balance beam values
 	bb_stop\t\t\t\t\t\t\t Stop Balance Beam Mode
 	bb_fetch_pos\t\t\t\t\t Fetch the current position the balance beam
 	bb_const, (kp) (ki) (kd) (N)\t Send updated constants for bb calc
@@ -78,7 +82,7 @@ class CyDAQ_CLI:
         self.wrapper_mode = False
         self.mock_mode = False
         self.balance_beam_enabled = False
-        self.is_working_stop_cmd_sent = False
+        self.is_working_cmd_sent = False
         self.generating = False
         self.bb_thread = None
         self.stop_thread = True
@@ -205,11 +209,24 @@ class CyDAQ_CLI:
                     self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
                 continue
             elif command[0].lower() == 'bb_start':
-                if self.balance_beam_enabled:
-                    self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
-                    continue
-                self.bb_pos = "-9"  # Default start value for plotting
-                self._start_beam_mode()
+                if len(command) == 1:
+                    if self.balance_beam_enabled:
+                        self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
+                        continue
+                    self.bb_pos = "-9"  # Default start value for plotting
+                    self._start_beam_mode()
+                elif len(command) == 2:
+                    args = command[1].split(' ')
+                    if len(args) == 5:
+                        if self.balance_beam_enabled:
+                            self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
+                            continue
+                        self.bb_pos = "-9"  # Default start value for plotting
+                        self._start_beam_mode(args[0], args[1], args[2], args[3], args[4])
+                    else:
+                        self._print_to_output("Invalid syntax. Ex: bb_start, 0 0 0 0 0")
+                else:
+                    self._print_to_output("Invalid syntax. Ex: bb_start, 0 0 0 0 0")
                 continue
 
             # The following commands require that the balance beam mode is already enabled
@@ -219,29 +236,42 @@ class CyDAQ_CLI:
                 continue
 
             if command[0].lower() == 'bb_stop':
-                self.is_working_stop_cmd_sent = True
+                self.is_working_cmd_sent = True
                 self._stop_beam_mode()
                 continue
             elif command[0].lower() == 'bb_fetch_pos':
+                self.is_working_cmd_sent = True
                 self._print_to_output(self.bb_pos, log_level="BB_LIVE")
                 continue
             elif command[0].lower() == 'bb_const':
+                self.is_working_cmd_sent = True
                 args = command[1].split(' ')
-                self._update_constants(args[0], args[1], args[2], args[3])
+                if len(args) != 4:
+                    self._print_to_output("Invalid syntax. Ex: bb_const, 0 0 0 0")
+                else:
+                    self._update_constants(args[0], args[1], args[2], args[3])
                 continue
             elif command[0].lower() == 'bb_set':
-                self._update_set(command[1])
+                self.is_working_cmd_sent = True
+                if len(command) != 2:
+                    self._print_to_output("Invalid syntax. Ex: bb_set, 0")
+                else:
+                    self._update_set(command[1])
                 continue
             elif command[0].lower() == 'bb_offset_inc':
+                self.is_working_cmd_sent = True
                 self._offset_inc()
                 continue
             elif command[0].lower() == 'bb_offset_dec':
+                self.is_working_cmd_sent = True
                 self._offset_dec()
                 continue
             elif command[0].lower() == 'bb_pause':
+                self.is_working_cmd_sent = True
                 self._pause_bb()
                 continue
             elif command[0].lower() == 'bb_resume':
+                self.is_working_cmd_sent = True
                 self._resume_bb()
                 continue
 
@@ -280,11 +310,14 @@ class CyDAQ_CLI:
 			True if the message was acknowleged, False if device is not connected.
 		"""
         a = datetime.datetime.now()
-        self.cmd_obj.ping_zybo()
+        success = self.cmd_obj.ping_zybo()
+        if not success:
+            self._print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
+            return False
         b = datetime.datetime.now()
         c = b - a
         self._print_to_output("CyDaq latency {} microseconds".format(c.microseconds), self.WRAPPER_INFO)
-        return 1
+        return True
 
     def _send(self):
         """
@@ -300,35 +333,38 @@ class CyDAQ_CLI:
 
         # TODO add config validation before sending?
 
-        def send_config_with_retry(func, *args):
+        def send_config_with_response(func, *args):
             """
 			Calls func with specified args. Func must be a cmd_obj function that sends 
 			config data to the cyDAQ. 
 			"""
-            n = 3
-            i = 0
-            while i < n:
-                func(*args)
-                if self.cmd_obj.recieve_acknowlege_zybo():
-                    break
-                i += 1
+            func(*args)
+            response = self.cmd_obj.recieve_acknowlege_zybo()
+            if not response:
+                raise Exception()
 
-        # must be sent in order? (Not 100% sure on this but the old code did so I'm rolling with it)
-        send_config_with_retry(self.cmd_obj.send_input, nameToEnum(config_send["Input"]))
-        send_config_with_retry(self.cmd_obj.send_sample_rate, config_send["Sample Rate"])
-        send_config_with_retry(self.cmd_obj.send_filter, nameToEnum(config_send["Filter"]))
+        try:
+            # must be sent in order? (Not 100% sure on this but the old code did so I'm rolling with it)
+            send_config_with_response(self.cmd_obj.send_input, nameToEnum(config_send["Input"]))
+            send_config_with_response(self.cmd_obj.send_sample_rate, config_send["Sample Rate"])
+            send_config_with_response(self.cmd_obj.send_filter, nameToEnum(config_send["Filter"]))
 
-        upper = config_send["Upper Corner"]
-        lower = config_send["Lower Corner"]
-        mid = config_send["Mid Corner"]
-        # This logic is probably wrong but it's how it was before... TODO fix?
-        if upper != 0 or lower != 0 or mid != 0:
-            send_config_with_retry(self.cmd_obj.send_corner_freq, upper, lower, mid, config_send["Filter"])
+            upper = config_send["Upper Corner"]
+            lower = config_send["Lower Corner"]
+            mid = config_send["Mid Corner"]
+            # This logic is probably wrong but it's how it was before... TODO fix?
+            if upper != 0 or lower != 0 or mid != 0:
+                send_config_with_response(self.cmd_obj.send_corner_freq, upper, lower, mid, config_send["Filter"])
 
-        # send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented
-        #  out before
-        send_config_with_retry(self.cmd_obj.send_dac_reps, config_send["Dac Reps"])
-        send_config_with_retry(self.cmd_obj.send_dac_gen_rate, config_send["Dac Generation Rate"])
+            # send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented
+            #  out before
+            send_config_with_response(self.cmd_obj.send_dac_reps, config_send["Dac Reps"])
+            send_config_with_response(self.cmd_obj.send_dac_gen_rate, config_send["Dac Generation Rate"])
+        except:
+            self._print_to_output(message="Error sending config!", log_level=self.WRAPPER_INFO)
+            return
+
+        self._print_to_output(message="Config sent successfully!", log_level=self.WRAPPER_INFO)
 
     def _update_single_config(self, key, value):
         """Updates a single entry in the config"""
@@ -356,7 +392,7 @@ class CyDAQ_CLI:
 
     def _stop_sampling(self, outFile=None):
         sampleRate = self.config["Sample Rate"]
-        time = 0
+        sample_time = 0
         period = 1 / int(sampleRate)
         if outFile is None or outFile == "":
             outFile = self._generateFilename()
@@ -365,61 +401,146 @@ class CyDAQ_CLI:
         writeFunction = self._writeCSV
         f = None
         if extension == ".csv":
-            f = open(outFile, 'w')
-        self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
-        self.cmd_obj.send_fetch()
+            try:
+                f = open(outFile, 'w')
+            except Exception as e:
+                self._print_to_output("Error opening file!", self.WRAPPER_ERROR)
+                return
+        # TODO move these to a seperate functions to keep it clean
+        if self.cmd_obj.ctrl_comm_obj.old_firmware:
+            self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
+            self.cmd_obj.send_fetch()
 
-        # open a new connection to get data
-        comm_obj = self.cmd_obj.ctrl_comm_obj
-        comm_obj.open(self.cmd_obj.port)
+            # open a new connection to get data
+            comm_obj = self.cmd_obj.ctrl_comm_obj
+            comm_obj.open(self.cmd_obj.port)
 
-        # wait for an @, which signals start of data
-        byte = b""
-        while byte != b"@":
-            byte = comm_obj.read()
+            # wait for an @, which signals start of data
+            byte = b""
+            while byte != b"@":
+                byte = comm_obj.read()
 
-        # read all from the buffer, writing it to file
-        res = bytearray(b"")
-        count = 0
-        listening = True
-        while listening:
-            res.extend(comm_obj.read_all())
-            if b"!" in res:
-                listening = False
-            # print(res)
-            if len(res) < 2:
-                continue
-            while len(res) >= 2:
-                # for some reason @ACK is sent at the end of data. Filter it out...
-                if res[0:2] == b'@A' or res[0:2] == b'CK':
+            # read all from the buffer, writing it to file
+            res = bytearray(b"")
+            count = 0
+            listening = True
+            while listening:
+                res.extend(comm_obj.read_all())
+                if len(res) < 2:
+                    continue
+                # print(res)
+
+                while len(res) >= 2:
+                    # old firmware sent data in the following format: @[DATA]00000000@ACK!
+                    # where [DATA] is two byte sensor values
+                    # new firmware mimics this, but can be changed
+                    # Note: the @ at the start has already been read at this point
+                    if len(res)<=6 and b'@ACK!' in res:
+                        listening = False
+                        break
+
+                    # old firmware behaivor would put 8 '0' chars at the end of the data for some reaon...
+                    # just filter that out
+                    if res[0:2] == b'00':
+                        res.pop(0)
+                        res.pop(0)
+                        continue
+
+                    # grab next two bytes and convert to uint16
+                    raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
                     res.pop(0)
                     res.pop(0)
-                    continue
 
-                # grab next two bytes and convert to uint16
-                raw_num = int.from_bytes(res[0:2], byteorder="little", signed=False)
-                res.pop(0)
-                res.pop(0)
-                volts = self._adc_raw_to_volts(raw_num)
+                    if extension == ".csv":
+                        writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
+                    elif extension == ".mat":
+                        matDict[f"{str(sample_time * period)}"] = np.array([self._adc_raw_to_volts(raw_num)])
+                    sample_time += 1
+                count += 1
+            # print("Batch count: ", count)
 
-                # hacky fix for bad data. Need firmware to fix though
-                if volts > 12:
-                    continue
+            comm_obj.close()
+            self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+            if extension == ".csv":
+                f.close()
+            elif extension == ".mat":
+                savemat(outFile, matDict)
+        else:
+            # TODO handle malab files
+            # new firmware, can use scp instead
+            print("Send stop command!") 
+            self.cmd_obj.send_stop_sampling()
+            self.cmd_obj.recieve_acknowlege_zybo()
+            print("Fetching samples with scp!")
 
-                if extension == ".csv":
-                    writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=time * period)
-                elif extension == ".mat":
-                    matDict[f"{str(time * period)}"] = self._adc_raw_to_volts(raw_num)
-                time += 1
-            count += 1
-        # print("Batch count: ", count)
+            if not os.path.exists("C:\Temp"):
+                os.makedirs("C:\Temp")
 
-        comm_obj.close()
-        self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
-        if extension == ".csv":
-            f.close()
-        elif extension == ".mat":
-            savemat(outFile, matDict)
+            # TODO make constants
+            remote_path = "/tmp/sample_data.bin"
+            local_path = "C:\Temp\sample_data.bin"
+
+            # Create an SSH client
+            ssh = None
+            retry_count = 10 #TODO make constant
+            ssh_count = 0
+            connected = False
+            # keep retrying the ssh connection until a timeout
+            while not connected:
+                try:
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(hostname="169.254.7.2", port=22, username="root", password="root") #TODO make constants
+                    # extra command I found that allows for an ssh session? Couldn't get it to work, but didn't spend much time on it
+                    # ssh.invoke_shell(term="vt100", width=80, height=24, width_pixels=0, height_pixels=0, environment=None)
+                    connected = True
+                    self._print_to_output("ssh connect successful!")
+                except BaseException as e:
+                    # print("base exception caught!!", e)
+                    self._print_to_output("ssh connect failed! sleeping 2 seconds") # change log to constant once added
+                    time.sleep(2) #TODO make constant
+                    ssh.close()
+                    ssh_count += 1
+                    if ssh_count > retry_count:
+                        print("max number of retry for SCP connection reached! ")
+                        break 
+
+            if ssh is None:
+                pass # TODO print error
+            scp = ssh.open_sftp()
+
+            # Copy the remote file to the local machine
+            scp.get(remote_path, local_path)
+
+            # Close the SCP client and SSH connection
+            scp.close()
+            ssh.close()
+
+            # read from temp data.bin, and write sample file to given file locaiton 
+            with open(local_path, "rb") as temp_file:
+                while True:
+                    raw_num = temp_file.read(2)
+                    
+                    if not raw_num:
+                        break
+
+                    raw_num = int.from_bytes(raw_num, byteorder="little", signed=False)
+
+                    writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
+                    sample_time += 1
+
+            # delete temp file
+            os.remove(local_path)
+
+            if extension == ".csv":
+                f.close()
+            elif extension == ".mat":
+                pass
+                # TODO
+                # savemat(outFile, matDict)
+
+            self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+
 
     def _construct(self):
         pc = ParameterConstructor()
@@ -517,9 +638,9 @@ class CyDAQ_CLI:
 
     ### Balance Beam Methods ###
 
-    def _start_beam_mode(self):
+    def _start_beam_mode(self, kp=None, ki=None, kd=None, N=None, set=None):
         # Start Balance Beam Mode (Send Start Command)
-        self.cmd_obj.start_bb()
+        self.cmd_obj.start_bb(kp, ki, kd, N, set)
 
         # Check and see if the buffer returns false, or a number
         # If it returns a number, balance beam is connected and functional
@@ -541,24 +662,31 @@ class CyDAQ_CLI:
         self.balance_beam_enabled = False
         self.stop_thread = True
         self.bb_thread = None
+        self.is_working_cmd_sent = False
 
     def _update_constants(self, kp, ki, kd, N):
         self.cmd_obj.update_constants(kp, ki, kd, N)
+        self.is_working_cmd_sent = False
 
     def _update_set(self, setv):
         self.cmd_obj.update_set(setv)
+        self.is_working_cmd_sent = False
 
     def _offset_inc(self):
         self.cmd_obj.offset_inc()
+        self.is_working_cmd_sent = False
 
     def _offset_dec(self):
         self.cmd_obj.offset_dec()
+        self.is_working_cmd_sent = False
 
     def _pause_bb(self):
         self.cmd_obj.pause_bb()
+        self.is_working_cmd_sent = False
 
     def _resume_bb(self):
         self.cmd_obj.resume_bb()
+        self.is_working_cmd_sent = False
 
     def _read_bb_buffer(self):
         while not self.stop_thread:
@@ -568,18 +696,20 @@ class CyDAQ_CLI:
             # Check for if the actual balance beam is not connected to the CyDAQ
             if type(buffer) == type(False):
                 if not buffer:
-                    if self.is_working_stop_cmd_sent:
+                    if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
                         continue
                     self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                     self.stop_thread = True
                     self.balance_beam_enabled = False
+                    print(f"Buffer is false for some reason! {buffer}")
                     return
             if buffer == "0xc9\r":  # Alternate balance beam not connected code
-                if self.is_working_stop_cmd_sent:
+                if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
                         continue
                 self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                 self.stop_thread = True
                 self.balance_beam_enabled = False
+                print(f"Buffer is the weird code for some reason! {buffer}")
                 return
 
             # Check if the buffer has improper syntax, and if so, throw it out
@@ -598,4 +728,6 @@ if __name__ == "__main__":
         cli = CyDAQ_CLI()
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
-        cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
+        # cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
+        cli._print_to_output("unhandled exception in CLI: " + e)
+        # print("additional exception info: ", e)

@@ -1,10 +1,10 @@
 -- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
--- Date        : Wed Mar 29 21:31:02 2023
+-- Date        : Wed Mar 29 21:31:01 2023
 -- Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub
---               u:/sdmay23-47/petalinux/hw/hw/hw.srcs/sources_1/bd/system/ip/system_auto_pc_1/system_auto_pc_1_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top system_auto_pc_1 -prefix
+--               system_auto_pc_1_ system_auto_pc_1_stub.vhdl
 -- Design      : system_auto_pc_1
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7z010clg400-1
