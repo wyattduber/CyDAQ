@@ -21,8 +21,8 @@ from widgets import DebugWidget
 from widgets import ConnectionWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEFAULT_WINDOW_WIDTH = 400
-DEFAULT_WINDOW_HEIGHT = 590
+DEFAULT_WINDOW_WIDTH = 553
+DEFAULT_WINDOW_HEIGHT = 626
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """

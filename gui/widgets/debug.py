@@ -45,6 +45,8 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
         self.snapLogScrollToTop()
 
+
+    # CyDAQ Connection Label
     def home(self):
         """Return to whatever the previous window was before switching to debug"""
         tmp = self.prev_index
