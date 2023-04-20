@@ -1,10 +1,12 @@
 # Standard Python Packages
+import shutil
 from datetime import datetime
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 # Stuff From Project - May show as an error but it works
 from generated.DebugWidgetUI import Ui_DebugWidget
@@ -103,14 +105,14 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
                                                        options=options)
         # Default Filename
         if filename.strip() == "":
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt"
+            return # User cancelled export
 
         # Save the logs to the file
-        with open(filename, 'w') as file:
-            logs = self.wrapper.getLog()
-            file.write(logs)
-
-
+        try:
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", filename)
+        except PermissionError:
+            self._show_error("Unable to save logs due to permission error!")
+            return
 
     # Enables mocking of the project
     def mockClicked(self):
@@ -136,3 +138,11 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     def clearLog(self):
         self.wrapper.clearLog()
         self.logUpdate()
+
+    def _show_error(self, message):
+        """Private method to just show an error message box with a custom message"""
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()

@@ -1,11 +1,13 @@
 import os
 import pexpect
+from datetime import datetime
 from pexpect import popen_spawn
 from threading import Thread
 from waiting import wait
 import json
 import re
 import csv
+import sys
 import time
 import pandas
 
@@ -19,7 +21,6 @@ NOT_CONNECTED = "Zybo not connected"
 # Default timeout for all commands (in seconds). May be increased if some commands take longer
 TIMEOUT = 20
 
-
 class CLI:
     """
     A class that handles communication with the cyDAQ. Uses the library pexpect to initialize and communicate with
@@ -32,6 +33,8 @@ class CLI:
 
     def __init__(self):
         self.log = ""
+        self.logfile = open(f"C:\\Temp\\cydaq_current_log.log", 'a+')
+        sys.stdout = self.logfile
         self.running_ping_command = False
         self.bb_log_thread = None
         self.bb_log_mode = False
@@ -120,10 +123,10 @@ class CLI:
             response = response.decode()
             response = response.strip()
 
-            self.log = response + "\n" + self.log
+            self.writeLog("response", response)
             print(response)
             if command != "bb_fetch_pos": # Can get a bit spammy
-                self.log = "Cmd: " + command + "\n" + self.log + "\n"
+                self.writeLog("cmd", command)
                 print(f"Cmd: {command}")
             if wrapper_mode:
                 if command == "ping":
@@ -200,6 +203,7 @@ class CLI:
     def close(self, **_):
         """Close the CLI tool"""
         self._send_command("q")
+        self.logfile.close()
 
     def clear_config(self, **_):
         """Clear the config to its default values"""
@@ -374,7 +378,27 @@ class CLI:
         print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
         print("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
 
+    def writeLog(self, type, string, **_):
+        if type == "response":
+            self.logfile.write(f"{string}\n")
+        elif type == "cmd":
+            self.logfile.write(f"Cmd: {string}\n")
+        else:
+            self.log = f"Cmd:"
+
     def getLog(self, **_):
+        pos = 101
+        lines = []
+        while len(lines) <= 100:
+            try:
+                self.logfile.seek(-pos, 2)
+            except IOError:
+                self.logfile.seek(0)
+                break
+            finally:
+                lines = list(self.logfile)
+            pos *= 2
+        self.log = '\n'.join(map(str, lines[-100:]))
         return self.log
 
     def clearLog(self, **_):

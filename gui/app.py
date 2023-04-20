@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 import ctypes
+import shutil
 from sys import platform
 from datetime import datetime
 
@@ -185,6 +186,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer = QTimer()
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
+
+        # Temp Log File
+        sys.stdout = self.wrapper.logfile
 
         self.show()
 
@@ -370,10 +374,6 @@ if __name__ == "__main__":
 
         # If exit wasn't normal, save debug logs to location of executable
         if currentExitCode != 0:
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
-            if main.wrapper is not None:
-                logs = main.wrapper.getLog()
-                with open(filename, 'w') as file:
-                    file.write(logs)
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
 
         app = None
