@@ -224,14 +224,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def updateWidgetConnectionStatus(self):
         if self.connected:
             print("setting green")
-            self.connectionWidget.connection_status_label.setText(
-                "<html><head/><body><p>CyDAQ Status:<span style=\" color:#0EAD69;\">⬤</span></p></body></html>"
-            )
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                   "{"
+                                                   "color: #0EAD69;"
+                                                   "}")
         else:
             print("setting red")
-            self.connectionWidget.connection_status_label.setText(
-                "<html><head/><body><p>CyDAQ Status:<span style=\" color:#DE3C4B;\">⬤</span></p></body></html>"
-            )
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                       "{"
+                                                       "color: #DE3C4B;"
+                                                       "}")
+
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
