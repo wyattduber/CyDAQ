@@ -137,7 +137,8 @@ int handle_message(struct _payload* payload){
 
 			//assume that petalinux is going to try to read from the shared memory at this length,
 			//flush the cache so it has the latest TODO don't actually need? idk yet
-//			Xil_DCacheFlushRange(shared_GetSampleBuffer, (int)sample_count * sizeof(u16));
+			volatile SAMPLE_TYPE *xadcSampleBuffer = (u16*)0x38800000;
+			Xil_DCacheFlushRange(xadcSampleBuffer, (int)sample_count * sizeof(u16));
 
 			if(DEBUG)
 				xil_printf("SAMP> got request for sample count, responding with: %d\r\n", *sample_count);

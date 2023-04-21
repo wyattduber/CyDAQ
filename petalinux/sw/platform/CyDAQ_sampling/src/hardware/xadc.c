@@ -307,9 +307,9 @@ void xadcInterruptHandler(void *CallBackRef) {
 
 	if ((*xadcSampleCount) < SAMPLE_BUFFER_SIZE ) {
 		//TOOD these invalidate/flush might not be needed, and could impact performance. Need more testing
-		Xil_DCacheInvalidateRange(xadcSampleBuffer + *xadcSampleCount, 2);
+//		Xil_DCacheInvalidateRange((UINTPTR)(xadcSampleBuffer + *xadcSampleCount), 2);
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
-		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
+//		Xil_DCacheFlushRange((UINTPTR)(xadcSampleBuffer + *xadcSampleCount), 2);
 
 		if(xadcSampleBuffer[*xadcSampleCount] == 65535 || xadcSampleBuffer[*xadcSampleCount] == 0){
 			xil_printf("SAMP> REEE writing bad data!!!\r\n");

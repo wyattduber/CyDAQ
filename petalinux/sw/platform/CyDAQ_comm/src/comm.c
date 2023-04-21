@@ -128,7 +128,7 @@ bool writeSamplesToFile(){
 	int rpc_data[PAYLOAD_DATA_LEN] = {};
 	volatile u16 *ptr;
 
-	int fd = open("/dev/mem", O_RDWR | O_SYNC);
+	int fd = open("/dev/mem", O_RDONLY | O_SYNC);
 	if (fd < 0) {
 		perror("COMM> open");
 		return true;
@@ -149,6 +149,13 @@ bool writeSamplesToFile(){
 		return true;
 	}
 
+//	TODO testing
+//	for(int i = 0; i < count; i++){
+//		if (ptr[i] == 0){
+//			printf("found zero at index: %d!\r\n", i);
+//		}
+//	}
+
 	FILE *fp = fopen("/tmp/sample_data.bin", "wb");
 	if(fp == NULL){
 		perror("COMM> Failed to open sample_data.bin file!\r\n");
@@ -162,7 +169,7 @@ bool writeSamplesToFile(){
         fclose(fp);
         return true;
     }
-
+    fflush(fp);
     fclose(fp);
 
 	if (munmap(ptr, size) == -1) {
@@ -428,6 +435,7 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 			if(err){
 				return err;
 			}
+			usleep(100000);
 			err = writeSamplesToComm();
 			if(err){
 				return err;
