@@ -14,13 +14,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ModeSelectorWidget(object):
     def setupUi(self, ModeSelectorWidget):
         ModeSelectorWidget.setObjectName("ModeSelectorWidget")
-        ModeSelectorWidget.resize(436, 602)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(ModeSelectorWidget.sizePolicy().hasHeightForWidth())
-        ModeSelectorWidget.setSizePolicy(sizePolicy)
-        ModeSelectorWidget.setMinimumSize(QtCore.QSize(436, 596))
         ModeSelectorWidget.setStyleSheet("QWidget {\n"
 "    font-family: \"Segoe UI\";\n"
 "    font-size: 20px;\n"

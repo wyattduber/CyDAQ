@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 import ctypes
+import shutil
 from sys import platform
 from datetime import datetime
 
@@ -21,8 +22,8 @@ from widgets import DebugWidget
 from widgets import ConnectionWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEFAULT_WINDOW_WIDTH = 400
-DEFAULT_WINDOW_HEIGHT = 590
+DEFAULT_WINDOW_WIDTH = 553
+DEFAULT_WINDOW_HEIGHT = 626
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -186,6 +187,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
 
+        # Temp Log File
+        sys.stdout = self.wrapper.logfile
+
         self.show()
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
@@ -220,14 +224,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def updateWidgetConnectionStatus(self):
         if self.connected:
             print("setting green")
-            self.connectionWidget.connection_status_label.setText(
-                "<html><head/><body><p>CyDAQ Status:<span style=\" color:#0EAD69;\">⬤</span></p></body></html>"
-            )
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                   "{"
+                                                   "color: #0EAD69;"
+                                                   "}")
         else:
             print("setting red")
-            self.connectionWidget.connection_status_label.setText(
-                "<html><head/><body><p>CyDAQ Status:<span style=\" color:#DE3C4B;\">⬤</span></p></body></html>"
-            )
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                       "{"
+                                                       "color: #DE3C4B;"
+                                                       "}")
+
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
@@ -370,10 +377,6 @@ if __name__ == "__main__":
 
         # If exit wasn't normal, save debug logs to location of executable
         if currentExitCode != 0:
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
-            if main.wrapper is not None:
-                logs = main.wrapper.getLog()
-                with open(filename, 'w') as file:
-                    file.write(logs)
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
 
         app = None

@@ -292,29 +292,6 @@ background-color: #d9d9d9;;</string>
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item alignment="Qt::AlignLeft|Qt::AlignBottom">
-      <widget class="QLabel" name="connection_status_label">
-       <property name="minimumSize">
-        <size>
-         <width>219</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>109</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>CyDAQ Status: Not Connected!</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <resources>

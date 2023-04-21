@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(400, 590)
+        MainWindow.resize(468, 554)
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(16)
@@ -26,14 +26,17 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
-        self.centralwidget.setMinimumSize(QtCore.QSize(400, 0))
-        self.centralwidget.setStyleSheet("")
+        self.centralwidget.setStyleSheet("QWidget {\n"
+"    font-family: \"Segoe UI\";\n"
+"    font-size: 14px;\n"
+"    color: #033f63;\n"
+"}")
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 400, 19))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 468, 19))
         font = QtGui.QFont()
         font.setPointSize(8)
         self.menubar.setFont(font)

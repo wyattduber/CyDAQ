@@ -39,6 +39,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.sampling = False
         self.writing = False
         self.shouldTimeout = False
+        self.config_timeout = False
         self.filename = None
         self.temp_filename = None
         self.file_error = True  # Start true then change later if successful
@@ -508,7 +509,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     # Still validates input, but just sends the config to the CyDAQ and implements it
     def send_config_only(self):
         # Changing the button
-        if not self.mainWindow.connected or self.writing or self.sampling:
+        if not self.mainWindow.connected or self.writing or self.sampling or self.config_timeout:
             return
 
         # validate input
@@ -523,7 +524,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             return
 
         def resetSendConfigBtn():
-            print("Resetting Config Button!")
             time.sleep(2)
             self.send_config_btn.setText("Send Config")
             self.send_config_btn.setStyleSheet("#send_config_btn"
@@ -532,21 +532,32 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
                                                "background-color: #d9d9d9;"
                                                "border: 1px solid #033f63;"
                                                "}")
+            self.config_timeout = False
 
         # send config
+        self.config_timeout = True
         self.wrapper.set_values(json.dumps(self.getData()))
-        self.wrapper.send_config_to_cydaq()
-        print(self.wrapper.get_config())
+        response = self.wrapper.send_config_to_cydaq()
+        if not self.wrapper.mocking:
+            print(self.wrapper.get_config())
         send_config = self.send_config_btn
-        send_config.setText("Config Sent")
-        send_config.setStyleSheet("#send_config_btn"
-                                  "{"
-                                  "background-color: #0ead69;"
-                                  "border-color: #0ead69;"
-                                  "color: #02324F;"
-                                  "}")
+        if response: # Config sent successfully
+            send_config.setText("Config Sent")
+            send_config.setStyleSheet("#send_config_btn"
+                                    "{"
+                                    "background-color: #0ead69;"
+                                    "border-color: #0ead69;"
+                                    "color: #02324F;"
+                                    "}")
+        else: # Config didn't send successfully
+            send_config.setText("Error Sending Config!")
+            send_config.setStyleSheet("#send_config_btn"
+                                    "{"
+                                    "background-color: #DE3C4B;"
+                                    "border-color: #DE3C4B;"
+                                    "color: #FFF;"
+                                    "}")
         Thread(target=resetSendConfigBtn).start()
-        # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
 
     def _show_error(self, message):
         """Private method to just show an error message box with a custom message"""
