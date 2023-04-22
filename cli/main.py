@@ -37,6 +37,18 @@ class CyDAQ_CLI:
     WRAPPER_IGNORE = "IGNORE"
     WRAPPER_BB_LIVE = "BB_LIVE"
 
+    NUM_RETRIES = 10
+
+    REMOTE_PATH = "/tmp/sample_data.bin"
+    LOCAL_PATH = "C:\Temp\sample_data.bin"
+
+    SSH_HOSTNAME = "169.254.7.2"
+    SSH_PORT = 22
+    SSH_USERNAME = "root"
+    SSH_PASSWORD = "root"
+
+    SLEEP_TIME = 2
+
     HELP_MSG = """	h/help\t\t\t\t\t\t\t Print This Help Menu
 	p/ping\t\t\t\t\t\t\t Ping the Zybo
 	configure\t\t\t\t\t\t Configure Parameters (Guided)
@@ -466,7 +478,7 @@ class CyDAQ_CLI:
             elif extension == ".mat":
                 savemat(outFile, matDict)
         else:
-            # TODO handle malab files
+            # TODO handle matlab files
             # new firmware, can use scp instead
             print("Send stop command!") 
             self.cmd_obj.send_stop_sampling()
@@ -476,13 +488,9 @@ class CyDAQ_CLI:
             if not os.path.exists("C:\Temp"):
                 os.makedirs("C:\Temp")
 
-            # TODO make constants
-            remote_path = "/tmp/sample_data.bin"
-            local_path = "C:\Temp\sample_data.bin"
-
             # Create an SSH client
             ssh = None
-            retry_count = 10 #TODO make constant
+            retry_count = NUM_RETRIES
             ssh_count = 0
             connected = False
             # keep retrying the ssh connection until a timeout
@@ -490,15 +498,15 @@ class CyDAQ_CLI:
                 try:
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                    ssh.connect(hostname="169.254.7.2", port=22, username="root", password="root") #TODO make constants
+                    ssh.connect(SSH_HOSTNAME, SSH_PORT, SSH_USERNAME, SSH_PASSWORD)
                     # extra command I found that allows for an ssh session? Couldn't get it to work, but didn't spend much time on it
                     # ssh.invoke_shell(term="vt100", width=80, height=24, width_pixels=0, height_pixels=0, environment=None)
                     connected = True
                     self._print_to_output("ssh connect successful!")
                 except BaseException as e:
                     # print("base exception caught!!", e)
-                    self._print_to_output("ssh connect failed! sleeping 2 seconds") # change log to constant once added
-                    time.sleep(2) #TODO make constant
+                    self._print_to_output("ssh connect failed! sleeping " + SLEEP_TIME + "seconds")
+                    time.sleep(SLEEP_TIME)
                     ssh.close()
                     ssh_count += 1
                     if ssh_count > retry_count:
@@ -510,14 +518,14 @@ class CyDAQ_CLI:
             scp = ssh.open_sftp()
 
             # Copy the remote file to the local machine
-            scp.get(remote_path, local_path)
+            scp.get(REMOTE_PATH, LOCAL_PATH)
 
             # Close the SCP client and SSH connection
             scp.close()
             ssh.close()
 
             # read from temp data.bin, and write sample file to given file locaiton 
-            with open(local_path, "rb") as temp_file:
+            with open(LOCAL_PATH, "rb") as temp_file:
                 while True:
                     raw_num = temp_file.read(2)
                     
@@ -530,7 +538,7 @@ class CyDAQ_CLI:
                     sample_time += 1
 
             # delete temp file
-            os.remove(local_path)
+            os.remove(LOCAL_PATH)
 
             if extension == ".csv":
                 f.close()
