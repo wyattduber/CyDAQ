@@ -140,6 +140,13 @@ int handle_message(struct _payload* payload){
 			volatile SAMPLE_TYPE *xadcSampleBuffer = (u16*)0x38800000;
 			Xil_DCacheFlushRange(xadcSampleBuffer, (int)sample_count * sizeof(u16));
 
+			//TODO testing. Remove
+//			for(int i = 0; i < *sample_count; i++){
+//				if(xadcSampleBuffer[i] == 0){
+//					xil_printf("SAMP> OH NO! Found bad data on samp at position: %d!\r\n", i);
+//				}
+//			}
+
 			if(DEBUG)
 				xil_printf("SAMP> got request for sample count, responding with: %d\r\n", *sample_count);
 			response_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;

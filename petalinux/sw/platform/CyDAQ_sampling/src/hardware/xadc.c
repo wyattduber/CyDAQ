@@ -315,12 +315,6 @@ void xadcInterruptHandler(void *CallBackRef) {
 			xil_printf("SAMP> REEE writing bad data!!!\r\n");
 		}
 
-		//write and flush two more times to fix the data not getting read correctly?
-//		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
-//		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
-//		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
-//		Xil_DCacheFlushRange(xadcSampleBuffer + *xadcSampleCount, 2);
-//		xil_printf("SAMP> XADC interrupt #%d, wrote: %d to address %p\r\n", *xadcSampleCount, xadcSampleBuffer[*xadcSampleCount], xadcSampleBuffer + *xadcSampleCount);
 		(*xadcSampleCount)++;
 
 	} else if(streamingEnabled) {
