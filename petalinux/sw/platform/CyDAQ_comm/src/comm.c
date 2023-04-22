@@ -121,6 +121,54 @@ void commRXTask() {
 }
 
 /*
+ * Attempt to clear the cache on the shared memory region, so the
+ * next time it's read it's actually what the sampling core wrote
+ * to it.
+ *
+ * This isn't a great solution, in fact it could be argued that it's
+ * a stupid one, but I can't find a better way around this. No matter
+ * what I try, petalinux is reading sample data that just isn't what
+ * was just written to memory. Most likely a cache coherence problem.
+ */
+void clearCache(){
+	int fd = open("/dev/mem", O_RDONLY | O_SYNC);
+	if (fd < 0) {
+		perror("COMM> open");
+		return;
+	}
+
+	off_t offset = 0x38800000; // starting point TODO make constant
+	size_t size = SAMPLE_BUFFER_SIZE * sizeof(u16);
+	volatile u16 *ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
+	if (ptr == MAP_FAILED) {
+		perror("COMM> mmap");
+		return;
+	}
+
+	FILE *fp = fopen("/tmp/junk.bin", "wb"); //TODO make constant
+	if(fp == NULL){
+		perror("COMM> Failed to open junk.bin file!\r\n");
+		return;
+	}
+
+	size_t samples_written = fwrite(ptr, sizeof(u16), SAMPLE_BUFFER_SIZE, fp);
+	if (samples_written != SAMPLE_BUFFER_SIZE) {
+		perror("Failed to write data");
+		fclose(fp);
+		return;
+	}
+	fflush(fp);
+	fclose(fp);
+
+	if (munmap(ptr, size) == -1) {
+		perror("COMM> munmap");
+		return;
+	}
+
+	close(fd);
+}
+
+/*
  * Writes the samples stored in shared memory to the filesystem.
  * Returns true if error, false otherwise
  */
@@ -143,26 +191,20 @@ bool writeSamplesToFile(){
 	size_t size = sizeof(u16) * count;
 	off_t offset = 0x38800000; // starting point TODO make constant
 
+	clearCache();
+
 	ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
 	if (ptr == MAP_FAILED) {
 		perror("COMM> mmap");
 		return true;
 	}
 
-//	TODO testing
-//	for(int i = 0; i < count; i++){
-//		if (ptr[i] == 0){
-//			printf("found zero at index: %d!\r\n", i);
-//		}
-//	}
-
 	FILE *fp = fopen("/tmp/sample_data.bin", "wb");
 	if(fp == NULL){
 		perror("COMM> Failed to open sample_data.bin file!\r\n");
 		return true;
 	}
-
-	size_t samples_written = fwrite(ptr, sizeof(u16), count, fp);
+	size_t samples_written = fwrite(ptr, sizeof(u16), count, fp);;
 	printf("COMM> Wrote %d samples to file\r\n", samples_written);
     if (samples_written != count) {
         perror("Failed to write data");

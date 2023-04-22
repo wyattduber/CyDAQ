@@ -1,5 +1,4 @@
 from copy import deepcopy
-import socket
 import numpy as np
 from scipy.io import savemat
 from threading import Thread
@@ -8,7 +7,6 @@ import re
 import os
 import json
 import time
-import traceback
 import paramiko
 
 from check_params import ParameterConstructor

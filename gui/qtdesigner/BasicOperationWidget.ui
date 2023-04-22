@@ -64,7 +64,7 @@ QPushButton {
       </size>
      </property>
      <property name="text">
-      <string>Sampling Rate</string>
+      <string>Sampling Rate - Enter a Value</string>
      </property>
     </widget>
    </item>
@@ -284,22 +284,22 @@ QPushButton {
      </item>
      <item>
       <property name="text">
-       <string>1st Order High Pass</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>1st Order Low Pass</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>6th Order High Pass</string>
+       <string>6th Order Low Pass</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>6th Order Low Pass</string>
+       <string>1st Order High Pass</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>6th Order High Pass</string>
       </property>
      </item>
      <item>
