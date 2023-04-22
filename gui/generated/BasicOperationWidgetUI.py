@@ -256,7 +256,7 @@ class Ui_BasicOpetaionWidget(object):
     def retranslateUi(self, BasicOpetaionWidget):
         _translate = QtCore.QCoreApplication.translate
         BasicOpetaionWidget.setWindowTitle(_translate("BasicOpetaionWidget", "Form"))
-        self.sampling_rate_label.setText(_translate("BasicOpetaionWidget", "Sampling Rate"))
+        self.sampling_rate_label.setText(_translate("BasicOpetaionWidget", "Sampling Rate - Enter a Value"))
         self.sample_rate_min_btn.setText(_translate("BasicOpetaionWidget", "100"))
         self.lessThan1Sample.setText(_translate("BasicOpetaionWidget", "≤"))
         self.sample_rate_input_box.setItemText(0, _translate("BasicOpetaionWidget", "48000"))
@@ -276,10 +276,10 @@ class Ui_BasicOpetaionWidget(object):
         self.filter_label.setText(_translate("BasicOpetaionWidget", "Filter"))
         self.filter_input_box.setItemText(0, _translate("BasicOpetaionWidget", "All Pass"))
         self.filter_input_box.setItemText(1, _translate("BasicOpetaionWidget", "60 hz Notch"))
-        self.filter_input_box.setItemText(2, _translate("BasicOpetaionWidget", "1st Order High Pass"))
-        self.filter_input_box.setItemText(3, _translate("BasicOpetaionWidget", "1st Order Low Pass"))
-        self.filter_input_box.setItemText(4, _translate("BasicOpetaionWidget", "6th Order High Pass"))
-        self.filter_input_box.setItemText(5, _translate("BasicOpetaionWidget", "6th Order Low Pass"))
+        self.filter_input_box.setItemText(2, _translate("BasicOpetaionWidget", "1st Order Low Pass"))
+        self.filter_input_box.setItemText(3, _translate("BasicOpetaionWidget", "6th Order Low Pass"))
+        self.filter_input_box.setItemText(4, _translate("BasicOpetaionWidget", "1st Order High Pass"))
+        self.filter_input_box.setItemText(5, _translate("BasicOpetaionWidget", "6th Order High Pass"))
         self.filter_input_box.setItemText(6, _translate("BasicOpetaionWidget", "2nd Order Band Pass"))
         self.filter_input_box.setItemText(7, _translate("BasicOpetaionWidget", "6th Order Band Pass"))
         self.mid_corner_label.setText(_translate("BasicOpetaionWidget", "Mid Corner"))
