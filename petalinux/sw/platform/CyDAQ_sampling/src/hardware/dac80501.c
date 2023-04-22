@@ -153,65 +153,65 @@ int dac80501_DisableGeneration(void)
 int dac80501_ReceiveDataset(u32 datasetSize)
 {
 	//check for errors before beginning reception
-	if(datasetSize == 0 || datasetSize > DAC_DATASET_BUFFER_SIZE) {
-		if(DEBUG)
-			xil_printf("SAMP> Invalid dataset length\r\n");
-
-		return 1;
-	}
-
-	//ack front end; indicate readiness for dataset reception
-	xil_printf("%cACK%c", COMM_START_CHAR, COMM_STOP_CHAR);
-
-	dacBufferSize = datasetSize;
-	dacCurrentIndex = 0;
-
-	//wait for start-of-transmission
-	while(1)
-	{
-		//receive a single byte
-		commUartRecv(&dac80501_DatasetRXBuffer[0], 1);
-
-		//if byte received was the start char, proceed to dataset reception
-		if(dac80501_DatasetRXBuffer[0] == COMM_START_CHAR) {
-			break;
-		}
-	}
-
-	//continuously receive dataset entries until stop condition is met
-	while(1)
-	{
-		//loop until a complete 16-bit entry is received
-		int bytesReceived = 0;
-		while(bytesReceived < 2)
-		{
-			bytesReceived += commUartRecv(&dac80501_DatasetRXBuffer[bytesReceived], 1);
-
-			//nothing was received, try again
-			if(bytesReceived == 0) {
-				continue;
-			}
-
-			//detect end-of-transmission
-			if(dacCurrentIndex == dacBufferSize) {
-				//a stop char was received after the final entry. Indicate successful reception
-				if(dac80501_DatasetRXBuffer[bytesReceived-1] == COMM_STOP_CHAR) {
-					return 0;
-
-				//some other byte was received after the final entry. Indicate error
-				} else {
-					return 1;
-				}
-			}
-		}
-
-		//a 16-bit entry has been received, process it and store it in the generation buffer
-		u16 entry = (dac80501_DatasetRXBuffer[bytesReceived-2] << 8) |
-					(dac80501_DatasetRXBuffer[bytesReceived-1]);
-
-		dac80501_DatasetBuffer[dacCurrentIndex] = entry;
-		dacCurrentIndex++;
-	}
+//	if(datasetSize == 0 || datasetSize > DAC_DATASET_BUFFER_SIZE) {
+//		if(DEBUG)
+//			xil_printf("SAMP> Invalid dataset length\r\n");
+//
+//		return 1;
+//	}
+//
+//	//ack front end; indicate readiness for dataset reception
+//	xil_printf("%cACK%c", COMM_START_CHAR, COMM_STOP_CHAR);
+//
+//	dacBufferSize = datasetSize;
+//	dacCurrentIndex = 0;
+//
+//	//wait for start-of-transmission
+//	while(1)
+//	{
+//		//receive a single byte
+////		commUartRecv(&dac80501_DatasetRXBuffer[0], 1);
+//
+//		//if byte received was the start char, proceed to dataset reception
+//		if(dac80501_DatasetRXBuffer[0] == COMM_START_CHAR) {
+//			break;
+//		}
+//	}
+//
+//	//continuously receive dataset entries until stop condition is met
+//	while(1)
+//	{
+//		//loop until a complete 16-bit entry is received
+//		int bytesReceived = 0;
+//		while(bytesReceived < 2)
+//		{
+////			bytesReceived += commUartRecv(&dac80501_DatasetRXBuffer[bytesReceived], 1);
+//
+//			//nothing was received, try again
+//			if(bytesReceived == 0) {
+//				continue;
+//			}
+//
+//			//detect end-of-transmission
+//			if(dacCurrentIndex == dacBufferSize) {
+//				//a stop char was received after the final entry. Indicate successful reception
+//				if(dac80501_DatasetRXBuffer[bytesReceived-1] == COMM_STOP_CHAR) {
+//					return 0;
+//
+//				//some other byte was received after the final entry. Indicate error
+//				} else {
+//					return 1;
+//				}
+//			}
+//		}
+//
+//		//a 16-bit entry has been received, process it and store it in the generation buffer
+//		u16 entry = (dac80501_DatasetRXBuffer[bytesReceived-2] << 8) |
+//					(dac80501_DatasetRXBuffer[bytesReceived-1]);
+//
+//		dac80501_DatasetBuffer[dacCurrentIndex] = entry;
+//		dacCurrentIndex++;
+//	}
 }
 
 void dac80501_InterruptHandler(void *CallBackRef)

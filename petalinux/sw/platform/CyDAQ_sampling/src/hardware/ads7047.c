@@ -140,11 +140,6 @@ int ads7047_DisableSampling(void)
 	return 0;
 }
 
-int ads7047_ProcessSamples(void)
-{
-	return xadcProcessSamples();
-}
-
 int intrcount = 0;
 void ads7047_InterruptHandler(void *CallBackRef)
 {

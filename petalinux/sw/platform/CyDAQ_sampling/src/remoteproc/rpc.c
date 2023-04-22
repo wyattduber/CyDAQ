@@ -70,10 +70,6 @@ int handle_message(struct _payload* payload){
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 			ret = xadcSetSampleRate(data[1]);
-
-		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){ //TODO not implemented yet
-			ret =  xadcProcessSamples();
-
 		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){ //TODO not implemented yet
 			ret =  xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
@@ -81,9 +77,6 @@ int handle_message(struct _payload* payload){
 			ret =  xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){ //TODO not implemented yet
-
-		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){ //TODO not implemented yet
-			ret =  ads7047_ProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){ //TODO not implemented yet
 			ret =  ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream

@@ -121,10 +121,6 @@ u8 xadcInit() {
 		XTmrCtr_Stop(&TimerCounterInst, TIMER_CNTR_0);
 		XTmrCtr_SetResetValue(&TimerCounterInst, TIMER_CNTR_0, (u32) resetValue);
 
-		//save reference to shared sample buffer
-//		xadcSampleBuffer = shared_GetSampleBuffer(); //TODO delete, don't need anymore?
-
-
 		xadcInitStatus = 1;
 
 		return XST_SUCCESS;
@@ -209,87 +205,6 @@ int xadcDisableSampling() {
 	return 0;
 }
 
-/** TODO this function is no longer valid as we need to just write to the shared memory region. Proably delete?
- * Process XADC samples and print to GUI over UART
- * TODO: Re-implement burst writes. Issues occur with bursts where a single byte will be dropped, causing
- * the reassembly of the 16-bit int to be off by 1 byte and wrecking the data. Adding a longer delay helps,
- * indicating something is going on with the buffer either on the Zybo end or the PC end. However, the burst
- * size is too large (I guess) and always causes a byte to drope on longer samples. This should be fixed by
- * sending appropriate sized bursts and waiting for a confirmation back form the PC before sending the next
- * burst. This also allows error checking.
- */
-int xadcProcessSamples() {
-	volatile u32* xadcSampleCount = shared_GetSampleCount();
-	u32 i = 0;
-//	u8 sent = 0;
-	u8* ptr = (u8*) xadcSampleBuffer;
-	u8* lastVal = (u8*) xadcSampleBuffer + (2 * (*xadcSampleCount));
-//	u8 burstSize = DEF_SAMPLE_BURST_SIZE;
-
-	if((*xadcSampleCount) == 0) {
-		if(DEBUG) {
-			xil_printf("SAMP> No new samples\r\n");
-		} else {
-			xil_printf("%c", COMM_START_CHAR);
-			usleep(100);
-			xil_printf("000000000");
-		}
-
-		return 0;
-	}
-
-	sleep(1);
-
-	if(DEBUG) {
-		xil_printf("SAMP> Beginning sample playback..\r\n");
-
-		while(i < (*xadcSampleCount)) {
-			voltage = RawToExtVoltage(xadcSampleBuffer[i]);
-			xil_printf(" => %d.%d V\n", (int)voltage, xadcFractionToInt(voltage));
-
-		}
-
-		xil_printf("SAMP> Finished processing samples\r\n");
-	} else {
-		xil_printf("%c", COMM_START_CHAR);
-
-		while(ptr < lastVal) {
-			//commUartSend(ptr++, 1);
-			//rpc_send_message();
-			rpc_send_message(COMM_SAMPLE_MSG, ptr++, 2);
-			usleep(30);
-			/*
-			//if we are on the last burst is smaller than the burst limit, resize window so we don't miss end samples
-			if(ptr+burstSize > lastVal) {
-				burstSize = lastVal-ptr;
-			}
-
-			while(sent < burstSize) {
-				sent += commUartSend((ptr+sent), burstSize-sent);
-			}
-
-			//increment pointer to sample array
-			ptr += burstSize;
-			usleep(1);
-
-			//reset temp variable
-			sent = 0;
-			*/
-		}
-
-		//clear UART out buffer before sending end sequence
-		usleep(100);
-
-		xil_printf("00000000"); //COMM_STOP_CHAR, COMM_STOP_CHAR);
-
-		//Needed to give GUI time to reset itself
-		usleep(50000);
-	}
-
-	shared_clearSampleCount();
-	return 0;
-}
-
 /**
  * ISR triggers on XADC end-of-capture, stores sample to buffer
  */
@@ -310,10 +225,6 @@ void xadcInterruptHandler(void *CallBackRef) {
 //		Xil_DCacheInvalidateRange((UINTPTR)(xadcSampleBuffer + *xadcSampleCount), 2);
 		xadcSampleBuffer[*xadcSampleCount] = (SAMPLE_TYPE) XSysMon_GetAdcData(&SysMonInst, AUX_14_INPUT) >> 4;
 //		Xil_DCacheFlushRange((UINTPTR)(xadcSampleBuffer + *xadcSampleCount), 2);
-
-		if(xadcSampleBuffer[*xadcSampleCount] == 65535 || xadcSampleBuffer[*xadcSampleCount] == 0){
-			xil_printf("SAMP> REEE writing bad data!!!\r\n");
-		}
 
 		(*xadcSampleCount)++;
 
