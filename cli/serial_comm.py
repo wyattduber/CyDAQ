@@ -229,11 +229,11 @@ class ctrl_comm:
 
         # connected device could be running old or new firmware, need to figure out which
         # old firmware:
-        # only one USB port detected, has name "USB Serial Port"
+        # 1) Only one USB port detected, has name "USB Serial Port".
 
         # new firmware:
-        # only one USB port detected, has name "USB Serial Device" (basic scenario in lab) OR
-        # two USB ports detected, one is "USB Serial Port" the other is "USB Serial" (when debugging) - need to pick the "USB Serial Device" one
+        # 1) Only one USB port detected, has name "USB Serial Device" (basic scenario in lab).
+        # 2) Two USB ports detected, one is "USB Serial Port" the other is "USB Serial" (when debugging) - need to pick the "USB Serial Device" one.
         if len(open_ports) == 0:
             return None
         if len(open_ports) == 1:
@@ -305,9 +305,13 @@ class ctrl_comm:
 
         if self.__s_comm.isOpen():
             try:
+                print("trying to write: ", data, " to port: ", self.__s_comm.port)
+                self.__s_comm.flush()
                 self.__s_comm.write(data)
             except serial.serialutil.SerialException:
                 print("Serial exception while writing to port", self.__s_comm.port, ". Assuming bad connection.")
+                return False
+            except OSError:
                 return False
             return True
         else:
@@ -328,6 +332,7 @@ class ctrl_comm:
         if self.__s_comm.isOpen() is True:
             try:
                 buffer = self.__s_comm.read(1)
+                print("just read: ", buffer, " on port: ", self.__s_comm.port)
             except serial.serialutil.SerialException:
                 # print("Serial exception while reading. Assuming bad connection.")
                 return False

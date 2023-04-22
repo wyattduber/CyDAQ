@@ -216,9 +216,10 @@ class CLI:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:
             if response == "":
-                raise CLIException("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? "
-                                   "Is there another instance running/connected to the CyDAQ? "
-                                   "Is there another program using that com port?")
+                return -1
+                # raise CLIException("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? "
+                #                    "Is there another instance running/connected to the CyDAQ? "
+                #                    "Is there another program using that com port?")
             elif response == "Error sending config!":
                 pass # Do nothing since error is already handled
             else:

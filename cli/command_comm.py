@@ -1,6 +1,7 @@
 from serial_comm import ctrl_comm
 from master_enum import enum_commands, sig_serial
 import struct
+import serial
 import time as t
 
 CMD_SERVO_OFFSET = "SOI"
@@ -237,6 +238,7 @@ class cmd:
         self.ctrl_comm_obj.close()
 
     def send_fetch(self):
+        print("sending fetch on port: ", self.port)
         self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -416,6 +418,7 @@ class cmd:
             self.__throw_exception('Sending DAC Reps Failed')
 
     def send_start(self):
+        print("sending start")
         """
         Sends the Input.
 
@@ -437,6 +440,7 @@ class cmd:
             return False
 
     def send_stop_sampling(self):
+        print("stop sampling on port: ", self.port)
         self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -511,6 +515,7 @@ class cmd:
         self.ctrl_comm_obj.close()
 
     def ping_zybo(self):
+        print("sending ping on port: ", self.port)
         """
         Handshake between zybo and the cydaq
 
@@ -522,7 +527,7 @@ class cmd:
         """
         try:
             self.ctrl_comm_obj.open(self.port)
-        except ValueError:
+        except (ValueError, serial.serialutil.SerialException):
             return False
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
