@@ -726,6 +726,6 @@ if __name__ == "__main__":
         cli = CyDAQ_CLI()
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
-        # cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
-        cli._print_to_output("unhandled exception in CLI: " + e)
+        cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
+        # cli._print_to_output("unhandled exception in CLI: " + e)
         # print("additional exception info: ", e)
