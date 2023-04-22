@@ -198,6 +198,7 @@ class ctrl_comm:
         self.__s_comm.dsrdtr = False
         self.__s_comm.parity = serial.PARITY_NONE  # PARITY_EVEN
         self.__s_comm.timeout = 4
+        self.__s_comm.write_timeout = 0
         self.__order = "little"
 
     def get_port(self):

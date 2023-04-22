@@ -528,38 +528,8 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.PING.value))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('ascii'))
-            cnt = 0
-            while True:
-                if self.recieve_acknowlege_zybo():
-                    print("ping ack recieved")
-                    return True
-                elif cnt > 10:
-                    return False
-                else:
-                    t.sleep(0.1)
-                    cnt += 1
-                    if self.ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
-                        buffer = ""
-                        byte_value = ""
-                        if len(buffer) < 20:
-                            while byte_value != sig_serial.END_BYTE.value:
-                                byte_value = self.ctrl_comm_obj.read_byte()
-                                if byte_value != sig_serial.END_BYTE.value:
-                                    buffer += byte_value
-                        else:
-                            print("Acknowledge was incorrect")
-                            return False
-                        if buffer == 'ACK':
-                            print(buffer)
-                            return True
-                        else:
-                            print("Acknowledge was incorrect")
-                            return False
-                    else:
-                        pass
-        else:
-            return False
-
+            return self.recieve_acknowlege_zybo()
+         
     def is_mock_mode(self):
         return self.ctrl_comm_obj.is_mock_mode()
 
