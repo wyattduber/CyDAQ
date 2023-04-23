@@ -79,7 +79,7 @@ class CLI:
             wait(lambda: not self.running_command)
 
         # Send command
-        self.logger.debug("wrapper trying to send command: " + command)
+        self.logger.debug("wrapper send cmd: " + command)
         try:
             if not force_async:
                 self.running_command = True
@@ -113,11 +113,9 @@ class CLI:
             response = response.decode()
             response = response.strip()
 
-            self.logger.debug("wrapper got response: " + response)
-            # if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
-                # self.writeLog("response", response)
-                # self.writeLog("cmd", command)
-                # print(f"Cmd: {command}")
+            if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
+                self.logger.debug("wrapper response: " + response)
+
             if wrapper_mode:
                 if command == "ping":
                     self.running_ping_command = False

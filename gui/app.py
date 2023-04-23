@@ -81,8 +81,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.wrapper = CLIWrapper.CLI(self.logger)
             self.connected = self.wrapper.ping() >= 0
         except CLIWrapper.cyDAQNotConnectedException:
+            self.logger.debug("wrapper threw cyDAQNotConnectedException")
             self.connected = False
         except CLIWrapper.CLIException:
+            self.logger.debug("wrapper threw CLIException")
             self.connected = False
             errorbox = QMessageBox(self)
             errorbox.setWindowTitle("Error")
@@ -98,8 +100,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self)
         self.balance_beam = BalanceBeamModeWidget(self)
         self.debug = DebugWidget(self)
-
-        self.logger.debug("alright alright")
 
         self.stack = StackedLayout() 
         self.connectionWidget = ConnectionWidget()
@@ -143,9 +143,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
 
-        # Temp Log File
-        # sys.stdout = self.wrapper.logfile
-
         self.show()
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
@@ -168,8 +165,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     self.updateWidgetConnectionStatus()
             else:
                 # Raise any other exceptions
-                print("trying to raise exception with message: ", traceback_msg)
-                # raise extype(traceback_msg)
+                self.logger.error("Trying to ping CyDAQ with wrapper returned unknown error: " + traceback_msg)
 
         self.runInWorkerThread(
             self.wrapper.ping,
@@ -179,13 +175,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def updateWidgetConnectionStatus(self):
         if self.connected:
-            print("setting green")
+            self.logger.debug("Setting connected status green")
             self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
                                                    "{"
                                                    "color: #0EAD69;"
                                                    "}")
         else:
-            print("setting red")
+            self.logger.debug("Setting connected status red")
             self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
                                                        "{"
                                                        "color: #DE3C4B;"
@@ -193,9 +189,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
 
     def startPingTimer(self):
+        self.logger.debug("Starting ping timer at interval: " + str(self.pingTimerInterval) + "ms")
         self.pingTimer.start(self.pingTimerInterval)
 
     def stopPingTimer(self):
+        self.logger.debug("Stopping ping timer")
         self.pingTimer.stop()
 
     ### The following are methods for switching to different widgets of the gui application. ###
