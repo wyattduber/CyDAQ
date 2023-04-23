@@ -11,6 +11,9 @@ CONSOLE_LOG_LEVEL = logging.DEBUG
 DEBUG_WIDGET_LOG_LEVEL = logging.DEBUG
 # Log file location for different OS's (development)
 if sys.platform == "win32":
+    TEMP_DIR = "C:\\Temp"
     DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
 else:
+    TEMP_DIR = "/tmp"
     DEFAULT_LOG_FILE = f"/tmp/cydaq_current_log.log"
+TEMP_SAMPLE_LOCATION = 'C:\Temp\sample_{}.csv' # the {} is where the time is calculated and placed

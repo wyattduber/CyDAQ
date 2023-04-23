@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import QMessageBox
 # Stuff From Project - May show as an error but it works
 from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
 from widgets.mode_widget import CyDAQModeWidget
+from widgets import config
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
@@ -32,6 +33,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
         self.setupUi(self)
 
         self.mainWindow = mainWindow
+        self.logger = self.mainWindow.logger
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
@@ -142,13 +144,14 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
 
     def writingData(self):
         """When the cyDAQ is sending data to the frontend, and it's writing it to a file."""
+        self.logger.debug("GUI started accepting/writing sample data...")
         self.writing = True
         self.mainWindow.pingTimer.stop()
         self.start_stop_sampling_btn.setText("Writing...")
 
     def writingDataFinished(self):
         """When the cyDAQ is finished writing data."""
-        print("writing data finished")
+        self.logger.debug("writing data finished")
         # Adds the filename to the plotter window for ease of use
         # self.mainWindow.livestream.infile_line.setText(self.filename)
         self.writing = False
@@ -190,6 +193,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
             while os.path.exists(new_filename):
                 i += 1
                 new_filename = base + f'_{i}' + ext
+            self.logger.info("Unable to write to file path " + self.filename + ". Picked new name: " + new_filename)
             self.filename = new_filename
 
         # If the filename is still the temp filename, no file was selected
@@ -200,14 +204,16 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
             # Copy the temp file over to the new one. If the user chose a matlab file, convert the csv to matlab first
             if ext == ".mat":
                 scipy.io.savemat(self.filename, {"data": pd.read_csv(self.temp_filename).values})
+                self.logger.info(".mat file chosen. Converted and written to " + self.filename)
             else:
+                self.logger.info("Copying file from " + self.temp_filename + " to " + self.filename)
                 shutil.copyfile(self.temp_filename, self.filename)
 
         # Delete the old temp file
         try:
             os.remove(self.temp_filename)
         except PermissionError:
-            print("Unable to delete temp file!! ", self.temp_filename)
+            self.logger.error("Unable to delete temp file: " + self.temp_filename)
 
         # Reset the temp filename and the existing filename
         # Causes an ask for filename every sample
@@ -310,11 +316,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
         self.shouldTimeout = False
         self.sampling = False
 
-        if not os.path.exists("C:\Temp"):
-            os.makedirs("C:\Temp")
+        if not os.path.exists(config.TEMP_DIR):
+            os.makedirs(config.TEMP_DIR)
 
         # Set the filename to a temp filename in the user's temp directory for writing
-        self.temp_filename = 'C:\Temp\sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
+        self.temp_filename = config.TEMP_SAMPLE_LOCATION.format(time.strftime('%Y%m%d-%H%M%S'))
 
         self.writingData()
 
@@ -333,7 +339,10 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
                                                        DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
                                                        options=options)
         if self.filename.strip() == "":  # no file chosen
+            self.logger.debug("No file chosen. Picking " + self.temp_filename + "to write sample data")
             self.filename = self.temp_filename
+        else:
+            self.logger.debug("User chose " + self.filename + " to save samples")
 
     # Method that is run both to start and stop sampling
     # Runs in a worker thread to keep the GUI from freezing and to allow use of other features
@@ -539,7 +548,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
         self.wrapper.set_values(json.dumps(self.getData()))
         response = self.wrapper.send_config_to_cydaq()
         if not self.wrapper.mocking:
-            print(self.wrapper.get_config())
+            self.logger.debug("GUI config: " + self.wrapper.get_config())
         send_config = self.send_config_btn
         if response: # Config sent successfully
             send_config.setText("Config Sent")
@@ -561,6 +570,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
 
     def _show_error(self, message):
         """Private method to just show an error message box with a custom message"""
+        self.logger.error(message)
         errorbox = QMessageBox(self)
         errorbox.setWindowTitle("Error")
         errorbox.setText(message)
@@ -569,6 +579,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
 
     def _show_message(self, title, message, subtext=None):
         """Private method to just show an info message box with a custom message"""
+        self.logger.info(message)
         messagebox = QMessageBox(self)
         messagebox.setWindowTitle(title)
         messagebox.setText(message)
