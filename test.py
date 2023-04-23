@@ -7,7 +7,7 @@ import time
 from cli.master_enum import enum_commands, sig_serial
 
 ser = serial.Serial(
-    port="COM8",
+    port="COM10",
     baudrate=921600,
     timeout=1,
     bytesize=serial.EIGHTBITS,
@@ -19,6 +19,13 @@ ser = serial.Serial(
 )
 print(ser)
 
+ser.write(sig_serial.START_BYTE.value.encode('ascii'))
+ser.write(struct.pack('!B', enum_commands.PING.value))
+ser.write(sig_serial.END_BYTE.value.encode('ascii'))
+
+ser.write(sig_serial.START_BYTE.value.encode('ascii'))
+ser.write(struct.pack('!B', enum_commands.PING.value))
+ser.write(sig_serial.END_BYTE.value.encode('ascii'))
 
 ser.write(sig_serial.START_BYTE.value.encode())
 ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))

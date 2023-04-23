@@ -1,6 +1,7 @@
 from serial_comm import ctrl_comm
 from master_enum import enum_commands, sig_serial
 import struct
+import serial
 import time as t
 
 CMD_SERVO_OFFSET = "SOI"
@@ -416,6 +417,7 @@ class cmd:
             self.__throw_exception('Sending DAC Reps Failed')
 
     def send_start(self):
+        print("sending start")
         """
         Sends the Input.
 
@@ -522,13 +524,43 @@ class cmd:
         """
         try:
             self.ctrl_comm_obj.open(self.port)
-        except ValueError:
+        except (ValueError, serial.serialutil.SerialException):
             return False
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.PING.value))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode('ascii'))
-            return self.recieve_acknowlege_zybo()
+            cnt = 0
+            while True:
+                if self.recieve_acknowlege_zybo():
+                    return True
+                elif cnt > 10:
+                    return False
+                else:
+                    t.sleep(0.1)
+                    cnt += 1
+                    if self.ctrl_comm_obj.read_byte() == sig_serial.START_BYTE.value:
+                        buffer = ""
+                        byte_value = ""
+                        if len(buffer) < 20:
+                            while byte_value != sig_serial.END_BYTE.value:
+                                byte_value = self.ctrl_comm_obj.read_byte()
+                                if byte_value != sig_serial.END_BYTE.value:
+                                    buffer += byte_value
+                        else:
+                            print("Acknowledge was incorrect")
+                            return False
+                        if buffer == 'ACK':
+                            print(buffer)
+                            return True
+                        else:
+                            print("Acknowledge was incorrect")
+                            return False
+                    else:
+                        pass
+        else:
+            return False
+
          
     def is_mock_mode(self):
         return self.ctrl_comm_obj.is_mock_mode()

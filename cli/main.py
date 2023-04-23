@@ -86,6 +86,7 @@ class CyDAQ_CLI:
         self.bb_thread = None
         self.stop_thread = True
         self.bb_pos = ""
+        self.sampling = False
 
     def start(self):
         """Start the CLI tool. Blocks indefinitely for user input until the quit command is issued."""
@@ -290,6 +291,16 @@ class CyDAQ_CLI:
 
     def _is_cydaq_connected(self):
         self.cmd_obj.refresh_port()
+
+        # on new firmware, when petalinux boots up only the debug port is visible
+        # this means get_port() will think it's running old firmware, even though it's not
+        # if the debug port doesn't respond with ACK, then we know it's not actually the old firmware.
+        # That being said, the old firmware can't ping the CyDAQ while sampling. So while the 
+        # CLI is in "sampling mode", don't do this extra check.
+        if not self.sampling and self.cmd_obj.port is not None and self.cmd_obj.port != "" and self.cmd_obj.ping_zybo() is False:
+            self.cmd_obj.ctrl_comm_obj.old_firmware = False
+            self.cmd_obj.port = None
+
         if self.cmd_obj.port == "" or self.cmd_obj.port is None:
             return False
         return True
@@ -387,9 +398,11 @@ class CyDAQ_CLI:
     ### Sampling Methods ###
 
     def _start_sampling(self):
+        self.sampling = True
         self.cmd_obj.send_start_cmd()
 
     def _stop_sampling(self, outFile=None):
+        self.sampling = False
         sampleRate = self.config["Sample Rate"]
         sample_time = 0
         period = 1 / int(sampleRate)
@@ -413,10 +426,13 @@ class CyDAQ_CLI:
             # open a new connection to get data
             comm_obj = self.cmd_obj.ctrl_comm_obj
             comm_obj.open(self.cmd_obj.port)
+            print("trying to read fetched samples on port: ", self.cmd_obj.port)
 
             # wait for an @, which signals start of data
             byte = b""
             while byte != b"@":
+                # if byte != b"":
+                print(byte)
                 byte = comm_obj.read()
 
             # read all from the buffer, writing it to file
@@ -438,7 +454,7 @@ class CyDAQ_CLI:
                         listening = False
                         break
 
-                    # old firmware behaivor would put 8 '0' chars at the end of the data for some reaon...
+                    # old firmware behaivor would put 8 '0' chars at the end of the data for some reason...
                     # just filter that out
                     if res[0:2] == b'00':
                         res.pop(0)
@@ -727,6 +743,10 @@ if __name__ == "__main__":
         cli = CyDAQ_CLI()
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
+        # TODO clean this printing up. Right now a large chunk of the stack trace isn't
+        # making it into the GUI logs. Need to fix
+        print("additional exception info: ", e)
+        print("more printing: ", traceback.format_exec())
+        # print("stack trace: ", e.with_traceback())
         cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
         # cli._print_to_output("unhandled exception in CLI: " + e)
-        # print("additional exception info: ", e)
