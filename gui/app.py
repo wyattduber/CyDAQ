@@ -188,7 +188,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.startPingTimer()
 
         # Temp Log File
-        sys.stdout = self.wrapper.logfile
+        # sys.stdout = self.wrapper.logfile
 
         self.show()
 

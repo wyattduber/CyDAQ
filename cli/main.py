@@ -15,6 +15,7 @@ from check_params import ParameterConstructor
 from command_comm import cmd
 from master_enum import nameToEnum
 
+import config
 
 class CyDAQ_CLI:
     """
@@ -26,27 +27,6 @@ class CyDAQ_CLI:
 	
 	CyDAQ_CLI().start()
 	"""
-
-    CYDAQ_NOT_CONNECTED = "CyDAQ not connected"
-    CLI_START_MESSAGE = "CyDAQ Command Line Interface"
-    BALANCE_BEAM_NOT_CONNECTED = "Balance Beam is not connected!"
-
-    WRAPPER_INFO = "INFO"
-    WRAPPER_ERROR = "ERROR"
-    WRAPPER_IGNORE = "IGNORE"
-    WRAPPER_BB_LIVE = "BB_LIVE"
-
-    NUM_RETRIES = 10
-
-    REMOTE_PATH = "/tmp/sample_data.bin"
-    LOCAL_PATH = "C:\Temp\sample_data.bin"
-
-    SSH_HOSTNAME = "169.254.7.2"
-    SSH_PORT = 22
-    SSH_USERNAME = "root"
-    SSH_PASSWORD = "root"
-
-    SLEEP_TIME = 2
 
     HELP_MSG = """	h/help\t\t\t\t\t\t\t Print This Help Menu
 	p/ping\t\t\t\t\t\t\t Ping the Zybo
@@ -103,16 +83,16 @@ class CyDAQ_CLI:
     def start(self):
         """Start the CLI tool. Blocks indefinitely for user input until the quit command is issued."""
 
-        self._print_to_output(self.CLI_START_MESSAGE)
+        self._print_to_output(config.CLI_START_MESSAGE)
 
         # Need to check CyDAQ connection once before input prompt
         if not self._is_cydaq_connected():
-            self._print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
+            self._print_to_output(config.CYDAQ_NOT_CONNECTED, config.WRAPPER_ERROR)
 
         while True:
             # Get user input and split up individual commands
             try:
-                raw_command = input("> ")
+                raw_command = input(config.INPUT_CHAR + " ")
             except EOFError:
                 break
             except KeyboardInterrupt:
@@ -140,7 +120,7 @@ class CyDAQ_CLI:
                 self._print_to_output("success")
                 continue
             elif command[0].lower() == 'print':
-                self._print_to_output(json.dumps(self.config), self.WRAPPER_INFO)
+                self._print_to_output(json.dumps(self.config), config.WRAPPER_INFO)
                 continue
             elif command[0].lower() == 'set':
                 if len(command) == 3:
@@ -179,14 +159,14 @@ class CyDAQ_CLI:
                         self.mock_mode = self.cmd_obj.is_mock_mode()
                         continue
                     elif command[1] == 'status' or command[1] == 's':
-                        self._print_to_output(str(self.mock_mode), self.WRAPPER_INFO)
+                        self._print_to_output(str(self.mock_mode), config.WRAPPER_INFO)
                         continue
                 self._print_to_output("Invalid syntax. Ex: mock, enable")
                 continue
 
             # Now need to check if connection is still active before any of the next commands can run
             if not self._is_cydaq_connected():
-                self._print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
+                self._print_to_output(config.CYDAQ_NOT_CONNECTED, config.WRAPPER_ERROR)
                 # Try to establish connection again
                 self.cmd_obj = cmd(self.mock_mode)
                 continue
@@ -214,16 +194,16 @@ class CyDAQ_CLI:
                 if not self.generating:
                     self.cmd_obj.send_start_gen()
                     self.generating = True
-                    self._print_to_output("Generating Started", self.WRAPPER_INFO)
+                    self._print_to_output("Generating Started", config.WRAPPER_INFO)
                 else:
                     self.cmd_obj.send_stop_gen()
                     self.generating = not self.generating
-                    self._print_to_output("Generating Stopped", self.WRAPPER_INFO)
+                    self._print_to_output("Generating Stopped", config.WRAPPER_INFO)
                 continue
             elif command[0].lower() == 'bb_start':
                 if len(command) == 1:
                     if self.balance_beam_enabled:
-                        self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
+                        self._print_to_output("Balance Beam Mode is already enabled!", config.WRAPPER_INFO)
                         continue
                     self.bb_pos = "-9"  # Default start value for plotting
                     self._start_beam_mode()
@@ -231,7 +211,7 @@ class CyDAQ_CLI:
                     args = command[1].split(' ')
                     if len(args) == 5:
                         if self.balance_beam_enabled:
-                            self._print_to_output("Balance Beam Mode is already enabled!", self.WRAPPER_INFO)
+                            self._print_to_output("Balance Beam Mode is already enabled!", config.WRAPPER_INFO)
                             continue
                         self.bb_pos = "-9"  # Default start value for plotting
                         self._start_beam_mode(args[0], args[1], args[2], args[3], args[4])
@@ -244,7 +224,7 @@ class CyDAQ_CLI:
             # The following commands require that the balance beam mode is already enabled
             # If the balance beam mode is not enabled, let the user know and deny the command
             if not self.balance_beam_enabled:
-                self._print_to_output("Balance Beam Mode is not enabled!", self.WRAPPER_INFO)
+                self._print_to_output("Balance Beam Mode is not enabled!", config.WRAPPER_INFO)
                 continue
 
             if command[0].lower() == 'bb_stop':
@@ -294,7 +274,7 @@ class CyDAQ_CLI:
         while True:
             print("Test")
 
-    def _print_to_output(self, message, log_level=WRAPPER_IGNORE):
+    def _print_to_output(self, message, log_level=config.WRAPPER_IGNORE):
         for line in message.split("\n"):
             if self.wrapper_mode:
                 print("%{0}% {1}".format(log_level, message))
@@ -319,10 +299,10 @@ class CyDAQ_CLI:
 
     def _print_help(self, cmnd):
         if cmnd:
-            self._print_to_output("\tUnknown command. Command List:", self.WRAPPER_INFO)
+            self._print_to_output("\tUnknown command. Command List:", config.WRAPPER_INFO)
         else:
-            self._print_to_output("\tCommand List & Info", self.WRAPPER_INFO)
-        self._print_to_output(self.HELP_MSG, self.WRAPPER_INFO)
+            self._print_to_output("\tCommand List & Info", config.WRAPPER_INFO)
+        self._print_to_output(self.HELP_MSG, config.WRAPPER_INFO)
 
     def _ping(self):
         """
@@ -334,11 +314,11 @@ class CyDAQ_CLI:
         a = datetime.datetime.now()
         success = self.cmd_obj.ping_zybo()
         if not success:
-            self._print_to_output(self.CYDAQ_NOT_CONNECTED, self.WRAPPER_ERROR)
+            self._print_to_output(config.CYDAQ_NOT_CONNECTED, config.WRAPPER_ERROR)
             return False
         b = datetime.datetime.now()
         c = b - a
-        self._print_to_output("CyDaq latency {} microseconds".format(c.microseconds), self.WRAPPER_INFO)
+        self._print_to_output("CyDaq latency {} microseconds".format(c.microseconds), config.WRAPPER_INFO)
         return True
 
     def _send(self):
@@ -352,8 +332,6 @@ class CyDAQ_CLI:
         config_send = deepcopy(self.default_config)
         for key in self.config:
             config_send[key] = self.config[key]
-
-        # TODO add config validation before sending?
 
         def send_config_with_response(func, *args):
             """
@@ -374,35 +352,31 @@ class CyDAQ_CLI:
             upper = config_send["Upper Corner"]
             lower = config_send["Lower Corner"]
             mid = config_send["Mid Corner"]
-            # This logic is probably wrong but it's how it was before... TODO fix?
+
             if upper != 0 or lower != 0 or mid != 0:
                 send_config_with_response(self.cmd_obj.send_corner_freq, upper, lower, mid, config_send["Filter"])
 
-            # send_config_value(cmd_obj.send_dac_mode, comm_port,  nameToEnum(config_send["Input"])) 	#TODO was commented
-            #  out before
             send_config_with_response(self.cmd_obj.send_dac_reps, config_send["Dac Reps"])
             send_config_with_response(self.cmd_obj.send_dac_gen_rate, config_send["Dac Generation Rate"])
         except:
-            self._print_to_output(message="Error sending config!", log_level=self.WRAPPER_INFO)
+            self._print_to_output(message="Error sending config!", log_level=config.WRAPPER_INFO)
             return
 
-        self._print_to_output(message="Config sent successfully!", log_level=self.WRAPPER_INFO)
+        self._print_to_output(message="Config sent successfully!", log_level=config.WRAPPER_INFO)
 
     def _update_single_config(self, key, value):
         """Updates a single entry in the config"""
-        # TODO some form of config validation here
         self.config[key] = value
 
     def _update_multiple_config(self, json_str):
         """Updates multiple entries specified as a JSON object"""
-        # TODO some form of config validation here
         jsonList = {}
 
         try:
-            self._print_to_output(json_str, self.WRAPPER_INFO)
+            self._print_to_output(json_str, config.WRAPPER_INFO)
             jsonList = json.loads(json_str)
         except json.JSONDecodeError:
-            self._print_to_output("ERROR: Improper JSON specified", self.WRAPPER_ERROR)
+            self._print_to_output("ERROR: Improper JSON specified", config.WRAPPER_ERROR)
 
         for key in jsonList:
             self.config[key] = jsonList[key]
@@ -428,11 +402,11 @@ class CyDAQ_CLI:
             try:
                 f = open(outFile, 'w')
             except Exception as e:
-                self._print_to_output("Error opening file!", self.WRAPPER_ERROR)
+                self._print_to_output("Error opening file!", config.WRAPPER_ERROR)
                 return
         # TODO move these to a seperate functions to keep it clean
         if self.cmd_obj.ctrl_comm_obj.old_firmware:
-            self._print_to_output("Fetching samples...", self.WRAPPER_INFO)
+            self._print_to_output("Fetching samples...", config.WRAPPER_INFO)
             self.cmd_obj.send_fetch()
 
             # open a new connection to get data
@@ -487,7 +461,7 @@ class CyDAQ_CLI:
             # print("Batch count: ", count)
 
             comm_obj.close()
-            self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+            self._print_to_output("Wrote samples to {}".format(outFile), config.WRAPPER_INFO)
             if extension == ".csv":
                 f.close()
             elif extension == ".mat":
@@ -505,7 +479,6 @@ class CyDAQ_CLI:
 
             # Create an SSH client
             ssh = None
-            retry_count = NUM_RETRIES
             ssh_count = 0
             connected = False
             # keep retrying the ssh connection until a timeout
@@ -513,18 +486,18 @@ class CyDAQ_CLI:
                 try:
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                    ssh.connect(SSH_HOSTNAME, SSH_PORT, SSH_USERNAME, SSH_PASSWORD)
+                    ssh.connect(config.SSH_HOSTNAME, config.SSH_PORT, config.SSH_USERNAME, config.SSH_PASSWORD)
                     # extra command I found that allows for an ssh session? Couldn't get it to work, but didn't spend much time on it
                     # ssh.invoke_shell(term="vt100", width=80, height=24, width_pixels=0, height_pixels=0, environment=None)
                     connected = True
                     self._print_to_output("ssh connect successful!")
                 except BaseException as e:
                     # print("base exception caught!!", e)
-                    self._print_to_output("ssh connect failed! sleeping " + SLEEP_TIME + "seconds")
-                    time.sleep(SLEEP_TIME)
+                    self._print_to_output("ssh connect failed! sleeping " + config.SSH_SLEEP_TIME + "seconds")
+                    time.sleep(config.SSH_SLEEP_TIME)
                     ssh.close()
                     ssh_count += 1
-                    if ssh_count > retry_count:
+                    if ssh_count > config.SSH_NUM_RETRIES:
                         print("max number of retry for SCP connection reached! ")
                         break 
 
@@ -533,14 +506,14 @@ class CyDAQ_CLI:
             scp = ssh.open_sftp()
 
             # Copy the remote file to the local machine
-            scp.get(REMOTE_PATH, LOCAL_PATH)
+            scp.get(config.SCP_REMOTE_PATH, config.SCP_LOCAL_PATH)
 
             # Close the SCP client and SSH connection
             scp.close()
             ssh.close()
 
             # read from temp data.bin, and write sample file to given file locaiton 
-            with open(LOCAL_PATH, "rb") as temp_file:
+            with open(config.SCP_LOCAL_PATH, "rb") as temp_file:
                 while True:
                     raw_num = temp_file.read(2)
                     
@@ -553,7 +526,7 @@ class CyDAQ_CLI:
                     sample_time += 1
 
             # delete temp file
-            os.remove(LOCAL_PATH)
+            os.remove(config.SCP_LOCAL_PATH)
 
             if extension == ".csv":
                 f.close()
@@ -562,7 +535,7 @@ class CyDAQ_CLI:
                 # TODO
                 # savemat(outFile, matDict)
 
-            self._print_to_output("Wrote samples to {}".format(outFile), self.WRAPPER_INFO)
+            self._print_to_output("Wrote samples to {}".format(outFile), config.WRAPPER_INFO)
 
 
     def _construct(self):
@@ -571,13 +544,13 @@ class CyDAQ_CLI:
 
         # Go through each ticket and let the user input either an integer or pick from a list
         while ticket is not None:
-            self._print_to_output(ticket["Node"], self.WRAPPER_INFO)
+            self._print_to_output(ticket["Node"], config.WRAPPER_INFO)
             if ticket["Type"] == "Integer":
-                self._print_to_output("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]), self.WRAPPER_INFO)
+                self._print_to_output("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]), config.WRAPPER_INFO)
             else:
                 if len(ticket["Options"]) == 1:
                     pc.input(ticket["Options"][0])
-                self._print_to_output(ticket["Options"], self.WRAPPER_INFO)
+                self._print_to_output(ticket["Options"], config.WRAPPER_INFO)
             if not self._handle_ticket(pc):
                 return None
             ticket = pc.ticket()
@@ -587,15 +560,15 @@ class CyDAQ_CLI:
         if params["Dac Mode"] == 'Dataset':
             valid_data = True
             while valid_data:
-                self._print_to_output('Filepath for DAC dataset (must be .csv)', self.WRAPPER_INFO)
+                self._print_to_output('Filepath for DAC dataset (must be .csv)', config.WRAPPER_INFO)
                 dac_dataset_filepath = input(': ')
                 if '.csv' in dac_dataset_filepath:
                     if self._loadCSV(dac_dataset_filepath) is not None:
                         params['Dataset Filepath'] = dac_dataset_filepath
                         valid_data = False
                 else:
-                    self._print_to_output("file must be .csv", self.WRAPPER_ERROR)
-        self._print_to_output(params, self.WRAPPER_INFO)
+                    self._print_to_output("file must be .csv", config.WRAPPER_ERROR)
+        self._print_to_output(params, config.WRAPPER_INFO)
         return params
 
     def _handle_ticket(self, pc):
@@ -607,7 +580,7 @@ class CyDAQ_CLI:
             elif words[0] == '/goto':
                 if len(words) < 2:
                     self._print_to_output('Not enough arguments, second arg should be the Step to navigate back to',
-                                          self.WRAPPER_ERROR)
+                                          config.WRAPPER_ERROR)
                 pc.goto(' '.join(words[1:]))
             elif words[0] == '/quit':
                 return 0
@@ -622,7 +595,7 @@ class CyDAQ_CLI:
         try:
             with open(filepath) as f:
                 if os.path.getsize(filepath) > 6000000:
-                    self._print_to_output("File too large", self.WRAPPER_ERROR)
+                    self._print_to_output("File too large", config.WRAPPER_ERROR)
                     return None
                 for line in f:
                     row_data = line.strip("\n").split()
@@ -671,7 +644,7 @@ class CyDAQ_CLI:
         buffer = self.cmd_obj.read_bb_buffer()
         if isinstance(buffer, bool):
             if not buffer:
-                self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, self.WRAPPER_INFO)
+                self._print_to_output(config.BALANCE_BEAM_NOT_CONNECTED, config.WRAPPER_INFO)
                 return
 
         # Start thread to get buffer and print it
@@ -721,7 +694,7 @@ class CyDAQ_CLI:
                 if not buffer:
                     if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
                         continue
-                    self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
+                    self._print_to_output(config.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                     self.stop_thread = True
                     self.balance_beam_enabled = False
                     print(f"Buffer is false for some reason! {buffer}")
@@ -729,7 +702,7 @@ class CyDAQ_CLI:
             if buffer == "0xc9\r":  # Alternate balance beam not connected code
                 if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
                         continue
-                self._print_to_output(self.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
+                self._print_to_output(config.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                 self.stop_thread = True
                 self.balance_beam_enabled = False
                 print(f"Buffer is the weird code for some reason! {buffer}")
@@ -754,7 +727,7 @@ if __name__ == "__main__":
         # TODO clean this printing up. Right now a large chunk of the stack trace isn't
         # making it into the GUI logs. Need to fix
         print("additional exception info: ", e)
-        print("more printing: ", traceback.format_exec())
+        print("more printing: ", traceback.format_exc())
         # print("stack trace: ", e.with_traceback())
         cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
         # cli._print_to_output("unhandled exception in CLI: " + e)

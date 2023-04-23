@@ -2,7 +2,7 @@ import struct
 import serial
 import time
 
-from cli.master_enum import enum_commands, sig_serial
+from cli.master_enum import enum_commands, config
 
 ser = serial.Serial(
     port="COM8",
@@ -19,9 +19,9 @@ print(ser)
 
 #======= Sample Rate ===========
 # sample_rate = 88
-# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(config.START_BYTE.encode())
 # ser.write(struct.pack('!BI', enum_commands.SAMPLE_RATE_SET.value, int(sample_rate)))
-# ser.write(sig_serial.END_BYTE.value.encode())
+# ser.write(config.END_BYTE.encode())
 
 #====== Input set ===========
 # audio_in = 0
@@ -34,10 +34,10 @@ print(ser)
 # digital_uart = 7
 
 # input_set = 3
-# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(config.START_BYTE.encode())
 # ser.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
 # ser.write(struct.pack('!B', int(input_set)))
-# ser.write(sig_serial.END_BYTE.value.encode())
+# ser.write(config.END_BYTE.encode())
 
 #=========== Filter Select ================
     # LP1 = 0
@@ -50,9 +50,9 @@ print(ser)
     # NO_FILTER = 7
 
 # filter_select = 1
-# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(config.START_BYTE.encode())
 # ser.write(struct.pack('!BB', enum_commands.FILTER_SELECT.value, int(filter_select)))
-# ser.write(sig_serial.END_BYTE.value.encode())
+# ser.write(config.END_BYTE.encode())
 
 #=========== Corner Freq ====================
 # val_to_write = None
@@ -74,27 +74,27 @@ print(ser)
 #     val_to_write = struct.pack('!BHH', enum_commands.CORNER_FREQ_SET.value, int(l_corner_freq),
 #                                 int(u_corner_freq))
 #     # print("4) Corner Frequency = " + str(l_corner_freq) + " / " + str(u_corner_freq))
-# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(config.START_BYTE.encode())
 # ser.write(val_to_write)
-# ser.write(sig_serial.END_BYTE.value.encode())
+# ser.write(config.END_BYTE.encode())
 
-# ser.write(sig_serial.START_BYTE.value.encode())
+# ser.write(config.START_BYTE.encode())
 # ser.write(struct.pack('!B', enum_commands.INPUT_SELECT.value))
 # ser.write(struct.pack('!B', int(input_set)))
-# ser.write(sig_serial.END_BYTE.value.encode())
+# ser.write(config.END_BYTE.encode())
 
-ser.write(sig_serial.START_BYTE.value.encode())
+ser.write(config.START_BYTE.encode())
 ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
 ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
-ser.write(sig_serial.END_BYTE.value.encode())
+ser.write(config.END_BYTE.encode())
 
 time.sleep(.1)
 
 print("after start: ", ser.read_all())
 
-ser.write(sig_serial.START_BYTE.value.encode())
+ser.write(config.START_BYTE.encode())
 ser.write(struct.pack('!B', enum_commands.FETCH_SAMPLES.value))
-ser.write(sig_serial.END_BYTE.value.encode())
+ser.write(config.END_BYTE.encode())
 
 
 while True:
