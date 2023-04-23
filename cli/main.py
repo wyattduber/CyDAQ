@@ -290,7 +290,6 @@ class CyDAQ_CLI:
                 print(line)
 
     def _is_cydaq_connected(self):
-        print("_is_cydaq_connected called while self.sampling: ", self.sampling)
         self.cmd_obj.refresh_port()
 
         # on new firmware, when petalinux boots up only the debug port is visible

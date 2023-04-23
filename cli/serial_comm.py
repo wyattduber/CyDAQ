@@ -305,7 +305,6 @@ class ctrl_comm:
 
         if self.__s_comm.isOpen():
             try:
-                print("trying to write: ", data, " to port: ", self.__s_comm.port)
                 self.__s_comm.flush()
                 self.__s_comm.write(data)
             except serial.serialutil.SerialException:
@@ -332,7 +331,6 @@ class ctrl_comm:
         if self.__s_comm.isOpen() is True:
             try:
                 buffer = self.__s_comm.read(1)
-                print("just read: ", buffer, " on port: ", self.__s_comm.port)
             except serial.serialutil.SerialException:
                 # print("Serial exception while reading. Assuming bad connection.")
                 return False

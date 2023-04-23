@@ -238,7 +238,6 @@ class cmd:
         self.ctrl_comm_obj.close()
 
     def send_fetch(self):
-        print("sending fetch on port: ", self.port)
         self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -440,7 +439,6 @@ class cmd:
             return False
 
     def send_stop_sampling(self):
-        print("stop sampling on port: ", self.port)
         self.ctrl_comm_obj.open(self.port)
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
@@ -515,7 +513,6 @@ class cmd:
         self.ctrl_comm_obj.close()
 
     def ping_zybo(self):
-        print("sending ping on port: ", self.port)
         """
         Handshake between zybo and the cydaq
 
@@ -536,7 +533,6 @@ class cmd:
             cnt = 0
             while True:
                 if self.recieve_acknowlege_zybo():
-                    print("ping ack recieved")
                     return True
                 elif cnt > 10:
                     return False
