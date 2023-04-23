@@ -1,6 +1,7 @@
 from serial_comm import ctrl_comm
 from master_enum import enum_commands, sig_serial
 import struct
+import serial
 import time as t
 
 CMD_SERVO_OFFSET = "SOI"
@@ -416,6 +417,7 @@ class cmd:
             self.__throw_exception('Sending DAC Reps Failed')
 
     def send_start(self):
+        print("sending start")
         """
         Sends the Input.
 
@@ -522,7 +524,7 @@ class cmd:
         """
         try:
             self.ctrl_comm_obj.open(self.port)
-        except ValueError:
+        except (ValueError, serial.serialutil.SerialException):
             return False
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
@@ -531,7 +533,6 @@ class cmd:
             cnt = 0
             while True:
                 if self.recieve_acknowlege_zybo():
-                    print("ping ack recieved")
                     return True
                 elif cnt > 10:
                     return False
@@ -560,6 +561,7 @@ class cmd:
         else:
             return False
 
+         
     def is_mock_mode(self):
         return self.ctrl_comm_obj.is_mock_mode()
 

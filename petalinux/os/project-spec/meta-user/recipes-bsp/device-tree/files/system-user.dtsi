@@ -45,8 +45,7 @@
 		};
 
 		shared_memory: shared_memory@0x38800000 {
-			no-map;
-			compatible = "shared-dma-pool";
+			no-cache;
 			reg = <0x38800000 0x2000000>;
 		};
 	};

@@ -25,7 +25,7 @@
 #define MAP_COEFF_0 0.40
 #define MAP_COEFF_1 0.85
 
-XUartPs *uart;
+//XUartPs *uart;
 int pause = 0;
 
 int ballbeamStart() {
@@ -46,7 +46,7 @@ int ballbeamStart() {
 	int stop = 0;
 
 	// Get UART pointer
-	uart = commGetUartPtr();
+//	uart = commGetUartPtr(); //TODO not how bb will work
 
 	// Initialize PID Controller
 	pid = pid_init(kp, ki, kd, r);
@@ -99,81 +99,82 @@ int ballbeamStart() {
 }
 
 int parseInput(PID *pid) {
-	static u8 in_buff[50];
-	int num_bytes = XUartPs_Recv(uart, in_buff, 64);
-
-	if (num_bytes != 0) {
-		XTime ticks;
-		unsigned int start_us;
-		unsigned int current_us;
-		XTime_GetTime(&ticks);
-		start_us = ticks / COUNTS_PER_USECOND;
-
-		while ((in_buff[num_bytes - 1] != COMM_STOP_CHAR)) {
-			XTime_GetTime(&ticks);
-			current_us = ticks / COUNTS_PER_USECOND;
-			if ((current_us - start_us) > UART_TIMEOUT_US) {
-				return 0;
-			}
-			num_bytes += XUartPs_Recv(uart, &in_buff[num_bytes], 64);
-		}
-
-		in_buff[num_bytes] = 0;
-		char *token;
-
-		token = strtok((char*) in_buff, " \n!");
-		tolower_str(token);
-
-		if (strcmp(token, "kp") == 0) { // Kp
-			token = strtok(NULL, " \n");
-			if (strcmp(token, "?") == 0) {
-				printf("%.5f", pid->kp);
-				return 0;
-			}
-			pid->kp = strtof(token, NULL);
-		} else if (strcmp(token, "kd") == 0) { // Kd
-			token = strtok(NULL, " \n");
-			if (strcmp(token, "?") == 0) {
-				printf("%.5f", pid->kd);
-				return 0;
-			}
-			pid->kd = strtof(token, NULL);
-		} else if (strcmp(token, "ki") == 0) { // Ki
-			token = strtok(NULL, " \n");
-			if (strcmp(token, "?") == 0) {
-				printf("%.5f", pid->ki);
-				return 0;
-			}
-			pid->integrator = 0;
-			pid->ki = strtof(token, NULL);
-		} else if (strcmp(token, "n") == 0) { // N
-			token = strtok(NULL, " \n");
-			if (strcmp(token, "?") == 0) {
-				printf("%.5f", pid->N);
-				return 0;
-			}
-			pid->N = strtof(token, NULL);
-		} else if (strcmp(token, "r") == 0) { // Set
-			token = strtok(NULL, " \n");
-			if (strcmp(token, "?") == 0) {
-				printf("%.5f", pid->set);
-				return 0;
-			}
-			pid->set = strtof(token, NULL);
-		} else if (strcmp(token, "pause") == 0) { // Pause
-			token = strtok(NULL, " \n");
-			if (strcmp(token, "off") == 0) { // resume
-				pause = 0;
-			} else if (strcmp(token, "on") == 0) { // pause
-				pause = 1;
-			}
-			return 0;
-		} else if (strcmp(token, "q") == 0) { // Quit
-			return 1;
-		}
-
-	}
-	return 0;
+//	static u8 in_buff[50];
+////	int num_bytes = XUartPs_Recv(uart, in_buff, 64);
+//	int num_bytes = 0;
+//
+//	if (num_bytes != 0) {
+//		XTime ticks;
+//		unsigned int start_us;
+//		unsigned int current_us;
+//		XTime_GetTime(&ticks);
+//		start_us = ticks / COUNTS_PER_USECOND;
+//
+//		while ((in_buff[num_bytes - 1] != COMM_STOP_CHAR)) {
+//			XTime_GetTime(&ticks);
+//			current_us = ticks / COUNTS_PER_USECOND;
+//			if ((current_us - start_us) > UART_TIMEOUT_US) {
+//				return 0;
+//			}
+////			num_bytes += XUartPs_Recv(uart, &in_buff[num_bytes], 64);
+//		}
+//
+//		in_buff[num_bytes] = 0;
+//		char *token;
+//
+//		token = strtok((char*) in_buff, " \n!");
+//		tolower_str(token);
+//
+//		if (strcmp(token, "kp") == 0) { // Kp
+//			token = strtok(NULL, " \n");
+//			if (strcmp(token, "?") == 0) {
+//				printf("%.5f", pid->kp);
+//				return 0;
+//			}
+//			pid->kp = strtof(token, NULL);
+//		} else if (strcmp(token, "kd") == 0) { // Kd
+//			token = strtok(NULL, " \n");
+//			if (strcmp(token, "?") == 0) {
+//				printf("%.5f", pid->kd);
+//				return 0;
+//			}
+//			pid->kd = strtof(token, NULL);
+//		} else if (strcmp(token, "ki") == 0) { // Ki
+//			token = strtok(NULL, " \n");
+//			if (strcmp(token, "?") == 0) {
+//				printf("%.5f", pid->ki);
+//				return 0;
+//			}
+//			pid->integrator = 0;
+//			pid->ki = strtof(token, NULL);
+//		} else if (strcmp(token, "n") == 0) { // N
+//			token = strtok(NULL, " \n");
+//			if (strcmp(token, "?") == 0) {
+//				printf("%.5f", pid->N);
+//				return 0;
+//			}
+//			pid->N = strtof(token, NULL);
+//		} else if (strcmp(token, "r") == 0) { // Set
+//			token = strtok(NULL, " \n");
+//			if (strcmp(token, "?") == 0) {
+//				printf("%.5f", pid->set);
+//				return 0;
+//			}
+//			pid->set = strtof(token, NULL);
+//		} else if (strcmp(token, "pause") == 0) { // Pause
+//			token = strtok(NULL, " \n");
+//			if (strcmp(token, "off") == 0) { // resume
+//				pause = 0;
+//			} else if (strcmp(token, "on") == 0) { // pause
+//				pause = 1;
+//			}
+//			return 0;
+//		} else if (strcmp(token, "q") == 0) { // Quit
+//			return 1;
+//		}
+//
+//	}
+//	return 0;
 }
 
 void tolower_str(char *str) {

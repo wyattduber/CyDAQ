@@ -109,6 +109,7 @@ typedef struct TtcConfig {
 #define DEFAULT_SAMPLE_RATE	44100
 #define SAMPLE_TYPE 		u16
 #define SAMPLE_BUFFER_SIZE  3000000
+#define SAMPLE_BUFFER_ADDRESS 0x38800000
 
 /**
  * Function definitions for shared_objects.c. Allows sharing of instance pointers and

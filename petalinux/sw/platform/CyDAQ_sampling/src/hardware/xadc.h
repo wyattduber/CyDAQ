@@ -26,8 +26,6 @@
 #include <xtmrctr.h>
 #include <math.h>
 
-#include "comm.h"
-
 /* Definitions for peripheral XADC_WIZ_0 */
 #define XPAR_XADC_WIZ_0_DEVICE_ID 		0U
 #define XPAR_XADC_WIZ_0_INCLUDE_INTR	1U

@@ -70,10 +70,6 @@ int handle_message(struct _payload* payload){
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 			ret = xadcSetSampleRate(data[1]);
-
-		}else if(data[0] == RPC_MESSAGE_XADC_PROCESS_SAMPLES){ //TODO not implemented yet
-			ret =  xadcProcessSamples();
-
 		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){ //TODO not implemented yet
 			ret =  xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
@@ -81,9 +77,6 @@ int handle_message(struct _payload* payload){
 			ret =  xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){ //TODO not implemented yet
-
-		}else if(data[0] == RPC_MESSAGE_ADS_PROCESS_SAMPLES){ //TODO not implemented yet
-			ret =  ads7047_ProcessSamples();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_ENABLE_SAMPLING){ //TODO not implemented yet
 			ret =  ads7047_EnableSampling(data[1]);//0 = normal, 1 = stream
@@ -139,6 +132,13 @@ int handle_message(struct _payload* payload){
 			//flush the cache so it has the latest TODO don't actually need? idk yet
 			volatile SAMPLE_TYPE *xadcSampleBuffer = (u16*)0x38800000;
 			Xil_DCacheFlushRange(xadcSampleBuffer, (int)sample_count * sizeof(u16));
+
+			//TODO testing. Remove
+//			for(int i = 0; i < *sample_count; i++){
+//				if(xadcSampleBuffer[i] == 0){
+//					xil_printf("SAMP> OH NO! Found bad data on samp at position: %d!\r\n", i);
+//				}
+//			}
 
 			if(DEBUG)
 				xil_printf("SAMP> got request for sample count, responding with: %d\r\n", *sample_count);

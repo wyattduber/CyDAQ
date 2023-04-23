@@ -22,7 +22,6 @@
 #include "pid.h"
 #include "xuartps.h"
 #include <string.h>
-#include "comm.h"
 
 #define max(x, y) ((x) > (y) ? x : y)
 #define min(x, y) ((x) < (y) ? x : y)

@@ -213,7 +213,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             else:
                 # Raise any other exceptions
                 print("trying to raise exception with message: ", traceback_msg)
-                raise extype(traceback_msg)
+                # raise extype(traceback_msg)
 
         self.runInWorkerThread(
             self.wrapper.ping,

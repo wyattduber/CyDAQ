@@ -25,7 +25,7 @@
 int init_ads7047(void);
 int ads7047_EnableSampling(u8 streamSetting);
 int ads7047_DisableSampling(void);
-int ads7047_ProcessSamples(void);
+//int ads7047_ProcessSamples(void);
 
 void ads7047_InterruptHandler(void *CallBackRef);
 

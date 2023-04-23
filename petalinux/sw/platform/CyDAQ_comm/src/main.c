@@ -55,36 +55,6 @@ int main(int argc, char **argv){
 	rpc_setup();
 	commInit();
 
-	//testing data sending
-//	sleep(2);
-//	int fd = open("/dev/mem", O_RDWR | O_SYNC);
-//	if (fd < 0) {
-//		perror("COMM> open");
-//		exit(1);
-//	}
-//
-//	size_t size = sizeof(int) * 100; // read 100 integers
-//	off_t offset = 0x38800000; // starting point
-//
-//	int *ptr = (int *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
-//	if (ptr == MAP_FAILED) {
-//		perror("COMM> mmap");
-//		exit(1);
-//	}
-//
-//	for (int i = 0; i < 100; i++) {
-//		printf("%d ", ptr[i]); // print the integers
-//	}
-//	printf("\n");
-//
-//	if (munmap(ptr, size) == -1) {
-//		perror("COMM> munmap");
-//		exit(1);
-//	}
-//
-//	close(fd);
-
-
 	commRXTask(); //when this returns, program is now wanting to stop
 
 	rpc_teardown();
