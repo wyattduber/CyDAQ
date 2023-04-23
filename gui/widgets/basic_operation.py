@@ -4,6 +4,8 @@ import re
 import time
 import json
 import shutil
+import pandas as pd
+import scipy
 from waiting import wait
 from threading import Thread
 
@@ -167,12 +169,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # This will throw an exception if the file is not writeable
         # It will append the file in the same place as the original filename with a _1 appended
         # If there is already a _#.csv, it will then append _#+1.csv to new file
+        base, ext = os.path.splitext(self.filename)
         try:
             if os.path.exists(self.filename):
                 open(self.filename, 'w')
         except PermissionError:
-            base, ext = os.path.splitext(self.filename)
-
             if val := re.search('_[0-9]+', base):
                 # Check for existing single/double-digit filenames
                 i = int(val.string[-1])
@@ -196,8 +197,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         # and remove the temp file
 
         if self.filename != self.temp_filename:
-            # Copy the temp file over to the new one
-            shutil.copyfile(self.temp_filename, self.filename)
+            # Copy the temp file over to the new one. If the user chose a matlab file, convert the csv to matlab first
+            if ext == ".mat":
+                scipy.io.savemat(self.filename, {"data": pd.read_csv(self.temp_filename).values})
+            else:
+                shutil.copyfile(self.temp_filename, self.filename)
 
         # Delete the old temp file
         try:

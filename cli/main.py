@@ -39,7 +39,7 @@ class CyDAQ_CLI:
 	wrapper, (enable/disable)\t\t Enable Wrapper Mode for CLIWrapper library
 	flush\t\t\t\t\t\t\t Flush 
 	start\t\t\t\t\t\t\t Start sampling
-	stop, [filename]\t\t\t\t Stop Sampling
+	stop, [filename]\t\t\t\t Stop Sampling. Supports .csv or .mat files
 	generate\t\t\t\t\t\t Start/Stop DAC Generation
 	mock, (enable/disable/status)\t Enable CyDAQ serial mocking mode
 	bb_start\t\t\t\t\t\t Start Balance Beam Mode
@@ -395,7 +395,11 @@ class CyDAQ_CLI:
         if outFile is None or outFile == "":
             outFile = self._generateFilename()
         _, extension = os.path.splitext(outFile)
-        matDict = {}  # Dictionary used to matlab file writing
+        
+        # used if writing to matlab file
+        matKeys = []
+        matValues = []
+        
         writeFunction = self._writeCSV
         f = None
         if extension == ".csv":
@@ -455,7 +459,8 @@ class CyDAQ_CLI:
                     if extension == ".csv":
                         writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
                     elif extension == ".mat":
-                        matDict[f"{str(sample_time * period)}"] = np.array([self._adc_raw_to_volts(raw_num)])
+                        matKeys.append(sample_time * period)
+                        matValues.append(self._adc_raw_to_volts(raw_num))
                     sample_time += 1
                 count += 1
             # print("Batch count: ", count)
@@ -465,7 +470,7 @@ class CyDAQ_CLI:
             if extension == ".csv":
                 f.close()
             elif extension == ".mat":
-                savemat(outFile, matDict)
+                savemat(outFile, {"keys": matKeys, "values": matValues})
         else:
             # TODO handle matlab files
             # new firmware, can use scp instead
@@ -521,8 +526,12 @@ class CyDAQ_CLI:
                         break
 
                     raw_num = int.from_bytes(raw_num, byteorder="little", signed=False)
-
-                    writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
+                    
+                    if extension == ".csv":
+                        writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
+                    elif extension == ".mat":
+                        matKeys.append(sample_time * period)
+                        matValues.append(self._adc_raw_to_volts(raw_num))
                     sample_time += 1
 
             # delete temp file
@@ -531,9 +540,7 @@ class CyDAQ_CLI:
             if extension == ".csv":
                 f.close()
             elif extension == ".mat":
-                pass
-                # TODO
-                # savemat(outFile, matDict)
+                savemat(outFile, {"keys": matKeys, "values": matValues})
 
             self._print_to_output("Wrote samples to {}".format(outFile), config.WRAPPER_INFO)
 
