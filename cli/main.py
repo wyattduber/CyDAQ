@@ -744,6 +744,10 @@ if __name__ == "__main__":
         cli = CyDAQ_CLI()
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
+        # TODO clean this printing up. Right now a large chunk of the stack trace isn't
+        # making it into the GUI logs. Need to fix
         print("additional exception info: ", e)
+        print("more printing: ", traceback.format_exec())
+        # print("stack trace: ", e.with_traceback())
         cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
         # cli._print_to_output("unhandled exception in CLI: " + e)

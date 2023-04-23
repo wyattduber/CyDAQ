@@ -198,11 +198,11 @@ class ctrl_comm:
         self.__s_comm.dsrdtr = False
         self.__s_comm.parity = serial.PARITY_NONE  # PARITY_EVEN
         self.__s_comm.timeout = 4
-        self.__s_comm.write_timeout = 0
         self.__order = "little"
 
     def get_port(self):
         """
+        TODO redo this description
         Returns a list of available serial devices on the host computer.
         Typical usage is to call this function to determine the computer's
         ports and open a connection with the open() function, using one of

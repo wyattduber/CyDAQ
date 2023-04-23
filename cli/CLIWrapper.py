@@ -60,7 +60,7 @@ class CLI:
 
         # Create log file
         self.logfile = open(DEFAULT_LOG_FILE, 'a+')
-        sys.stdout = self.logfile
+        # sys.stdout = self.logfile # This most likely breaks communication between the CLI and wrapper. TODO delete?
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
@@ -146,7 +146,7 @@ class CLI:
             response = response.strip()
 
             self.writeLog("response", response)
-            # print(response)
+            print(response)
             if command != "bb_fetch_pos":  # Can get a bit spammy
                 self.writeLog("cmd", command)
                 # print(f"Cmd: {command}")
