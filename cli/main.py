@@ -492,8 +492,6 @@ class CyDAQ_CLI:
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(config.SSH_HOSTNAME, config.SSH_PORT, config.SSH_USERNAME, config.SSH_PASSWORD)
-                    # extra command I found that allows for an ssh session? Couldn't get it to work, but didn't spend much time on it
-                    # ssh.invoke_shell(term="vt100", width=80, height=24, width_pixels=0, height_pixels=0, environment=None)
                     connected = True
                     self._print_to_output("ssh connect successful!")
                 except BaseException as e:
@@ -510,8 +508,17 @@ class CyDAQ_CLI:
                 pass # TODO print error
             scp = ssh.open_sftp()
 
+            start_time = time.time()
+
             # Copy the remote file to the local machine
             scp.get(config.SCP_REMOTE_PATH, config.SCP_LOCAL_PATH)
+
+            end_time = time.time()
+
+            transfer_time =  end_time - start_time
+            transfer_speed = int(os.path.getsize(config.SCP_LOCAL_PATH) / transfer_time)
+
+            self._print_to_output("SCP finished. Transfer speed: " + str(transfer_speed) + " bytes/second or " + str(transfer_speed/1000000) + " MB/second")
 
             # Close the SCP client and SSH connection
             scp.close()
