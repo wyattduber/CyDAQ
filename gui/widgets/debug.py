@@ -10,19 +10,20 @@ from PyQt5.QtWidgets import QMessageBox
 
 # Stuff From Project - May show as an error but it works
 from generated.DebugWidgetUI import Ui_DebugWidget
+from widgets.mode_widget import CyDAQModeWidget
+# from widgets import CyDAQModeWidget
 
 # Constants
 LOG_TIMER_DELAY = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 
-class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
+class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):
 
-    def __init__(self, mainWindow, cyDAQModeWidget):
+    def __init__(self, mainWindow):
         super(DebugWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
@@ -34,9 +35,9 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         self.home_btn.clicked.connect(self.home)
 
         # Widget Buttons (Disabled for Lab Launch)
-        # self.write_btn.clicked.connect(self.writeData)
-        # self.write2_btn.clicked.connect(self.writeDataV2)
-        # self.read_btn.clicked.connect(self.readData)
+        self.write_btn.clicked.connect(self.writeData)
+        self.write2_btn.clicked.connect(self.writeDataV2)
+        self.read_btn.clicked.connect(self.readData)
         self.export_logs_btn.clicked.connect(self.exportLogs)
         self.mock_checkBox.clicked.connect(self.mockClicked)
         self.clear_log_btn.clicked.connect(self.clearLog)
@@ -72,8 +73,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
     def writeData(self):
         """Test Method to write data as fast as python can handle"""
-        self.cyDAQModeWidget.runInWorkerThread(
-            self,
+        self.runInWorkerThread(
             func=self.wrapper.writeALotOfData,
             finished_func=lambda: print("Success!"),
             error_func=lambda x: self.mainWindow.showError(x)
@@ -81,8 +81,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
     def writeDataV2(self):
         """Second Test Method to write data as fast as python can handle"""
-        self.cyDAQModeWidget.runInWorkerThread(
-            self,
+        self.runInWorkerThread(
             func=self.wrapper.writeALotOfDataV2,
             finished_func=lambda: print("Success!"),
             error_func=lambda x: self.mainWindow.showError(x)
@@ -90,8 +89,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
     def readData(self):
         """Test Method to read data as fast as python can handle"""
-        self.cyDAQModeWidget.runInWorkerThread(
-            self,
+        self.runInWorkerThread(
             func=self.wrapper.readALotOfData,
             finished_func=lambda: print("Success"),
             error_func=lambda x: self.mainWindow.showError(x)

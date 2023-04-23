@@ -18,20 +18,20 @@ from PyQt5.QtWidgets import QMessageBox
 
 # Stuff From Project - May show as an error but it works
 from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
+from widgets.mode_widget import CyDAQModeWidget
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 
 
-class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
+class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQModeWidget):
     """Basic operation mode window. Allows for basic sampling of data with basic filters and presets. """
 
-    def __init__(self, mainWindow, cyDAQModeWidget):
+    def __init__(self, mainWindow):
         super(BasicOperationModeWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
@@ -320,12 +320,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
 
         # Then tell the cydaq to stop sampling and writing to a temp file
         # This will happen while the user is working on the actual filename 
-        self.cyDAQModeWidget.runInWorkerThread(
-            self,
+        self.runInWorkerThread(
             func=self.wrapper.stop_sampling,
             func_args=self.temp_filename,
             finished_func=self.writingDataFinished,
-            error_func=lambda x: self.mainWindow.showError(str(x[1]))
+            error_func=lambda x: self.showError(str(x[1]))
         )
 
         # Get the filename after the user stopped sampling
@@ -362,13 +361,12 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
 
             def handleError(x):
                 self.startSamplingError = True
-                self.mainWindow.showError(x[2])
+                self.showError(x[2])
 
             def step1():
                 if self.startSamplingError:
                     return
-                self.cyDAQModeWidget.runInWorkerThread(
-                    self,
+                self.runInWorkerThread(
                     func=self.wrapper.send_config_to_cydaq,
                     finished_func=step2,
                     error_func=handleError
@@ -379,8 +377,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
                     return
                 self.sampling = True
                 self.mainWindow.stopPingTimer()
-                self.cyDAQModeWidget.runInWorkerThread(
-                    self,
+                self.runInWorkerThread(
                     func=self.wrapper.start_sampling,
                     finished_func=step3,
                     error_func=handleError
@@ -395,8 +392,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
 
             self.startSamplingError = False
 
-            self.cyDAQModeWidget.runInWorkerThread(
-                self,
+            self.runInWorkerThread(
                 func=self.wrapper.set_values,
                 func_args=json.dumps(self.getData()),
                 finished_func=step1,

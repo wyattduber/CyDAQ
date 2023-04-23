@@ -5,3 +5,4 @@ from .debug import DebugWidget
 from .live_stream import LiveStreamModeWidget
 from .mode_selector import ModeSelectorWidget
 from .connection import ConnectionWidget
+from .mode_widget import CyDAQModeWidget

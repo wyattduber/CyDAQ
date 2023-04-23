@@ -119,9 +119,9 @@ class CLI:
             response = response.decode()
             response = response.strip()
 
-            self.writeLog("response", response)
             print(response)
-            if command != "bb_fetch_pos":  # Can get a bit spammy
+            if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
+                self.writeLog("response", response)
                 self.writeLog("cmd", command)
                 # print(f"Cmd: {command}")
             if wrapper_mode:
@@ -183,7 +183,6 @@ class CLI:
     def ping(self, **_):
         """Ping cyDAQ, returns the response time in microseconds or -1 if error"""
         response = self._send_command("ping")
-        print("ping response: ", response)
         try:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:

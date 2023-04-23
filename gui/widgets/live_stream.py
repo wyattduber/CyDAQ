@@ -18,13 +18,14 @@ from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
 from generated.LiveStreamWidgetUI import Ui_LiveStreamWidget
+from widgets.mode_widget import CyDAQModeWidget
 
 # Constants
 DEFAULT_SAVE_LOCATION = "U:\\"
 CONVERT_SEC_TO_MS = 1000
 
 
-class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget):
+class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget, CyDAQModeWidget):
     running = False
     in_thread = False
     window = None
@@ -38,12 +39,11 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget):
     and then will have the option to save it in a file or discard it. 
     """
 
-    def __init__(self, mainWindow, cyDAQModeWidget):
+    def __init__(self, mainWindow):
         super(LiveStreamModeWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
@@ -113,8 +113,7 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget):
         self.start_btn.setCheckable(False)
         self.reload_btn.setCheckable(False)
         self.window.start_app(self.file_name, int(self.speed_slider.value()), self.graph_type_dropdown.currentText())
-        self.cyDAQModeWidget.runInWorkerThread(
-            self,
+        self.runInWorkerThread(
             func=self.updateSpeed,
             finished_func=self.finishedStartBtn,
             error_func=self.mainWindow.showError

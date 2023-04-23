@@ -20,21 +20,21 @@ from pglive.sources.live_plot_widget import LivePlotWidget
 
 # Stuff From Project - May show as an error but it works
 from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
+from widgets.mode_widget import CyDAQModeWidget
 
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 LOG_TIMER_DEFAULT = 1000
 
 
-class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget):
+class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWidget):
     """Balance Beam mode window. Allows the use of the balance beam tool with custom settings."""
 
-    def __init__(self, mainWindow, cyDAQModeWidget):
+    def __init__(self, mainWindow):
         super(BalanceBeamModeWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool

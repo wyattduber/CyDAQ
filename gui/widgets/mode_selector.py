@@ -3,17 +3,17 @@ from PyQt5 import QtWidgets
 
 # Stuff From Project - May show as an error but it works
 from generated.ModeSelectorWidgetUI import Ui_ModeSelectorWidget
+from widgets.mode_widget import CyDAQModeWidget
 
 
-class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget):
+class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidget):
     """Starter widget that allows the user to switch between all other generated"""
 
-    def __init__(self, mainWindow, cyDAQModeWidget):
+    def __init__(self, mainWindow):
         super(ModeSelectorWidget, self).__init__()
         self.setupUi(self)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = cyDAQModeWidget
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
