@@ -32,6 +32,7 @@ class enum_commands(IntEnum):
     DAC_SEND_DATASET = 13
     START_GENERATION = 14
     STOP_GENERATION = 15
+    START_BALANCE_BEAM = 16
 
 
 class enum_dac_mode(IntEnum):
@@ -94,6 +95,9 @@ enum_dic = {
     "5 volt": enum_input.volt_5.value,
     "3.3 volt": enum_input.volt_3.value,
     "1.8 volt": enum_input.volt_1.value,
+    "5 Volt": enum_input.volt_5.value,
+    "3.3 Volt": enum_input.volt_3.value,
+    "1.8 Volt": enum_input.volt_1.value,
     "Analog In": enum_input.analog_in.value,
     "Audio In": enum_input.audio_in.value,
     "Digital I2C Bus": enum_input.digital_i2c.value,

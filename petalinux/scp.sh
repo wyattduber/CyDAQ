@@ -1,0 +1,2 @@
+#! /bin/bash
+sshpass -p "root" scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/sdmay23-47/petalinux/sw/platform/CyDAQ_sampling/Debug/CyDAQ_sampling.elf root@169.254.7.2:/lib/firmware/CyDAQ_sampling.elf && sshpass -p "root" scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/sdmay23-47/petalinux/sw/platform/CyDAQ_comm/Debug/CyDAQ_comm.elf root@169.254.7.2:/home/root/CyDAQ_comm.elf

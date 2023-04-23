@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>590</height>
+    <width>468</width>
+    <height>554</height>
    </rect>
   </property>
   <property name="font">
@@ -29,14 +29,12 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="minimumSize">
-    <size>
-     <width>400</width>
-     <height>0</height>
-    </size>
-   </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">QWidget {
+	font-family: &quot;Segoe UI&quot;;
+	font-size: 14px;
+	color: #033f63;
+}</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout"/>
   </widget>
@@ -45,7 +43,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>468</width>
      <height>19</height>
     </rect>
    </property>

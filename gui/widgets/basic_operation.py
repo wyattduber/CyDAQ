@@ -1,12 +1,18 @@
 # Standard Python Packages
+import os
+import re
 import time
 import json
+import shutil
+from waiting import wait
 from threading import Thread
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 # Stuff From Project - May show as an error but it works
 from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
@@ -33,16 +39,18 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.sampling = False
         self.writing = False
         self.shouldTimeout = False
+        self.config_timeout = False
         self.filename = None
+        self.temp_filename = None
+        self.file_error = True  # Start true then change later if successful
 
         ### Below are the methods called when buttons are pressed ###
 
         # Home Button
-        self.home_btn.clicked.connect(lambda: self.mainWindow.switchToModeSelector())
+        self.home_btn.clicked.connect(lambda: self.pre_btn_check("home"))
 
         # Bottom Buttons
-        send_config = self.send_config_btn
-        send_config.clicked.connect(lambda: self.send_config_only())
+        self.send_config_btn.clicked.connect(lambda: self.pre_btn_check("send_config_only"))
 
         # Sample Rate
         self.sample_rate_max_btn.clicked.connect(
@@ -69,17 +77,20 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             lambda: self.high_corner_input.setText(self.high_corner_max_btn.text().replace(',', '')))
 
         # Corner Input Validation
-        validator = QDoubleValidator(100, 20000, 4)
+        validator = QDoubleValidator(200, 20000, 4)
         self.low_corner_input.setValidator(validator)
 
-        validator = QDoubleValidator(100, 40000, 4)
+        validator = QDoubleValidator(200, 40000, 4)
         self.mid_corner_input_box.setValidator(validator)
 
         validator = QDoubleValidator(2000, 40000, 4)
         self.high_corner_input.setValidator(validator)
 
+        validator = QIntValidator(0, 9999)
+        self.sampling_time_input.setValidator(validator)
+
         # Sampling
-        self.start_stop_sampling_btn.clicked.connect(self.startStopSampling)
+        self.start_stop_sampling_btn.clicked.connect(lambda: self.pre_btn_check("start_stop_sampling"))
 
         def onFilterChange():
             midCorner = [
@@ -127,14 +138,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         self.filter_input_box.currentIndexChanged.connect(onFilterChange)
         onFilterChange()
 
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("CyDAQ Status: Connected!")
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("CyDAQ Status: Not Connected!")
-
     def writingData(self):
         """When the cyDAQ is sending data to the frontend, and it's writing it to a file."""
         self.writing = True
@@ -144,11 +147,67 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     def writingDataFinished(self):
         """When the cyDAQ is finished writing data."""
         print("writing data finished")
-        self.mainWindow.livestream.infile_line.setText(self.filename)
-        self.filename = None  # Causes an ask for filename every sample
+        # Adds the filename to the plotter window for ease of use
+        # self.mainWindow.livestream.infile_line.setText(self.filename)
         self.writing = False
         self.mainWindow.startPingTimer()
         self.start_stop_sampling_btn.setText("Start")
+
+        Thread(target=self.copyTempFile).start()
+
+    def copyTempFile(self):
+        """
+        When the temp file is done being written to and the new filename
+        is input, copy the tmp file contents over and remove the old one.
+        """
+        # Wait to make sure that the filename has actually been entered
+        wait(lambda: self.filename != "" and self.filename is not None)
+
+        # Put a few checks here for if file is not writeable
+        # This will throw an exception if the file is not writeable
+        # It will append the file in the same place as the original filename with a _1 appended
+        # If there is already a _#.csv, it will then append _#+1.csv to new file
+        try:
+            if os.path.exists(self.filename):
+                open(self.filename, 'w')
+        except PermissionError:
+            base, ext = os.path.splitext(self.filename)
+
+            if val := re.search('_[0-9]+', base):
+                # Check for existing single/double-digit filenames
+                i = int(val.string[-1])
+                # Check for double digits
+                try:
+                    if val.string[-2].isnumeric():
+                        i = int(f"{val.string[-2]}{val.string[-1]}")
+                except IndexError:
+                    pass  # Do nothing, it's a single digit
+                new_filename = base + str(i) + ext
+            else:
+                new_filename = base + '_1' + ext
+                i = 1
+            while os.path.exists(new_filename):
+                i += 1
+                new_filename = base + f'_{i}' + ext
+            self.filename = new_filename
+
+        # If the filename is still the temp filename, no file was selected
+        # We can assume that they don't want to save the data, so skip copying
+        # and remove the temp file
+
+        if self.filename != self.temp_filename:
+            # Copy the temp file over to the new one
+            shutil.copyfile(self.temp_filename, self.filename)
+
+        # Delete the old temp file
+        try:
+            os.remove(self.temp_filename)
+        except PermissionError:
+            print("Unable to delete temp file!! ", self.temp_filename)
+
+        # Reset the temp filename and the existing filename
+        # Causes an ask for filename every sample
+        self.filename = self.temp_filename = None
 
     # Function to get the data from the GUI and format it into a JSON Dictionary
     # Each try/catch statement is to determine if the input is in scientific notation
@@ -211,17 +270,67 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
         print(f"{self.sampling_time_input.text()}s reached, timeout")
         self.stop_sampling()
 
+    def pre_btn_check(self, btn):
+        """
+        When a button is pressed, check the various conditions
+        that need to be met for each button to work properly
+        """
+        # First, buttons that don't require an active CyDAQ connection
+        if btn == "home":
+            if self.sampling:
+                self.stop_sampling()
+            self.mainWindow.switchToModeSelector()
+            return
+
+        # Now handle that commands that require an active CyDAQ connection
+        if not self.mainWindow.connected:
+            self._show_error("CyDAQ is not Connected!")
+            return
+
+        # Send start/stop sample command
+        if btn == "start_stop_sampling":
+            self.startStopSampling()
+            return
+
+        # Now check if already sampling
+        if self.sampling:
+            self._show_error("You cannot send the config when already sampling!")
+            return
+
+        # Send the config only
+        if btn == "send_config_only":
+            self.send_config_only()
+            return
+
     def stop_sampling(self):
         self.shouldTimeout = False
         self.sampling = False
+
+        if not os.path.exists("C:\Temp"):
+            os.makedirs("C:\Temp")
+
+        # Set the filename to a temp filename in the user's temp directory for writing
+        self.temp_filename = 'C:\Temp\sample_{}.csv'.format(time.strftime('%Y%m%d-%H%M%S'))
+
         self.writingData()
+
+        # Then tell the cydaq to stop sampling and writing to a temp file
+        # This will happen while the user is working on the actual filename 
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.stop_sampling,
-            func_args=self.filename,
+            func_args=self.temp_filename,
             finished_func=self.writingDataFinished,
-            error_func=lambda: self.mainWindow.showError(x)
+            error_func=lambda x: self.mainWindow.showError(str(x[1]))
         )
+
+        # Get the filename after the user stopped sampling
+        options = QFileDialog.Options()
+        self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
+                                                       DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
+                                                       options=options)
+        if self.filename.strip() == "":  # no file chosen
+            self.filename = self.temp_filename
 
     # Method that is run both to start and stop sampling
     # Runs in a worker thread to keep the GUI from freezing and to allow use of other features
@@ -246,15 +355,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             if s != "":
                 self.showInfo(s)
                 return
-
-            if self.filename is None or self.filename.strip() == "":
-                # get file save location
-                options = QFileDialog.Options()
-                self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the sample!",
-                                                               DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
-                                                               options=options)
-                if self.filename.strip() == "":  # no file chosen
-                    return
 
             def handleError(x):
                 self.startSamplingError = True
@@ -409,7 +509,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
     # Still validates input, but just sends the config to the CyDAQ and implements it
     def send_config_only(self):
         # Changing the button
-        if not self.mainWindow.connected or self.writing or self.sampling:
+        if not self.mainWindow.connected or self.writing or self.sampling or self.config_timeout:
             return
 
         # validate input
@@ -424,7 +524,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
             return
 
         def resetSendConfigBtn():
-            print("Resetting Config Button!")
             time.sleep(2)
             self.send_config_btn.setText("Send Config")
             self.send_config_btn.setStyleSheet("#send_config_btn"
@@ -433,18 +532,46 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget):
                                                "background-color: #d9d9d9;"
                                                "border: 1px solid #033f63;"
                                                "}")
+            self.config_timeout = False
 
         # send config
+        self.config_timeout = True
         self.wrapper.set_values(json.dumps(self.getData()))
-        self.wrapper.send_config_to_cydaq()
-        print(self.wrapper.get_config())
+        response = self.wrapper.send_config_to_cydaq()
+        if not self.wrapper.mocking:
+            print(self.wrapper.get_config())
         send_config = self.send_config_btn
-        send_config.setText("Config Sent")
-        send_config.setStyleSheet("#send_config_btn"
-                                  "{"
-                                  "background-color: #0ead69;"
-                                  "border-color: #0ead69;"
-                                  "color: #02324F;"
-                                  "}")
+        if response: # Config sent successfully
+            send_config.setText("Config Sent")
+            send_config.setStyleSheet("#send_config_btn"
+                                    "{"
+                                    "background-color: #0ead69;"
+                                    "border-color: #0ead69;"
+                                    "color: #02324F;"
+                                    "}")
+        else: # Config didn't send successfully
+            send_config.setText("Error Sending Config!")
+            send_config.setStyleSheet("#send_config_btn"
+                                    "{"
+                                    "background-color: #DE3C4B;"
+                                    "border-color: #DE3C4B;"
+                                    "color: #FFF;"
+                                    "}")
         Thread(target=resetSendConfigBtn).start()
-        # TODO Eventual feedback from CyDAQ that config was received and successfully implemented
+
+    def _show_error(self, message):
+        """Private method to just show an error message box with a custom message"""
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()
+
+    def _show_message(self, title, message, subtext=None):
+        """Private method to just show an info message box with a custom message"""
+        messagebox = QMessageBox(self)
+        messagebox.setWindowTitle(title)
+        messagebox.setText(message)
+        messagebox.setInformativeText(subtext)
+        messagebox.setIcon(QMessageBox.Information)
+        messagebox.exec()

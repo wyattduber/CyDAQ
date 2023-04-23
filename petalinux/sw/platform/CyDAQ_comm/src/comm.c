@@ -1,7 +1,12 @@
 /*
  *
  */
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "comm.h"
+#include "rpc.h"
 
 bool samplingEnabled = false;
 bool streamingEnabled = false;
@@ -9,33 +14,33 @@ bool SpiInitStatus = false;
 filters_e activeFilter = FILTER_PASSTHROUGH;
 adcs_e activeAdc = ADC_XADC;
 
-SAMPLE_TYPE SampleBuffer[SAMPLE_BUFFER_SIZE];
 volatile u32 SampleCount = 0;
 
 static int serial_port;
 static u8 receiveBuffer[TEST_BUFFER_SIZE];	// Buffer for receiving UART data
 
-int TotalErrorCount;
-
-//TODO most likely not needed
-volatile int TotalReceivedCount;// These counters are used to determine when the
-volatile int TotalSentCount;	//   entire buffer has been sent and received.
+/*
+ * Opens a serial connection to the PC.
+ * Returns the FD id
+ */
+int open_serial_port(){
+	return open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
+}
 
 /**
  * Initializes UART
  */
 int commInit() {
-    serial_port = open("/dev/ttyGS0", O_RDWR | O_NOCTTY);
-    printf("Serial_port: %d\n", serial_port);
+    serial_port = open_serial_port();
     if(serial_port < 0){
-		printf("Error opening serial port");
+		printf("COMM> Error opening serial port");
 		return XST_FAILURE;
 	}
 
     struct termios tty;
     memset (&tty, 0, sizeof tty);
     if ( tcgetattr ( serial_port, &tty ) != 0 ) {
-       printf("Error getting attributes");
+       printf("COMM> Error getting serial attributes");
        return XST_FAILURE;
     }
 
@@ -57,10 +62,10 @@ int commInit() {
     //Make raw
     cfmakeraw(&tty);
 
-    //Flush Port, then applies attributes */
+    //Flush Port, then applies attributes
     tcflush( serial_port, TCIFLUSH );
     if ( tcsetattr ( serial_port, TCSANOW, &tty ) != 0) {
-       printf("Error setting serial attributes");
+       printf("COMM> Error setting serial attributes");
        return XST_FAILURE;
     }
 
@@ -68,8 +73,7 @@ int commInit() {
 }
 
 /**
- * Processes commands received over UART. Runs infinitely in the background, getting interrupted by ISRs
- * 	as higher-priority timers (such as the ADC sampling timer) trigger.
+ * Processes commands received over UART. Blocking.
  */
 void commRXTask() {
 	//number of bytes received over UART
@@ -81,22 +85,15 @@ void commRXTask() {
 	while (1) {
 		//idle until a complete command is received
 		while (receiveBuffer[bytesReceived - 1] != COMM_STOP_CHAR && bytesReceived < 7) {
-			bytesReceived += read(serial_port, &receiveBuffer[bytesReceived], 1);
-		}
-
-		//stop sampling to config device
-		//TODO: instead, save configuration and apply once sampling is done
-		if (samplingEnabled == true) {
-			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcDisableSampling(); //TODO
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_DisableSampling(); //TODO
-				break;
-			default:
-				break;
+			int len = read(serial_port, &receiveBuffer[bytesReceived], 1);
+			if(len == 0){
+				//serial must be unplugged, as the above read is blocking while connected
+				printf("COMM> detected serial unplugged, re-opening device\r\n");
+				close(serial_port);
+				serial_port = open_serial_port();
+				continue;
 			}
+			bytesReceived += len;
 		}
 
 		//apply command
@@ -116,35 +113,209 @@ void commRXTask() {
 	}
 }
 
+/*
+ * Attempt to clear the cache on the shared memory region, so the
+ * next time it's read it's actually what the sampling core wrote
+ * to it.
+ *
+ * This isn't a great solution, in fact it could be argued that it's
+ * a stupid one, but I can't find a better way around this. No matter
+ * what I try, Petalinux is reading sample data that just isn't what
+ * was just written to memory. Most likely a cache coherence problem.
+ */
+void clearCache(){
+	int fd = open("/dev/mem", O_RDONLY | O_SYNC);
+	if (fd < 0) {
+		perror("COMM> open");
+		return;
+	}
+
+	size_t size = SAMPLE_BUFFER_SIZE * sizeof(u16);
+	volatile u16 *ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, SAMPLE_BUFFER_ADDRESS);
+	if (ptr == MAP_FAILED) {
+		perror("COMM> mmap");
+		return;
+	}
+
+	FILE *fp = fopen("/tmp/junk.bin", "wb"); //TODO make constant
+	if(fp == NULL){
+		perror("COMM> Failed to open junk.bin file!\r\n");
+		return;
+	}
+
+	size_t samples_written = fwrite(ptr, sizeof(u16), SAMPLE_BUFFER_SIZE, fp);
+	if (samples_written != SAMPLE_BUFFER_SIZE) {
+		perror("Failed to write data");
+		fclose(fp);
+		return;
+	}
+	fflush(fp);
+	fclose(fp);
+
+	if (munmap(ptr, size) == -1) {
+		perror("COMM> munmap");
+		return;
+	}
+
+	close(fd);
+}
+
+/*
+ * Writes the samples stored in shared memory to the file system.
+ * This allows the PC connected over Ethernet to grab the file via SCP
+ * Returns true if error, false otherwise
+ */
+bool writeSamplesToFile(){
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
+	volatile u16 *ptr;
+
+	int fd = open("/dev/mem", O_RDONLY | O_SYNC);
+	if (fd < 0) {
+		perror("COMM> open");
+		return true;
+	}
+
+	rpc_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
+	rpc_send_message(MSG_TYPE_REQUEST, rpc_data, 1);
+	int count = rpc_recieve_int_response();
+	if(DEBUG)
+		printf("COMM> SAMP reported %d samples in buffer\r\n", count);
+
+	clearCache();
+
+	size_t size = sizeof(u16) * count;
+	ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, SAMPLE_BUFFER_ADDRESS);
+	if (ptr == MAP_FAILED) {
+		perror("COMM> mmap");
+		return true;
+	}
+
+	FILE *fp = fopen("/tmp/sample_data.bin", "wb");
+	if(fp == NULL){
+		perror("COMM> Failed to open sample_data.bin file!\r\n");
+		return true;
+	}
+	size_t samples_written = fwrite(ptr, sizeof(u16), count, fp);;
+	printf("COMM> Wrote %d samples to file\r\n", samples_written);
+    if (samples_written != count) {
+        perror("Failed to write data");
+        fclose(fp);
+        return true;
+    }
+    fflush(fp);
+    fclose(fp);
+
+	if (munmap(ptr, size) == -1) {
+		perror("COMM> munmap");
+		return true;
+	}
+
+	close(fd);
+	return false;
+}
+
+/*
+ * Writes samples stored in shared memory to PC via COMM
+ * Returns true if error, false otherwise
+ */
+bool writeSamplesToComm(){
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
+	volatile u16 *ptr;
+
+	int fd = open("/dev/mem", O_RDWR | O_SYNC);
+	if (fd < 0) {
+		perror("COMM> open");
+		return true;
+	}
+
+	rpc_data[0] = RPC_MESSAGE_GET_SAMPLE_COUNT;
+	rpc_send_message(MSG_TYPE_REQUEST, rpc_data, 1);
+	int count = rpc_recieve_int_response();
+	if(DEBUG)
+		printf("COMM> SAMP reported %d samples in buffer\r\n", count);
+
+	clearCache();
+
+	size_t size = sizeof(u16) * count;
+	off_t offset = 0x38800000; // starting point TODO make constant
+	ptr = (u16 *) mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
+	if (ptr == MAP_FAILED) {
+		perror("COMM> mmap");
+		return true;
+	}
+
+	//send data to remote pc, starting with @ and ending with !
+	char* test1 = "@";
+	commUartSend(test1, 1);
+	commUartSend(ptr, size); //send the whole buffer over uart to the host pc. Hope they are ready for it!
+	usleep(100);
+	char* test2 = "00000000"; //had it in the old code, so included it. Can probably remove
+	commUartSend(test2, 8);
+	usleep(50000);
+
+	if(DEBUG)
+		printf("COMM> done writing samples\r\n");
+
+	if (munmap(ptr, size) == -1) {
+		perror("COMM> munmap");
+		return true;
+	}
+
+	close(fd);
+	return false;
+}
+
+/*
+ * Sends the necessary message(s) to the remote cpu to stop sampling
+ * returns true if an error occurred, false otherwise
+ */
+bool stopSampling(){
+	samplingEnabled = false;
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
+	switch (activeAdc) {
+	case ADC_XADC:
+		if(DEBUG)
+			printf("COMM> disabling xadc sampling\r\n");
+		rpc_data[0] = RPC_MESSAGE_XADC_DISABLE_SAMPLING;
+		rpc_data[1] = 0; //useStreaming=false - not implemented
+		rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+		if(rpc_recieve_ack() != 0){
+			if(DEBUG)
+				printf("COMM> disabling xadc sampling failed!\r\n");
+			return true;
+		}
+		return false;
+	case ADC_SPI_EXTERNAL:
+		if(DEBUG)
+			printf("COMM> disabling ads7047 sampling\r\n");
+		rpc_data[0] = RPC_MESSAGE_ADS_DISABLE_SAMPLING;
+		rpc_data[1] = 0; //useStreaming - not implemented
+		rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+		if(rpc_recieve_ack() != 0){
+			if(DEBUG)
+				printf("COMM> disabling ads7047 sampling failed!\r\n");
+			return true;
+		}
+		return false;
+	default:
+		printf("COMM> active adc set incorrectly\r\n");
+		return true;
+	}
+}
+
 /**
  * Processes the packet received from the UART.
  */
 bool commProcessPacket(u8 *buffer, u16 bufSize) {
 	bool err = false;
-	u8 cmd, status = 0;
+	u8 cmd = 0;
 	u8* payload = NULL;
 
-	if(DEBUG){
-		printf("=== Processing packet ===\n");
+	int rpc_data[PAYLOAD_DATA_LEN] = {};
 
-		printf("Char representation: ");
-		for(int i = 0; i < bufSize; i++){
-			printf("%c", buffer[i]);
-		}
-		printf("\n");
-
-		printf("Hex representation: ");
-		for(int i = 0; i < bufSize; i++){
-			printf("0x%02x ", buffer[i]);
-		}
-		printf("\n");
-	}
-
-	if ((char) buffer[0] != COMM_START_CHAR
-			|| (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
-		//command structure was invalid
+	if ((char) buffer[0] != COMM_START_CHAR || (char) buffer[bufSize - 1] != COMM_STOP_CHAR || bufSize <= 2) {
 		if (DEBUG)
-			printf("Command structure was invalid\n");
+			printf("COMM> Command structure was invalid\r\n");
 		err = true;
 	} else {
 		//capture command byte
@@ -158,53 +329,93 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				- COMM_CMD_SIZE;
 
 		if (DEBUG)
-			printf("CMD: %u, payloadLen: %d\n", cmd, payloadLength);
+			printf("COMM> CMD: %u, payloadLen: %d\n", cmd, payloadLength);
+
+		/*  ---Respond to Ping. Should be the only command that works while sampling---  */
+		if (cmd == PING) {
+			//sets err to false so zybo always sends an ACK back to GUI, confirming operation
+			err = false;
+			return err;
+		}
+
+
+//		if(samplingEnabled){
+//			err = true;
+//			return err;
+//		}
 
 		/*	---Set XADC and external ADC Sample Rates---  */
 		if (cmd == SAMPLE_RATE_SET) {
 			if (payloadLength < COMM_SAMPLE_RATE_SIZE) {
 				if (DEBUG)
-					printf("Error, not enough bytes to represent sample rate\n");
+					printf("COMM> ERROR: not enough bytes to represent sample rate\r\n");
 
 				err = true;
 			} else {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
-//				xadcSetSampleRate(rate); //TODO
-//				ads7047_SetSampleRate(rate); //TODO
-			}
+				printf("COMM> Got sample rate set of: %d\r\n", rate);
 
-			/*  ---Select Input Source---  */
-		} else if (cmd == INPUT_SELECT) {
-			if (payloadLength == 0) {
-				if (DEBUG)
-					printf("Error, payload length too small\n");
+				rpc_data[0] = RPC_MESSAGE_XADC_SET_SAMPLE_RATE;
+				rpc_data[1] = (int)rate;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> XADC set sample rate failed!r\n");
+					err = true;
+				}
 
-				err = true;
-			} else {
-//				status = muxSetInputPins(payload[0]); //TODO
-				if (status > 0) {
+				rpc_data[0] = RPC_MESSAGE_ADS_SET_SAMPLE_RATE;
+				rpc_data[1] = (int)rate;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> ADS set sample rate failed!r\n");
 					err = true;
 				}
 			}
 
-			/*  ---Select Active Filter---  */
+		/*  ---Select Input Source---  */
+		} else if (cmd == INPUT_SELECT) {
+			if (payloadLength == 0) {
+				if (DEBUG)
+					printf("COMM> Error, payload length too small\r\n");
+				err = true;
+			} else {
+				printf("COMM> setting input select to number %d\r\n", (int)payload[0]);
+				rpc_data[0] = RPC_MESSAGE_MUX_SET_INPUT_PINS;
+				rpc_data[1] = (int)payload[0];
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> setting input failed!\r\n");
+					err = true;
+				}
+			}
+
+		/*  ---Select Active Filter---  */
 		} else if (cmd == FILTER_SELECT) {
 			if (payloadLength < 1) {
 				if (DEBUG)
-					printf("No filter param given to set\n");
-
+					printf("COMM> No filter param given to set\r\n");
 				err = true;
 			} else {
-//				err = muxSetActiveFilter(payload[0]); //TODO
+				printf("COMM> Setting filter select to filter number %d\r\n", (int)payload[0]);
+				rpc_data[0] = RPC_MESSAGE_SET_ACTIVE_FILTER;
+				rpc_data[1] = (int)payload[0];
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+				if(rpc_recieve_ack() != 0){
+					if(DEBUG)
+						printf("COMM> setting failed!\r\n");
+					err = true;
+				}
 			}
 
-			/*  ---Set Filter Corner Frequencies---  */
+		/*  ---Set Filter Corner Frequencies---  */
 		} else if (cmd == CORNER_FREQ_SET) {
 			if (payloadLength < 4) {
 				if (DEBUG)
-					printf("err in filter tune function");
-
+					printf("COMM> err in filter tune function\r\n");
 				err = true;
 			} else {
 				//each frequency should be sent as two bytes each
@@ -212,24 +423,32 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 						+ payload[1];
 				FILTER_FREQ_TYPE upper = ((payload[2] << 8) & 0xFF00)
 						+ payload[3];
-
-				//tune filter
-//				err = tuneFilter(50, lower, upper); //TODO
+				if(DEBUG)
+					printf("COMM> setting corner freq %d %d %d\r\n", (int)payload[0], (int)lower, (int)upper);
+				rpc_data[0] = RPC_MESSAGE_TUNE_FILTER;
+				rpc_data[1] = (int)payload[0];
+				rpc_data[2] = (int)lower;
+				rpc_data[3] = (int)upper;
+				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 4);
+				if(rpc_recieve_ack() != 0){
+					if (DEBUG)
+						printf("COMM> err setting corner freq\r\n");
+					err = true;
+				}
 			}
 
-			/*  ---Select between XADC and external SPI ADC---  */
-		} else if (cmd == ADC_SELECT) {
+		/*  ---Select between XADC and external SPI ADC---  */
+		} else if (cmd == ADC_SELECT) { //TODO not supported yet
 			if (payloadLength != 1) {
 				if (DEBUG)
-					printf("Incorrect formatting in ADC select command");
-
+					printf("COMM> Incorrect formatting in ADC select command\r\n");
 				err = true;
 			} else {
 				u8 adcSel = payload[0];
 
 				if (adcSel >= NUM_ADCS) {
 					if (DEBUG)
-						printf("Invalid ADC selection");
+						printf("COMM> Invalid ADC selection\r\n");
 
 					err = true;
 				} else {
@@ -237,127 +456,137 @@ bool commProcessPacket(u8 *buffer, u16 bufSize) {
 				}
 			}
 
-			/*  ---Respond to Ping---  */
-		} else if (cmd == PING) {
-			//sets err to false so zybo always sends an ACK back to GUI, confirming operation
-			err = false;
-
-			/*  ---Print Samples---  */
+		/*  ---Print Samples---  */
 		} else if (cmd == FETCH_SAMPLES) {
-			//acknowledge command before returning samples
-			respond_ack(serial_port);
-
-			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcProcessSamples(); //TODO
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_ProcessSamples(); //TODO
-				break;
-			default:
-				err = true;
-				break;
+			err = stopSampling();
+			if(err){
+				return err;
 			}
 
-			/*  ---Start Sampling---  */
+			err = writeSamplesToComm();
+			if(err){
+				return err;
+			}
+			err = writeSamplesToFile();
+			if(err){
+				return err;
+			}
+
+		/*  ---Start Sampling---  */
 		} else if (cmd == START_SAMPLING) {
-			//sending an additional dummy byte indicates that streaming mode should be used
-			u8 useStreaming = 0;
-//			if (payloadLength == 1) {
-//				useStreaming = 1;
-//			}
 
-			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcEnableSampling(useStreaming); //TODO
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_EnableSampling(useStreaming); //TODO
-				break;
-			default:
+			if(samplingEnabled){
+				printf("COMM> Starting sampling when already enabled\r\n");
 				err = true;
-				break;
+				return err;
 			}
 
-			/*  ---Stop Sampling---  */
+			samplingEnabled = true;
+
+			switch (activeAdc) {
+				case ADC_XADC:
+					printf("COMM> enabling xadc sampling\r\n");
+					rpc_data[0] = RPC_MESSAGE_XADC_ENABLE_SAMPLING;
+					rpc_data[1] = 0; //useStreaming - not implemented
+					rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+					if(rpc_recieve_ack() != 0){
+						if(DEBUG)
+							printf("COMM> enabling xadc sampling failed!\r\n");
+						err = true;
+					}
+					break;
+				case ADC_SPI_EXTERNAL:
+					printf("COMM> enabling ads7047 sampling\r\n");
+					rpc_data[0] = RPC_MESSAGE_ADS_ENABLE_SAMPLING;
+					rpc_data[1] = 0; //useStreaming - not implemented
+					rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+					if(rpc_recieve_ack() != 0){
+						if(DEBUG)
+							printf("COMM> enabling ads7047 sampling failed!\r\n");
+						err = true;
+					}
+					break;
+				default:
+					err = true;
+					break;
+			}
+		/* ---Stop Sampling--- */
 		} else if (cmd == STOP_SAMPLING) {
-			switch (activeAdc) {
-			case ADC_XADC:
-//				xadcDisableSampling(); //TODO
-				break;
-			case ADC_SPI_EXTERNAL:
-//				ads7047_DisableSampling(); //TODO
-				break;
-			default:
-				err = true;
-				break;
+			printf("COMM> stop sampling!\r\n");
+			err = stopSampling(); //moved to separate function because it needs to also happen in fetch command
+			if(err){
+				return err;
 			}
+			err = writeSamplesToFile();
+			if(err){
+				return err;
+			}
+		/*  ---Select DAC Operating Mode---  */
+		} else if (cmd == DAC_MODE_SELECT) { //TODO: implement me once DAC has multiple operating modes
 
-			/*  ---Select DAC Operating Mode---  */
-		} else if (cmd == DAC_MODE_SELECT) {
-			//TODO: implement me once DAC has multiple operating modes
-
-			/*  ---Set DAC Generation Repetitions Count---  */
-		} else if (cmd == DAC_NUM_REPS_SET) {
+		/*  ---Set DAC Generation Repetitions Count---  */
+		} else if (cmd == DAC_NUM_REPS_SET) { //TODO not finished yet
 			if (payloadLength < 4) {
 				if (DEBUG)
-					printf("Not enough bytes to represent num repetitions\r\n");
+					printf("COMM> Not enough bytes to represent num repetitions\r\n");
 
 				err = true;
 			} else {
 				u32 num = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 
-//				dac80501_SetNumRepetitions(num); //TODO
+				rpc_data[0] = RPC_MESSAGE_DAC_SET_NUM_REPETITIONS;
+				rpc_data[1] = num;
+//				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
-			/*  ---Set DAC Generation Rate (Sampling Rate)---  */
-		} else if (cmd == DAC_GEN_RATE_SET) {
+		/*  ---Set DAC Generation Rate (Sampling Rate)---  */
+		} else if (cmd == DAC_GEN_RATE_SET) { //TODO not finished yet
 			if (payloadLength < 4) {
 				if (DEBUG)
-					printf("Not enough bytes to represent generation rate\r\n");
+					printf("COMM> Not enough bytes to represent generation rate\r\n");
 
 				err = true;
 			} else {
 				u32 rate = (payload[0] << 24) | (payload[1] << 16)
 						| (payload[2] << 8) | (payload[3]);
 
-//				err = dac80501_SetGenerationRate(rate); //TODO
+				rpc_data[0] = RPC_MESSAGE_DAC_SET_GEN_RATE;
+				rpc_data[1] = rate;
+//				rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			}
 
-			/*  ---Receive New Dataset Sent from PC---  */
-		} else if (cmd == DAC_SEND_DATASET) {
+		/*  ---Receive New Dataset Sent from PC---  */
+		} else if (cmd == DAC_SEND_DATASET) { //TODO not finished yet
 			u32 dsSize = (payload[0] << 24) | (payload[1] << 16)
 					| (payload[2] << 8) | (payload[3]);
 
-//			err = dac80501_ReceiveDataset(dsSize); //TODO
+//			err = dac80501_ReceiveDataset(dsSize);
+			rpc_data[0] = RPC_MESSAGE_DAC_RECEIVE_DATASET;
+			rpc_data[1] = dsSize;
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Start Waveform Generation---  */
-		} else if (cmd == START_GENERATION) {
-//			dac80501_EnableGeneration(); //TODO
-
-			/*  ---Stop Waveform Generation---  */
-		} else if (cmd == STOP_GENERATION) {
-//			dac80501_DisableGeneration(); //TODO
+		} else if (cmd == START_GENERATION) { //TODO not finished yet
+			rpc_data[0] = RPC_MESSAGE_DAC_ENABLE_GENERATION;
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
+		} else if (cmd == STOP_GENERATION) { //TODO not finished yet
+			rpc_data[0] = RPC_MESSAGE_DAC_DISABLE_GENERATION;
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 
 			/*  ---Ball & Beam Controller---  */
-		} else if (cmd == START_CONTROLLER) {
+		} else if (cmd == START_CONTROLLER) { //TODO not finished yet
 //			ballbeamStart(); //TODO
-
+			rpc_data[0] = RPC_MESSAGE_DAC_BALL_BEAM_START;
+//			rpc_send_message(COMM_COMMAND_MSG, rpc_data, 2);
 			/*  ---Unsupported Command---  */
 		} else {
+			if(DEBUG)
+				printf("COMM> Unknown command!\r\n");
 			err = true;
 		}
 	}
-
 	return err;
-}
-
-/**
- * Exposes UART receive command to libraries without need for global UART pointer.
- */
-u32 commUartRecv(u8 *bufferPtr, u32 numBytes) {
-	return read(serial_port, bufferPtr, numBytes);
 }
 
 /**
@@ -367,68 +596,13 @@ u32 commUartSend(u8 *bufferPtr, u32 numBytes) {
 	return write(serial_port, bufferPtr, numBytes);
 }
 
-/**
- * Exposes UART isTransmitFull command to libraries without need for global UART pointer.
- */
-//u32 commUartIsTransmitFull(void) {
-//	return XUartPs_IsTransmitFull(UART1.Config.BaseAddress);
-//}
-
-/**
- * Exposes blocking UART receive command to libraries without need for global UART pointer.
- */
-u32 commUartWaitReceive(u8 *bufferPtr, char endChar1, char endChar2) {
-	u32 byteCount = 0;
-
-	while (bufferPtr[byteCount - 1] != endChar1
-			&& bufferPtr[byteCount - 1] != endChar2) {
-		byteCount += commUartRecv(bufferPtr, 1);
-	}
-
-	return byteCount;
-}
-
-//XUartPs* commGetUartPtr() {
-//	return &UART1;
-//}
-
 void respond_ack(int serial_port){
-	if(DEBUG)
-		printf("Responding ACK\n");
 	char * message = "@ACK!";
 	write(serial_port, message, 6);
-//	fsync(serial_port);
 }
 
 void respond_err(int serial_port){
-	if(DEBUG)
-		printf("Responding ERR\n");
 	char * message = "@ERR!";
 	write(serial_port, message, 6);
-//	fsync(serial_port);
 }
 
-//TODO delete when done
-void commReadTest(){
-	int n = 0, spot = 0;
-	char buf = '\0';
-
-	char response[1024];
-	memset(response, '\0', sizeof response);
-
-	do {
-	    n = read( serial_port, &buf, 1 );
-	    sprintf( &response[spot], "%c", buf );
-	    spot += n;
-	} while( buf != '\n' && n > 0);
-
-	if (n < 0) {
-	    printf("error reading\n");
-	}
-	else if (n == 0) {
-	    printf("read nothing\n");
-	}
-	else {
-	    printf("Response: %s\n", response);
-	}
-}

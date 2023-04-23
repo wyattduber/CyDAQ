@@ -3,6 +3,7 @@
 *.pyc
 *.csv
 cli/__pycache__
+venv/
 
 # These directories are created when compile.sh is run
 build
@@ -14,3 +15,4 @@ data.txt
 
 # Matlab file extensions
 *.m
+*.mat

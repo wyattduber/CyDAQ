@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 import ctypes
+import shutil
 from sys import platform
 from datetime import datetime
 
@@ -18,9 +19,11 @@ from widgets import BasicOperationModeWidget
 from widgets import LiveStreamModeWidget
 from widgets import BalanceBeamModeWidget
 from widgets import DebugWidget
+from widgets import ConnectionWidget
 from generated.MainWindowUI import Ui_MainWindow
 
-DEBUG_LOGS = ""
+DEFAULT_WINDOW_WIDTH = 553
+DEFAULT_WINDOW_HEIGHT = 626
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -31,7 +34,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
 
 # This path must be appended because the CLI and GUI aren't in packages.
 # If both were in python packages, this issue wouldn't be here.
@@ -126,6 +128,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = self.wrapper.ping() >= 0
         except CLIWrapper.cyDAQNotConnectedException:
             self.connected = False
+        except CLIWrapper.CLIException:
+            self.connected = False
+            errorbox = QMessageBox(self)
+            errorbox.setWindowTitle("Error")
+            errorbox.setText("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
+            errorbox.setInformativeText("Try restarting the CyDAQ.")
+            errorbox.setIcon(QMessageBox.Critical)
+            errorbox.exec()
+            qApp.exit(-2)
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self, CyDAQModeWidget)
@@ -133,11 +144,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self, CyDAQModeWidget)
         self.balance_beam = BalanceBeamModeWidget(self, CyDAQModeWidget)
         self.debug = DebugWidget(self, CyDAQModeWidget)
-        
+
+        self.stack = StackedLayout() 
+        self.connectionWidget = ConnectionWidget()
+
         self.centerWidget = QtWidgets.QWidget()
+        self.centerLayout = QVBoxLayout()
+        self.centerLayout.addLayout(self.stack)
+        self.centerLayout.addWidget(self.connectionWidget)
+        self.centerWidget.setLayout(self.centerLayout)
         self.setCentralWidget(self.centerWidget)
 
-        self.stack = StackedLayout(self.centerWidget)        
         self.widgets = []
         self.widgets.append(self.mode_selector)
         self.widgets.append(self.basic_operation)
@@ -149,6 +166,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.stack.setCurrentIndex(0)
 
         self.updateWidgetConnectionStatus()
+
+        self.current_index = 0
 
         plotterAction = self.actionLaunch_Plotter
         plotterAction.triggered.connect(lambda: self.switchToLiveStream(True))
@@ -167,6 +186,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer = QTimer()
         self.pingTimer.timeout.connect(self.pingCyDAQ)
         self.startPingTimer()
+
+        # Temp Log File
+        sys.stdout = self.wrapper.logfile
 
         self.show()
 
@@ -190,7 +212,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     self.updateWidgetConnectionStatus()
             else:
                 # Raise any other exceptions
-                raise extype(traceback_msg)
+                print("trying to raise exception with message: ", traceback_msg)
+                # raise extype(traceback_msg)
 
         self.runInWorkerThread(
             self.wrapper.ping,
@@ -199,11 +222,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         )
 
     def updateWidgetConnectionStatus(self):
-        for widget in self.widgets:
-            if self.connected:
-                widget.cyDaqConnected()
-            else:
-                widget.cyDaqDisconnected()
+        if self.connected:
+            print("setting green")
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                   "{"
+                                                   "color: #0EAD69;"
+                                                   "}")
+        else:
+            print("setting red")
+            self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
+                                                       "{"
+                                                       "color: #DE3C4B;"
+                                                       "}")
+
 
     def startPingTimer(self):
         self.pingTimer.start(self.pingTimerInterval)
@@ -213,21 +244,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     ### The following are methods for switching to different widgets of the gui application. ###
 
-    def switchToModeSelector(self):
+    def switchToModeSelector(self, prev_geometry=None):
+        if prev_geometry is not None:
+            self.setMaximumSize(16777215, 16777215) # Reset maximum size
+            self.setMinimumSize(0, 0) # Reset minimum size
+            self.setGeometry(prev_geometry)
         self.stack.setCurrentIndex(0)
+        self.current_index = 0
 
     def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
+        self.current_index = 1
 
     def switchToBalanceBeam(self):
+        # Check that the cydaq is connected and that balance beam mode isn't already on
+        self.balance_beam.prev_geometry = self.geometry()
         self.stack.setCurrentIndex(2)
+        self.current_index = 2
 
     def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
+        self.current_index = 3
         self.livestream.show_window(self.livestream)
         self.livestream.came_from_basic = came_from_basic
 
     def switchToDebug(self):
+        self.debug.prev_index = self.current_index
         self.stack.setCurrentIndex(4)
 
     def restartWindow(self):
@@ -245,6 +287,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
+            if self.connected:
+                self.balance_beam.running = False
+                self.wrapper.stop_bb()
             event.accept()
             if main.widgets[3].window is not None:
                 main.widgets[3].window.close()
@@ -332,10 +377,6 @@ if __name__ == "__main__":
 
         # If exit wasn't normal, save debug logs to location of executable
         if currentExitCode != 0:
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
-            if main.wrapper is not None:
-                logs = main.wrapper.getLog()
-                with open(filename, 'w') as file:
-                    file.write(logs)
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
 
         app = None

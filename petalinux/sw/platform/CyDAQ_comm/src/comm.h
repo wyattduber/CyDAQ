@@ -43,6 +43,8 @@
 #define TEST_BUFFER_SIZE	50
 #define DEF_SAMPLE_BURST_SIZE 200 //number of bytes worth of samples to send in single burst (# samples* 2 bytes/sample)
 
+//Message type
+#define COMM_COMMAND_MSG 0
 //int commInit();
 
 void commRXTask();
@@ -57,5 +59,5 @@ u32 commUartWaitReceive(u8 *bufferPtr, char endChar1, char endChar2);
 
 void respond_ack(int serial_port);
 void respond_err(int serial_port);
-
+int commInit();
 #endif /* SRC_COMM_H_ */

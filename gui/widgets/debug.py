@@ -1,10 +1,12 @@
 # Standard Python Packages
+import shutil
 from datetime import datetime
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 # Stuff From Project - May show as an error but it works
 from generated.DebugWidgetUI import Ui_DebugWidget
@@ -26,10 +28,12 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
 
-        # Home Button
-        self.home_btn.clicked.connect(self.mainWindow.switchToModeSelector)
+        self.prev_index = 0
 
-        # Widget Buttons (Disabled for Lab Launch
+        # Home Button
+        self.home_btn.clicked.connect(self.home)
+
+        # Widget Buttons (Disabled for Lab Launch)
         # self.write_btn.clicked.connect(self.writeData)
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
@@ -45,15 +49,20 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
 
 
     # CyDAQ Connection Label
-    def cyDaqConnected(self):
-        """When CyDAQ changes from disconnected to connected"""
-        self.connection_status_label.setText("Connected!")
-        pass
-
-    def cyDaqDisconnected(self):
-        """When CyDAQ changes from connected to disconnected"""
-        self.connection_status_label.setText("Not Connected!")
-        pass
+    def home(self):
+        """Return to whatever the previous window was before switching to debug"""
+        tmp = self.prev_index
+        if self.prev_index == 0:
+            self.mainWindow.switchToModeSelector()
+        elif self.prev_index == 1:
+            self.mainWindow.switchToBasicOperation()
+        elif self.prev_index == 2:
+            self.mainWindow.switchToBalanceBeam()
+        elif self.prev_index == 3:
+            self.mainWindow.switchToLiveStream()
+        elif self.prev_index == 4:
+            self.prev_index = tmp
+            self.home()
 
     """ 
     Below are some tests that we came up with to test the reading/writing
@@ -62,6 +71,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     """
 
     def writeData(self):
+        """Test Method to write data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.writeALotOfData,
@@ -70,6 +80,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         )
 
     def writeDataV2(self):
+        """Second Test Method to write data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.writeALotOfDataV2,
@@ -78,6 +89,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
         )
 
     def readData(self):
+        """Test Method to read data as fast as python can handle"""
         self.cyDAQModeWidget.runInWorkerThread(
             self,
             func=self.wrapper.readALotOfData,
@@ -93,14 +105,14 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
                                                        options=options)
         # Default Filename
         if filename.strip() == "":
-            filename = f"CyDAQ-Debug_{datetime.now().strftime('%d-%m-%Y_%H:%M:%S')}.txt"
+            return # User cancelled export
 
         # Save the logs to the file
-        with open(filename, 'w') as file:
-            logs = self.wrapper.getLog()
-            file.write(logs)
-
-
+        try:
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", filename)
+        except PermissionError:
+            self._show_error("Unable to save logs due to permission error!")
+            return
 
     # Enables mocking of the project
     def mockClicked(self):
@@ -114,7 +126,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     def logUpdate(self):
         old_pos = self.log_textBrowser.verticalScrollBar().value()
         self.log_textBrowser.setText(self.wrapper.getLog())
-        if(old_pos == 0):
+        if old_pos == 0:
             self.snapLogScrollToTop()
         else:
             self.log_textBrowser.verticalScrollBar().setSliderPosition(old_pos)
@@ -126,3 +138,11 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget):
     def clearLog(self):
         self.wrapper.clearLog()
         self.logUpdate()
+
+    def _show_error(self, message):
+        """Private method to just show an error message box with a custom message"""
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()

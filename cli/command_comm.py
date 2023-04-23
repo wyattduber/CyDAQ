@@ -1,7 +1,20 @@
 from serial_comm import ctrl_comm
-from master_enum import enum_filter, enum_commands, sig_serial
+from master_enum import enum_commands, sig_serial
 import struct
+import serial
 import time as t
+
+CMD_SERVO_OFFSET = "SOI"
+CMD_STOP_BB = '!q'
+CMD_PAUSE = "pause on!"
+CMD_RESUME = "pause off!"
+
+# Balance Beam Default Values
+DEFAULT_KP = 0
+DEFAULT_KI = 0
+DEFAULT_KD = 0
+DEFAULT_N = 0
+DEFAULT_SET = 0
 
 class cmd:
 
@@ -46,7 +59,7 @@ class cmd:
                         print('CyDAQ encountered error during configuration, contact ETG')
                         return False
                     else:
-                        # self.__throw_exception('ack was not received')
+                        self.__throw_exception('ack was not received')
                         print("'ack' was not received")
                         return False
                 else:
@@ -404,6 +417,7 @@ class cmd:
             self.__throw_exception('Sending DAC Reps Failed')
 
     def send_start(self):
+        print("sending start")
         """
         Sends the Input.
 
@@ -418,6 +432,17 @@ class cmd:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
             self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+
+        else:
+            self.__throw_exception('Sending start failed')
+            return False
+
+    def send_stop_sampling(self):
+        self.ctrl_comm_obj.open(self.port)
+        if self.ctrl_comm_obj.isOpen() is True:
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.STOP_SAMPLING.value))
             self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
 
         else:
@@ -499,7 +524,7 @@ class cmd:
         """
         try:
             self.ctrl_comm_obj.open(self.port)
-        except ValueError:
+        except (ValueError, serial.serialutil.SerialException):
             return False
         if self.ctrl_comm_obj.isOpen() is True:
             self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode('ascii'))
@@ -536,8 +561,175 @@ class cmd:
         else:
             return False
 
+         
     def is_mock_mode(self):
         return self.ctrl_comm_obj.is_mock_mode()
+
+    ### Balance Beam Commands ###
+
+    def start_bb(self, kp=None, ki=None, kd=None, N=None, set=None):
+        """
+        Sends the start command to the CyDAQ
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        # Send Start Command
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(sig_serial.START_BYTE.value.encode())
+            self.ctrl_comm_obj.write(struct.pack('!B', enum_commands.START_BALANCE_BEAM.value))
+            self.ctrl_comm_obj.write(sig_serial.END_BYTE.value.encode())
+        else:
+            self.__throw_exception('Starting balance beam mode failed')
+
+        # Set Default Values on Startup or Use Given Values
+        if not [x for x in (kp, ki, kd, N, set) if x is None]:
+            self.update_constants(kp, ki, kd, N)
+            self.update_set(N)
+        else:
+            self.update_constants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD, DEFAULT_N)
+            self.update_set(DEFAULT_SET)
+
+    def stop_bb(self):
+        """
+        Sends the stop command to the CyDAQ.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            # Then, send stop command
+            self.ctrl_comm_obj.write('q!'.encode())
+        else:
+            self.__throw_exception('Stopping balance beam mode failed')
+
+    def update_constants(self, kp, ki, kd, N):
+        """
+        Send the user-defined constants to the CyDAQ.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"kp {kp}!".encode())
+            self.ctrl_comm_obj.write(f"ki {ki}!".encode())
+            self.ctrl_comm_obj.write(f"kd {kd}!".encode())
+            self.ctrl_comm_obj.write(f"n {N}!".encode())
+        else:
+            self.__throw_exception('Updating constants failed')
+
+    def update_set(self, setv):
+        """
+        Send the user-defined set point in cm to the CyDAQ.
+        Args:
+            setv: The set point in cm
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"r {setv}!".encode())
+        else:
+            self.__throw_exception('Updating set failed')
+
+    def offset_inc(self):
+        """
+        Increase the offset for calibration.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET} 1!".encode())
+        else:
+            self.__throw_exception('Increasing offset failed')
+
+    def offset_dec(self):
+        """
+        Decrease the offset for calibration.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(f"{CMD_SERVO_OFFSET} -1!".encode())
+        else:
+            self.__throw_exception('Decreasing offset failed')
+
+    def pause_bb(self):
+        """
+        Pause the Balance Beam Mode.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+        
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(CMD_PAUSE.encode())
+        else:
+            self.__throw_exception('Error pausing')
+
+    def resume_bb(self):
+        """
+        Resume the Balance Beam Mode.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+        
+        if self.ctrl_comm_obj.isOpen():
+            self.ctrl_comm_obj.write(CMD_RESUME.encode())
+        else:
+            self.__throw_exception('Error pausing')
+
+    def read_bb_buffer(self):
+        """
+        Method that receives the buffer being sent from the CyDAQ
+        Parses the buffer into either positive or negataive numbers
+        and returns the number to the CLI tool to be output.
+        """
+        try:
+            self.ctrl_comm_obj.open(self.port)
+        except ValueError:
+            return False
+        
+        if self.ctrl_comm_obj.isOpen():
+            byte_value = ""
+            buffer = ""
+
+            while byte_value != ' ': # Check for each number
+                byte_value = self.ctrl_comm_obj.read_byte()
+                if type(byte_value) == type(False):
+                    return False
+                if byte_value == '-': # If value is negative
+                    for i in range(0, 6):
+                        if byte_value == ' ': # number sent might be less than 3 decimals
+                            break
+                        buffer += byte_value
+                        byte_value = self.ctrl_comm_obj.read_byte()
+                    return buffer
+                elif byte_value.isnumeric(): # If value is positive
+                    for i in range(0, 5):
+                        if byte_value == ' ': # number sent might be less than 3 decimals
+                            break
+                        buffer += byte_value
+                        byte_value = self.ctrl_comm_obj.read_byte()
+                    return buffer
+                
 
     # not needed since struct library takes care of byte convertions for us
     # def decimal_to_binary(self, number):

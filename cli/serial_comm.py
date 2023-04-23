@@ -1,8 +1,16 @@
 import os
+import re
 import threading
 import time
 import serial
 import serial.tools.list_ports
+
+# Old firmware
+OLD_COMM_PORT_DESCRIPTION = "USB Serial Port"
+
+# New firmware
+NEW_COMM_PORT_DESCRIPTION = "USB Serial Device"
+
 
 class ctrl_comm:
     """
@@ -14,7 +22,10 @@ class ctrl_comm:
     def __init__(self, mock_mode=False):
         # print("ctrl_comm init")
         self.mock_mode = mock_mode
+        self.old_firmware = None  # set to true/false once connected
         self._init_comm()
+        self.bb_mode = False
+        self.bb_pause = False
 
         if self.mock_mode:
             try:
@@ -23,15 +34,19 @@ class ctrl_comm:
                 print("Mock mode not supported! Reverting to normal mode.")
                 self.mock_mode = False
                 return
-            
-            master,slave = pty.openpty() #open the pseudoterminal
-            self.__s_comm.port = os.ttyname(slave) #translate the slave fd to a filename
+
+            master, slave = pty.openpty()  # open the pseudoterminal
+            self.__s_comm.port = os.ttyname(slave)  # translate the slave fd to a filename
             self._mock_thread_running = True
 
-            #create a separate thread that listens on the master device for commands
+            # create a separate thread that listens on the master device for commands
             thread = threading.Thread(target=self._mock_listener, args=[master])
             self.mock_thread = thread
             thread.start()
+
+            # Create a seperate thread that just sends tons of data to the master device
+            self.mock_bb_thread = threading.Thread(target=self._mock_bb_data, args=[master])
+            self._mock_bb_thread_running = False
 
     # def __del__(self):
     #     self.kill_mock()
@@ -42,35 +57,130 @@ class ctrl_comm:
             res = b""
             while not res.endswith(b"!"):
                 res += os.read(port, 1)
-            
-            print("Command recieved in mock listener: ", res) 
+
+            print("Command recieved in mock listener: ", res)
 
             if res == b'stop!':
+                self._mock_bb_thread_running = False
                 break
-            if res == b'@\x07!': # ping
+            if res == b'@\x07!':  # ping
                 os.write(port, b'@')
-                os.write(port, b'ACK') 
-                os.write(port, b'!') 
-            elif res == b'@\x08\x08!': # start sampling
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x08\x08!':  # start sampling
                 os.write(port, b'@')
-                os.write(port, b'ACK') 
-                os.write(port, b'!') 
-            elif res == b'@\x04!': # stop sampling
-                time.sleep(.01) # must sleep or input in main thread flushes data below
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x04!':  # stop sampling
+                time.sleep(.01)  # must sleep or input in main thread flushes data below
                 os.write(port, b'@')
-                os.write(port, b'\xd5\x07'*10_000_000)
+                os.write(port, b'\xd5\x07' * 10_000_000)
 
                 # current CyDAQ firmware throws an @ACK in here.. not needed....
-                os.write(port, b'@ACK') 
+                os.write(port, b'@ACK')
 
-                os.write(port, b'!') 
-            #TODO implement other commands that need to be mocked here
+                os.write(port, b'!')
+            # Below is all of the default config send commands
+            # Each one of them is changed when anything in the config changes
+            # I can't be bothered to write them out for every setting... so here you go
+            elif res == b'@\x00\x01!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x01\x00\x00\xacD!': # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x02\x07!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x03\x00\x00\x00\x00!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x0b\x00\x00\x00\x00!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x0c\x00\x00\x00\x00!':  # config send
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'@\x16!':  # bb_start
+                time.sleep(0.01)
+                # os.write(port, b'@')
+                # os.write(port, b'ACK')
+                # os.write(port, b'!')
+
+                self._mock_bb_thread_running = True
+                self.mock_bb_thread.start()
+            elif res == b'q!':  # bb_stop
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+                self._mock_bb_thread_running = False
+            elif res == b'pause on!':  # bb_pause
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+
+                if self.bb_pause:
+                    self.bb_pause = False
+                else:
+                    self.bb_pause = True
+            elif res == b'pause off!':  # bb_resume
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'SOI 1!':  # bb_offset_inc
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif res == b'SOI -1!':  # bb_offset_dec
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            # K Constant Commands
+            elif re.search(b'kp [0-9]+', res):  # 'kp <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'ki [0-9]+', res):  # 'ki <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'kd [0-9]+', res):  # 'kd <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'n [0-9]+', res):  # 'n <int>'
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            elif re.search(b'r [0-9]+', res):  # set <int>
+                os.write(port, b'@')
+                os.write(port, b'ACK')
+                os.write(port, b'!')
+            # TODO implement other commands that need to be mocked here
             else:
                 print("Unknown command sent to mock CyDAQ serial connection! Command: ", res)
                 os.write(port, b'@')
                 os.write(port, b'ERR')
                 os.write(port, b'!')
         print("listener on port {} stopped".format(port))
+
+    # Method that runs and sends data to the mock listening port for fake balance beam data
+    def _mock_bb_data(self, port):
+        while self._mock_thread_running and self._mock_bb_thread_running:
+            if self.bb_pause:
+                pass
+            os.write(port, b'0')
+            os.write(port, b'.')
+            os.write(port, b'0')
+            os.write(port, b'0')
+            os.write(port, b'0')
+            os.write(port, b' ')
 
     def _init_comm(self):
         self.__s_comm = serial.Serial()
@@ -92,6 +202,7 @@ class ctrl_comm:
 
     def get_port(self):
         """
+        TODO redo this description
         Returns a list of available serial devices on the host computer.
         Typical usage is to call this function to determine the computer's
         ports and open a connection with the open() function, using one of
@@ -113,15 +224,32 @@ class ctrl_comm:
         all_ports = serial.tools.list_ports.comports()
         open_ports = []
         for element in all_ports:
-            if "USB Serial Port" in element.description:
-                open_ports.append(element.device)
-        try:
-            zybo_port = open_ports[0]
-            port = str(zybo_port)
-            # print("Zybo found on ",str(zybo_port))
-            return port
-        except:
-            # print("Zybo not connected")
+            if OLD_COMM_PORT_DESCRIPTION in element.description or NEW_COMM_PORT_DESCRIPTION in element.description:
+                open_ports.append((element.description, element.device))
+
+        # connected device could be running old or new firmware, need to figure out which
+        # old firmware:
+        # 1) Only one USB port detected, has name "USB Serial Port".
+
+        # new firmware:
+        # 1) Only one USB port detected, has name "USB Serial Device" (basic scenario in lab).
+        # 2) Two USB ports detected, one is "USB Serial Port" the other is "USB Serial" (when debugging) - need to pick the "USB Serial Device" one.
+        if len(open_ports) == 0:
+            return None
+        if len(open_ports) == 1:
+            self.old_firmware = OLD_COMM_PORT_DESCRIPTION in open_ports[0][0]
+            return str(open_ports[0][1])
+        elif len(open_ports) == 2:
+            self.old_firmware = False
+            if NEW_COMM_PORT_DESCRIPTION in open_ports[0][0]:
+                return str(open_ports[0][1])
+            elif NEW_COMM_PORT_DESCRIPTION in open_ports[1][0]:
+                return str(open_ports[1][1])
+            else:
+                print("Couldn't find correct new firmware port. Unable to proceed!")
+                return None
+        else:
+            print("Found 3 or more viable COMM ports. Unable to proceed!")
             return None
 
     def close(self):
@@ -177,9 +305,12 @@ class ctrl_comm:
 
         if self.__s_comm.isOpen():
             try:
+                self.__s_comm.flush()
                 self.__s_comm.write(data)
             except serial.serialutil.SerialException:
-                print("Serial exception while writing. Assuming bad connection.")
+                print("Serial exception while writing to port", self.__s_comm.port, ". Assuming bad connection.")
+                return False
+            except OSError:
                 return False
             return True
         else:
@@ -207,7 +338,7 @@ class ctrl_comm:
             if len(buffer) >= 2:
                 self.__throw_exception('SerialReadTimeout')
             elif not len(buffer):
-                print("Nothing Received over Comm Port")
+                # print("Nothing Received over Comm Port")
                 return False
             try:
                 buffer1 = buffer.decode('ascii')

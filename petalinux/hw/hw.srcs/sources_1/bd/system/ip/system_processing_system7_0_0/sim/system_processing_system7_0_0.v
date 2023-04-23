@@ -59,12 +59,6 @@ module system_processing_system7_0_0 (
 GPIO_I, 
 GPIO_O, 
 GPIO_T, 
-I2C0_SDA_I, 
-I2C0_SDA_O, 
-I2C0_SDA_T, 
-I2C0_SCL_I, 
-I2C0_SCL_O, 
-I2C0_SCL_T, 
 I2C1_SDA_I, 
 I2C1_SDA_O, 
 I2C1_SDA_T, 
@@ -161,7 +155,7 @@ S_AXI_HP0_AWID,
 S_AXI_HP0_WID, 
 S_AXI_HP0_WDATA, 
 S_AXI_HP0_WSTRB, 
-IRQ_F2P, 
+Core1_nIRQ, 
 DMA0_DATYPE, 
 DMA0_DAVALID, 
 DMA0_DRREADY, 
@@ -202,15 +196,9 @@ PS_SRSTB,
 PS_CLK, 
 PS_PORB 
 );
-input [63 : 0] GPIO_I;
-output [63 : 0] GPIO_O;
-output [63 : 0] GPIO_T;
-input I2C0_SDA_I;
-output I2C0_SDA_O;
-output I2C0_SDA_T;
-input I2C0_SCL_I;
-output I2C0_SCL_O;
-output I2C0_SCL_T;
+input [0 : 0] GPIO_I;
+output [0 : 0] GPIO_O;
+output [0 : 0] GPIO_T;
 input I2C1_SDA_I;
 output I2C1_SDA_O;
 output I2C1_SDA_T;
@@ -307,7 +295,7 @@ input [5 : 0] S_AXI_HP0_AWID;
 input [5 : 0] S_AXI_HP0_WID;
 input [63 : 0] S_AXI_HP0_WDATA;
 input [7 : 0] S_AXI_HP0_WSTRB;
-input [5 : 0] IRQ_F2P;
+input Core1_nIRQ;
 output [1 : 0] DMA0_DATYPE;
 output DMA0_DAVALID;
 output DMA0_DRREADY;
@@ -736,7 +724,7 @@ input PS_PORB;
     .FCLK_RESET1_N(),
     .FCLK_RESET2_N(),
     .FCLK_RESET3_N(),
-    .IRQ_F2P(IRQ_F2P),
+    .IRQ_F2P(16'B0),
     .PS_SRSTB(PS_SRSTB),
     .PS_CLK(PS_CLK),
     .PS_PORB(PS_PORB)
