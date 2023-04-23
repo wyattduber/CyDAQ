@@ -6,12 +6,14 @@ import ctypes
 import shutil
 from sys import platform
 from datetime import datetime
+import logging
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from widgets import config
 
 # Stuff From Project
 from widgets import ModeSelectorWidget
@@ -56,6 +58,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
 
+        # logging
+        logging.basicConfig(level=config.CONSOLE_LOG_LEVEL, format=config.LOG_FORMAT)
+        self.logger = logging.getLogger(__name__)
+        fh = logging.FileHandler(config.DEFAULT_LOG_FILE)
+        fh.setLevel(config.FILE_LOG_LEVEL)
+        formatter = logging.Formatter(config.LOG_FORMAT)
+        fh.setFormatter(formatter)
+        self.logger.addHandler(fh)
+
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -67,7 +78,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         # CyDAQ communication
         self.wrapper = None
         try:
-            self.wrapper = CLIWrapper.CLI()
+            self.wrapper = CLIWrapper.CLI(self.logger)
             self.connected = self.wrapper.ping() >= 0
         except CLIWrapper.cyDAQNotConnectedException:
             self.connected = False
@@ -87,6 +98,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self)
         self.balance_beam = BalanceBeamModeWidget(self)
         self.debug = DebugWidget(self)
+
+        self.logger.debug("alright alright")
 
         self.stack = StackedLayout() 
         self.connectionWidget = ConnectionWidget()

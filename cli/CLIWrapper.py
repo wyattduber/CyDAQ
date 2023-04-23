@@ -8,6 +8,7 @@ import re
 import csv
 import time
 import pandas
+import logging
 
 import config
 
@@ -21,7 +22,7 @@ class CLI:
     print(cli.ping())
     """
 
-    def __init__(self):
+    def __init__(self, logger=None):
         # Global Variables
         self.running_ping_command = False
         self.bb_log_thread = None
@@ -29,19 +30,9 @@ class CLI:
         self.mocking = False
 
         # Logging
-        self.log = ""
-        self.log_buffer = ""
-
-        # Remove existing file if it exists
-        if os.path.exists(config.DEFAULT_LOG_FILE):
-            try:
-                os.remove(config.DEFAULT_LOG_FILE)
-            except PermissionError:
-                print("Unable to delete log file!! ", config.DEFAULT_LOG_FILE)
-
-        # Create log file
-        self.logfile = open(config.DEFAULT_LOG_FILE, 'a+')
-        # sys.stdout = self.logfile # This most likely breaks communication between the CLI and wrapper. TODO delete?
+        self.logger = logger
+        if self.logger is None:
+            self.logger = logging.logger
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
@@ -79,13 +70,16 @@ class CLI:
     def _send_command(self, command, wrapper_mode=True, force_async=False, **_):
         """Send a command to the cyDAQ and returns the result"""
         if not self.connectionEnabled:
+            self.logger.debug("wrapper connectionEnabled false, not sending command: " + command)
             return
+        
 
         # Use the waiting library to prevent two commands from being run at the same time
         if not force_async:
             wait(lambda: not self.running_command)
 
         # Send command
+        self.logger.debug("wrapper trying to send command: " + command)
         try:
             if not force_async:
                 self.running_command = True
@@ -93,8 +87,8 @@ class CLI:
                 self.running_ping_command = True
             self.p.sendline(command)
         except OSError as e:
-            print("OSError in wrapper _send_command for command:", command)
-            print("OsError: ", e)
+            self.logger.error("OSError in wrapper _send_command for command: " + command)
+            self.logger.errorint("OsError: " + e)
             if not force_async:
                 self.running_command = False
             raise cyDAQNotConnectedException
@@ -119,10 +113,10 @@ class CLI:
             response = response.decode()
             response = response.strip()
 
-            print(response)
-            if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
-                self.writeLog("response", response)
-                self.writeLog("cmd", command)
+            self.logger.debug("wrapper got response: " + response)
+            # if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
+                # self.writeLog("response", response)
+                # self.writeLog("cmd", command)
                 # print(f"Cmd: {command}")
             if wrapper_mode:
                 if command == "ping":
@@ -339,7 +333,7 @@ class CLI:
         return response
 
     def writeALotOfData(self, **_):
-        print("Writing Data for 20 Seconds....")
+        self.logger.debug("Writing Data for 20 Seconds....")
         start = round(time.time())
         with open('lotsOfData.csv', 'w', encoding='utf-8') as file:
             header = ['Times']
@@ -350,8 +344,8 @@ class CLI:
                 writer.writerows([{'Times': f'{time.time()}'}])
                 curr = round(time.time())
             file.close()
-        print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
-        print("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
+        self.logger.debug("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
+        self.logger.debug("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
 
     def writeALotOfDataV2(self, **_):
         start = time.time()
@@ -362,44 +356,23 @@ class CLI:
                 f.write(data)
         delta = time.time() - start
         numLines = len(pandas.read_csv('lotsOfData.csv'))
-        print("Total Lines: " + "{:,}".format(numLines))
-        print("Time to write: ", delta)
-        print("Lines per second: {:,}".format(round(numLines / delta)))
+        self.logger.debug("Total Lines: " + "{:,}".format(numLines))
+        self.logger.debug("Time to write: " + delta)
+        self.logger.debug("Lines per second: {:,}".format(round(numLines / delta)))
 
     def readALotOfData(self, label, **_):
         with open('lotsOfData.csv', newline='') as csvfile:
             csvFile = pandas.read_csv('lotsOfData.csv')
-            print("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
+            self.logger.debug("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
             start = round(time.time())
             file = csv.reader(csvfile)
             for i in file:
-                print(str(i))
+                self.logger.debug(str(i))
             stop = round(time.time())
             csvfile.close()
-        print("Time Taken: " + str(round(stop - start)))
-        print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
-        print("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
-
-    def writeLog(self, type, string, **_):
-        if type == "response":
-            self.logfile.write(f"{string}\n")
-            self.log_buffer = f"{string}\n{self.log_buffer}"
-        elif type == "cmd":
-            self.logfile.write(f"Cmd: {string}\n")
-            self.log_buffer = f"Cmd: {string}\n{self.log_buffer}"
-
-    def getLog(self, **_):
-        if self.log_buffer != "":
-            lines = self.log.splitlines()
-            if len(lines) > config.LOG_MAX_LENGTH:
-                lines = lines[0:config.LOG_MAX_LENGTH - len(self.log_buffer.splitlines())]
-                self.log = '\n'.join(lines)
-            self.log = f"{self.log_buffer}\n{self.log}"
-            self.log_buffer = ""
-        return self.log
-
-    def clearLog(self, **_):
-        self.log = ""
+        self.logger.debug("Time Taken: " + str(round(stop - start)))
+        self.logger.debug("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
+        self.logger.debug("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
 
     def convertMillis(self, millis, **_):
         seconds = (millis / 1000) % 60
