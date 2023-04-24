@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/elf_loader.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/elf_loader.h
 openamp/remoteproc.h
 -
 openamp/remoteproc_loader.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/open_amp.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/open_amp.h
 openamp/rpmsg.h
 -
 openamp/rpmsg_virtio.h
@@ -22,7 +22,7 @@ openamp/remoteproc.h
 openamp/remoteproc_virtio.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/remoteproc.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/remoteproc.h
 metal/io.h
 -
 metal/mutex.h
@@ -30,7 +30,7 @@ metal/mutex.h
 metal/compiler.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/remoteproc_loader.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/remoteproc_loader.h
 metal/io.h
 -
 metal/list.h
@@ -40,7 +40,7 @@ metal/sys.h
 openamp/remoteproc.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/remoteproc_virtio.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/remoteproc_virtio.h
 metal/io.h
 -
 metal/list.h
@@ -48,7 +48,7 @@ metal/list.h
 openamp/virtio.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rpmsg.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rpmsg.h
 metal/compiler.h
 -
 metal/mutex.h
@@ -64,7 +64,7 @@ stdbool.h
 stdint.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rpmsg_retarget.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rpmsg_retarget.h
 metal/mutex.h
 -
 openamp/open_amp.h
@@ -72,7 +72,7 @@ openamp/open_amp.h
 stdint.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rpmsg_virtio.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rpmsg_virtio.h
 metal/io.h
 -
 metal/mutex.h
@@ -82,19 +82,19 @@ openamp/rpmsg.h
 openamp/virtio.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rsc_table_parser.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/rsc_table_parser.h
 openamp/remoteproc.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/virtio.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/virtio.h
 openamp/virtqueue.h
 -
 metal/spinlock.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/virtio_ring.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/virtio_ring.h
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/virtqueue.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/include/openamp/virtqueue.h
 stdbool.h
 -
 stdint.h
@@ -110,7 +110,7 @@ metal/log.h
 metal/assert.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/proxy/rpmsg_retarget.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/proxy/rpmsg_retarget.c
 errno.h
 -
 metal/mutex.h
@@ -130,7 +130,7 @@ string.h
 fcntl.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/elf_loader.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/elf_loader.c
 string.h
 -
 metal/alloc.h
@@ -142,7 +142,7 @@ openamp/elf_loader.h
 openamp/remoteproc.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/remoteproc.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/remoteproc.c
 metal/alloc.h
 -
 metal/log.h
@@ -160,7 +160,7 @@ openamp/remoteproc_virtio.h
 openamp/rsc_table_parser.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/remoteproc_virtio.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/remoteproc_virtio.c
 openamp/remoteproc.h
 -
 openamp/remoteproc_virtio.h
@@ -174,21 +174,21 @@ metal/utilities.h
 metal/alloc.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/rsc_table_parser.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/remoteproc/rsc_table_parser.c
 metal/io.h
 -
 openamp/rsc_table_parser.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg.c
 openamp/rpmsg.h
 -
 metal/alloc.h
 -
 rpmsg_internal.h
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_internal.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_internal.h
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_internal.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_internal.h
 stdint.h
 -
 openamp/rpmsg.h
@@ -196,7 +196,7 @@ openamp/rpmsg.h
 metal/log.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_virtio.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_virtio.c
 metal/alloc.h
 -
 metal/sleep.h
@@ -208,13 +208,13 @@ openamp/rpmsg_virtio.h
 openamp/virtqueue.h
 -
 rpmsg_internal.h
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_internal.h
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/rpmsg/rpmsg_internal.h
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/virtio/virtio.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/virtio/virtio.c
 openamp/virtio.h
 -
 
-/home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/virtio/virtqueue.c
+/home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/openamp_v1_6/src/open-amp/lib/virtio/virtqueue.c
 string.h
 -
 openamp/virtio.h

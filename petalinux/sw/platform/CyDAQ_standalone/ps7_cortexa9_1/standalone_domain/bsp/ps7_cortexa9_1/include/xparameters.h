@@ -271,7 +271,7 @@
 /******************************************************************/
 
 /* Definitions for driver GPIO */
-#define XPAR_XGPIO_NUM_INSTANCES 2
+#define XPAR_XGPIO_NUM_INSTANCES 3
 
 /* Definitions for peripheral AXI_GPIO_0 */
 #define XPAR_AXI_GPIO_0_BASEADDR 0x41200000
@@ -289,6 +289,14 @@
 #define XPAR_AXI_GPIO_ETH_IS_DUAL 0
 
 
+/* Definitions for peripheral AXI_GPIO_LED */
+#define XPAR_AXI_GPIO_LED_BASEADDR 0x41210000
+#define XPAR_AXI_GPIO_LED_HIGHADDR 0x4121FFFF
+#define XPAR_AXI_GPIO_LED_DEVICE_ID 2
+#define XPAR_AXI_GPIO_LED_INTERRUPT_PRESENT 0
+#define XPAR_AXI_GPIO_LED_IS_DUAL 0
+
+
 /******************************************************************/
 
 /* Canonical definitions for peripheral AXI_GPIO_0 */
@@ -304,6 +312,13 @@
 #define XPAR_GPIO_1_DEVICE_ID XPAR_AXI_GPIO_ETH_DEVICE_ID
 #define XPAR_GPIO_1_INTERRUPT_PRESENT 0
 #define XPAR_GPIO_1_IS_DUAL 0
+
+/* Canonical definitions for peripheral AXI_GPIO_LED */
+#define XPAR_GPIO_2_BASEADDR 0x41210000
+#define XPAR_GPIO_2_HIGHADDR 0x4121FFFF
+#define XPAR_GPIO_2_DEVICE_ID XPAR_AXI_GPIO_LED_DEVICE_ID
+#define XPAR_GPIO_2_INTERRUPT_PRESENT 0
+#define XPAR_GPIO_2_IS_DUAL 0
 
 
 /******************************************************************/
@@ -412,7 +427,7 @@
 /******************************************************************/
 
 /* Definitions for Fabric interrupts connected to ps7_scugic_0 */
-#define XPAR_FABRIC_XADC_WIZ_0_IP2INTC_IRPT_INTR 61U
+#define XPAR_FABRIC_XADC_WIZ_0_IP2INTC_IRPT_INTR 31U
 
 /******************************************************************/
 

@@ -2,6 +2,7 @@
 #include <openamp/open_amp.h>
 #include <metal/alloc.h>
 
+#include "xgpio.h"
 #include "platform_info.h"
 #include "rpc.h"
 #include "../hardware/shared_definitions.h"
@@ -112,6 +113,16 @@ int handle_message(struct _payload* payload){
 
 		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
 			ret =  ballbeamStart(); //TODO this is blocking...
+
+		}else if(data[0] == RPC_MESSAGE_LED_INIT){
+			xil_printf("SAMP> Turning on LED\r\n");
+			XGpio gpio;
+			XGpio_Initialize(&gpio, XPAR_AXI_GPIO_LED_DEVICE_ID);
+			XGpio_SetDataDirection(&gpio, 1, 0x00000000);
+			XGpio_SetDataDirection(&gpio, 2, 0x00000000);
+			XGpio_DiscreteWrite(&gpio, 1, 0xFFFFFFFF);
+			XGpio_DiscreteWrite(&gpio, 2, 0xFFFFFFFF);
+			ret = 0;
 
 		}else{
 			LPRINTF("SAMP> Unknown message, type: %d, command: %d, data: %d\r\n", message_type, data[0],data[1]);

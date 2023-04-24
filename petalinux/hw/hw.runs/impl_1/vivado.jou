@@ -1,12 +1,12 @@
 #-----------------------------------------------------------
 # Vivado v2020.1 (64-bit)
-# SW Build 2902540 on Wed May 27 19:54:49 MDT 2020
+# SW Build 2902540 on Wed May 27 19:54:35 MDT 2020
 # IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
-# Start of session at: Thu Apr 20 16:10:17 2023
-# Process ID: 31240
-# Current directory: U:/sdmay23-47/petalinux/hw/hw.runs/impl_1
-# Command line: vivado.exe -log system_wrapper.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source system_wrapper.tcl -notrace
-# Log file: U:/sdmay23-47/petalinux/hw/hw.runs/impl_1/system_wrapper.vdi
-# Journal file: U:/sdmay23-47/petalinux/hw/hw.runs/impl_1\vivado.jou
+# Start of session at: Sun Apr 23 19:54:16 2023
+# Process ID: 9356
+# Current directory: /home/longz/sdmay23-47/petalinux/hw/hw.runs/impl_1
+# Command line: vivado -log system_wrapper.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source system_wrapper.tcl -notrace
+# Log file: /home/longz/sdmay23-47/petalinux/hw/hw.runs/impl_1/system_wrapper.vdi
+# Journal file: /home/longz/sdmay23-47/petalinux/hw/hw.runs/impl_1/vivado.jou
 #-----------------------------------------------------------
 source system_wrapper.tcl -notrace

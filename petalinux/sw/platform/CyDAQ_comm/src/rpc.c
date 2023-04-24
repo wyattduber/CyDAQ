@@ -187,6 +187,14 @@ int rpc_setup(){
 		printf("COMM> ERROR: Failed to allocate memory for payload.\n");
 		return -1;
 	}
+
+	//sending LED init command
+	int rpc_data[1] = {};
+	rpc_data[0] = RPC_MESSAGE_LED_INIT;
+	rpc_send_message(MSG_TYPE_COMMAND,rpc_data,1);
+	printf("COMM> LED ON\r\n");
+
+
 	return 0;
 }
 

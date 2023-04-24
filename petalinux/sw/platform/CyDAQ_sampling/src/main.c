@@ -29,6 +29,7 @@ u8 getButtonChangeBlocking();
  * Baremetal main function.
  */
 int main(int argc, char *argv[]) {
+
 	xil_printf("\n**********CyDAQ baremetal sampling process***********\r\n");
 	init_platform();
 
@@ -44,7 +45,6 @@ int main(int argc, char *argv[]) {
 	if(init_dac80501() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! dac80501 init failed!\r\n");
 	}
-
 	rpc_setup(); //blocking
 
 	return 0;
