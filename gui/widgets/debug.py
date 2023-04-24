@@ -160,4 +160,7 @@ class LogHandler(QObject, logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        self.logSignal.emit(msg)
+        try:
+            self.logSignal.emit(msg)
+        except: 
+            pass # currently throws an error when the app is restarted with the file -> restart button, just don't write in this scenario
