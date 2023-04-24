@@ -48,6 +48,7 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget, CyDAQModeWidg
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+        self.logger = self.mainWindow.logger
 
         ### Below are the methods called when buttons are pressed ###
 
@@ -88,6 +89,7 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget, CyDAQModeWidg
             return
         self.infile_line.setText(self.file_name)
         self.infile_line.setStyleSheet("background: rgb(217, 217, 217);")
+        self.logger.debug(f"File picked: {self.file_name}")
 
     # Calls the start_app method in the child plotter window
     # Starts live plotting with the file send from the UI
@@ -119,15 +121,19 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget, CyDAQModeWidg
             error_func=self.mainWindow.showError
         )
 
+        self.logger.debug("Graphing Started")
+
     # Pause live plotting
     def pause(self):
         if self.window.running:
             if self.window.pause is True:
                 self.window.pause = False
                 self.pause_btn.setText("Pause")
+                self.logger.debug("Graphing Paused")
             else:
                 self.window.pause = True
                 self.pause_btn.setText("Resume")
+                self.logger.debug("Graphing Resumed")
 
     # Return to the home page
     # Removes the graph window as it's not longer needed on another page
@@ -152,6 +158,7 @@ class LiveStreamModeWidget(QtWidgets.QWidget, Ui_LiveStreamWidget, CyDAQModeWidg
     def clear(self):
         self.finishedStartBtn()
         self.window.clear()
+        self.logger.debug("Graph Window Cleared")
 
     # Changes the speed at which the points are plotted
     # Not working at the moment

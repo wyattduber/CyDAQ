@@ -3,7 +3,6 @@ import time
 from typing import Union
 from threading import Thread
 from waiting import wait
-
 from PyQt5.QtWidgets import QFileDialog
 from scipy.io import savemat
 
@@ -40,6 +39,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
         self.prev_geometry = None
+        self.logger = self.mainWindow.logger
 
         # Start Balance Beam Mode w/ Default Values
         self.paused = False
@@ -138,6 +138,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             if self.running:
                 self.stop()
             self.mainWindow.switchToModeSelector(self.prev_geometry)
+            self.logger.debug("Switched to Mode Selector from Balance Beam")
             return
         elif btn == "save_plot_data":
             if not self.running and len(self.plot_data) == 0:
@@ -213,6 +214,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
                 print("Maybe")
                 self._show_error("Balance Beam Not Connected!")
                 self.checking_connection = False
+                self.logger.error("Balance Beam Not Connected!")
 
                 # Resume the timer and log
                 self.mainWindow.startPingTimer()
@@ -223,6 +225,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         except Exception:
             self._show_error("Balance Beam Not Connected!")
             self.checking_connection = False
+            self.logger.error("Balance Beam Not Connected!")
 
             # Resume the timer and log
             self.mainWindow.startPingTimer()
@@ -232,6 +235,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         # Once balance beam is connected, start beam mode
         self.running = True
         self.start_time = time.time()
+        self.logger.debug("Balance Beam Started")
 
         # Wait to make sure that balance beam logging has started
         wait(lambda: self.wrapper.bb_log_mode)
@@ -252,6 +256,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.wrapper.stop_bb()
         self.mainWindow.startPingTimer()
         self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
+        self.logger.debug("Balance Beam Stopped")
 
     def sendConstants(self):
         """Send in the user-defined constants"""
@@ -264,11 +269,17 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.kd_output.setText(str(self.kd))
         self.n_output.setText(str(self.N))
 
+        self.logger.debug("Constants Sent!")
+        self.logger.debug(f"Constants: kp: {self.kp}, ki: {self.ki}, kd: {self.ki} N: {self.N}")
+
     def sendSetPoint(self):
         """Send in the user-defined set point in cm"""
         self.setcm = float(self.set_cm_input.text()) or 0
         self.wrapper.send_set_point(self.setcm)
         self.set_cm_output.setText(str(self.setcm))
+
+        self.logger.debug("Set Point Sent!")
+        self.logger.debug(f"Set Point: {self.setcm}")
 
     def saveStep(self):
         """Method that does nothing at the moment according to Matt Post"""
@@ -285,25 +296,32 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.savemat_thread = Thread(target=savemat, args=[self.filename, self.plot_data]).start()
         self.savemat_thread.start()
 
+        self.logger.debug(f"Saved Plot Data to: {self.filename}")
+
     def offsetInc(self):
         """Increase the offset for calibration"""
         self.wrapper.offset_inc()
+        self.logger.debug("Increased Offset")
 
     def offsetDec(self):
         """Decrease the offset for calibration"""
         self.wrapper.offset_dec()
+        self.logger.debug("Increased Offset")
 
     def pause(self):
         """Pause the plotting/balancing"""
         if self.paused:
             self.wrapper.resume_bb()
             self.paused = False
+            self.logger.debug("Resumed Balance Beam")
         else:
             self.wrapper.pause_bb()
             self.paused = True
+            self.logger.debug("Paused Balance Beam")
 
     def _show_error(self, message):
         """Private method to just show an error message box with a custom message"""
+        self.logger.error(message)
         errorbox = QMessageBox(self)
         errorbox.setWindowTitle("Error")
         errorbox.setText(message)
@@ -312,6 +330,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
     def _show_message(self, title, message, subtext=None):
         """Private method to just show an info message box with a custom message"""
+        self.logger.info(message)
         messagebox = QMessageBox(self)
         messagebox.setWindowTitle(title)
         messagebox.setText(message)

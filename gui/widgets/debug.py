@@ -72,6 +72,8 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):
         elif self.prev_index == 3:
             self.mainWindow.switchToLiveStream()
         elif self.prev_index == 4:
+            self.mainWindow.switchToExternalADC()
+        elif self.prev_index == 5:
             self.prev_index = tmp
             self.home()
 

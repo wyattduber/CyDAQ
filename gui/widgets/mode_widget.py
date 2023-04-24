@@ -1,7 +1,6 @@
 import sys
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import *
 
 class CyDAQModeWidget:

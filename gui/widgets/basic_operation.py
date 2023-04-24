@@ -33,11 +33,11 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
         self.setupUi(self)
 
         self.mainWindow = mainWindow
-        self.logger = self.mainWindow.logger
 
         # Share resources from main window
         self.threadpool = self.mainWindow.threadpool
         self.wrapper = mainWindow.wrapper
+        self.logger = self.mainWindow.logger
 
         # Some flag booleans to determine what mode the basic operation mode is in
         self.sampling = False

@@ -17,6 +17,7 @@ from master_enum import nameToEnum
 
 import config
 
+
 class CyDAQ_CLI:
     """
 	Handles the creation of a command line interface to communicate with a CyDAQ device. 
@@ -396,11 +397,11 @@ class CyDAQ_CLI:
         if outFile is None or outFile == "":
             outFile = self._generateFilename()
         _, extension = os.path.splitext(outFile)
-        
+
         # used if writing to matlab file
         matKeys = []
         matValues = []
-        
+
         writeFunction = self._writeCSV
         f = None
         if extension == ".csv":
@@ -441,7 +442,7 @@ class CyDAQ_CLI:
                     # where [DATA] is two byte sensor values
                     # new firmware mimics this, but can be changed
                     # Note: the @ at the start has already been read at this point
-                    if len(res)<=6 and b'@ACK!' in res:
+                    if len(res) <= 6 and b'@ACK!' in res:
                         listening = False
                         break
 
@@ -475,7 +476,7 @@ class CyDAQ_CLI:
         else:
             # TODO handle matlab files
             # new firmware, can use scp instead
-            print("Send stop command!") 
+            print("Send stop command!")
             self.cmd_obj.send_stop_sampling()
             self.cmd_obj.recieve_acknowlege_zybo()
             print("Fetching samples with scp!")
@@ -497,16 +498,17 @@ class CyDAQ_CLI:
                     self._print_to_output("ssh connect successful!", config.WRAPPER_IGNORE)
                 except BaseException as e:
                     # print("base exception caught!!", e)
-                    self._print_to_output("ssh connect failed! sleeping " + str(config.SSH_SLEEP_TIME) + " seconds", config.WRAPPER_IGNORE)
+                    self._print_to_output("ssh connect failed! sleeping " + str(config.SSH_SLEEP_TIME) + " seconds",
+                                          config.WRAPPER_IGNORE)
                     time.sleep(config.SSH_SLEEP_TIME)
                     ssh.close()
                     ssh_count += 1
                     if ssh_count > config.SSH_NUM_RETRIES:
                         print("max number of retry for SCP connection reached!", config.WRAPPER_ERROR)
-                        break 
+                        break
 
             if ssh is None:
-                pass # TODO print error
+                pass  # TODO print error
             scp = ssh.open_sftp()
 
             start_time = time.time()
@@ -516,10 +518,11 @@ class CyDAQ_CLI:
 
             end_time = time.time()
 
-            transfer_time =  end_time - start_time
+            transfer_time = end_time - start_time
             transfer_speed = int(os.path.getsize(config.SCP_LOCAL_PATH) / transfer_time)
 
-            self._print_to_output("SCP finished. Transfer speed: " + str(transfer_speed) + " bytes/second or " + str(transfer_speed/1000000) + " MB/second")
+            self._print_to_output("SCP finished. Transfer speed: " + str(transfer_speed) + " bytes/second or " + str(
+                transfer_speed / 1000000) + " MB/second")
 
             # Close the SCP client and SSH connection
             scp.close()
@@ -529,12 +532,12 @@ class CyDAQ_CLI:
             with open(config.SCP_LOCAL_PATH, "rb") as temp_file:
                 while True:
                     raw_num = temp_file.read(2)
-                    
+
                     if not raw_num:
                         break
 
                     raw_num = int.from_bytes(raw_num, byteorder="little", signed=False)
-                    
+
                     if extension == ".csv":
                         writeFunction(f, self._adc_raw_to_volts(raw_num), time_stamp=sample_time * period)
                     elif extension == ".mat":
@@ -552,7 +555,6 @@ class CyDAQ_CLI:
 
             self._print_to_output("Wrote samples to {}".format(outFile), config.WRAPPER_INFO)
 
-
     def _construct(self):
         pc = ParameterConstructor()
         ticket = pc.ticket()
@@ -561,7 +563,8 @@ class CyDAQ_CLI:
         while ticket is not None:
             self._print_to_output(ticket["Node"], config.WRAPPER_INFO)
             if ticket["Type"] == "Integer":
-                self._print_to_output("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]), config.WRAPPER_INFO)
+                self._print_to_output("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]),
+                                      config.WRAPPER_INFO)
             else:
                 if len(ticket["Options"]) == 1:
                     pc.input(ticket["Options"][0])
@@ -707,7 +710,7 @@ class CyDAQ_CLI:
             # Check for if the actual balance beam is not connected to the CyDAQ
             if type(buffer) == type(False):
                 if not buffer:
-                    if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
+                    if self.is_working_cmd_sent:  # Fix for the trailing "not connected" error when running stop
                         continue
                     self._print_to_output(config.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                     self.stop_thread = True
@@ -715,8 +718,8 @@ class CyDAQ_CLI:
                     print(f"Buffer is false for some reason! {buffer}")
                     return
             if buffer == "0xc9\r":  # Alternate balance beam not connected code
-                if self.is_working_cmd_sent: # Fix for the trailing "not connected" error when running stop
-                        continue
+                if self.is_working_cmd_sent:  # Fix for the trailing "not connected" error when running stop
+                    continue
                 self._print_to_output(config.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                 self.stop_thread = True
                 self.balance_beam_enabled = False

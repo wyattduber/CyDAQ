@@ -1,7 +1,6 @@
 # Standard Python Packages
 import os
 import sys
-import traceback
 import ctypes
 import shutil
 from sys import platform
@@ -20,6 +19,7 @@ from widgets import ModeSelectorWidget
 from widgets import BasicOperationModeWidget
 from widgets import LiveStreamModeWidget
 from widgets import BalanceBeamModeWidget
+from widgets import DACModeWidget
 from widgets import DebugWidget
 from widgets import ConnectionWidget
 from widgets import CyDAQModeWidget
@@ -27,6 +27,7 @@ from generated.MainWindowUI import Ui_MainWindow
 
 DEFAULT_WINDOW_WIDTH = 553
 DEFAULT_WINDOW_HEIGHT = 626
+
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -37,6 +38,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
 
 # This path must be appended because the CLI and GUI aren't in packages.
 # If both were in python packages, this issue wouldn't be here.
@@ -49,6 +51,8 @@ PING_TIMER_DELAY_MS = 1000
 LOG_TIMER_DELAY = 1000
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
+
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     """Main window that contains all other windows within it. 
     Responsible for communicating with CyDAQ through wrapper. """
@@ -73,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
             self.setWindowIcon(QIcon('../images/CyDAQ.jpg'))
-        
+
         self.setupUi(self)
         self.threadpool = QThreadPool()
 
@@ -90,7 +94,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = False
             errorbox = QMessageBox(self)
             errorbox.setWindowTitle("Error")
-            errorbox.setText("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
+            errorbox.setText(
+                "Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
             errorbox.setInformativeText("Try restarting the CyDAQ.")
             errorbox.setIcon(QMessageBox.Critical)
             errorbox.exec()
@@ -101,11 +106,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.mode_selector = ModeSelectorWidget(self)
         self.basic_operation = BasicOperationModeWidget(self)
         self.balance_beam = BalanceBeamModeWidget(self)
-        self.debug = DebugWidget(self) # Note, anything that happens before this line won't show up in the debug widget's log, but will show up in console/file logging
+        self.external_adc = DACModeWidget(self)
+        self.debug = DebugWidget(self)  # Note, anything that happens before this line won't show up in the debug widget's log, but will show up in console/file logging
 
         self.deleteTempSampleData()
 
-        self.stack = StackedLayout() 
+        self.stack = StackedLayout()
         self.connectionWidget = ConnectionWidget()
 
         self.centerWidget = QtWidgets.QWidget()
@@ -120,6 +126,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.widgets.append(self.basic_operation)
         self.widgets.append(self.balance_beam)
         self.widgets.append(self.livestream)
+        self.widgets.append(self.external_adc)
         self.widgets.append(self.debug)
         for widget in self.widgets:
             self.stack.addWidget(widget)
@@ -181,16 +188,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         if self.connected:
             self.logger.debug("Setting connected status green")
             self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
-                                                   "{"
-                                                   "color: #0EAD69;"
-                                                   "}")
+                                                                    "{"
+                                                                    "color: #0EAD69;"
+                                                                    "}")
         else:
             self.logger.debug("Setting connected status red")
             self.connectionWidget.connectionIndicator.setStyleSheet("#connectionIndicator"
-                                                       "{"
-                                                       "color: #DE3C4B;"
-                                                       "}")
-
+                                                                    "{"
+                                                                    "color: #DE3C4B;"
+                                                                    "}")
 
     def startPingTimer(self):
         self.logger.debug("Starting ping timer at interval: " + str(self.pingTimerInterval) + "ms")
@@ -204,31 +210,41 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
     def switchToModeSelector(self, prev_geometry=None):
         if prev_geometry is not None:
-            self.setMaximumSize(16777215, 16777215) # Reset maximum size
-            self.setMinimumSize(0, 0) # Reset minimum size
+            self.setMaximumSize(16777215, 16777215)  # Reset maximum size
+            self.setMinimumSize(0, 0)  # Reset minimum size
             self.setGeometry(prev_geometry)
         self.stack.setCurrentIndex(0)
         self.current_index = 0
+        self.logger.debug("Switched to Mode Selector")
 
     def switchToBasicOperation(self):
         self.stack.setCurrentIndex(1)
         self.current_index = 1
+        self.logger.debug("Switched to Basic Operation")
 
     def switchToBalanceBeam(self):
         # Check that the cydaq is connected and that balance beam mode isn't already on
         self.balance_beam.prev_geometry = self.geometry()
         self.stack.setCurrentIndex(2)
         self.current_index = 2
+        self.logger.debug("Switched to Balance Beam")
 
     def switchToLiveStream(self, came_from_basic):
         self.stack.setCurrentIndex(3)
         self.current_index = 3
         self.livestream.show_window(self.livestream)
         self.livestream.came_from_basic = came_from_basic
+        self.logger.debug("Switched to Live Stream Plotter")
+
+    def switchToExternalADC(self):
+        self.stack.setCurrentIndex(4)
+        self.current_index = 4
+        self.logger.debug("Switched to External ADC")
 
     def switchToDebug(self):
         self.debug.prev_index = self.current_index
-        self.stack.setCurrentIndex(4)
+        self.stack.setCurrentIndex(5)
+        self.logger.debug("Switched to Debug Page")
 
     def restartWindow(self):
         self.pingTimer.stop()
@@ -236,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.pingTimer = None
         self.wrapper.close()
         self.wrapper = None
+        self.logger.debug("Restarted Window")
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
     # Override of the closeEvent method to add a confirmation box 
@@ -245,6 +262,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                                      "Are you sure?",
                                      QMessageBox.Yes | QMessageBox.No)
         if close == QMessageBox.Yes:
+            self.logger.debug("Exited window")
             if self.connected:
                 self.balance_beam.running = False
                 self.wrapper.stop_bb()
@@ -262,6 +280,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                     os.remove(os.path.join(config.TEMP_DIR, file))
                     self.logger.debug("removed temp file: " + file)
 
+
 class StackedLayout(QtWidgets.QStackedLayout):
     def minimumSize(self):
         if self.currentWidget():
@@ -270,6 +289,7 @@ class StackedLayout(QtWidgets.QStackedLayout):
                 s = self.currentWidget().minimumSizeHint()
             return s
         return super().minimumSize()
+
 
 class InvalidInputException(IOError):
     pass
@@ -285,6 +305,7 @@ if __name__ == "__main__":
 
         # If exit wasn't normal, save debug logs to location of executable
         if currentExitCode != 0:
-            shutil.copyfile("C:\\Temp\\cydaq_current_log.log", f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
+            shutil.copyfile("C:\\Temp\\cydaq_current_log.log",
+                            f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
 
         app = None

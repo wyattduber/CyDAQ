@@ -16,3 +16,6 @@ data.txt
 # Matlab file extensions
 *.m
 *.mat
+
+# Logging files
+*.log

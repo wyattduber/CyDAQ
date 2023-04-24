@@ -50,7 +50,7 @@ class ctrl_comm:
             while not res.endswith(b"!"):
                 res += os.read(port, 1)
 
-            print("Command recieved in mock listener: ", res)
+            #print("Command recieved in mock listener: ", res)
 
             if res == b'stop!':
                 self._mock_bb_thread_running = False
@@ -99,7 +99,7 @@ class ctrl_comm:
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x16!':  # bb_start
+            elif res == b'@\x10!':  # bb_start
                 time.sleep(0.01)
                 # os.write(port, b'@')
                 # os.write(port, b'ACK')
@@ -164,6 +164,7 @@ class ctrl_comm:
 
     # Method that runs and sends data to the mock listening port for fake balance beam data
     def _mock_bb_data(self, port):
+        os.write(port, b' ')
         while self._mock_thread_running and self._mock_bb_thread_running:
             if self.bb_pause:
                 pass
@@ -172,7 +173,6 @@ class ctrl_comm:
             os.write(port, b'0')
             os.write(port, b'0')
             os.write(port, b'0')
-            os.write(port, b' ')
 
     def _init_comm(self):
         self.__s_comm = serial.Serial()

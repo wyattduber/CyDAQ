@@ -1,5 +1,3 @@
-#TODO is this needed anymore?
-
 import nltk
 import copy
 import numbers

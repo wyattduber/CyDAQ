@@ -9,7 +9,6 @@ import csv
 import time
 import pandas
 import logging
-import traceback
 
 import config
 
@@ -335,6 +334,7 @@ class CLI:
         to stop sending like the other commands do. Hence, the "force_async" option
         """
         response = self._send_command("bb_fetch_pos", force_async=True)
+        print(response)
         return response
 
     def writeALotOfData(self, **_):

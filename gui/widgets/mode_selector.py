@@ -26,13 +26,19 @@ class ModeSelectorWidget(QtWidgets.QWidget, Ui_ModeSelectorWidget, CyDAQModeWidg
         basicOperationButton.setText("Basic Operation")
         basicOperationButton.clicked.connect(lambda: self.mainWindow.switchToBasicOperation())
 
-        balanceBeamButton = self.balance_beam_btn
-        balanceBeamButton.setCheckable(True)
-        balanceBeamButton.setText("Balance Beam")
-        balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
-
         # TODO disabled for lab testing
         # liveStreamButton = self.livestream_btn
         # liveStreamButton.setCheckable(True)
         # liveStreamButton.setText("Plotter")
         # liveStreamButton.clicked.connect(lambda: self.mainWindow.switchToLiveStream(False))
+
+        balanceBeamButton = self.balance_beam_btn
+        balanceBeamButton.setCheckable(True)
+        balanceBeamButton.setText("Balance Beam")
+        balanceBeamButton.clicked.connect(lambda: self.mainWindow.switchToBalanceBeam())
+
+        # TODO Disabled due to no DAC implementation yet
+        # dacModeButton = self.external_adc_btn
+        # dacModeButton.setCheckable(True)
+        # dacModeButton.setText("External ADC")
+        # dacModeButton.clicked.connect(lambda: self.mainWindow.switchToExternalADC())
