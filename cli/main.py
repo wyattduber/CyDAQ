@@ -494,10 +494,10 @@ class CyDAQ_CLI:
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(config.SSH_HOSTNAME, config.SSH_PORT, config.SSH_USERNAME, config.SSH_PASSWORD)
                     connected = True
-                    self._print_to_output("ssh connect successful!", config.WRAPPER_INFO)
+                    self._print_to_output("ssh connect successful!", config.WRAPPER_IGNORE)
                 except BaseException as e:
                     # print("base exception caught!!", e)
-                    self._print_to_output("ssh connect failed! sleeping " + config.SSH_SLEEP_TIME + "seconds", config.WRAPPER_INFO)
+                    self._print_to_output("ssh connect failed! sleeping " + str(config.SSH_SLEEP_TIME) + " seconds", config.WRAPPER_IGNORE)
                     time.sleep(config.SSH_SLEEP_TIME)
                     ssh.close()
                     ssh_count += 1
