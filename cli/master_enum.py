@@ -1,15 +1,6 @@
-from enum import IntEnum, Enum
+from enum import IntEnum
 
-
-class sig_serial(Enum):
-    """
-    This class defines a table of commands that are sent between the firmware
-    and the front-end.
-
-    """
-    END_BYTE = "!"  # decimal for '!'
-    START_BYTE = "@"  # decimal for '@'
-
+import config
 
 class enum_commands(IntEnum):
     """

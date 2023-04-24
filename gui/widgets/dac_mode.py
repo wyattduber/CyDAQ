@@ -5,11 +5,12 @@ from PyQt5.QtGui import QDoubleValidator
 
 # Stuff From Project - May show as an error but it works
 from generated.DacModeWidgetUI import Ui_DAC_mode_widget
+from widgets.mode_widget import CyDAQModeWidget
 
 
 # TODO This will get used later - Might not be included for final product in sdmay23-47
-class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
-    def __init__(self, mainWindow, cyDAQModeWidget):
+class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget, CyDAQModeWidget):
+    def __init__(self, mainWindow):
         super(DACModeWidget, self).__init__()
         self.setupUi(self)
         validator = QDoubleValidator(0, 2147483647, 9)
@@ -18,7 +19,7 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget):
         self.gen_rate_input.setValidator(validator)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = cyDAQModeWidget
+        self.cyDAQModeWidget = CyDAQModeWidget()
 
         def onDropdownChanged():
 

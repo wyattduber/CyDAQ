@@ -5,12 +5,7 @@ import time
 import serial
 import serial.tools.list_ports
 
-# Old firmware
-OLD_COMM_PORT_DESCRIPTION = "USB Serial Port"
-
-# New firmware
-NEW_COMM_PORT_DESCRIPTION = "USB Serial Device"
-
+import config
 
 class ctrl_comm:
     """
@@ -48,9 +43,6 @@ class ctrl_comm:
             self.mock_bb_thread = threading.Thread(target=self._mock_bb_data, args=[master])
             self._mock_bb_thread_running = False
 
-    # def __del__(self):
-    #     self.kill_mock()
-
     def _mock_listener(self, port):
         print("---Mock serial started listening on port: {}---".format(port))
         while self._mock_thread_running:
@@ -58,7 +50,7 @@ class ctrl_comm:
             while not res.endswith(b"!"):
                 res += os.read(port, 1)
 
-            print("Command recieved in mock listener: ", res)
+            #print("Command recieved in mock listener: ", res)
 
             if res == b'stop!':
                 self._mock_bb_thread_running = False
@@ -107,7 +99,7 @@ class ctrl_comm:
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x16!':  # bb_start
+            elif res == b'@\x10!':  # bb_start
                 time.sleep(0.01)
                 # os.write(port, b'@')
                 # os.write(port, b'ACK')
@@ -172,6 +164,7 @@ class ctrl_comm:
 
     # Method that runs and sends data to the mock listening port for fake balance beam data
     def _mock_bb_data(self, port):
+        os.write(port, b' ')
         while self._mock_thread_running and self._mock_bb_thread_running:
             if self.bb_pause:
                 pass
@@ -180,7 +173,6 @@ class ctrl_comm:
             os.write(port, b'0')
             os.write(port, b'0')
             os.write(port, b'0')
-            os.write(port, b' ')
 
     def _init_comm(self):
         self.__s_comm = serial.Serial()
@@ -190,32 +182,36 @@ class ctrl_comm:
         except:
             # TODO bad..
             pass
-        self.__s_comm.baudrate = 921600
-        self.__s_comm.bytesize = serial.EIGHTBITS
-        self.__s_comm.stopbits = serial.STOPBITS_ONE
-        self.__s_comm.xonxoff = False
-        self.__s_comm.rtscts = False
-        self.__s_comm.dsrdtr = False
-        self.__s_comm.parity = serial.PARITY_NONE  # PARITY_EVEN
-        self.__s_comm.timeout = 4
-        self.__order = "little"
+        self.__s_comm.baudrate = config.SERIAL_BAUDRATE
+        self.__s_comm.bytesize = config.SERIAL_BYTESIZE
+        self.__s_comm.stopbits = config.SERIAL_STOPBITS
+        self.__s_comm.xonxoff = config.SERIAL_XONXOFF
+        self.__s_comm.rtscts = config.SERIAL_RTSCTS
+        self.__s_comm.dsrdtr = config.SERIAL_DSRDTR
+        self.__s_comm.parity = config.SERIAL_PARITY
+        self.__s_comm.timeout = config.SERIAL_TIMEOUT
+        self.__order = config.SERIAL_ORDER
 
     def get_port(self):
         """
-        TODO redo this description
-        Returns a list of available serial devices on the host computer.
-        Typical usage is to call this function to determine the computer's
-        ports and open a connection with the open() function, using one of
-        the devices returned by this function.
+        Returns the name of the correct serial device to connect to. 
 
+        Connected device could be running old or new firmware, need to figure out which.
+        old firmware:
+        1) Only one USB port detected, has name "USB Serial Port".
+
+        new firmware:
+        1) Only one USB port detected, has name "USB Serial Device" (basic scenario in lab).
+        2) Two USB ports detected, one is "USB Serial Port" the other is "USB Serial Device" (when debugging) - need to pick the "USB Serial Device" one.
+        3) Only one USB port detected, has name "USB Serial Port". This occurs while petalinux is booting and the CyDAQ_comm app hasn't started yet
+            The function will still return this port though, so it's up to other parts of the program to decide if that port is actually "good" 
+            (by pinging it and waiting for ACK most likely)
+        
         Args:
             None
 
         Returns:
-            A list of available serial devices, as strings
-
-    ****CHANGE: Only the COM port that says 'USB Serial Port' (this is what the zybo
-                shows up as) will appear
+            The name of the COMM device to try to connect to, or None if none could be found
         """
         if self.mock_mode:
             # Mock mode should already have the port set
@@ -224,26 +220,19 @@ class ctrl_comm:
         all_ports = serial.tools.list_ports.comports()
         open_ports = []
         for element in all_ports:
-            if OLD_COMM_PORT_DESCRIPTION in element.description or NEW_COMM_PORT_DESCRIPTION in element.description:
+            if config.OLD_COMM_PORT_DESCRIPTION in element.description or config.NEW_COMM_PORT_DESCRIPTION in element.description:
                 open_ports.append((element.description, element.device))
 
-        # connected device could be running old or new firmware, need to figure out which
-        # old firmware:
-        # 1) Only one USB port detected, has name "USB Serial Port".
-
-        # new firmware:
-        # 1) Only one USB port detected, has name "USB Serial Device" (basic scenario in lab).
-        # 2) Two USB ports detected, one is "USB Serial Port" the other is "USB Serial" (when debugging) - need to pick the "USB Serial Device" one.
         if len(open_ports) == 0:
             return None
         if len(open_ports) == 1:
-            self.old_firmware = OLD_COMM_PORT_DESCRIPTION in open_ports[0][0]
+            self.old_firmware = config.OLD_COMM_PORT_DESCRIPTION in open_ports[0][0]
             return str(open_ports[0][1])
         elif len(open_ports) == 2:
             self.old_firmware = False
-            if NEW_COMM_PORT_DESCRIPTION in open_ports[0][0]:
+            if config.NEW_COMM_PORT_DESCRIPTION in open_ports[0][0]:
                 return str(open_ports[0][1])
-            elif NEW_COMM_PORT_DESCRIPTION in open_ports[1][0]:
+            elif config.NEW_COMM_PORT_DESCRIPTION in open_ports[1][0]:
                 return str(open_ports[1][1])
             else:
                 print("Couldn't find correct new firmware port. Unable to proceed!")

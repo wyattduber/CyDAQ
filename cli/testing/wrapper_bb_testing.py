@@ -14,7 +14,6 @@ def main():
     sleep(10)
     global runbool
     runbool = False
-    thread = None
     cli._send_command("bb_stop")
     cli.close()
 

@@ -4,7 +4,7 @@ import struct
 import serial
 import time
 
-from cli.master_enum import enum_commands, sig_serial
+from cli.master_enum import enum_commands, config
 
 ser = serial.Serial(
     port="COM10",
@@ -19,25 +19,25 @@ ser = serial.Serial(
 )
 print(ser)
 
-ser.write(sig_serial.START_BYTE.value.encode('ascii'))
+ser.write(config.START_BYTE.encode('ascii'))
 ser.write(struct.pack('!B', enum_commands.PING.value))
-ser.write(sig_serial.END_BYTE.value.encode('ascii'))
+ser.write(config.END_BYTE.encode('ascii'))
 
-ser.write(sig_serial.START_BYTE.value.encode('ascii'))
+ser.write(config.START_BYTE.encode('ascii'))
 ser.write(struct.pack('!B', enum_commands.PING.value))
-ser.write(sig_serial.END_BYTE.value.encode('ascii'))
+ser.write(config.END_BYTE.encode('ascii'))
 
-ser.write(sig_serial.START_BYTE.value.encode())
+ser.write(config.START_BYTE.encode())
 ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
 ser.write(struct.pack('!B', enum_commands.START_SAMPLING.value))
-ser.write(sig_serial.END_BYTE.value.encode())
+ser.write(config.END_BYTE.encode())
 
 time.sleep(1)
 
 
-ser.write(sig_serial.START_BYTE.value.encode())
+ser.write(config.START_BYTE.encode())
 ser.write(struct.pack('!B', enum_commands.FETCH_SAMPLES.value))
-ser.write(sig_serial.END_BYTE.value.encode())
+ser.write(config.END_BYTE.encode())
 
 while True:
     data = ser.read_all()

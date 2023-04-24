@@ -6,10 +6,8 @@ from time import sleep
 
 cli = CLIWrapper.CLI()
 
-cli.start_bb()
-sleep(1)
-cli.stop_bb()
+cli.enable_mock()
 
-cli.start_bb(0.8, 0.2, 0.4, 16, 0)
+print(str(cli.start_bb()))
 sleep(1)
-cli.stop_bb()
+print(str(cli.stop_bb()))

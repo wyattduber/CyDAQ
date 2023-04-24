@@ -1,34 +1,16 @@
 import os
 import pexpect
-from sys import platform
 from pexpect import popen_spawn
 from threading import Thread
 from waiting import wait
 import json
 import re
 import csv
-import sys
 import time
 import pandas
+import logging
 
-from main import CyDAQ_CLI
-
-cli_tool = CyDAQ_CLI()
-
-CLI_MAIN_FILE_NAME = "main.py"
-INPUT_CHAR = ">"
-NOT_CONNECTED = "Zybo not connected"
-LOG_MAX_LENGTH = 10000
-
-# Log file location for different OS's (development)
-if platform == "win32":
-    DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
-else:
-    DEFAULT_LOG_FILE = f"/tmp/cydaq_current_log.log"
-
-# Default timeout for all commands (in seconds). May be increased if some commands take longer
-TIMEOUT = 20
-
+import config
 
 class CLI:
     """
@@ -40,7 +22,7 @@ class CLI:
     print(cli.ping())
     """
 
-    def __init__(self):
+    def __init__(self, logger=None):
         # Global Variables
         self.running_ping_command = False
         self.bb_log_thread = None
@@ -48,27 +30,17 @@ class CLI:
         self.mocking = False
 
         # Logging
-        self.log = ""
-        self.log_buffer = ""
-
-        # Remove existing file if it exists
-        if os.path.exists(DEFAULT_LOG_FILE):
-            try:
-                os.remove(DEFAULT_LOG_FILE)
-            except PermissionError:
-                print("Unable to delete log file!! ", DEFAULT_LOG_FILE)
-
-        # Create log file
-        self.logfile = open(DEFAULT_LOG_FILE, 'a+')
-        # sys.stdout = self.logfile # This most likely breaks communication between the CLI and wrapper. TODO delete?
+        self.logger = logger
+        if self.logger is None:
+            self.logger = logging.getLogger(__name__)
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
 
-        dirname = f"\"{os.path.join(os.path.dirname(__file__), CLI_MAIN_FILE_NAME)}\""
+        dirname = f"\"{os.path.join(os.path.dirname(__file__), config.CLI_MAIN_FILE_NAME)}\""
 
         # Create the pexpect shell
-        self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
+        self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
 
         # Enable the connection tracker
         self.connectionEnabled = True
@@ -76,26 +48,19 @@ class CLI:
         # Wait for cli to start up. It will NOT be in wrapper mode yet
         # Also, check to make sure that the command shouldn't be another variation of the python command
         try:
-            self.p.expect(cli_tool.CLI_START_MESSAGE)  # Check with `python3` first
+            self.p.expect(config.CLI_START_MESSAGE)  # Check with `python3` first
         except pexpect.exceptions.EOF:
             try:
                 pythonCmd = "python "  # Check for `python` next
-                self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
-                self.p.expect(cli_tool.CLI_START_MESSAGE)
+                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
+                self.p.expect(config.CLI_START_MESSAGE)
             except pexpect.exceptions.EOF:
                 pythonCmd = "py "  # Finally, check for `py` last
-                self.p = popen_spawn.PopenSpawn(timeout=TIMEOUT, cmd=pythonCmd + dirname)
-                self.p.expect(cli_tool.CLI_START_MESSAGE)
-
-        # If the CyDAQ is not connected at this point the CLI will immedately say so
-        try:
-            self.p.expect(NOT_CONNECTED, timeout=0)
-            raise cyDAQNotConnectedException
-        except pexpect.exceptions.TIMEOUT:
-            pass
+                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
+                self.p.expect(config.CLI_START_MESSAGE)
 
         # Wait for command input
-        self.p.expect(INPUT_CHAR, timeout=5)
+        self.p.expect(config.INPUT_CHAR, timeout=5)
 
         self.running_command = False
 
@@ -105,13 +70,17 @@ class CLI:
     def _send_command(self, command, wrapper_mode=True, force_async=False, **_):
         """Send a command to the cyDAQ and returns the result"""
         if not self.connectionEnabled:
+            self.logger.debug("wrapper connectionEnabled false, not sending command: " + command)
             return
-
+        
         # Use the waiting library to prevent two commands from being run at the same time
         if not force_async:
             wait(lambda: not self.running_command)
 
         # Send command
+        if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
+            self.logger.debug("wrapper send cmd: " + command)
+        fail_send = False
         try:
             if not force_async:
                 self.running_command = True
@@ -119,8 +88,10 @@ class CLI:
                 self.running_ping_command = True
             self.p.sendline(command)
         except OSError as e:
-            print("OSError in wrapper _send_command for command:", command)
-            print("OsError: ", e)
+            fail_send = True
+            self.logger.error("OSError in wrapper _send_command for command: " + command)
+            self.logger.error("OsError: " + str(e))
+            self.logger.error("Last output from CLI: " + str(self.p.before))
             if not force_async:
                 self.running_command = False
             raise cyDAQNotConnectedException
@@ -130,10 +101,12 @@ class CLI:
                 'bb_set, [0-9]*\.[0-9]+', command):
             # Wait for response
             try:
-                self.p.expect(INPUT_CHAR)
+                self.p.expect(config.INPUT_CHAR, timeout=config.WRAPPER_TIMEOUT)
             except pexpect.exceptions.EOF:
+                self.logger.error("Unexpected EOF: Last output from CLI: " + str(self.p.before))
                 raise CLICloseException(self.p.before)
             except pexpect.exceptions.TIMEOUT:
+                self.logger.error("Pexpect timeout: Last output from CLI: " + str(self.p.before))
                 raise CLITimeoutException
             finally:
                 self.running_command = False
@@ -141,21 +114,20 @@ class CLI:
 
             # Parse response
             if response is None:
+                self.logger.info("No response from CLI")
                 raise CLINoResponseException
             response = response.decode()
             response = response.strip()
 
-            self.writeLog("response", response)
-            print(response)
-            if command != "bb_fetch_pos":  # Can get a bit spammy
-                self.writeLog("cmd", command)
-                # print(f"Cmd: {command}")
+            if fail_send or (command != "bb_fetch_pos" and command != "ping"):  # Can get a bit spammy
+                self.logger.debug("wrapper response: " + response)
+
             if wrapper_mode:
                 if command == "ping":
                     self.running_ping_command = False
                 return self._parse_wrapper_mode_message(response)
             else:
-                if response.strip() == cli_tool.CYDAQ_NOT_CONNECTED:
+                if response.strip() == config.CYDAQ_NOT_CONNECTED:
                     raise cyDAQNotConnectedException
                 if command == "ping":
                     self.running_ping_command = False
@@ -181,13 +153,13 @@ class CLI:
         if len(matches) > 0:
             level = matches[0][0]
             message = matches[0][1].strip()
-            if level == cli_tool.WRAPPER_INFO:
+            if level == config.WRAPPER_INFO:
                 return message
-            elif level == cli_tool.WRAPPER_ERROR:
+            elif level == config.WRAPPER_ERROR:
                 self._error_parser(message)
-            elif level == cli_tool.WRAPPER_IGNORE:
+            elif level == config.WRAPPER_IGNORE:
                 return ""
-            elif level == cli_tool.WRAPPER_BB_LIVE:
+            elif level == config.WRAPPER_BB_LIVE:
                 return message
             else:
                 raise CLIUnknownLogLevelException
@@ -196,12 +168,12 @@ class CLI:
 
     def _error_parser(self, message):
         """Parses known error messages and throws the appropiate exception if needed. Otherwise, throws a generic exception."""
-        if message == cli_tool.CYDAQ_NOT_CONNECTED:
+        if message == config.CYDAQ_NOT_CONNECTED:
             raise cyDAQNotConnectedException
-        elif message == cli_tool.BALANCE_BEAM_NOT_CONNECTED:
+        elif message == config.BALANCE_BEAM_NOT_CONNECTED:
             self.stop_bb()
             raise BalanceBeamNotConnectedException
-        elif message == "Error opening file!":  # TODO make constant
+        elif message == config.ERROR_OPENING_FILE:
             raise cyDAQFileException("Error opening the file specified! Is it already open in another program?")
         else:
             raise CLIException(message)
@@ -209,17 +181,13 @@ class CLI:
     def ping(self, **_):
         """Ping cyDAQ, returns the response time in microseconds or -1 if error"""
         response = self._send_command("ping")
-        print("ping response: ", response)
-        # if response == "CyDAQ not connected": #TODO make constant
-        #     return -1
         try:
             return int(''.join(filter(str.isdigit, response)))  # type: ignore
         except ValueError:
+            if response == config.CYDAQ_NOT_CONNECTED:
+                return -1
             if response == "":
                 return -1
-                # raise CLIException("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? "
-                #                    "Is there another instance running/connected to the CyDAQ? "
-                #                    "Is there another program using that com port?")
             elif response == "Error sending config!":
                 pass # Do nothing since error is already handled
             else:
@@ -320,7 +288,7 @@ class CLI:
 
         # Check if the balance beam is connected before retrieving data
         response = self._send_command(f"bb_start, {kp} {ki} {kd} {N} {set}")
-        if not response == CyDAQ_CLI.BALANCE_BEAM_NOT_CONNECTED:
+        if not response == config.BALANCE_BEAM_NOT_CONNECTED:
             self.bb_log_mode = True
             self.bb_log_thread = Thread(target=self.retrieve_bb_pos)
             self.bb_log_thread.start()
@@ -366,10 +334,11 @@ class CLI:
         to stop sending like the other commands do. Hence, the "force_async" option
         """
         response = self._send_command("bb_fetch_pos", force_async=True)
+        print(response)
         return response
 
     def writeALotOfData(self, **_):
-        print("Writing Data for 20 Seconds....")
+        self.logger.debug("Writing Data for 20 Seconds....")
         start = round(time.time())
         with open('lotsOfData.csv', 'w', encoding='utf-8') as file:
             header = ['Times']
@@ -380,8 +349,8 @@ class CLI:
                 writer.writerows([{'Times': f'{time.time()}'}])
                 curr = round(time.time())
             file.close()
-        print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
-        print("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
+        self.logger.debug("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
+        self.logger.debug("Lines Per Second: " + "{:,}".format(round(len(pandas.read_csv('lotsOfData.csv')) / 20)))
 
     def writeALotOfDataV2(self, **_):
         start = time.time()
@@ -392,44 +361,23 @@ class CLI:
                 f.write(data)
         delta = time.time() - start
         numLines = len(pandas.read_csv('lotsOfData.csv'))
-        print("Total Lines: " + "{:,}".format(numLines))
-        print("Time to write: ", delta)
-        print("Lines per second: {:,}".format(round(numLines / delta)))
+        self.logger.debug("Total Lines: " + "{:,}".format(numLines))
+        self.logger.debug("Time to write: " + delta)
+        self.logger.debug("Lines per second: {:,}".format(round(numLines / delta)))
 
     def readALotOfData(self, label, **_):
         with open('lotsOfData.csv', newline='') as csvfile:
             csvFile = pandas.read_csv('lotsOfData.csv')
-            print("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
+            self.logger.debug("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
             start = round(time.time())
             file = csv.reader(csvfile)
             for i in file:
-                print(str(i))
+                self.logger.debug(str(i))
             stop = round(time.time())
             csvfile.close()
-        print("Time Taken: " + str(round(stop - start)))
-        print("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
-        print("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
-
-    def writeLog(self, type, string, **_):
-        if type == "response":
-            self.logfile.write(f"{string}\n")
-            self.log_buffer = f"{string}\n{self.log_buffer}"
-        elif type == "cmd":
-            self.logfile.write(f"Cmd: {string}\n")
-            self.log_buffer = f"Cmd: {string}\n{self.log_buffer}"
-
-    def getLog(self, **_):
-        if self.log_buffer != "":
-            lines = self.log.splitlines()
-            if len(lines) > LOG_MAX_LENGTH:
-                lines = lines[0:LOG_MAX_LENGTH - len(self.log_buffer.splitlines())]
-                self.log = '\n'.join(lines)
-            self.log = f"{self.log_buffer}\n{self.log}"
-            self.log_buffer = ""
-        return self.log
-
-    def clearLog(self, **_):
-        self.log = ""
+        self.logger.debug("Time Taken: " + str(round(stop - start)))
+        self.logger.debug("Total Lines: " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))))
+        self.logger.debug("Lines Per Second: " + "{:,}".format(round(len(csvFile) / (stop - start))))
 
     def convertMillis(self, millis, **_):
         seconds = (millis / 1000) % 60
@@ -482,7 +430,7 @@ class CLITimeoutException(Exception):
     """Thrown when the CLI doesn't write to output in TIMEOUT time"""
 
     def __init__(self):
-        self.message = "CLI didn't write to output in " + str(TIMEOUT) + " seconds."
+        self.message = "CLI didn't write to output in " + str(config.WRAPPER_TIMEOUT) + " seconds."
 
 
 class CLIUnknownLogLevelException(Exception):

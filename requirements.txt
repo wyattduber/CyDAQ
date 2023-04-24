@@ -1,10 +1,10 @@
 nltk==3.8.1
-numpy==1.24.2
+numpy==1.24.3
 scipy==1.10.1
-setuptools==67.6.1
-pandas==2.0.0
+setuptools==67.7.2
+pandas==2.0.1
 pexpect
-pglive==0.6.2
+pglive==0.6.3
 PyInstaller==5.10.1
 pylint==2.17.2
 PyQt5==5.15.9 # was having install issues with this one, tentatively reenabled
