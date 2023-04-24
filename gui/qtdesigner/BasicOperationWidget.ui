@@ -372,43 +372,13 @@ QPushButton {
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="mid_corner_input_box">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QLineEdit" name="mid_corner_input_box">
        <property name="minimumSize">
         <size>
          <width>190</width>
          <height>30</height>
         </size>
        </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="currentText">
-        <string/>
-       </property>
-       <property name="currentIndex">
-        <number>-1</number>
-       </property>
-       <item>
-        <property name="text">
-         <string>100</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1000</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>10000</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item>

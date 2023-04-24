@@ -19,7 +19,6 @@ class DACModeWidget(QtWidgets.QWidget, Ui_DAC_mode_widget, CyDAQModeWidget):
         self.gen_rate_input.setValidator(validator)
 
         self.mainWindow = mainWindow
-        self.cyDAQModeWidget = CyDAQModeWidget()
 
         def onDropdownChanged():
 

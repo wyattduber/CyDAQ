@@ -248,7 +248,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
             tmp_dict["Upper Corner"] = "0"
 
         try:
-            tmp = "{:.0f}".format(float(self.mid_corner_input_box.currentText()))
+            tmp = "{:.0f}".format(float(self.mid_corner_input_box.text()))
             if tmp == "inf":
                 tmp_dict["Mid Corner"] = "99999999"
             else:

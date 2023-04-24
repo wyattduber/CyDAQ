@@ -15,7 +15,6 @@ from widgets import config
 from widgets.mode_widget import CyDAQModeWidget
 
 # Constants
-LOG_TIMER_DELAY = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
 
 class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):

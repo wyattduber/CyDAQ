@@ -291,7 +291,7 @@ class CyDAQ_CLI:
         # if the debug port doesn't respond with ACK, then we know it's not actually the old firmware.
         # That being said, the old firmware can't ping the CyDAQ while sampling. So while the 
         # CLI is in "sampling mode", don't do this extra check.
-        if not self.sampling and self.cmd_obj.port is not None and self.cmd_obj.port != "" and self.cmd_obj.ping_zybo() is False:
+        if not self.sampling and not self.balance_beam_enabled and self.cmd_obj.port is not None and self.cmd_obj.port != "" and self.cmd_obj.ping_zybo() is False:
             self.cmd_obj.ctrl_comm_obj.old_firmware = False
             self.cmd_obj.port = None
 
@@ -672,10 +672,14 @@ class CyDAQ_CLI:
         self.bb_thread.start()
 
     def _stop_beam_mode(self):
-        self.cmd_obj.stop_bb()
-        self.balance_beam_enabled = False
         self.stop_thread = True
         self.bb_thread = None
+
+        # Pause to give the thread enough time to finish
+        time.sleep(0.1)
+
+        self.cmd_obj.stop_bb()
+        self.balance_beam_enabled = False
         self.is_working_cmd_sent = False
 
     def _update_constants(self, kp, ki, kd, N):
@@ -715,6 +719,7 @@ class CyDAQ_CLI:
                     self._print_to_output(config.BALANCE_BEAM_NOT_CONNECTED, log_level="ERROR")
                     self.stop_thread = True
                     self.balance_beam_enabled = False
+                    self._stop_beam_mode()
                     print(f"Buffer is false for some reason! {buffer}")
                     return
             if buffer == "0xc9\r":  # Alternate balance beam not connected code

@@ -23,7 +23,6 @@ from widgets.mode_widget import CyDAQModeWidget
 
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
-LOG_TIMER_DEFAULT = 1000
 
 
 class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWidget):
@@ -193,12 +192,16 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         this does not happen.
         """
         # Start checking status in the background
-        self.connection_thread = Thread(target=self.start_bb_mode)
-        self.connection_thread.start()
+        # self.connection_thread = Thread(target=self.start_bb_mode)
+        # self.connection_thread.start()
+
+        self.runInWorkerThread(
+            func=self.start_bb_mode,
+            error_func=self.showError
+        )
 
         # Stop ping timer from other window, set log to update instantly for live data
         self.mainWindow.stopPingTimer()
-        self.mainWindow.debug.log_timer.setInterval(0)
 
     def start_bb_mode(self):
         """
@@ -211,17 +214,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         # Start Balance Beam Mode from Wrapper
         try:
             if not self.wrapper.start_bb(self.kp, self.ki, self.kd, self.N, self.set):
-                print("Maybe")
                 self._show_error("Balance Beam Not Connected!")
                 self.checking_connection = False
                 self.logger.error("Balance Beam Not Connected!")
 
                 # Resume the timer and log
                 self.mainWindow.startPingTimer()
-                self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
                 return
             self.checking_connection = False
-            print("Maybe not")
         except Exception:
             self._show_error("Balance Beam Not Connected!")
             self.checking_connection = False
@@ -229,16 +229,12 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
             # Resume the timer and log
             self.mainWindow.startPingTimer()
-            self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
             return
 
         # Once balance beam is connected, start beam mode
         self.running = True
         self.start_time = time.time()
         self.logger.debug("Balance Beam Started")
-
-        # Wait to make sure that balance beam logging has started
-        wait(lambda: self.wrapper.bb_log_mode)
 
         # Start Graphing of Data
         self.graph_thread = Thread(target=self.graph_data)
@@ -255,7 +251,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.savemat_thread = None
         self.wrapper.stop_bb()
         self.mainWindow.startPingTimer()
-        self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
         self.logger.debug("Balance Beam Stopped")
 
     def sendConstants(self):
@@ -359,7 +354,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
                 self.running = False
 
                 self.mainWindow.startPingTimer()
-                self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
                 return
 
             # Don't graph anything if paused or paused to run a command
@@ -373,7 +367,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
                     self.running = False
 
                     self.mainWindow.startPingTimer()
-                    self.mainWindow.debug.log_timer.setInterval(LOG_TIMER_DEFAULT)
                     return
                 continue
 
