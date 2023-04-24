@@ -51,6 +51,9 @@
 //request function calls
 #define RPC_MESSAGE_GET_SAMPLE_COUNT		17
 
+//LED commend
+#define RPC_MESSAGE_LED_INIT 18
+
 //Message type from comm
 //#define COMM_COMMAND_MSG 0
 #define COMM_SAMPLE_MSG 1

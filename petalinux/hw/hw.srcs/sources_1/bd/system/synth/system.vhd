@@ -1,8 +1,8 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
---Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
---Date        : Thu Apr 20 16:07:27 2023
---Host        : DESKTOP-F6K4P93 running 64-bit major release  (build 9200)
+--Tool Version: Vivado v.2020.1 (lin64) Build 2902540 Wed May 27 19:54:35 MDT 2020
+--Date        : Sun Apr 23 19:52:15 2023
+--Host        : ubuntu-18 running 64-bit Ubuntu 18.04.6 LTS
 --Command     : generate_target system.bd
 --Design      : system
 --Purpose     : IP block netlist
@@ -5129,6 +5129,9 @@ entity system is
     leds_4bits_tri_i : in STD_LOGIC_VECTOR ( 3 downto 0 );
     leds_4bits_tri_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
     leds_4bits_tri_t : out STD_LOGIC_VECTOR ( 3 downto 0 );
+    rgb_led_tri_i : in STD_LOGIC_VECTOR ( 2 downto 0 );
+    rgb_led_tri_o : out STD_LOGIC_VECTOR ( 2 downto 0 );
+    rgb_led_tri_t : out STD_LOGIC_VECTOR ( 2 downto 0 );
     servo_pwm : out STD_LOGIC;
     spi_rtl_0_io0_i : in STD_LOGIC;
     spi_rtl_0_io0_o : out STD_LOGIC;
@@ -5616,7 +5619,10 @@ architecture STRUCTURE of system is
     s_axi_rready : in STD_LOGIC;
     gpio_io_i : in STD_LOGIC_VECTOR ( 3 downto 0 );
     gpio_io_o : out STD_LOGIC_VECTOR ( 3 downto 0 );
-    gpio_io_t : out STD_LOGIC_VECTOR ( 3 downto 0 )
+    gpio_io_t : out STD_LOGIC_VECTOR ( 3 downto 0 );
+    gpio2_io_i : in STD_LOGIC_VECTOR ( 2 downto 0 );
+    gpio2_io_o : out STD_LOGIC_VECTOR ( 2 downto 0 );
+    gpio2_io_t : out STD_LOGIC_VECTOR ( 2 downto 0 )
   );
   end component system_axi_gpio_1_0;
   signal Vaux14_0_1_V_N : STD_LOGIC;
@@ -5648,6 +5654,9 @@ architecture STRUCTURE of system is
   signal axi_gpio_eth_GPIO_TRI_I : STD_LOGIC_VECTOR ( 0 to 0 );
   signal axi_gpio_eth_GPIO_TRI_O : STD_LOGIC_VECTOR ( 0 to 0 );
   signal axi_gpio_eth_GPIO_TRI_T : STD_LOGIC_VECTOR ( 0 to 0 );
+  signal axi_gpio_led_GPIO2_TRI_I : STD_LOGIC_VECTOR ( 2 downto 0 );
+  signal axi_gpio_led_GPIO2_TRI_O : STD_LOGIC_VECTOR ( 2 downto 0 );
+  signal axi_gpio_led_GPIO2_TRI_T : STD_LOGIC_VECTOR ( 2 downto 0 );
   signal axi_iic_0_IIC_SCL_I : STD_LOGIC;
   signal axi_iic_0_IIC_SCL_O : STD_LOGIC;
   signal axi_iic_0_IIC_SCL_T : STD_LOGIC;
@@ -6040,6 +6049,9 @@ architecture STRUCTURE of system is
   attribute X_INTERFACE_INFO of leds_4bits_tri_i : signal is "xilinx.com:interface:gpio:1.0 leds_4bits TRI_I";
   attribute X_INTERFACE_INFO of leds_4bits_tri_o : signal is "xilinx.com:interface:gpio:1.0 leds_4bits TRI_O";
   attribute X_INTERFACE_INFO of leds_4bits_tri_t : signal is "xilinx.com:interface:gpio:1.0 leds_4bits TRI_T";
+  attribute X_INTERFACE_INFO of rgb_led_tri_i : signal is "xilinx.com:interface:gpio:1.0 rgb_led TRI_I";
+  attribute X_INTERFACE_INFO of rgb_led_tri_o : signal is "xilinx.com:interface:gpio:1.0 rgb_led TRI_O";
+  attribute X_INTERFACE_INFO of rgb_led_tri_t : signal is "xilinx.com:interface:gpio:1.0 rgb_led TRI_T";
   attribute X_INTERFACE_INFO of spi_rtl_0_ss_i : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_I";
   attribute X_INTERFACE_INFO of spi_rtl_0_ss_o : signal is "xilinx.com:interface:spi:1.0 spi_rtl_0 SS_O";
 begin
@@ -6051,6 +6063,7 @@ begin
   Vp_Vn_0_1_V_P <= Vp_Vn_0_v_p;
   axi_gpio_1_GPIO_TRI_I(3 downto 0) <= leds_4bits_tri_i(3 downto 0);
   axi_gpio_eth_GPIO_TRI_I(0) <= eth_rst_b_tri_i(0);
+  axi_gpio_led_GPIO2_TRI_I(2 downto 0) <= rgb_led_tri_i(2 downto 0);
   axi_iic_0_IIC_SCL_I <= ir_sensor_scl_i;
   axi_iic_0_IIC_SDA_I <= ir_sensor_sda_i;
   axi_quad_spi_0_SPI_0_IO0_I <= spi_rtl_0_io0_i;
@@ -6068,6 +6081,8 @@ begin
   je_tri_o(7 downto 0) <= axi_gpio_0_GPIO2_TRI_O(7 downto 0);
   leds_4bits_tri_o(3 downto 0) <= axi_gpio_1_GPIO_TRI_O(3 downto 0);
   leds_4bits_tri_t(3 downto 0) <= axi_gpio_1_GPIO_TRI_T(3 downto 0);
+  rgb_led_tri_o(2 downto 0) <= axi_gpio_led_GPIO2_TRI_O(2 downto 0);
+  rgb_led_tri_t(2 downto 0) <= axi_gpio_led_GPIO2_TRI_T(2 downto 0);
   servo_pwm <= axi_timer_1_pwm0;
   spi_rtl_0_io0_o <= axi_quad_spi_0_SPI_0_IO0_O;
   spi_rtl_0_io0_t <= axi_quad_spi_0_SPI_0_IO0_T;
@@ -6173,6 +6188,9 @@ axi_gpio_eth: component system_axi_gpio_eth_0
     );
 axi_gpio_led: component system_axi_gpio_1_0
      port map (
+      gpio2_io_i(2 downto 0) => axi_gpio_led_GPIO2_TRI_I(2 downto 0),
+      gpio2_io_o(2 downto 0) => axi_gpio_led_GPIO2_TRI_O(2 downto 0),
+      gpio2_io_t(2 downto 0) => axi_gpio_led_GPIO2_TRI_T(2 downto 0),
       gpio_io_i(3 downto 0) => axi_gpio_1_GPIO_TRI_I(3 downto 0),
       gpio_io_o(3 downto 0) => axi_gpio_1_GPIO_TRI_O(3 downto 0),
       gpio_io_t(3 downto 0) => axi_gpio_1_GPIO_TRI_T(3 downto 0),

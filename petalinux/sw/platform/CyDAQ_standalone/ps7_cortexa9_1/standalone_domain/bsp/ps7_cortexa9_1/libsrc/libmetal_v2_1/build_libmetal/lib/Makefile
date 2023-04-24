@@ -51,10 +51,10 @@ RM = /tools/Xilinx/Vitis/2020.1/tps/lnx64/cmake-3.3.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal
+CMAKE_SOURCE_DIR = /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal
+CMAKE_BINARY_DIR = /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -138,14 +138,14 @@ install/strip/fast: install/strip
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(CMAKE_COMMAND) -E cmake_progress_start /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/CMakeFiles /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/lib/CMakeFiles/progress.marks
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/CMakeFiles 0
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(CMAKE_COMMAND) -E cmake_progress_start /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/CMakeFiles /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/lib/CMakeFiles/progress.marks
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/clean
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/clean
 .PHONY : clean
 
 # The main clean target
@@ -155,22 +155,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 lib/CMakeFiles/metal-static.dir/rule:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/CMakeFiles/metal-static.dir/rule
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f CMakeFiles/Makefile2 lib/CMakeFiles/metal-static.dir/rule
 .PHONY : lib/CMakeFiles/metal-static.dir/rule
 
 # Convenience name for target.
@@ -180,7 +180,7 @@ metal-static: lib/CMakeFiles/metal-static.dir/rule
 
 # fast build rule for target.
 metal-static/fast:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/build
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/build
 .PHONY : metal-static/fast
 
 device.obj: device.c.obj
@@ -189,7 +189,7 @@ device.obj: device.c.obj
 
 # target to build an object file
 device.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/device.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/device.c.obj
 .PHONY : device.c.obj
 
 device.i: device.c.i
@@ -198,7 +198,7 @@ device.i: device.c.i
 
 # target to preprocess a source file
 device.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/device.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/device.c.i
 .PHONY : device.c.i
 
 device.s: device.c.s
@@ -207,7 +207,7 @@ device.s: device.c.s
 
 # target to generate assembly for a file
 device.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/device.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/device.c.s
 .PHONY : device.c.s
 
 dma.obj: dma.c.obj
@@ -216,7 +216,7 @@ dma.obj: dma.c.obj
 
 # target to build an object file
 dma.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/dma.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/dma.c.obj
 .PHONY : dma.c.obj
 
 dma.i: dma.c.i
@@ -225,7 +225,7 @@ dma.i: dma.c.i
 
 # target to preprocess a source file
 dma.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/dma.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/dma.c.i
 .PHONY : dma.c.i
 
 dma.s: dma.c.s
@@ -234,7 +234,7 @@ dma.s: dma.c.s
 
 # target to generate assembly for a file
 dma.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/dma.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/dma.c.s
 .PHONY : dma.c.s
 
 init.obj: init.c.obj
@@ -243,7 +243,7 @@ init.obj: init.c.obj
 
 # target to build an object file
 init.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/init.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/init.c.obj
 .PHONY : init.c.obj
 
 init.i: init.c.i
@@ -252,7 +252,7 @@ init.i: init.c.i
 
 # target to preprocess a source file
 init.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/init.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/init.c.i
 .PHONY : init.c.i
 
 init.s: init.c.s
@@ -261,7 +261,7 @@ init.s: init.c.s
 
 # target to generate assembly for a file
 init.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/init.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/init.c.s
 .PHONY : init.c.s
 
 io.obj: io.c.obj
@@ -270,7 +270,7 @@ io.obj: io.c.obj
 
 # target to build an object file
 io.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/io.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/io.c.obj
 .PHONY : io.c.obj
 
 io.i: io.c.i
@@ -279,7 +279,7 @@ io.i: io.c.i
 
 # target to preprocess a source file
 io.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/io.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/io.c.i
 .PHONY : io.c.i
 
 io.s: io.c.s
@@ -288,7 +288,7 @@ io.s: io.c.s
 
 # target to generate assembly for a file
 io.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/io.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/io.c.s
 .PHONY : io.c.s
 
 irq.obj: irq.c.obj
@@ -297,7 +297,7 @@ irq.obj: irq.c.obj
 
 # target to build an object file
 irq.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/irq.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/irq.c.obj
 .PHONY : irq.c.obj
 
 irq.i: irq.c.i
@@ -306,7 +306,7 @@ irq.i: irq.c.i
 
 # target to preprocess a source file
 irq.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/irq.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/irq.c.i
 .PHONY : irq.c.i
 
 irq.s: irq.c.s
@@ -315,7 +315,7 @@ irq.s: irq.c.s
 
 # target to generate assembly for a file
 irq.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/irq.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/irq.c.s
 .PHONY : irq.c.s
 
 log.obj: log.c.obj
@@ -324,7 +324,7 @@ log.obj: log.c.obj
 
 # target to build an object file
 log.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/log.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/log.c.obj
 .PHONY : log.c.obj
 
 log.i: log.c.i
@@ -333,7 +333,7 @@ log.i: log.c.i
 
 # target to preprocess a source file
 log.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/log.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/log.c.i
 .PHONY : log.c.i
 
 log.s: log.c.s
@@ -342,7 +342,7 @@ log.s: log.c.s
 
 # target to generate assembly for a file
 log.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/log.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/log.c.s
 .PHONY : log.c.s
 
 shmem-provider.obj: shmem-provider.c.obj
@@ -351,7 +351,7 @@ shmem-provider.obj: shmem-provider.c.obj
 
 # target to build an object file
 shmem-provider.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem-provider.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem-provider.c.obj
 .PHONY : shmem-provider.c.obj
 
 shmem-provider.i: shmem-provider.c.i
@@ -360,7 +360,7 @@ shmem-provider.i: shmem-provider.c.i
 
 # target to preprocess a source file
 shmem-provider.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem-provider.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem-provider.c.i
 .PHONY : shmem-provider.c.i
 
 shmem-provider.s: shmem-provider.c.s
@@ -369,7 +369,7 @@ shmem-provider.s: shmem-provider.c.s
 
 # target to generate assembly for a file
 shmem-provider.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem-provider.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem-provider.c.s
 .PHONY : shmem-provider.c.s
 
 shmem.obj: shmem.c.obj
@@ -378,7 +378,7 @@ shmem.obj: shmem.c.obj
 
 # target to build an object file
 shmem.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem.c.obj
 .PHONY : shmem.c.obj
 
 shmem.i: shmem.c.i
@@ -387,7 +387,7 @@ shmem.i: shmem.c.i
 
 # target to preprocess a source file
 shmem.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem.c.i
 .PHONY : shmem.c.i
 
 shmem.s: shmem.c.s
@@ -396,7 +396,7 @@ shmem.s: shmem.c.s
 
 # target to generate assembly for a file
 shmem.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/shmem.c.s
 .PHONY : shmem.c.s
 
 softirq.obj: softirq.c.obj
@@ -405,7 +405,7 @@ softirq.obj: softirq.c.obj
 
 # target to build an object file
 softirq.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/softirq.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/softirq.c.obj
 .PHONY : softirq.c.obj
 
 softirq.i: softirq.c.i
@@ -414,7 +414,7 @@ softirq.i: softirq.c.i
 
 # target to preprocess a source file
 softirq.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/softirq.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/softirq.c.i
 .PHONY : softirq.c.i
 
 softirq.s: softirq.c.s
@@ -423,7 +423,7 @@ softirq.s: softirq.c.s
 
 # target to generate assembly for a file
 softirq.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/softirq.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/softirq.c.s
 .PHONY : softirq.c.s
 
 system/generic/condition.obj: system/generic/condition.c.obj
@@ -432,7 +432,7 @@ system/generic/condition.obj: system/generic/condition.c.obj
 
 # target to build an object file
 system/generic/condition.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/condition.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/condition.c.obj
 .PHONY : system/generic/condition.c.obj
 
 system/generic/condition.i: system/generic/condition.c.i
@@ -441,7 +441,7 @@ system/generic/condition.i: system/generic/condition.c.i
 
 # target to preprocess a source file
 system/generic/condition.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/condition.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/condition.c.i
 .PHONY : system/generic/condition.c.i
 
 system/generic/condition.s: system/generic/condition.c.s
@@ -450,7 +450,7 @@ system/generic/condition.s: system/generic/condition.c.s
 
 # target to generate assembly for a file
 system/generic/condition.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/condition.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/condition.c.s
 .PHONY : system/generic/condition.c.s
 
 system/generic/device.obj: system/generic/device.c.obj
@@ -459,7 +459,7 @@ system/generic/device.obj: system/generic/device.c.obj
 
 # target to build an object file
 system/generic/device.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/device.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/device.c.obj
 .PHONY : system/generic/device.c.obj
 
 system/generic/device.i: system/generic/device.c.i
@@ -468,7 +468,7 @@ system/generic/device.i: system/generic/device.c.i
 
 # target to preprocess a source file
 system/generic/device.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/device.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/device.c.i
 .PHONY : system/generic/device.c.i
 
 system/generic/device.s: system/generic/device.c.s
@@ -477,7 +477,7 @@ system/generic/device.s: system/generic/device.c.s
 
 # target to generate assembly for a file
 system/generic/device.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/device.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/device.c.s
 .PHONY : system/generic/device.c.s
 
 system/generic/init.obj: system/generic/init.c.obj
@@ -486,7 +486,7 @@ system/generic/init.obj: system/generic/init.c.obj
 
 # target to build an object file
 system/generic/init.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/init.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/init.c.obj
 .PHONY : system/generic/init.c.obj
 
 system/generic/init.i: system/generic/init.c.i
@@ -495,7 +495,7 @@ system/generic/init.i: system/generic/init.c.i
 
 # target to preprocess a source file
 system/generic/init.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/init.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/init.c.i
 .PHONY : system/generic/init.c.i
 
 system/generic/init.s: system/generic/init.c.s
@@ -504,7 +504,7 @@ system/generic/init.s: system/generic/init.c.s
 
 # target to generate assembly for a file
 system/generic/init.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/init.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/init.c.s
 .PHONY : system/generic/init.c.s
 
 system/generic/io.obj: system/generic/io.c.obj
@@ -513,7 +513,7 @@ system/generic/io.obj: system/generic/io.c.obj
 
 # target to build an object file
 system/generic/io.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/io.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/io.c.obj
 .PHONY : system/generic/io.c.obj
 
 system/generic/io.i: system/generic/io.c.i
@@ -522,7 +522,7 @@ system/generic/io.i: system/generic/io.c.i
 
 # target to preprocess a source file
 system/generic/io.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/io.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/io.c.i
 .PHONY : system/generic/io.c.i
 
 system/generic/io.s: system/generic/io.c.s
@@ -531,7 +531,7 @@ system/generic/io.s: system/generic/io.c.s
 
 # target to generate assembly for a file
 system/generic/io.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/io.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/io.c.s
 .PHONY : system/generic/io.c.s
 
 system/generic/irq.obj: system/generic/irq.c.obj
@@ -540,7 +540,7 @@ system/generic/irq.obj: system/generic/irq.c.obj
 
 # target to build an object file
 system/generic/irq.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/irq.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/irq.c.obj
 .PHONY : system/generic/irq.c.obj
 
 system/generic/irq.i: system/generic/irq.c.i
@@ -549,7 +549,7 @@ system/generic/irq.i: system/generic/irq.c.i
 
 # target to preprocess a source file
 system/generic/irq.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/irq.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/irq.c.i
 .PHONY : system/generic/irq.c.i
 
 system/generic/irq.s: system/generic/irq.c.s
@@ -558,7 +558,7 @@ system/generic/irq.s: system/generic/irq.c.s
 
 # target to generate assembly for a file
 system/generic/irq.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/irq.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/irq.c.s
 .PHONY : system/generic/irq.c.s
 
 system/generic/time.obj: system/generic/time.c.obj
@@ -567,7 +567,7 @@ system/generic/time.obj: system/generic/time.c.obj
 
 # target to build an object file
 system/generic/time.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/time.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/time.c.obj
 .PHONY : system/generic/time.c.obj
 
 system/generic/time.i: system/generic/time.c.i
@@ -576,7 +576,7 @@ system/generic/time.i: system/generic/time.c.i
 
 # target to preprocess a source file
 system/generic/time.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/time.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/time.c.i
 .PHONY : system/generic/time.c.i
 
 system/generic/time.s: system/generic/time.c.s
@@ -585,7 +585,7 @@ system/generic/time.s: system/generic/time.c.s
 
 # target to generate assembly for a file
 system/generic/time.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/time.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/time.c.s
 .PHONY : system/generic/time.c.s
 
 system/generic/xlnx_common/irq.obj: system/generic/xlnx_common/irq.c.obj
@@ -594,7 +594,7 @@ system/generic/xlnx_common/irq.obj: system/generic/xlnx_common/irq.c.obj
 
 # target to build an object file
 system/generic/xlnx_common/irq.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/xlnx_common/irq.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/xlnx_common/irq.c.obj
 .PHONY : system/generic/xlnx_common/irq.c.obj
 
 system/generic/xlnx_common/irq.i: system/generic/xlnx_common/irq.c.i
@@ -603,7 +603,7 @@ system/generic/xlnx_common/irq.i: system/generic/xlnx_common/irq.c.i
 
 # target to preprocess a source file
 system/generic/xlnx_common/irq.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/xlnx_common/irq.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/xlnx_common/irq.c.i
 .PHONY : system/generic/xlnx_common/irq.c.i
 
 system/generic/xlnx_common/irq.s: system/generic/xlnx_common/irq.c.s
@@ -612,7 +612,7 @@ system/generic/xlnx_common/irq.s: system/generic/xlnx_common/irq.c.s
 
 # target to generate assembly for a file
 system/generic/xlnx_common/irq.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/xlnx_common/irq.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/xlnx_common/irq.c.s
 .PHONY : system/generic/xlnx_common/irq.c.s
 
 system/generic/zynq7/sys.obj: system/generic/zynq7/sys.c.obj
@@ -621,7 +621,7 @@ system/generic/zynq7/sys.obj: system/generic/zynq7/sys.c.obj
 
 # target to build an object file
 system/generic/zynq7/sys.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/zynq7/sys.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/zynq7/sys.c.obj
 .PHONY : system/generic/zynq7/sys.c.obj
 
 system/generic/zynq7/sys.i: system/generic/zynq7/sys.c.i
@@ -630,7 +630,7 @@ system/generic/zynq7/sys.i: system/generic/zynq7/sys.c.i
 
 # target to preprocess a source file
 system/generic/zynq7/sys.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/zynq7/sys.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/zynq7/sys.c.i
 .PHONY : system/generic/zynq7/sys.c.i
 
 system/generic/zynq7/sys.s: system/generic/zynq7/sys.c.s
@@ -639,7 +639,7 @@ system/generic/zynq7/sys.s: system/generic/zynq7/sys.c.s
 
 # target to generate assembly for a file
 system/generic/zynq7/sys.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/zynq7/sys.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/system/generic/zynq7/sys.c.s
 .PHONY : system/generic/zynq7/sys.c.s
 
 version.obj: version.c.obj
@@ -648,7 +648,7 @@ version.obj: version.c.obj
 
 # target to build an object file
 version.c.obj:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/version.c.obj
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/version.c.obj
 .PHONY : version.c.obj
 
 version.i: version.c.i
@@ -657,7 +657,7 @@ version.i: version.c.i
 
 # target to preprocess a source file
 version.c.i:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/version.c.i
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/version.c.i
 .PHONY : version.c.i
 
 version.s: version.c.s
@@ -666,7 +666,7 @@ version.s: version.c.s
 
 # target to generate assembly for a file
 version.c.s:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/version.c.s
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(MAKE) -f lib/CMakeFiles/metal-static.dir/build.make lib/CMakeFiles/metal-static.dir/version.c.s
 .PHONY : version.c.s
 
 # Help Target
@@ -748,6 +748,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/build_libmetal && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

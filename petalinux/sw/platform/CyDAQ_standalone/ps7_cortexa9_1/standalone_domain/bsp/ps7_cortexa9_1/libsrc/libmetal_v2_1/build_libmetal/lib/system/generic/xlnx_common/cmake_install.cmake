@@ -1,4 +1,4 @@
-# Install script for directory: /home/corbin/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal/lib/system/generic/xlnx_common
+# Install script for directory: /home/longz/sdmay23-47/petalinux/sw/platform/CyDAQ_standalone/ps7_cortexa9_1/standalone_domain/bsp/ps7_cortexa9_1/libsrc/libmetal_v2_1/src/libmetal/lib/system/generic/xlnx_common
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
