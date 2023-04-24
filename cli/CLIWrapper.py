@@ -196,7 +196,6 @@ class CLI:
     def close(self, **_):
         """Close the CLI tool"""
         self._send_command("q")
-        self.logfile.close()
 
     def clear_config(self, **_):
         """Clear the config to its default values"""

@@ -64,7 +64,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         # logging
         if os.path.exists(config.DEFAULT_LOG_FILE):
-            os.remove(config.DEFAULT_LOG_FILE)
+            try:
+                os.remove(config.DEFAULT_LOG_FILE)
+            except:
+                pass # throws an error if restart button is clicked as the logger is still running. Just don't delete the file in this case
         logging.basicConfig(level=config.CONSOLE_LOG_LEVEL, format=config.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
         fh = logging.FileHandler(config.DEFAULT_LOG_FILE)
@@ -304,8 +307,9 @@ if __name__ == "__main__":
         currentExitCode = app.exec_()
 
         # If exit wasn't normal, save debug logs to location of executable
-        if currentExitCode != 0:
-            shutil.copyfile("C:\\Temp\\cydaq_current_log.log",
+        if currentExitCode != 0 and currentExitCode != MainWindow.EXIT_CODE_REBOOT: # -123
+            print("CODE: ", currentExitCode)
+            shutil.copyfile(config.DEFAULT_LOG_FILE,
                             f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
 
         app = None

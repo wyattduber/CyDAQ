@@ -9,6 +9,7 @@ LOG_FORMAT = '%(levelname)s - %(message)s'
 FILE_LOG_LEVEL = logging.DEBUG
 CONSOLE_LOG_LEVEL = logging.DEBUG
 DEBUG_WIDGET_LOG_LEVEL = logging.DEBUG
+
 # Log file location for different OS's (development)
 if sys.platform == "win32":
     TEMP_DIR = "C:\\Temp"
