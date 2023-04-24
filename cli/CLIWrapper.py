@@ -55,9 +55,18 @@ class CLI:
                 self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
                 self.p.expect(config.CLI_START_MESSAGE)
             except pexpect.exceptions.EOF:
-                pythonCmd = "py "  # Finally, check for `py` last
-                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
-                self.p.expect(config.CLI_START_MESSAGE)
+                try:
+                    pythonCmd = "py "  # Finally, check for `py` last
+                    self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
+                    self.p.expect(config.CLI_START_MESSAGE)
+                except pexpect.exceptions.EOF:
+                    raise CLIStartupException(str(self.p.after))
+                except pexpect.exceptions.TIMEOUT:
+                    raise CLIStartupException(str(self.p.after))
+            except pexpect.exceptions.TIMEOUT:
+                raise CLIStartupException(str(self.p.after))
+        except pexpect.exceptions.TIMEOUT:
+            raise CLIStartupException(str(self.p.after))
 
         # Wait for command input
         self.p.expect(config.INPUT_CHAR, timeout=5)
@@ -287,18 +296,10 @@ class CLI:
 
         # Check if the balance beam is connected before retrieving data
         response = self._send_command(f"bb_start, {kp} {ki} {kd} {N} {set}")
-        if not response == config.BALANCE_BEAM_NOT_CONNECTED:
-            self.bb_log_mode = True
-            self.bb_log_thread = Thread(target=self.retrieve_bb_pos)
-            self.bb_log_thread.start()
-            return True
-        else:
-            return False
+        return response == config.BALANCE_BEAM_NOT_CONNECTED
 
     def stop_bb(self, **_):
         """Stop balance beam mode and live data streaming"""
-        self.bb_log_mode = False
-        self.bb_log_thread = None
         self._send_command("bb_stop")
 
     def set_constants(self, kp, ki, kd, N, **_):
@@ -430,6 +431,13 @@ class CLITimeoutException(Exception):
 
     def __init__(self):
         self.message = "CLI didn't write to output in " + str(config.WRAPPER_TIMEOUT) + " seconds."
+
+
+class CLIStartupException(Exception):
+    """Thrown when the CLI tool cannot start in a pexpect shell"""
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 
 class CLIUnknownLogLevelException(Exception):

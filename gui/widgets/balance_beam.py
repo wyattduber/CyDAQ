@@ -47,6 +47,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.checking_connection = False
         self.graph_thread = None
         self.connection_thread = None
+        self.pre_error = False
         self.savemat_thread = None
         self.plot_data = {}
         self.start_time = 0
@@ -197,13 +198,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
         self.runInWorkerThread(
             func=self.start_bb_mode,
-            error_func=self.showError
+            finished_func=self.start_graphing,
+            error_func=lambda x: self.showError(x[2])
         )
 
         # Stop ping timer from other window, set log to update instantly for live data
         self.mainWindow.stopPingTimer()
 
-    def start_bb_mode(self):
+    def start_bb_mode(self, **_):
         """
         Starts the Balance Beam and live graphing of the data.
         """
@@ -213,22 +215,24 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
         # Start Balance Beam Mode from Wrapper
         try:
-            if not self.wrapper.start_bb(self.kp, self.ki, self.kd, self.N, self.set):
-                self._show_error("Balance Beam Not Connected!")
+            if not self.wrapper.start_bb(self.kp, self.ki, self.kd, self.N, self.setcm):
+                self._show_error("Balance Beam Not Connected! 1")
                 self.checking_connection = False
-                self.logger.error("Balance Beam Not Connected!")
+                self.logger.error("Balance Beam Not Connected! 1")
 
                 # Resume the timer and log
-                self.mainWindow.startPingTimer()
+                self.stop()
+                self.pre_error = True
                 return
             self.checking_connection = False
-        except Exception:
-            self._show_error("Balance Beam Not Connected!")
+        except Exception as e:
+            self._show_error("Balance Beam Not Connected! 2", e)
             self.checking_connection = False
-            self.logger.error("Balance Beam Not Connected!")
+            self.logger.error("Balance Beam Not Connected! 2", e)
 
             # Resume the timer and log
-            self.mainWindow.startPingTimer()
+            self.stop()
+            self.pre_error = True
             return
 
         # Once balance beam is connected, start beam mode
@@ -236,9 +240,20 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.start_time = time.time()
         self.logger.debug("Balance Beam Started")
 
-        # Start Graphing of Data
-        self.graph_thread = Thread(target=self.graph_data)
-        self.graph_thread.start()
+    def start_graphing(self, **_):
+        if self.pre_error:
+            self.pre_error = False
+            self.logger.error("Canceling Balance Beam Start!")
+            return
+
+        self.runInWorkerThread(
+            func=self.start_graphing,
+            finished_func=self.stop,
+            error_func=lambda x: self.showError(x[2])
+        )
+
+        # self.graph_thread = Thread(target=self.graph_data)
+        # self.graph_thread.start()
 
     def stop(self):
         """
@@ -350,23 +365,18 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             try:
                 current_data = self.wrapper.retrieve_bb_pos()
             except Exception:
-                self._show_error("Balance Beam Not Connected!")
-                self.running = False
-
-                self.mainWindow.startPingTimer()
+                self._show_error("Balance Beam Not Connected! 3 ")
                 return
 
             # Don't graph anything if paused or paused to run a command
             while self.paused or self.cmd_paused:
                 pass
+
             # Check if the data isn't actually coming through
             if current_data == "" or current_data == "-9":
                 i = + 1
                 if i > 100:
-                    self._show_error("Balance Beam Not Connected!")
-                    self.running = False
-
-                    self.mainWindow.startPingTimer()
+                    self._show_error("Balance Beam Not Connected! 4 ")
                     return
                 continue
 
@@ -379,5 +389,4 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
                 self.high_connector.cb_append_data_point(self.high_sample, curr_time)
             except ValueError:
                 self._show_error(f"Error plotting data! Current data is {current_data}")
-                self.running = False
-                self.stop()
+                return

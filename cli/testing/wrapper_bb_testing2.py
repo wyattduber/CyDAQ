@@ -1,6 +1,6 @@
 import sys
 from threading import Thread
-sys.path.insert(0, "../../cli")
+sys.path.insert(0, "cli")
 import CLIWrapper
 from time import sleep
 
