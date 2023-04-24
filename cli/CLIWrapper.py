@@ -33,7 +33,7 @@ class CLI:
         # Logging
         self.logger = logger
         if self.logger is None:
-            self.logger = logging.logger
+            self.logger = logging.getLogger(__name__)
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
