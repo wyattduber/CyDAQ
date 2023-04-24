@@ -130,7 +130,7 @@ class CyDAQ_CLI:
                 continue
             elif command[0].lower() == 'setm':
                 raw_json = raw_command.split(',', 1)[1]
-                self._print_to_output("setm json: {0}".format(raw_json))
+                # self._print_to_output("setm json: {0}".format(raw_json))
                 self._update_multiple_config(raw_json)
                 continue
             elif command[0].lower() == 'wrapper':
@@ -173,6 +173,7 @@ class CyDAQ_CLI:
 
             # Next check for commands that require direct connection to CyDAQ.
             if command[0].lower() == 'ping' or command[0] == 'p':
+                # raise Exception("REE")
                 self._ping()
                 continue
             elif command[0].lower() == 'send':
@@ -493,15 +494,15 @@ class CyDAQ_CLI:
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(config.SSH_HOSTNAME, config.SSH_PORT, config.SSH_USERNAME, config.SSH_PASSWORD)
                     connected = True
-                    self._print_to_output("ssh connect successful!")
+                    self._print_to_output("ssh connect successful!", config.WRAPPER_INFO)
                 except BaseException as e:
                     # print("base exception caught!!", e)
-                    self._print_to_output("ssh connect failed! sleeping " + config.SSH_SLEEP_TIME + "seconds")
+                    self._print_to_output("ssh connect failed! sleeping " + config.SSH_SLEEP_TIME + "seconds", config.WRAPPER_INFO)
                     time.sleep(config.SSH_SLEEP_TIME)
                     ssh.close()
                     ssh_count += 1
                     if ssh_count > config.SSH_NUM_RETRIES:
-                        print("max number of retry for SCP connection reached! ")
+                        print("max number of retry for SCP connection reached!", config.WRAPPER_ERROR)
                         break 
 
             if ssh is None:

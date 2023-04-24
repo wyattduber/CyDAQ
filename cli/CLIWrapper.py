@@ -9,6 +9,7 @@ import csv
 import time
 import pandas
 import logging
+import traceback
 
 import config
 
@@ -73,13 +74,14 @@ class CLI:
             self.logger.debug("wrapper connectionEnabled false, not sending command: " + command)
             return
         
-
         # Use the waiting library to prevent two commands from being run at the same time
         if not force_async:
             wait(lambda: not self.running_command)
 
         # Send command
-        self.logger.debug("wrapper send cmd: " + command)
+        if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
+            self.logger.debug("wrapper send cmd: " + command)
+        fail_send = False
         try:
             if not force_async:
                 self.running_command = True
@@ -87,8 +89,10 @@ class CLI:
                 self.running_ping_command = True
             self.p.sendline(command)
         except OSError as e:
+            fail_send = True
             self.logger.error("OSError in wrapper _send_command for command: " + command)
-            self.logger.errorint("OsError: " + e)
+            self.logger.error("OsError: " + str(e))
+            self.logger.error("Last output from CLI: " + str(self.p.before))
             if not force_async:
                 self.running_command = False
             raise cyDAQNotConnectedException
@@ -98,10 +102,12 @@ class CLI:
                 'bb_set, [0-9]*\.[0-9]+', command):
             # Wait for response
             try:
-                self.p.expect(config.INPUT_CHAR)
+                self.p.expect(config.INPUT_CHAR, timeout=config.WRAPPER_TIMEOUT)
             except pexpect.exceptions.EOF:
+                self.logger.error("Unexpected EOF: Last output from CLI: " + str(self.p.before))
                 raise CLICloseException(self.p.before)
             except pexpect.exceptions.TIMEOUT:
+                self.logger.error("Pexpect timeout: Last output from CLI: " + str(self.p.before))
                 raise CLITimeoutException
             finally:
                 self.running_command = False
@@ -109,11 +115,12 @@ class CLI:
 
             # Parse response
             if response is None:
+                self.logger.info("No response from CLI")
                 raise CLINoResponseException
             response = response.decode()
             response = response.strip()
 
-            if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
+            if fail_send or (command != "bb_fetch_pos" and command != "ping"):  # Can get a bit spammy
                 self.logger.debug("wrapper response: " + response)
 
             if wrapper_mode:
