@@ -59,6 +59,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         super(MainWindow, self).__init__()
 
         # logging
+        if os.path.exists(config.DEFAULT_LOG_FILE):
+            os.remove(config.DEFAULT_LOG_FILE)
         logging.basicConfig(level=config.CONSOLE_LOG_LEVEL, format=config.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
         fh = logging.FileHandler(config.DEFAULT_LOG_FILE)
@@ -99,7 +101,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.mode_selector = ModeSelectorWidget(self)
         self.basic_operation = BasicOperationModeWidget(self)
         self.balance_beam = BalanceBeamModeWidget(self)
-        self.debug = DebugWidget(self)
+        self.debug = DebugWidget(self) # Note, anything that happens before this line won't show up in the debug widget's log, but will show up in console/file logging
+
+        self.deleteTempSampleData()
 
         self.stack = StackedLayout() 
         self.connectionWidget = ConnectionWidget()
@@ -250,7 +254,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         else:
             event.ignore()
 
-
+    def deleteTempSampleData(self):
+        """Deletes all *.csv files in config.DEFAULT_LOG_FILE save location"""
+        if os.path.exists(config.TEMP_DIR):
+            for file in os.listdir(config.TEMP_DIR):
+                if file.endswith(".csv"):
+                    os.remove(os.path.join(config.TEMP_DIR, file))
+                    self.logger.debug("removed temp file: " + file)
 
 class StackedLayout(QtWidgets.QStackedLayout):
     def minimumSize(self):
