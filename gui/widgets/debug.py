@@ -48,6 +48,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):
         # self.write_btn.clicked.connect(self.writeData)
         # self.write2_btn.clicked.connect(self.writeDataV2)
         # self.read_btn.clicked.connect(self.readData)
+        self.crash_btn.clicked.connect(self.ex)
         self.export_logs_btn.clicked.connect(self.exportLogs)
         self.mock_checkBox.clicked.connect(self.mockClicked)
         self.ping_msg_checkBox.clicked.connect(self.pingClicked)
@@ -140,6 +141,10 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):
             self.wrapper.enable_ping_log()
         else:
             self.wrapper.disable_ping_log()
+
+    def ex(self):
+        while True:
+            pass
 
     def clearLog(self):
         # self.wrapper.clearLog()

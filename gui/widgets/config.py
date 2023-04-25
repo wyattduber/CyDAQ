@@ -14,7 +14,11 @@ DEBUG_WIDGET_LOG_LEVEL = logging.DEBUG
 if sys.platform == "win32":
     TEMP_DIR = "C:\\Temp"
     DEFAULT_LOG_FILE = f"C:\\Temp\\cydaq_current_log.log"
+    DEFAULT_BB_DATA_FILE = f"C:\\Temp\\bb_data_file.csv"
 else:
     TEMP_DIR = "/tmp"
     DEFAULT_LOG_FILE = f"/tmp/cydaq_current_log.log"
+    DEFAULT_BB_DATA_FILE = f"/tmp/bb_data_file.csv"
 TEMP_SAMPLE_LOCATION = 'C:\Temp\sample_{}.csv' # the {} is where the time is calculated and placed
+
+BB_MAX_POINTS = 150

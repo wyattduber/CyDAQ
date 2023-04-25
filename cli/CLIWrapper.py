@@ -203,6 +203,8 @@ class CLI:
                 return -1
             elif response == "Error sending config!":
                 pass # Do nothing since error is already handled
+            elif response == "Balance Beam Mode is not enabled!":
+                pass # Do nothing since balance beam was likely just ended
             else:
                 raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
@@ -341,7 +343,7 @@ class CLI:
         to stop sending like the other commands do. Hence, the "force_async" option
         """
         response = self._send_command("bb_fetch_pos", force_async=True)
-        print(response)
+        print(response) # TODO Remove this
         return response
 
     ### Logging Methods ###

@@ -1,7 +1,6 @@
 # Standard Python Packages
 import os
 import sys
-import time
 import ctypes
 import pexpect
 from sys import platform
@@ -95,14 +94,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.connected = False
         except (CLIWrapper.CLIException, pexpect.exceptions.EOF) as e:
             self.logger.debug("wrapper threw CLIException")
+            self.logger.error(str(e))
             self.connected = False
             self._show_wrapper_error("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?", e)
-            qApp.exit(-2)
         except pexpect.exceptions.TIMEOUT as e:
             self.logger.debug("wrapper threw pexpect timeout exception")
+            self.logger.error(str(e))
             self.connected = False
             self._show_wrapper_error("Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
-            qApp.exit(-2)
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self)
@@ -295,8 +294,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         if os.path.exists(config.TEMP_DIR):
             for file in os.listdir(config.TEMP_DIR):
                 if file.endswith(".csv"):
-                    os.remove(os.path.join(config.TEMP_DIR, file))
-                    self.logger.debug("removed temp file: " + file)
+                    try:
+                        os.remove(os.path.join(config.TEMP_DIR, file))
+                        self.logger.debug("removed temp file: " + file)
+                    except PermissionError:
+                        self._show_wrapper_error(f"File {file} cannot be removed! Is it open in another program?")
 
 
 class StackedLayout(QtWidgets.QStackedLayout):

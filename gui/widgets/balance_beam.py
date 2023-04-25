@@ -1,10 +1,14 @@
 # Standard Python Packages
-import sys
 import time
+import os
+import re
+import shutil
+from waiting import wait
 from typing import Union
 from threading import Thread
 from PyQt5.QtWidgets import QFileDialog
-from scipy.io import savemat
+import pandas as pd
+import scipy
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
@@ -20,6 +24,9 @@ from pglive.sources.live_plot_widget import LivePlotWidget
 # Stuff From Project - May show as an error but it works
 from generated.BalanceBeamWidgetUI import Ui_BalanceBeamWidget
 from widgets.mode_widget import CyDAQModeWidget
+
+# Config
+from widgets import config
 
 CONVERT_SEC_TO_MS = 1000
 DEFAULT_SAVE_LOCATION = "U:\\"
@@ -45,13 +52,12 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.cmd_paused = False
         self.running = False
         self.checking_connection = False
-        self.graph_thread = None
-        self.connection_thread = None
-        self.pre_error = False
         self.savemat_thread = None
+        self.pre_error = False
         self.plot_data = {}
         self.start_time = 0
-        self.filename = f"data-{time.time()}.mat"
+        self.filename = ""
+        self.temp_filename = config.DEFAULT_BB_DATA_FILE
 
         # Balance Beam Input Values (Default)
         self.kp = 0
@@ -116,9 +122,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.low_plot = LiveLinePlot(pen="orange", width=2)
         self.high_plot = LiveLinePlot(pen="blue", width=2)
 
-        self.mid_connector = DataConnector(self.mid_plot, max_points=100)
-        self.low_connector = DataConnector(self.low_plot, max_points=100)
-        self.high_connector = DataConnector(self.high_plot, max_points=100)
+        self.mid_connector = DataConnector(self.mid_plot, max_points=config.BB_MAX_POINTS)
+        self.low_connector = DataConnector(self.low_plot, max_points=config.BB_MAX_POINTS)
+        self.high_connector = DataConnector(self.high_plot, max_points=config.BB_MAX_POINTS)
 
         # Add the plots and the graph view
         self.graph_view.addItem(self.mid_plot)
@@ -144,7 +150,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             if not self.running and len(self.plot_data) == 0:
                 self._show_error("No Plot Data to Save!")
             else:
-                self.savePlotData()
+                Thread(target=self.savePlotData).start()
             return
         elif btn == "save_step":
             return  # TODO Not sure what save step is
@@ -192,86 +198,80 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         when it is waiting for a response from the CyDAQ. When run in a thread,
         this does not happen.
         """
-        # Start checking status in the background
-        # self.connection_thread = Thread(target=self.start_bb_mode)
-        # self.connection_thread.start()
+
+        def start_bb_mode(**_):
+            """
+            Starts the Balance Beam and live graphing of the data.
+            """
+
+            # Get the latest version of constants from the GUI
+            self._update_constants_in_memory()
+
+            # Start Balance Beam Mode from Wrapper
+            try:
+                if not self.wrapper.start_bb(self.kp, self.ki, self.kd, self.N, self.setcm):
+                    self._show_error("Balance Beam Not Connected! 1")
+                    self.checking_connection = False
+                    self.logger.error("Balance Beam Not Connected! 1")
+
+                    # Resume the timer and log
+                    self.stop()
+                    self.pre_error = True
+                    return
+                self.checking_connection = False
+            except Exception as e:
+                self._show_error("Balance Beam Not Connected! 2", e)
+                self.checking_connection = False
+                self.logger.error("Balance Beam Not Connected! 2", e)
+
+                # Resume the timer and log
+                self.stop()
+                self.pre_error = True
+                return
+
+            # Once balance beam is connected, start beam mode
+            self.running = True
+            self.start_time = time.time()
+            self.pre_error = False
+            self.logger.debug("Balance Beam Started")
+
+        def start_graphing(**_):
+            if self.pre_error:
+                self.pre_error = False
+                self.logger.error("Canceling Balance Beam Start!")
+                return
+
+            self.runInWorkerThread(
+                func=self.graph_data,
+                finished_func=self.stop,
+                error_func=lambda x: self.showError(x[2])
+            )
 
         self.runInWorkerThread(
-            func=self.start_bb_mode,
-            finished_func=self.start_graphing,
+            func=start_bb_mode,
+            finished_func=start_graphing,
             error_func=lambda x: self.showError(x[2])
         )
 
         # Stop ping timer from other window, set log to update instantly for live data
         self.mainWindow.stopPingTimer()
 
-    def start_bb_mode(self, **_):
-        """
-        Starts the Balance Beam and live graphing of the data.
-        """
-
-        # Get the latest version of constants from the GUI
-        self._update_constants_in_memory()
-
-        # Start Balance Beam Mode from Wrapper
-        try:
-            if not self.wrapper.start_bb(self.kp, self.ki, self.kd, self.N, self.setcm):
-                self._show_error("Balance Beam Not Connected! 1")
-                self.checking_connection = False
-                self.logger.error("Balance Beam Not Connected! 1")
-
-                # Resume the timer and log
-                self.stop()
-                self.pre_error = True
-                return
-            self.checking_connection = False
-        except Exception as e:
-            self._show_error("Balance Beam Not Connected! 2", e)
-            self.checking_connection = False
-            self.logger.error("Balance Beam Not Connected! 2", e)
-
-            # Resume the timer and log
-            self.stop()
-            self.pre_error = True
-            return
-
-        # Once balance beam is connected, start beam mode
-        self.running = True
-        self.start_time = time.time()
-        self.pre_error = False
-        self.logger.debug("Balance Beam Started")
-
-    def start_graphing(self, **_):
-        if self.pre_error:
-            self.pre_error = False
-            self.logger.error("Canceling Balance Beam Start!")
-            return
-
-        self.runInWorkerThread(
-            func=self.start_graphing,
-            finished_func=self.stop,
-            error_func=lambda x: self.showError(x[2])
-        )
-
-        # self.graph_thread = Thread(target=self.graph_data)
-        # self.graph_thread.start()
-
     def stop(self):
         """
         Sends the stop command to the CyDAQ and ends all threads
         Also re-enables the ping timer in the background for connectivity
         """
-        try:
-            raise Exception()
-        except:
-            frame = sys.exc_info()[2].tb_frame.f_back
-            self.logger.debug(frame.f_code.co_name)
         self.running = False
-        self.graph_thread = None
-        self.connection_thread = None
         self.savemat_thread = None
         self.wrapper.stop_bb()
         self.mainWindow.startPingTimer()
+
+        # Delete the old temp file
+        #try:
+        #    os.remove(self.temp_filename)
+        #except PermissionError:
+        #    self.logger.error("Unable to delete temp file: " + self.temp_filename)
+
         self.logger.debug("Balance Beam Stopped")
 
     def sendConstants(self):
@@ -305,14 +305,17 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         """Save the plot data to a file"""
         options = QFileDialog.Options()
         self.filename, _ = QFileDialog.getSaveFileName(self, "Pick a location to save the data!",
-                                                       DEFAULT_SAVE_LOCATION, "MATLAB Files (*.mat)",
+                                                       DEFAULT_SAVE_LOCATION, "MATLAB Files (*.mat);;CSV Files (*.csv)",
                                                        options=options)
-        # Save the current data dictionary to a matlab file
-        # Using a thread because this process can take a while and be memory intensive
-        self.savemat_thread = Thread(target=savemat, args=[self.filename, self.plot_data]).start()
+        if self.filename.strip() == "":  # no file chosen
+            self.logger.debug("No file chosen. Picking " + self.temp_filename + "to write sample data")
+            self.filename = self.temp_filename
+        else:
+            self.logger.debug("User chose " + self.filename + " to save samples")
+        
+        # self.savemat_thread = Thread(target=self.copyTempFile)
+        self.savemat_thread = Thread(target=scipy.io.savemat, args=[self.filename, self.plot_data])
         self.savemat_thread.start()
-
-        self.logger.debug(f"Saved Plot Data to: {self.filename}")
 
     def offsetInc(self):
         """Increase the offset for calibration"""
@@ -361,7 +364,60 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.N = int(self.n_input.text()) or 0
         self.setcm = float(self.set_cm_input.text()) or 0
 
-    def graph_data(self):
+    def copyTempFile(self):
+        """
+        When the temp file is done being written to and the new filename
+        is input, copy the tmp file contents over and remove the old one.
+        """
+        # Wait to make sure that the filename has actually been entered
+        wait(lambda: self.filename != "" and self.filename is not None)
+
+        # Put a few checks here for if file is not writeable
+        # This will throw an exception if the file is not writeable
+        # It will append the file in the same place as the original filename with a _1 appended
+        # If there is already a _#.csv, it will then append _#+1.csv to new file
+        base, ext = os.path.splitext(self.filename)
+        try:
+            if os.path.exists(self.filename):
+                open(self.filename, 'w')
+        except PermissionError:
+            if val := re.search('_[0-9]+', base):
+                # Check for existing single/double-digit filenames
+                i = int(val.string[-1])
+                # Check for double digits
+                try:
+                    if val.string[-2].isnumeric():
+                        i = int(f"{val.string[-2]}{val.string[-1]}")
+                except IndexError:
+                    pass  # Do nothing, it's a single digit
+                new_filename = base + str(i) + ext
+            else:
+                new_filename = base + '_1' + ext
+                i = 1
+            while os.path.exists(new_filename):
+                i += 1
+                new_filename = base + f'_{i}' + ext
+            self.logger.info("Unable to write to file path " + self.filename + ". Picked new name: " + new_filename)
+            self.filename = new_filename
+
+        # If the filename is still the temp filename, no file was selected
+        # We can assume that they don't want to save the data, so skip copying
+        # and remove the temp file
+
+        if self.filename != self.temp_filename:
+            # Copy the temp file over to the new one. If the user chose a matlab file, convert the csv to matlab first
+            if ext == ".mat":
+                scipy.io.savemat(self.filename, {"data": pd.read_csv(self.temp_filename).values})
+                self.logger.info(".mat file chosen. Converted and written to " + self.filename)
+            else:
+                self.logger.info("Copying file from " + self.temp_filename + " to " + self.filename)
+                shutil.copyfile(self.temp_filename, self.filename)
+
+        # Reset the temp filename and the existing filename
+        # Causes an ask for filename every sample
+        self.filename = None
+
+    def graph_data(self, **_):
         """
         Method that runs the graphing, usually in another thread.
         Retrieves the data from the CyDAQ using the wrapper,
@@ -379,20 +435,25 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
                 pass
 
             # Check if the data isn't actually coming through
-            if current_data == "" or current_data == "-9":
-                i = + 1
-                if i > 100:
-                    self._show_error("Balance Beam Not Connected! 4 ")
-                    return
+            if current_data == "":
                 continue
+            #    i = + 1
+            #    if i > 100:
+            #        self._show_error("Balance Beam Not Connected! 4 ")
+            #        return
+            #    continue
 
             # Check that input is valid and not some other kind of string
             try:
+                self.mainWindow.connected = True
                 curr_time = time.time() - self.start_time
                 self.plot_data[f"{curr_time}"] = current_data
+                # df = pd.DataFrame({f"{curr_time}": current_data})
+                # df.to_csv(self.temp_filename, mode='a', header=False)
+                # self.outfile.write({f"{curr_time}": {current_data}})
                 self.mid_connector.cb_append_data_point(float(current_data), curr_time)
                 self.low_connector.cb_append_data_point(self.low_sample, curr_time)
                 self.high_connector.cb_append_data_point(self.high_sample, curr_time)
-            except ValueError:
-                self._show_error(f"Error plotting data! Current data is {current_data}")
+            except ValueError as e :
+                self._show_error(f"Error plotting data! Current data is {current_data}. Exception: {e}")
                 return

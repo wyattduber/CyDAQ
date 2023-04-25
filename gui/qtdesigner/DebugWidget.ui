@@ -116,6 +116,13 @@ background-color: #d9d9d9;</string>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="write2_btn">
+       <property name="text">
+        <string>Write Speed Test 2</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QPushButton" name="read_btn">
        <property name="text">
@@ -123,10 +130,10 @@ background-color: #d9d9d9;</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="write2_btn">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="write_btn">
        <property name="text">
-        <string>Write Speed Test 2</string>
+        <string>Write Speed Test</string>
        </property>
       </widget>
      </item>
@@ -137,10 +144,17 @@ background-color: #d9d9d9;</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="write_btn">
+     <item row="2" column="0">
+      <widget class="QPushButton" name="crash_btn">
        <property name="text">
-        <string>Write Speed Test</string>
+        <string>Crash CyDAQ</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="ping_msg_checkBox">
+       <property name="text">
+        <string>Show Ping Cmds in Log</string>
        </property>
       </widget>
      </item>
@@ -159,13 +173,6 @@ background-color: #d9d9d9;</string>
      </property>
      <property name="checked">
       <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="ping_msg_checkBox">
-     <property name="text">
-      <string>Show Ping Cmds in Log</string>
      </property>
     </widget>
    </item>
