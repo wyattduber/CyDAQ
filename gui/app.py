@@ -1,10 +1,10 @@
 # Standard Python Packages
 import os
 import sys
+import time
 import ctypes
-import shutil
+import pexpect
 from sys import platform
-from datetime import datetime
 import logging
 
 # PyQt5 Packages
@@ -83,6 +83,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.setupUi(self)
         self.threadpool = QThreadPool()
+        self.exception_close = False
 
         # CyDAQ communication
         self.wrapper = None
@@ -92,16 +93,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         except CLIWrapper.cyDAQNotConnectedException:
             self.logger.debug("wrapper threw cyDAQNotConnectedException")
             self.connected = False
-        except CLIWrapper.CLIException:
+        except (CLIWrapper.CLIException, pexpect.exceptions.EOF) as e:
             self.logger.debug("wrapper threw CLIException")
             self.connected = False
-            errorbox = QMessageBox(self)
-            errorbox.setWindowTitle("Error")
-            errorbox.setText(
-                "Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?")
-            errorbox.setInformativeText("Try restarting the CyDAQ.")
-            errorbox.setIcon(QMessageBox.Critical)
-            errorbox.exec()
+            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?", e)
+            qApp.exit(-2)
+        except pexpect.exceptions.TIMEOUT as e:
+            self.logger.debug("wrapper threw pexpect timeout exception")
+            self.connected = False
+            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
             qApp.exit(-2)
 
         # Widgets
@@ -258,8 +258,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.logger.debug("Restarted Window")
         qApp.exit(MainWindow.EXIT_CODE_REBOOT)
 
+    def _show_wrapper_error(self, message, e=None):
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        if e is not None:
+            errorbox.setInformativeText(str(e))
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()
+
     # Override of the closeEvent method to add a confirmation box 
     def closeEvent(self, event):
+        if self.exception_close:
+            self.logger.debug("Exited window from exception")
+            if self.connected:
+                self.balance_beam.running = False
+                self.wrapper.stop_bb()
+            event.accept()
         close = QMessageBox.question(self,
                                      "Quit CyDAQ",
                                      "Are you sure?",
@@ -305,11 +320,4 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         main = MainWindow()
         currentExitCode = app.exec_()
-
-        # If exit wasn't normal, save debug logs to location of executable
-        if currentExitCode != 0 and currentExitCode != MainWindow.EXIT_CODE_REBOOT: # -123
-            print("CODE: ", currentExitCode)
-            shutil.copyfile(config.DEFAULT_LOG_FILE,
-                            f".\\CyDAQ-Crash_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.txt")
-
         app = None

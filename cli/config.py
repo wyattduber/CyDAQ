@@ -3,6 +3,8 @@ from sys import platform
 
 # misc CLI
 INPUT_CHAR = ">"
+CMD_LIST = ['h', 'help', 'configure', 'clear', 'print', 'p', 'send', 'set', 'setm', 'wrapper', 'flush', 'start','stop', 'generate', 'mock', 'bb_start', 'bb_stop', 'bb_fetch_pos', 'bb_const', 'bb_set', 'bb_offset_inc', 'bb_offset_dec', 'bb_pause', 'bb_resume', 'q', 'quit']
+WRAPPER_MODE_PREFIX = ['%INFO%', '%ERROR%', '%BB_LIVE%', '%IGNORE%']
 
 # serial communication
 START_BYTE = "@"

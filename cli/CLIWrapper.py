@@ -1,7 +1,6 @@
 import os
 import pexpect
 from pexpect import popen_spawn
-from threading import Thread
 from waiting import wait
 import json
 import re
@@ -28,11 +27,14 @@ class CLI:
         self.bb_log_thread = None
         self.bb_log_mode = False
         self.mocking = False
+        self.log_ping_cmd = False
 
         # Logging
         self.logger = logger
         if self.logger is None:
             self.logger = logging.getLogger(__name__)
+        self.logger.write = self._write
+        self.logger.flush = self._doNothing
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
         pythonCmd = "python3 "
@@ -40,7 +42,7 @@ class CLI:
         dirname = f"\"{os.path.join(os.path.dirname(__file__), config.CLI_MAIN_FILE_NAME)}\""
 
         # Create the pexpect shell
-        self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
+        self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
 
         # Enable the connection tracker
         self.connectionEnabled = True
@@ -52,21 +54,21 @@ class CLI:
         except pexpect.exceptions.EOF:
             try:
                 pythonCmd = "python "  # Check for `python` next
-                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
+                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
                 self.p.expect(config.CLI_START_MESSAGE)
             except pexpect.exceptions.EOF:
                 try:
                     pythonCmd = "py "  # Finally, check for `py` last
-                    self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname)
+                    self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
                     self.p.expect(config.CLI_START_MESSAGE)
                 except pexpect.exceptions.EOF:
-                    raise CLIStartupException(str(self.p.after))
+                    raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
                 except pexpect.exceptions.TIMEOUT:
-                    raise CLIStartupException(str(self.p.after))
+                    raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
             except pexpect.exceptions.TIMEOUT:
-                raise CLIStartupException(str(self.p.after))
+                raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
         except pexpect.exceptions.TIMEOUT:
-            raise CLIStartupException(str(self.p.after))
+            raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
 
         # Wait for command input
         self.p.expect(config.INPUT_CHAR, timeout=5)
@@ -87,8 +89,9 @@ class CLI:
             wait(lambda: not self.running_command)
 
         # Send command
-        if command != "bb_fetch_pos" and command != "ping":  # Can get a bit spammy
-            self.logger.debug("wrapper send cmd: " + command)
+        if command != "bb_fetch_pos":  # Can get a bit spammy
+            if self.log_ping_cmd:
+                self.logger.debug("wrapper send cmd: " + command)
         fail_send = False
         try:
             if not force_async:
@@ -128,8 +131,9 @@ class CLI:
             response = response.decode()
             response = response.strip()
 
-            if fail_send or (command != "bb_fetch_pos" and command != "ping"):  # Can get a bit spammy
-                self.logger.debug("wrapper response: " + response)
+            if fail_send or command != "bb_fetch_pos":  # Can get a bit spammy
+                if self.log_ping_cmd:
+                    self.logger.debug("wrapper response: " + response)
 
             if wrapper_mode:
                 if command == "ping":
@@ -295,8 +299,11 @@ class CLI:
         wait(lambda: not self.running_ping_command)
 
         # Check if the balance beam is connected before retrieving data
-        response = self._send_command(f"bb_start, {kp} {ki} {kd} {N} {set}")
-        return response == config.BALANCE_BEAM_NOT_CONNECTED
+        if None in [kp, ki, kd, N, set]:
+            response = self._send_command("bb_start")
+        else:
+            response = self._send_command(f"bb_start, {kp} {ki} {kd} {N} {set}")
+        return response != config.BALANCE_BEAM_NOT_CONNECTED
 
     def stop_bb(self, **_):
         """Stop balance beam mode and live data streaming"""
@@ -336,6 +343,34 @@ class CLI:
         response = self._send_command("bb_fetch_pos", force_async=True)
         print(response)
         return response
+
+    ### Logging Methods ###
+
+    def enable_ping_log(self):
+        self.log_ping_cmd = True
+
+    def disable_ping_log(self):
+        self.log_ping_cmd = False
+
+    def _write(self, *args, **_):
+        content = args[0].decode('utf-8')
+
+        # Return if the command/response is already logged in wrapper logs
+        # also don't log empty lines or the return '>' character
+        cmd = '(?:% s)' % '|'.join(config.CMD_LIST)
+        res = '(?:% s)' % '|'.join(config.WRAPPER_MODE_PREFIX)
+        if re.match(cmd, content) or re.match(res, content) or content in [' ', '', '\n', '\r', '\r\n'] or re.search('>', content):
+            return
+
+        for eol in ['\r\n', '\r', '\n']:
+            # remove ending EOL, the logger will add it anyway
+            content = re.sub('\%s$' % eol, '', content)
+
+        return self.logger.debug(f"Pexpect Shell: {content}") # call the logger info method with the reworked content
+
+    def _doNothing(self):
+        pass
+
 
     def writeALotOfData(self, **_):
         self.logger.debug("Writing Data for 20 Seconds....")
@@ -431,13 +466,6 @@ class CLITimeoutException(Exception):
 
     def __init__(self):
         self.message = "CLI didn't write to output in " + str(config.WRAPPER_TIMEOUT) + " seconds."
-
-
-class CLIStartupException(Exception):
-    """Thrown when the CLI tool cannot start in a pexpect shell"""
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
 
 
 class CLIUnknownLogLevelException(Exception):

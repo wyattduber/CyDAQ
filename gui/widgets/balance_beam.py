@@ -1,8 +1,8 @@
 # Standard Python Packages
+import sys
 import time
 from typing import Union
 from threading import Thread
-from waiting import wait
 from PyQt5.QtWidgets import QFileDialog
 from scipy.io import savemat
 
@@ -238,6 +238,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         # Once balance beam is connected, start beam mode
         self.running = True
         self.start_time = time.time()
+        self.pre_error = False
         self.logger.debug("Balance Beam Started")
 
     def start_graphing(self, **_):
@@ -260,6 +261,11 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         Sends the stop command to the CyDAQ and ends all threads
         Also re-enables the ping timer in the background for connectivity
         """
+        try:
+            raise Exception()
+        except:
+            frame = sys.exc_info()[2].tb_frame.f_back
+            self.logger.debug(frame.f_code.co_name)
         self.running = False
         self.graph_thread = None
         self.connection_thread = None

@@ -50,6 +50,7 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):
         # self.read_btn.clicked.connect(self.readData)
         self.export_logs_btn.clicked.connect(self.exportLogs)
         self.mock_checkBox.clicked.connect(self.mockClicked)
+        self.ping_msg_checkBox.clicked.connect(self.pingClicked)
         self.clear_log_btn.clicked.connect(self.clearLog)
 
     def updateLog(self, msg):
@@ -132,6 +133,13 @@ class DebugWidget(QtWidgets.QWidget, Ui_DebugWidget, CyDAQModeWidget):
             self.wrapper.disable_mock()
         
         self.mock_checkBox.setChecked(self.wrapper.isMocking())
+
+    # Enables the ability for ping commands to be logged just in case
+    def pingClicked(self):
+        if self.ping_msg_checkBox.isChecked():
+            self.wrapper.enable_ping_log()
+        else:
+            self.wrapper.disable_ping_log()
 
     def clearLog(self):
         # self.wrapper.clearLog()
