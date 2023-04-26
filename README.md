@@ -88,8 +88,20 @@ make # Installs project requirements
 make build # Builds the project into an executable
 ```
 
-The .exe should be located under the newly created ```dist/app/app.exe```. 
+Alternatively, you can build the executable using the `compile.sh` script that exists in the root directory of the project.
+
+```bash
+./compile.sh
+```
+
+The .exe should be located under the newly created ```dist/CyDAQ.exe```. 
 There is also a zip file with all the contents of the app for easy installation.
+
+To clean the build output files, either delete the `build/` and `dist/` folders yourself or run the following:
+
+```bash
+make clean # Deletes the build/ and dist/ directories
+```
 
 
 
