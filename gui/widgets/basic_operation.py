@@ -72,9 +72,9 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
         self.low_corner_max_btn.clicked.connect(
             lambda: self.low_corner_input.setText(self.low_corner_max_btn.text().replace(',', '')))
         self.mid_corner_min_btn.clicked.connect(
-            lambda: self.mid_corner_input_box.setEditText(self.mid_corner_min_btn.text().replace(',', '')))
+            lambda: self.mid_corner_input_box.setText(self.mid_corner_min_btn.text().replace(',', '')))
         self.mid_corner_max_btn.clicked.connect(
-            lambda: self.mid_corner_input_box.setEditText(self.mid_corner_max_btn.text().replace(',', '')))
+            lambda: self.mid_corner_input_box.setText(self.mid_corner_max_btn.text().replace(',', '')))
         self.high_corner_min_btn.clicked.connect(
             lambda: self.high_corner_input.setText(self.high_corner_min_btn.text().replace(',', '')))
         self.high_corner_max_btn.clicked.connect(
