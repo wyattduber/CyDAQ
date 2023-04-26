@@ -87,8 +87,7 @@ class CLI:
             wait(lambda: not self.running_command)
 
         # Send command
-        if command != "bb_fetch_pos":  # Can get a bit spammy
-            if self.log_ping_cmd:
+        if self.log_ping_cmd and command != "bb_fetch_pos":  # Can get a bit spammy
                 self.logger.debug("wrapper send cmd: " + command)
         fail_send = False
         try:
@@ -128,10 +127,9 @@ class CLI:
                 raise CLINoResponseException
             response = response.decode()
             response = response.strip()
-
-            if fail_send or command != "bb_fetch_pos":  # Can get a bit spammy
-                if self.log_ping_cmd:
-                    self.logger.debug("wrapper response: " + response)
+            
+            if fail_send or (self.log_ping_cmd and command != "bb_fetch_pos"):  # Can get a bit spammy
+                self.logger.debug("wrapper response: " + response)
 
             if wrapper_mode:
                 if command == "ping":
