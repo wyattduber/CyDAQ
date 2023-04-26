@@ -20,9 +20,9 @@ Open CyDAQ_proto_1.xpr in Vivado to view/modify to project.
 
 For more detail, check the [Hardware Design page](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/Hardware-Design-(Vivado)) on [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home).
 # Firmware
-The bare-metal firmware design is under /firmware-dual-core/workspace/ import this folder in Vitis as a workspace to view/modify.
+The new firmware uses Petalinux, and is located in the `petalinux` folder at the root of the project. More in depth information about how to set up a development environment for Petalinux can be found on our [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home). 
 
-For the linux firmware, it is using petalinux tools, you need a linux environment to view.edit it. The petalinux project is under /firmware-petalinux/os/ the Vitis project for linux is under /firmware-petalinux/platform/
+The old, bare-metal firmware design is under `firmware-dual-core/workspace/` import this folder in Vitis as a workspace to view/modify. We are keeping it in this repsitory as a reference, but we weren't able to successfully get it to work as a USB Gadget. 
 
 For more detail, check the [petalinux pages](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/Petalinux-(Firmware)) on [wiki](https://git.ece.iastate.edu/sd/sdmay23-47/-/wikis/home).
 
