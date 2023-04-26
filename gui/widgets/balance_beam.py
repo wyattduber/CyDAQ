@@ -351,13 +351,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             self.paused = True
             self.logger.debug("Paused Balance Beam")
 
-    def _update_constants_in_memory(self):
-        self.kp = float(self.kp_input.text()) or 0
-        self.ki = float(self.ki_input.text()) or 0
-        self.kd = float(self.kd_input.text()) or 0
-        self.N = int(self.n_input.text()) or 0
-        self.setcm = float(self.set_cm_input.text()) or 0
-
     def copyTempFile(self):
         """
         When the temp file is done being written to and the new filename
@@ -451,6 +444,32 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             except ValueError as e:
                 self.logger.error(f"Error plotting data! Current data is {current_data}. Exception: {e}")
                 return True
+
+    def _show_error(self, message):
+        """Private method to just show an error message box with a custom message"""
+        self.logger.error(message)
+        errorbox = QMessageBox(self)
+        errorbox.setWindowTitle("Error")
+        errorbox.setText(message)
+        errorbox.setIcon(QMessageBox.Critical)
+        errorbox.exec()
+
+    def _show_message(self, title, message, subtext=None):
+        """Private method to just show an info message box with a custom message"""
+        self.logger.info(message)
+        messagebox = QMessageBox(self)
+        messagebox.setWindowTitle(title)
+        messagebox.setText(message)
+        messagebox.setInformativeText(subtext)
+        messagebox.setIcon(QMessageBox.Information)
+        messagebox.exec()
+
+    def _update_constants_in_memory(self):
+        self.kp = float(self.kp_input.text()) or 0
+        self.ki = float(self.ki_input.text()) or 0
+        self.kd = float(self.kd_input.text()) or 0
+        self.N = int(self.n_input.text()) or 0
+        self.setcm = float(self.set_cm_input.text()) or 0
 
 
 class BalanceBeamNotConnectedException(Exception):
