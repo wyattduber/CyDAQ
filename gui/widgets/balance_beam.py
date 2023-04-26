@@ -207,6 +207,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             Starts the Balance Beam and live graphing of the data.
             """
 
+            # Start checking connection
+            self.checking_connection = True
+
             # Get the latest version of constants from the GUI
             self._update_constants_in_memory()
 
@@ -225,7 +228,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
                     self.logger.error("Balance Beam Not Connected!")
                     raise BalanceBeamNotConnectedException(config.BALANCE_BEAM_NOT_CONNECTED_MSG)
                 self.checking_connection = False
-            except Exception:
+            except BalanceBeamNotConnectedException:
+                raise
+            except:
                 # self._show_error(message="Balance Beam Module not Connected!",
                 #                 subtext="If you are using the new firmware, Balance Beam mode will not work.")
                 self.checking_connection = False
@@ -246,9 +251,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         def start_graphing(**_):
             if self.pre_error:
                 self.pre_error = False
-                self.logger.error("Canceling Balance Beam Start!")
                 return
-            self.logger.debug("Not canceling start for some reason")
 
             self.runInWorkerThread(
                 func=self.graph_data,
@@ -266,6 +269,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
         # Stop ping timer from other window, set log to update instantly for live data
         self.mainWindow.stopPingTimer()
+
+        # Let the user know what is happening
+        self._show_bb_connection_msg()
 
     def stop(self, error=False):
         """
@@ -462,7 +468,8 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         messagebox.setText(message)
         messagebox.setInformativeText(subtext)
         messagebox.setIcon(QMessageBox.Information)
-        messagebox.exec()
+        messagebox.show()
+        return messagebox
 
     def _update_constants_in_memory(self):
         self.kp = float(self.kp_input.text()) or 0
@@ -470,6 +477,22 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.kd = float(self.kd_input.text()) or 0
         self.N = int(self.n_input.text()) or 0
         self.setcm = float(self.set_cm_input.text()) or 0
+
+    def _show_bb_connection_msg(self):
+        # Method that waits for the connection to be checked and then closes this window
+        def waitClose():
+            while self.checking_connection:
+                pass
+            if pb is None:
+                wait(lambda: pb is not None)
+                pb.close()
+            else:
+                pb.close()
+
+        pb = self._show_message(title="Checking CyDAQ...",
+                                message="Checking CyDAQ to see if the Balance Beam Module is connected...",
+                                subtext="This will take a few seconds.")
+        Thread(target=waitClose).start()
 
 
 class BalanceBeamNotConnectedException(Exception):
