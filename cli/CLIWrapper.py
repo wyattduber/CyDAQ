@@ -57,18 +57,16 @@ class CLI:
                 self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
                 self.p.expect(config.CLI_START_MESSAGE)
             except pexpect.exceptions.EOF:
-                try:
-                    pythonCmd = "py "  # Finally, check for `py` last
-                    self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
-                    self.p.expect(config.CLI_START_MESSAGE)
-                except pexpect.exceptions.EOF:
-                    raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
-                except pexpect.exceptions.TIMEOUT:
-                    raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
-            except pexpect.exceptions.TIMEOUT:
-                raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
+                pythonCmd = "py "  # Finally, check for `py` last
+                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
+                self.p.expect(config.CLI_START_MESSAGE)
+
+        # If the CyDAQ is not connected at this point the CLI will immedately say so
+        try:
+            self.p.expect(config.NOT_CONNECTED, timeout=0)
+            raise cyDAQNotConnectedException
         except pexpect.exceptions.TIMEOUT:
-            raise CLIException("Check the log file at C:\Temp\cydaq_current_log.log!")
+            pass
 
         # Wait for command input
         self.p.expect(config.INPUT_CHAR, timeout=5)
@@ -343,7 +341,6 @@ class CLI:
         to stop sending like the other commands do. Hence, the "force_async" option
         """
         response = self._send_command("bb_fetch_pos", force_async=True)
-        print(response) # TODO Remove this
         return response
 
     ### Logging Methods ###
