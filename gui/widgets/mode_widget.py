@@ -49,6 +49,15 @@ class CyDAQModeWidget:
         dlg.setIcon(QMessageBox.Critical)
         dlg.exec()
 
+    def showSimpleError(self, message, splitC):
+        message = message.split(splitC)[1]
+        print(message)
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Error")
+        dlg.setText(message)
+        dlg.setIcon(QMessageBox.Critical)
+        dlg.exec()
+
     def showInfo(self, message):
         """Show a simple message in the middle of the parent window"""
         print(message)

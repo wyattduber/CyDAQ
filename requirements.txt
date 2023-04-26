@@ -6,7 +6,7 @@ pandas==2.0.1
 pexpect
 pglive==0.6.3
 PyInstaller==5.10.1
-pylint==2.17.2
+pylint==2.17.3
 PyQt5==5.15.9 # was having install issues with this one, tentatively reenabled
 pyqtgraph==0.13.3
 pyserial

@@ -433,7 +433,8 @@ class CLINoResponseException(Exception):
 
 class cyDAQNotConnectedException(Exception):
     def __init__(self):
-        super().__init__("CyDAQ is not connected properly!")
+        self.message = "CyDAQ is not connected properly!"
+        super().__init__(self.message)
 
 
 class cyDAQFileException(Exception):
@@ -447,7 +448,8 @@ class cyDAQFileException(Exception):
 
 class BalanceBeamNotConnectedException(Exception):
     def __init__(self):
-        super().__init__("The Balance Beam is not connected to the CyDAQ!")
+        self.message = "The Balance Beam is not connected to the CyDAQ!"
+        super().__init__(self.message)
 
 
 class CLICloseException(Exception):
@@ -463,6 +465,7 @@ class CLITimeoutException(Exception):
 
     def __init__(self):
         self.message = "CLI didn't write to output in " + str(config.WRAPPER_TIMEOUT) + " seconds."
+        super().__init__(self.message)
 
 
 class CLIUnknownLogLevelException(Exception):

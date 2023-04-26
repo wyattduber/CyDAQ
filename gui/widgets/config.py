@@ -19,6 +19,8 @@ else:
     TEMP_DIR = "/tmp"
     DEFAULT_LOG_FILE = f"/tmp/cydaq_current_log.log"
     DEFAULT_BB_DATA_FILE = f"/tmp/bb_data_file.csv"
-TEMP_SAMPLE_LOCATION = 'C:\Temp\sample_{}.csv' # the {} is where the time is calculated and placed
+TEMP_SAMPLE_LOCATION = 'C:\\Temp\\sample_{}.csv'  # the {} is where the time is calculated and placed
 
 BB_MAX_POINTS = 150
+BALANCE_BEAM_NOT_CONNECTED_MSG = "Balance Beam Module Not Connected! If you are using the new firmware, Balance Beam " \
+                                 "Mode will not work."

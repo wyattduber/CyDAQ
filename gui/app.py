@@ -65,8 +65,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         if os.path.exists(config.DEFAULT_LOG_FILE):
             try:
                 os.remove(config.DEFAULT_LOG_FILE)
-            except:
-                pass # throws an error if restart button is clicked as the logger is still running. Just don't delete the file in this case
+            except Exception as e:
+                # throws an error if restart button is clicked as the logger is still running. Just don't delete the
+                # file in this case
+                print(f"Error removing log file {config.DEFAULT_LOG_FILE}! Exception: {e}")
         logging.basicConfig(level=config.CONSOLE_LOG_LEVEL, format=config.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
         fh = logging.FileHandler(config.DEFAULT_LOG_FILE)
