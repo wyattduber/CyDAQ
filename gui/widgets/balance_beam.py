@@ -483,11 +483,7 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         def waitClose():
             while self.checking_connection:
                 pass
-            if pb is None:
-                wait(lambda: pb is not None)
-                pb.close()
-            else:
-                pb.close()
+            pb.close()
 
         pb = self._show_message(title="Checking CyDAQ...",
                                 message="Checking CyDAQ to see if the Balance Beam Module is connected...",

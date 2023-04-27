@@ -271,10 +271,7 @@ class CyDAQ_CLI:
 
             # Otherwise command not found
             self._print_help(True)
-
-    def _temp_print_stuff(self):
-        while True:
-            print("Test")
+            
 
     def _print_to_output(self, message, log_level=config.WRAPPER_IGNORE):
         for line in message.split("\n"):

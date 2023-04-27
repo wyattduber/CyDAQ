@@ -24,8 +24,6 @@ class CLI:
     def __init__(self, logger=None):
         # Global Variables
         self.running_ping_command = False
-        self.bb_log_thread = None
-        self.bb_log_mode = False
         self.mocking = False
         self.log_ping_cmd = False
 
