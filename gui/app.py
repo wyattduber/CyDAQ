@@ -70,14 +70,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                 # throws an error if restart button is clicked as the logger is still running. Just don't delete the
                 # file in this case
                 print(f"Error removing log file {config.DEFAULT_LOG_FILE}! Exception: {e}")
+        
+        # sets the logging output to console. Useful when running the app in the command line
         logging.basicConfig(level=config.CONSOLE_LOG_LEVEL, format=config.LOG_FORMAT)
+        
+        # pass this logger object to any other window/page you want to have logging for
         self.logger = logging.getLogger(__name__)
+        
+        # configures the logger to write to a file as well. Useful when dealing with crashes
         fh = logging.FileHandler(config.DEFAULT_LOG_FILE)
         fh.setLevel(config.FILE_LOG_LEVEL)
         formatter = logging.Formatter(config.LOG_FORMAT)
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)
 
+        # required to make the icon work in Windows
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
