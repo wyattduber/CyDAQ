@@ -3,9 +3,9 @@ import os
 import sys
 import ctypes
 import pexpect
-import logging
+import pyi_splash
 from sys import platform
-from waiting import wait, TimeoutExpired
+import logging
 
 # PyQt5 Packages
 from PyQt5 import QtWidgets
@@ -62,6 +62,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
 
+        # Splash
+        pyi_splash.update_text("Loading CyDAQ GUI....")
+
         # logging
         if os.path.exists(config.DEFAULT_LOG_FILE):
             try:
@@ -70,21 +73,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                 # throws an error if restart button is clicked as the logger is still running. Just don't delete the
                 # file in this case
                 print(f"Error removing log file {config.DEFAULT_LOG_FILE}! Exception: {e}")
-        
-        # sets the logging output to console. Useful when running the app in the command line
         logging.basicConfig(level=config.CONSOLE_LOG_LEVEL, format=config.LOG_FORMAT)
-        
-        # pass this logger object to any other window/page you want to have logging for
         self.logger = logging.getLogger(__name__)
-        
-        # configures the logger to write to a file as well. Useful when dealing with crashes
         fh = logging.FileHandler(config.DEFAULT_LOG_FILE)
         fh.setLevel(config.FILE_LOG_LEVEL)
         formatter = logging.Formatter(config.LOG_FORMAT)
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)
 
-        # required to make the icon work in Windows
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -96,7 +92,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         # CyDAQ communication
         self.wrapper = None
-        self.init_wrapper()
+        try:
+            self.wrapper = CLIWrapper.CLI(self.logger)
+            self.connected = self.wrapper.ping() >= 0
+        except CLIWrapper.cyDAQNotConnectedException:
+            self.logger.debug("wrapper threw cyDAQNotConnectedException")
+            self.connected = False
+        except (CLIWrapper.CLIException, pexpect.exceptions.EOF) as e:
+            self.logger.debug("wrapper threw CLIException")
+            self.logger.error(str(e))
+            self.connected = False
+            pyi_splash.close()
+            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?", e)
+        except pexpect.exceptions.TIMEOUT as e:
+            self.logger.debug("wrapper threw pexpect timeout exception")
+            self.logger.error(str(e))
+            self.connected = False
+            pyi_splash.close()
+            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self)
@@ -153,25 +166,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.show()
 
-    # Method that initializes the wrapper. This is used in the inital setup of the program. 
-    def init_wrapper(self):
-        self.wrapper = None
         try:
-            self.wrapper = CLIWrapper.CLI(self.logger)
-            self.connected = self.wrapper.ping() >= 0
-        except CLIWrapper.cyDAQNotConnectedException:
-            self.logger.debug("wrapper threw cyDAQNotConnectedException")
-            self.connected = False
-        except (CLIWrapper.CLIException, pexpect.exceptions.EOF) as e:
-            self.logger.debug("wrapper threw CLIException")
-            self.logger.error(str(e))
-            self.connected = False
-            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?", e)
-        except pexpect.exceptions.TIMEOUT as e:
-            self.logger.debug("wrapper threw pexpect timeout exception")
-            self.logger.error(str(e))
-            self.connected = False
-            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
+            pyi_splash.close()
+        except:
+            pass
+
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
     # Works with hotplugging the machine, will detect a new connection even without restarting the application
@@ -198,7 +197,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.runInWorkerThread(
             self.wrapper.ping,
             result_func=setConnected,
-            error_func=lambda x: setConnectedError(x)
+            error_func=setConnectedError
         )
 
     def updateWidgetConnectionStatus(self):
