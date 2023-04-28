@@ -3,7 +3,6 @@ import os
 import sys
 import ctypes
 import pexpect
-import pyi_splash
 from sys import platform
 import logging
 
@@ -27,6 +26,13 @@ from generated.MainWindowUI import Ui_MainWindow
 
 DEFAULT_WINDOW_WIDTH = 553
 DEFAULT_WINDOW_HEIGHT = 626
+
+# Check if app was started from command line or executable
+# This will determine if the splash screen will work
+try:
+    import pyi_splash
+except ModuleNotFoundError:
+    pass
 
 
 def resource_path(relative_path):
@@ -62,9 +68,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        # Splash
-        pyi_splash.update_text("Loading CyDAQ GUI....")
-
         # logging
         if os.path.exists(config.DEFAULT_LOG_FILE):
             try:
@@ -80,6 +83,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         formatter = logging.Formatter(config.LOG_FORMAT)
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)
+
+        # Splash
+        # This will update the splash if it exists
+        # Otherwise, will log that it's likely being run from cmdline
+        try:
+            pyi_splash.update_text("Loading CyDAQ GUI....")
+        except NameError:
+            self.logger.info("pyi_splash not detected, initializing from cmdline/dev environment")
 
         if platform == "win32":
             myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
@@ -103,13 +114,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.logger.error(str(e))
             self.connected = False
             pyi_splash.close()
-            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?", e)
+            self._show_wrapper_error(
+                "Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?",
+                e)
         except pexpect.exceptions.TIMEOUT as e:
-            self.logger.debug("wrapper threw pexpect timeout exception")
+            self.logger.debug("wrap"
+                              "per threw pexpect timeout exception")
             self.logger.error(str(e))
             self.connected = False
             pyi_splash.close()
-            self._show_wrapper_error("Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
+            self._show_wrapper_error(
+                "Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
 
         # Widgets
         self.livestream = LiveStreamModeWidget(self)
@@ -117,7 +132,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         self.basic_operation = BasicOperationModeWidget(self)
         self.balance_beam = BalanceBeamModeWidget(self)
         self.external_adc = DACModeWidget(self)
-        self.debug = DebugWidget(self)  # Note, anything that happens before this line won't show up in the debug widget's log, but will show up in console/file logging
+        self.debug = DebugWidget(
+            self)  # Note, anything that happens before this line won't show up in the debug widget's log, but will show up in console/file logging
 
         self.deleteTempSampleData()
 
@@ -166,11 +182,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         self.show()
 
+        # If the Splash module is enabled, then close it
+        # Else, ignore it as it was never created to begin with
         try:
             pyi_splash.close()
-        except:
+        except NameError:
             pass
-
 
     # Method that is triggered every second to ping the CyDAQ and determine if it is connected or not.
     # Works with hotplugging the machine, will detect a new connection even without restarting the application
