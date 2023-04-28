@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>ModeSelectorWidget</class>
  <widget class="QWidget" name="ModeSelectorWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>436</width>
+    <height>602</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -121,7 +129,7 @@ QPushButton {
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QPushButton" name="livestream_btn">
+    <widget class="QPushButton" name="balance_beam_btn">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -140,7 +148,7 @@ QPushButton {
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QPushButton" name="balance_beam_btn">
+    <widget class="QPushButton" name="livestream_btn">
      <property name="minimumSize">
       <size>
        <width>0</width>
