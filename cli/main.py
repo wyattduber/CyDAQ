@@ -224,7 +224,7 @@ class CyDAQ_CLI:
 
             # The following commands require that the balance beam mode is already enabled
             # If the balance beam mode is not enabled, let the user know and deny the command
-            if not self.balance_beam_enabled:
+            if not self.balance_beam_enabled and command[0].lower() in config.BB_CMDS:
                 self._print_to_output("Balance Beam Mode is not enabled!", config.WRAPPER_INFO)
                 continue
 
@@ -270,14 +270,20 @@ class CyDAQ_CLI:
 
             # Otherwise command not found
             self._print_help(True)
-            
 
     def _print_to_output(self, message, log_level=config.WRAPPER_IGNORE):
-        for line in message.split("\n"):
-            if self.wrapper_mode:
-                print("%{0}% {1}".format(log_level, message))
-            else:
-                print(line)
+        if type(message) == list:
+            for i in message:
+                if self.wrapper_mode:
+                    print("%{0}% {1}".format(log_level, i))
+                else:
+                    print(i)
+        else:
+            for line in message.split("\n"):
+                if self.wrapper_mode:
+                    print("%{0}% {1}".format(log_level, message))
+                else:
+                    print(line)
 
     def _is_cydaq_connected(self):
         self.cmd_obj.refresh_port()
@@ -470,7 +476,6 @@ class CyDAQ_CLI:
             elif extension == ".mat":
                 savemat(outFile, {"keys": matKeys, "values": matValues})
         else:
-            # TODO handle matlab files
             # new firmware, can use scp instead
             print("Send stop command!")
             self.cmd_obj.send_stop_sampling()

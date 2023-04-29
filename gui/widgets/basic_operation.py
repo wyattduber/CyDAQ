@@ -339,7 +339,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
                                                        DEFAULT_SAVE_LOCATION, "CSV Files (*.csv);;MATLAB Files (*.mat)",
                                                        options=options)
         if self.filename.strip() == "":  # no file chosen
-            self.logger.debug("No file chosen. Picking " + self.temp_filename + "to write sample data")
+            self.logger.debug("No file chosen. Picking " + self.temp_filename + " to write sample data")
             self.filename = self.temp_filename
         else:
             self.logger.debug("User chose " + self.filename + " to save samples")

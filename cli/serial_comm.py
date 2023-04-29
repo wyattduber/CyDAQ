@@ -79,23 +79,23 @@ class ctrl_comm:
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x01\x00\x00\xacD!': # config send
+            elif res == b'@\x02\x07!': # config send
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x02\x07!':  # config send
+            elif res == b'@\x03\x00d\x07\xd0!': # config send
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x03\x00\x00\x00\x00!':  # config send
+            elif res == b'@\x0b\x00\x00\x00\x00!': # config send
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x0b\x00\x00\x00\x00!':  # config send
+            elif res == b'@\x0c\x00\x00\x00\x00!': # config send
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')
-            elif res == b'@\x0c\x00\x00\x00\x00!':  # config send
+            elif re.search(b'@\x01\x00', res):  # general config send
                 os.write(port, b'@')
                 os.write(port, b'ACK')
                 os.write(port, b'!')

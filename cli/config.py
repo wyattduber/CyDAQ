@@ -3,7 +3,9 @@ from sys import platform
 
 # misc CLI
 INPUT_CHAR = ">"
-CMD_LIST = ['h', 'help', 'configure', 'clear', 'print', 'p', 'send', 'set', 'setm', 'wrapper', 'flush', 'start','stop', 'generate', 'mock', 'bb_start', 'bb_stop', 'bb_fetch_pos', 'bb_const', 'bb_set', 'bb_offset_inc', 'bb_offset_dec', 'bb_pause', 'bb_resume', 'q', 'quit']
+CMD_LIST = ['h', 'help', 'configure', 'clear', 'print', 'p', 'send', 'set', 'setm', 'wrapper', 'flush', 'start', 'stop', 'generate', 'mock', 'bb_start', 'bb_stop', 'bb_fetch_pos', 'bb_const', 'bb_set', 'bb_offset_inc', 'bb_offset_dec', 'bb_pause', 'bb_resume', 'q', 'quit']
+BB_CMDS = ['bb_start', 'bb_stop', 'bb_fetch_pos', 'bb_const', 'bb_set', 'bb_offset_inc', 'bb_offset_dec', 'bb_pause', 'bb_resume']
+CONFIG_CMDS = [b'@\x02\x07!', b'@\x03\x00\x00\x00\x00!', b'@\x0b\x00\x00\x00\x00!', b'@\x0c\x00\x00\x00\x00!', b'@\x01\x00\x00\x00d!', b'@\x03\x00d\x07\xd0!', ]
 WRAPPER_MODE_PREFIX = ['%INFO%', '%ERROR%', '%BB_LIVE%', '%IGNORE%']
 
 # serial communication
