@@ -97,7 +97,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.stop_btn.clicked.connect(lambda: self.pre_btn_checks("stop"))
         self.send_constants_btn.clicked.connect(lambda: self.pre_btn_checks("send_constants"))
         self.send_set_point_btn.clicked.connect(lambda: self.pre_btn_checks("send_set"))
-        self.save_step_btn.clicked.connect(lambda: self.pre_btn_checks("save_step"))
         self.save_plot_data_btn.clicked.connect(lambda: self.pre_btn_checks("save_plot_data"))
         self.offset_inc_btn.clicked.connect(lambda: self.pre_btn_checks("offset_inc"))
         self.offset_dec_btn.clicked.connect(lambda: self.pre_btn_checks("offset_dec"))
@@ -152,8 +151,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             else:
                 Thread(target=self.savePlotData).start()
             return
-        elif btn == "save_step":
-            return  # TODO Not sure what save step is
 
         # Now handle commands that require an active CyDAQ connection
         # Or balance beam mode to be enabled (Seperate checks)
@@ -315,10 +312,6 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
         self.logger.debug("Set Point Sent!")
         self.logger.debug(f"Set Point: {self.setcm}")
-
-    def saveStep(self):
-        """Method that does nothing at the moment according to Matt Post"""
-        pass
 
     def savePlotData(self):
         """Save the plot data to a file"""

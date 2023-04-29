@@ -62,7 +62,7 @@ background-color: #d9d9d9;</string>
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>110</y>
+     <y>120</y>
      <width>171</width>
      <height>151</height>
     </rect>
@@ -167,7 +167,7 @@ background-color: #d9d9d9;</string>
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>280</y>
+     <y>290</y>
      <width>191</width>
      <height>41</height>
     </rect>
@@ -180,7 +180,7 @@ background-color: #d9d9d9;</string>
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>339</y>
+     <y>350</y>
      <width>211</width>
      <height>41</height>
     </rect>
@@ -213,7 +213,7 @@ background-color: #d9d9d9;</string>
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>400</y>
+     <y>410</y>
      <width>191</width>
      <height>41</height>
     </rect>
@@ -222,24 +222,11 @@ background-color: #d9d9d9;</string>
     <string>Send Set Point</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="save_step_btn">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>450</y>
-     <width>191</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Save Step</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="save_plot_data_btn">
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>500</y>
+     <y>470</y>
      <width>191</width>
      <height>41</height>
     </rect>
@@ -252,7 +239,7 @@ background-color: #d9d9d9;</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>560</y>
+     <y>530</y>
      <width>261</width>
      <height>71</height>
     </rect>
@@ -278,7 +265,7 @@ background-color: #d9d9d9;</string>
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>650</y>
+     <y>620</y>
      <width>191</width>
      <height>41</height>
     </rect>
