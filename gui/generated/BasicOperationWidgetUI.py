@@ -288,5 +288,5 @@ class Ui_BasicOpetaionWidget(object):
         self.high_corner_max_btn.setText(_translate("BasicOpetaionWidget", "40,000"))
         self.sampling_time_label.setText(_translate("BasicOpetaionWidget", "Sampling Duration (seconds)"))
         self.send_config_btn.setText(_translate("BasicOpetaionWidget", "Send Config"))
-        self.start_stop_sampling_btn.setText(_translate("BasicOpetaionWidget", "Start"))
+        self.start_stop_sampling_btn.setText(_translate("BasicOpetaionWidget", "Start Sampling"))
 from . import basic_operation_rc

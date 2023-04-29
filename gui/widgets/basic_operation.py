@@ -147,7 +147,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
         self.logger.debug("GUI started accepting/writing sample data...")
         self.writing = True
         self.mainWindow.pingTimer.stop()
-        self.start_stop_sampling_btn.setText("Writing...")
+        self.start_stop_sampling_btn.setText("Writing Samples...")
 
     def writingDataFinished(self):
         """When the cyDAQ is finished writing data."""
@@ -397,7 +397,7 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
                     self.sampling = False
                     self.filename = None
                     return
-                self.start_stop_sampling_btn.setText("Stop")
+                self.start_stop_sampling_btn.setText("Stop Sampling")
 
             self.startSamplingError = False
 
