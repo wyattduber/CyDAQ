@@ -176,8 +176,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
 
         # Ping the CyDAQ periodically to verify connection
         self.pingTimerInterval = PING_TIMER_DELAY_MS
-        self.pingTimer = QTimer()
-        self.pingTimer.timeout.connect(self.pingCyDAQ)
+        self.pingTimer = QTimer(self)
+        self.pingTimer.timeout.connect(self._ping_cydaq_with_keyboard_interrupt)
         self.startPingTimer()
 
         self.show()
@@ -216,6 +216,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             result_func=setConnected,
             error_func=setConnectedError
         )
+
+    # Helper method to allow KeyboardInterrupt to close the program
+    def _ping_cydaq_with_keyboard_interrupt(self):
+        try:
+            self.pingCyDAQ()
+        except KeyboardInterrupt:
+            self.exception_close = True
+            self.close()
 
     def updateWidgetConnectionStatus(self):
         if self.connected:
@@ -305,6 +313,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                 self.balance_beam.running = False
                 self.wrapper.stop_bb()
             event.accept()
+            return
         close = QMessageBox.question(self,
                                      "Quit CyDAQ",
                                      "Are you sure?",

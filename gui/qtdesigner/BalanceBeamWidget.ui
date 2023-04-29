@@ -173,7 +173,7 @@ background-color: #d9d9d9;</string>
     </rect>
    </property>
    <property name="text">
-    <string>Send Constants</string>
+    <string>Set Constants</string>
    </property>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget">
@@ -219,7 +219,7 @@ background-color: #d9d9d9;</string>
     </rect>
    </property>
    <property name="text">
-    <string>Send Set Point</string>
+    <string>Set Set Point</string>
    </property>
   </widget>
   <widget class="QPushButton" name="save_plot_data_btn">

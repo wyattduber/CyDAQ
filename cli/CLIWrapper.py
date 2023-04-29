@@ -11,6 +11,7 @@ import logging
 
 import config
 
+
 class CLI:
     """
     A class that handles communication with the cyDAQ. Uses the library pexpect to initialize and communicate with
@@ -35,12 +36,11 @@ class CLI:
         self.logger.flush = self._doNothing
 
         # Run the CLI tool using the pexpect library just like a user would in the terminal
-        pythonCmd = "python3 "
 
         dirname = f"\"{os.path.join(os.path.dirname(__file__), config.CLI_MAIN_FILE_NAME)}\""
 
         # Create the pexpect shell
-        self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
+        self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=config.CLI_PYTHON_CMD + dirname, logfile=self.logger)
 
         # Enable the connection tracker
         self.connectionEnabled = True
@@ -51,12 +51,14 @@ class CLI:
             self.p.expect(config.CLI_START_MESSAGE)  # Check with `python3` first
         except pexpect.exceptions.EOF:
             try:
-                pythonCmd = "python "  # Check for `python` next
-                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
+                pythonCmd = "python3 "  # Check for `python` next
+                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname,
+                                                logfile=self.logger)
                 self.p.expect(config.CLI_START_MESSAGE)
             except pexpect.exceptions.EOF:
                 pythonCmd = "py "  # Finally, check for `py` last
-                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname, logfile=self.logger)
+                self.p = popen_spawn.PopenSpawn(timeout=config.WRAPPER_TIMEOUT, cmd=pythonCmd + dirname,
+                                                logfile=self.logger)
                 self.p.expect(config.CLI_START_MESSAGE)
 
         # If the CyDAQ is not connected at this point the CLI will immedately say so
@@ -79,14 +81,14 @@ class CLI:
         if not self.connectionEnabled:
             self.logger.debug("wrapper connectionEnabled false, not sending command: " + command)
             return
-        
+
         # Use the waiting library to prevent two commands from being run at the same time
         if not force_async:
             wait(lambda: not self.running_command)
 
         # Send command
         if self.log_ping_cmd and command != "bb_fetch_pos":  # Can get a bit spammy
-                self.logger.debug("wrapper send cmd: " + command)
+            self.logger.debug("wrapper send cmd: " + command)
         fail_send = False
         try:
             if not force_async:
@@ -105,7 +107,7 @@ class CLI:
 
         if command != "q" and command != "bb_start" and command != "bb_offset_inc" and command != "bb_offset_dec" and not re.search(
                 'bb_const, [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]*\.[0-9]+ [0-9]+', command) and not re.search(
-                'bb_set, [0-9]*\.[0-9]+', command):
+            'bb_set, [0-9]*\.[0-9]+', command):
             # Wait for response
             try:
                 self.p.expect(config.INPUT_CHAR, timeout=config.WRAPPER_TIMEOUT)
@@ -125,7 +127,7 @@ class CLI:
                 raise CLINoResponseException
             response = response.decode()
             response = response.strip()
-            
+
             if fail_send or (self.log_ping_cmd and command != "bb_fetch_pos"):  # Can get a bit spammy
                 self.logger.debug("wrapper response: " + response)
 
@@ -196,9 +198,9 @@ class CLI:
             if response == "":
                 return -1
             elif response == "Error sending config!":
-                pass # Do nothing since error is already handled
+                pass  # Do nothing since error is already handled
             elif response == "Balance Beam Mode is not enabled!":
-                pass # Do nothing since balance beam was likely just ended
+                pass  # Do nothing since balance beam was likely just ended
             else:
                 raise CLIException("Unable to parse ping response. Response was: {}".format(response))
 
@@ -354,18 +356,18 @@ class CLI:
         # also don't log empty lines or the return '>' character
         cmd = '(?:% s)' % '|'.join(config.CMD_LIST)
         res = '(?:% s)' % '|'.join(config.WRAPPER_MODE_PREFIX)
-        if re.match(cmd, content) or re.match(res, content) or content in [' ', '', '\n', '\r', '\r\n'] or re.search('>', content):
+        if re.match(cmd, content) or re.match(res, content) or content in [' ', '', '\n', '\r', '\r\n'] or re.search(
+                '>', content):
             return
 
         for eol in ['\r\n', '\r', '\n']:
             # remove ending EOL, the logger will add it anyway
             content = re.sub('\%s$' % eol, '', content)
 
-        return self.logger.debug(f"Pexpect Shell: {content}") # call the logger info method with the reworked content
+        return self.logger.debug(f"Pexpect Shell: {content}")  # call the logger info method with the reworked content
 
     def _doNothing(self):
         pass
-
 
     def writeALotOfData(self, **_):
         self.logger.debug("Writing Data for 20 Seconds....")
@@ -398,7 +400,8 @@ class CLI:
     def readALotOfData(self, label, **_):
         with open('lotsOfData.csv', newline='') as csvfile:
             csvFile = pandas.read_csv('lotsOfData.csv')
-            self.logger.debug("Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
+            self.logger.debug(
+                "Started Reading " + "{:,}".format(len(pandas.read_csv('lotsOfData.csv'))) + " Lines of Data...")
             start = round(time.time())
             file = csv.reader(csvfile)
             for i in file:

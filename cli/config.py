@@ -59,7 +59,8 @@ DEFAULT_KD = 0
 DEFAULT_N = 0
 DEFAULT_SET = 0
 
-# CLI wrapper 
+# CLI wrapper
+CLI_PYTHON_CMD = "python "
 CLI_MAIN_FILE_NAME = "main.py"
 NOT_CONNECTED = "Zybo not connected"
 LOG_MAX_LENGTH = 10000 # number of log lines that can be made before needing to be written to file

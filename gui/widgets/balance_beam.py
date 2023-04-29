@@ -155,9 +155,9 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         # Now handle commands that require an active CyDAQ connection
         # Or balance beam mode to be enabled (Seperate checks)
 
-        if not self.mainWindow.connected:
-            self._show_error("CyDAQ is not Connected!")
-            return
+        #if not self.mainWindow.connected:
+        #    self._show_error("CyDAQ is not Connected!")
+        #    return
 
         if btn == "start":
             if self.running:
@@ -165,20 +165,25 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
             else:
                 self.start()
             return
+        elif btn == "send_constants":
+            self.cmd_paused = True
+            self.sendConstants()
+            self.cmd_paused = False
+            return
+        elif btn == "send_set":
+            self.cmd_paused = True
+            self.sendSetPoint()
+            self.cmd_paused = False
+            return
 
         if not self.running:
             self._show_error("Balance Beam is not running!")
             return
 
-        if btn == "stop":
-            self.stop()
-
         # Pause graphing while the command is sent
         self.cmd_paused = True
-        if btn == "send_constants":
-            self.sendConstants()
-        elif btn == "send_set":
-            self.sendSetPoint()
+        if btn == "stop":
+            self.stop()
         elif btn == "offset_inc":
             self.offsetInc()
         elif btn == "offset_dec":
@@ -292,23 +297,40 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
 
     def sendConstants(self):
         """Send in the user-defined constants"""
+
+        # Update the constants in memory
         self._update_constants_in_memory()
 
-        self.wrapper.set_constants(self.kp, self.ki, self.kd, self.N)
-
+        # and in the current value output boxes
         self.kp_output.setText(str(self.kp))
         self.ki_output.setText(str(self.ki))
         self.kd_output.setText(str(self.kd))
         self.n_output.setText(str(self.N))
+
+        # Then, check if bb is running
+        # If it is, send the values. if not, stop here
+        if not self.running:
+            return
+
+        self.wrapper.set_constants(self.kp, self.ki, self.kd, self.N)
 
         self.logger.debug("Constants Sent!")
         self.logger.debug(f"Constants: kp: {self.kp}, ki: {self.ki}, kd: {self.ki} N: {self.N}")
 
     def sendSetPoint(self):
         """Send in the user-defined set point in cm"""
+
+        # Update the constants in memory and in the current val output box
         self.setcm = float(self.set_cm_input.text()) or 0
-        self.wrapper.send_set_point(self.setcm)
         self.set_cm_output.setText(str(self.setcm))
+
+        # Check if the bb is running
+        # If it is, send the values. if not, stop here
+
+        if not self.running:
+            return
+
+        self.wrapper.send_set_point(self.setcm)
 
         self.logger.debug("Set Point Sent!")
         self.logger.debug(f"Set Point: {self.setcm}")
@@ -470,6 +492,14 @@ class BalanceBeamModeWidget(QtWidgets.QWidget, Ui_BalanceBeamWidget, CyDAQModeWi
         self.kd = float(self.kd_input.text()) or 0
         self.N = int(self.n_input.text()) or 0
         self.setcm = float(self.set_cm_input.text()) or 0
+
+        # Update input boxes to remove leading zeroes and format
+        self.kp_input.setText(str(self.kp))
+        self.ki_input.setText(str(self.ki))
+        self.kd_input.setText(str(self.kd))
+        self.n_input.setText(str(self.N))
+        self.set_cm_input.setText(str(self.setcm))
+
 
     def _show_bb_connection_msg(self):
         # Method that waits for the connection to be checked and then closes this window
