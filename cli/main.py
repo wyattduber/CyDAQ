@@ -9,8 +9,6 @@ import json
 import time
 import paramiko
 
-from check_params import ParameterConstructor
-
 from command_comm import cmd
 from master_enum import nameToEnum
 
@@ -30,7 +28,6 @@ class CyDAQ_CLI:
 
     HELP_MSG = """	h/help\t\t\t\t\t\t\t Print This Help Menu
 	p/ping\t\t\t\t\t\t\t Ping the Zybo
-	configure\t\t\t\t\t\t Configure Parameters (Guided)
 	clear\t\t\t\t\t\t\t Clear config to default
 	print\t\t\t\t\t\t\t Print Current Config
 	send\t\t\t\t\t\t\t Send config to cyDAQ
@@ -111,9 +108,6 @@ class CyDAQ_CLI:
                 continue
             elif command[0].lower() == 'h' or command[0].lower() == 'help':
                 self._print_help(False)
-                continue
-            elif command[0].lower() == 'configure':
-                self.config = self._construct()
                 continue
             elif command[0].lower() == 'clear':
                 self.config = self.default_config.copy()
@@ -556,84 +550,6 @@ class CyDAQ_CLI:
 
             self._print_to_output("Wrote samples to {}".format(outFile), config.WRAPPER_INFO)
 
-    def _construct(self):
-        pc = ParameterConstructor()
-        ticket = pc.ticket()
-
-        # Go through each ticket and let the user input either an integer or pick from a list
-        while ticket is not None:
-            self._print_to_output(ticket["Node"], config.WRAPPER_INFO)
-            if ticket["Type"] == "Integer":
-                self._print_to_output("[{}, {}] :".format(ticket["Bounds"][0], ticket["Bounds"][1]),
-                                      config.WRAPPER_INFO)
-            else:
-                if len(ticket["Options"]) == 1:
-                    pc.input(ticket["Options"][0])
-                self._print_to_output(ticket["Options"], config.WRAPPER_INFO)
-            if not self._handle_ticket(pc):
-                return None
-            ticket = pc.ticket()
-        params = pc.toDict()
-
-        # Dataset dac mode requires a file input
-        if params["Dac Mode"] == 'Dataset':
-            valid_data = True
-            while valid_data:
-                self._print_to_output('Filepath for DAC dataset (must be .csv)', config.WRAPPER_INFO)
-                dac_dataset_filepath = input(': ')
-                if '.csv' in dac_dataset_filepath:
-                    if self._loadCSV(dac_dataset_filepath) is not None:
-                        params['Dataset Filepath'] = dac_dataset_filepath
-                        valid_data = False
-                else:
-                    self._print_to_output("file must be .csv", config.WRAPPER_ERROR)
-        self._print_to_output(params, config.WRAPPER_INFO)
-        return params
-
-    def _handle_ticket(self, pc):
-        response = input(' :')
-        if '/' in response:
-            words = response.split(' ')
-            if words[0] == '/back':
-                pc.back()
-            elif words[0] == '/goto':
-                if len(words) < 2:
-                    self._print_to_output('Not enough arguments, second arg should be the Step to navigate back to',
-                                          config.WRAPPER_ERROR)
-                pc.goto(' '.join(words[1:]))
-            elif words[0] == '/quit':
-                return 0
-            pass
-        else:
-            pc.input(response)
-        return 1
-
-    # TODO this probably needs removed/changed. Will address when used
-    def _loadCSV(self, filepath):
-        data = []
-        try:
-            with open(filepath) as f:
-                if os.path.getsize(filepath) > 6000000:
-                    self._print_to_output("File too large", config.WRAPPER_ERROR)
-                    return None
-                for line in f:
-                    row_data = line.strip("\n").split()
-                    for i, item in enumerate(row_data):
-                        try:
-                            row_data[i] = float(item)  # type: ignore
-                        except ValueError:
-                            pass
-                    try:
-                        if len(row_data) == 1:
-                            data.append(float(row_data[0]))
-                        else:
-                            data.append(float(row_data))  # type: ignore
-                    except ValueError:
-                        pass
-            return data
-        except:
-            return None
-
     def _writeCSV(self, f, value, time_stamp=None):
         if time_stamp is not None:
             f.write("{},{}\n".format(time_stamp, value))
@@ -748,10 +664,4 @@ if __name__ == "__main__":
         cli = CyDAQ_CLI()
         cli.start()
     except Exception as e:  # Doesn't catch keyboard interrupt
-        # TODO clean this printing up. Right now a large chunk of the stack trace isn't
-        # making it into the GUI logs. Need to fix
-        print("additional exception info: ", e)
-        print("more printing: ", traceback.format_exc())
-        # print("stack trace: ", e.with_traceback())
         cli._print_to_output("unhandled exception in CLI: " + traceback.format_exc())
-        # cli._print_to_output("unhandled exception in CLI: " + e)

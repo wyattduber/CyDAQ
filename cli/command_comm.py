@@ -1,5 +1,5 @@
 from serial_comm import ctrl_comm
-from master_enum import enum_commands, config
+from master_enum import enum_commands
 import struct
 import serial
 import time as t
@@ -520,7 +520,7 @@ class cmd:
             while True:
                 if self.recieve_acknowlege_zybo():
                     return True
-                elif cnt > 10:
+                elif cnt > 3:
                     return False
                 else:
                     t.sleep(0.1)
@@ -715,17 +715,3 @@ class cmd:
                         buffer += byte_value
                         byte_value = self.ctrl_comm_obj.read_byte()
                     return buffer
-                
-
-    # not needed since struct library takes care of byte convertions for us
-    # def decimal_to_binary(self, number):
-    #     bin_num = bin(int(number))
-    #     return bin_num
-    #
-    # def binary_to_hex(self, number):
-    #     hex_num = hex(int(number, 2))
-    #     return hex_num
-    #
-    # def hex_to_dec(self, hex_number):
-    #     dec_num = str(int(hex_number, 16))
-    #     return dec_num

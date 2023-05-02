@@ -1,7 +1,5 @@
 from enum import IntEnum
 
-import config
-
 class enum_commands(IntEnum):
     """
            This class defines a table of commands that are sent to the ZYBO specifying the settings for

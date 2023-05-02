@@ -113,7 +113,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.logger.debug("wrapper threw CLIException")
             self.logger.error(str(e))
             self.connected = False
-            pyi_splash.close()
+            try: # hacky fix but prevents crashes if the system doesn't have pyi_splash
+                pyi_splash.close()
+            except NameError:
+                pass
             self._show_wrapper_error(
                 "Unable to connect to CyDAQ through wrapper. Is the CyDAQ on? Is there another instance running/connected to the CyDAQ? Is there another program using that com port?",
                 e)
@@ -122,7 +125,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
                               "per threw pexpect timeout exception")
             self.logger.error(str(e))
             self.connected = False
-            pyi_splash.close()
+            try: # hacky fix but prevents crashes if the system doesn't have pyi_splash
+                pyi_splash.close()
+            except NameError:
+                pass
             self._show_wrapper_error(
                 "Unable to connect to CyDAQ through wrapper due to timeout. Restart the CyDAQ and try again.", e)
 
