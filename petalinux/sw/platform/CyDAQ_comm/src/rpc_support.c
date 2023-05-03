@@ -3,7 +3,6 @@
  * Put them in a seperate file here because they were annoying to sift through.
  */
 
-//TODO clean up imports. Lazily copied these
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>

@@ -2,16 +2,24 @@
 #include <openamp/open_amp.h>
 #include <metal/alloc.h>
 
+#include "xil_cache.h"
+
 #include "xgpio.h"
 #include "platform_info.h"
 #include "rpc.h"
+#include "../hardware/xadc.h"
+#include "../hardware/ads7047.h"
+#include "../hardware/mux_driver.h"
+#include "../hardware/filter.h"
+#include "../hardware/dac80501.h"
+#include "../hardware/bb_controller.h"
 #include "../hardware/shared_definitions.h"
 
 #define LPRINTF(format, ...) xil_printf(format, ##__VA_ARGS__)
 #define LPERROR(format, ...) LPRINTF("ERROR: " format, ##__VA_ARGS__)
 
 #define VIRTIO_DEV_DEVICE 1UL
-#define RPMSG_SERVICE_NAME         "rpmsg-openamp-demo-channel" //TODO change
+#define RPMSG_SERVICE_NAME         "rpmsg-openamp-demo-channel"
 
 static struct rpmsg_endpoint lept;
 static int shutdown_req = 0;
@@ -36,7 +44,6 @@ void rpc_print_payload(struct _payload* payload){
 int rpc_send_message(struct rpmsg_endpoint *ept, int message, int data[], int data_len){
 	send_payload->message = message;
 
-	//TODO zero out all other data?
 	int b = data_len;
 	if(data_len > PAYLOAD_DATA_LEN)
 		data_len = PAYLOAD_DATA_LEN;
@@ -57,24 +64,26 @@ int send_ack(struct rpmsg_endpoint *ept){
 	int data[PAYLOAD_DATA_LEN] = {RPC_MESSAGE_DAC_ACK};
 	if (rpc_send_message(ept, MSG_TYPE_COMMAND, data, 1) < 0) {
 		xil_printf("SAMP> send_ack failed\n");
+		return -1;
 	}
 	return 0;
 }
 
 int handle_message(struct _payload* payload){
 	int* data = payload->data;
-	int data_len = payload->data_len;
+	//int data_len = payload->data_len;
 	int message_type = payload->message;
 	int ret = -1;
 
-	//command message handling TODO move to switch
+	//command message handling
+	//NOTE: All else ifs below marked with TODO are not fully supported. They were just copied over from old firmware
 	if(message_type == MSG_TYPE_COMMAND){
 		if(data[0] == RPC_MESSAGE_XADC_SET_SAMPLE_RATE){
 			ret = xadcSetSampleRate(data[1]);
-		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){ //TODO not implemented yet
+		}else if(data[0] == RPC_MESSAGE_XADC_ENABLE_SAMPLING){
 			ret =  xadcEnableSampling(data[1]);//0 = normal, 1 = stream
 
-		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){ //TODO not implemented yet
+		}else if(data[0] == RPC_MESSAGE_XADC_DISABLE_SAMPLING){
 			ret =  xadcDisableSampling();
 
 		}else if(data[0] == RPC_MESSAGE_ADS_SET_SAMPLE_RATE){ //TODO not implemented yet
@@ -96,22 +105,22 @@ int handle_message(struct _payload* payload){
 			//data[3] = upper
 			ret =  tuneFilter(50,data[2],data[3]);
 
-		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){
+		}else if(data[0] == RPC_MESSAGE_DAC_SET_NUM_REPETITIONS){ //TODO not implemented yet
 			ret =  dac80501_SetNumRepetitions(data[1]);
 
-		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){
+		}else if(data[0] == RPC_MESSAGE_DAC_SET_GEN_RATE){ //TODO not implemented yet
 			ret =  dac80501_SetGenerationRate(data[1]);
 
-		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){
+		}else if(data[0] == RPC_MESSAGE_DAC_RECEIVE_DATASET){ //TODO not implemented yet
 			ret =  dac80501_ReceiveDataset(data[1]);
 
-		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){
+		}else if(data[0] == RPC_MESSAGE_DAC_ENABLE_GENERATION){ //TODO not implemented yet
 			ret =  dac80501_EnableGeneration();
 
-		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){
+		}else if(data[0] == RPC_MESSAGE_DAC_DISABLE_GENERATION){ //TODO not implemented yet
 			ret =  dac80501_DisableGeneration();
 
-		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){
+		}else if(data[0] == RPC_MESSAGE_DAC_BALL_BEAM_START){ //TODO not implemented yet
 			ret =  ballbeamStart(); //TODO this is blocking...
 
 		}else if(data[0] == RPC_MESSAGE_LED_INIT){
@@ -126,10 +135,9 @@ int handle_message(struct _payload* payload){
 
 		}else{
 			LPRINTF("SAMP> Unknown message, type: %d, command: %d, data: %d\r\n", message_type, data[0],data[1]);
-			//TODO send fail
 			return -1;
 		}
-		send_ack(&lept); //TODO send fail if failed
+		send_ack(&lept);
 		return ret;
 
 	}else if(message_type == MSG_TYPE_REQUEST){
@@ -140,16 +148,9 @@ int handle_message(struct _payload* payload){
 			sample_count = shared_GetSampleCount();
 
 			//assume that petalinux is going to try to read from the shared memory at this length,
-			//flush the cache so it has the latest TODO don't actually need? idk yet
+			//flush the cache so it has the latest. This might not be necessary.
 			volatile SAMPLE_TYPE *xadcSampleBuffer = (u16*)0x38800000;
 			Xil_DCacheFlushRange(xadcSampleBuffer, (int)sample_count * sizeof(u16));
-
-			//TODO testing. Remove
-//			for(int i = 0; i < *sample_count; i++){
-//				if(xadcSampleBuffer[i] == 0){
-//					xil_printf("SAMP> OH NO! Found bad data on samp at position: %d!\r\n", i);
-//				}
-//			}
 
 			if(DEBUG)
 				xil_printf("SAMP> got request for sample count, responding with: %d\r\n", *sample_count);
@@ -160,7 +161,7 @@ int handle_message(struct _payload* payload){
 			}
 		}
 	}
-
+	return 0;
 }
 
 /*-----------------------------------------------------------------------------*
@@ -173,19 +174,14 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	(void)src;
 
 	/* On reception of a shutdown we signal the application to terminate */
-	//TODO test or remove this?
 	if ((*(unsigned int *)data) == SHUTDOWN_MSG) {
 		LPRINTF("SAMP> shutdown message is received.\n");
 		shutdown_req = 1;
 		return RPMSG_SUCCESS;
 	}
 
-	int ret = handle_message((struct _payload*)data);
+	handle_message((struct _payload*)data);
 
-	/* Send data back to master */ //TODO change this to just ACK later on
-//	if (rpmsg_send(ept, data, len) < 0) {
-//		xil_printf("SAMP>  rpmsg_send failed\r\n");
-//	}
 	return RPMSG_SUCCESS;
 }
 
@@ -254,4 +250,5 @@ int rpc_setup(){
 
 	xil_printf("SAMP> Stopping application...\r\n");
 	platform_cleanup(platform);
+	return 0;
 }

@@ -39,17 +39,23 @@ int main(int argc, char *argv[]) {
 	if(xadcInit() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! xadcInit failed!\r\n");
 	}
+
+	//from old firmware, not supported but kept in
 	if(init_x9258_i2c() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! x9258_i2c init failed!\r\n");
 	}
+
+	//from old firmware, not supported but kept in
 	if(init_dac80501() != XST_SUCCESS){
 		xil_printf("SAMP> ERROR! dac80501 init failed!\r\n");
 	}
+
 	rpc_setup(); //blocking
 
 	return 0;
 }
 
+//below is from old firmware. Keeping it in but not used
 u8 getButtons() {
 	return (u8) Xil_In32(BUTTON_BASE_ADDR);
 }

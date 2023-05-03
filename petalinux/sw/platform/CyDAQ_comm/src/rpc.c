@@ -24,7 +24,7 @@ char sbuf[512];
 int r5_id = 0;
 char rpmsg_dev_name[256];
 int ept_fd = -1;
-char *rpmsg_svc="rpmsg-openamp-demo-channel"; //TDOO change name? //TODO make define?
+char *rpmsg_svc="rpmsg-openamp-demo-channel";
 
 void rpc_print_payload(struct _payload* payload){
 	if(DEBUG){
@@ -51,7 +51,6 @@ void rpc_stop_remote(void)
 int rpc_send_message(int message, int data[], int data_len){
 	send_payload->message = message;
 
-	//TODO zero out all other data?
 	int b = data_len;
 	if(data_len > PAYLOAD_DATA_LEN)
 		data_len = PAYLOAD_DATA_LEN;
@@ -110,7 +109,6 @@ int rpc_recieve_int_response(){
 		printf("COMM> Unexpected payload in rpc_recieve_int_response!\r\n");
 	}
 
-	//TODO verify it's not an error?
 	return receive_payload->data[1];
 
 }
@@ -128,7 +126,7 @@ int rpc_setup(){
 
 	/* Write firmware name to remoteproc sysfs interface */
 	sprintf(sbuf, "/sys/class/remoteproc/remoteproc%u/firmware", r5_id);
-	if (0 != file_write(sbuf, "CyDAQ_sampling.elf")) { //TODO make constant at top of file //was "image_rpc_demo" or "CyDAQ_sampling.elf"
+	if (0 != file_write(sbuf, "CyDAQ_sampling.elf")) {
 		return -EINVAL;
 	}
 
@@ -202,7 +200,6 @@ int rpc_setup(){
 }
 
 void rpc_teardown(){
-	//todo clean up other memory?
 	close(fd);
 	rpc_stop_remote();
 	free(send_payload);

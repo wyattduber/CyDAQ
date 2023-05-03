@@ -29,6 +29,9 @@
 int pause = 0;
 
 int ballbeamStart() {
+	//NOTE: This code is copied over from the old firmware.
+	//We didn't get around to implementing it for this new firmware.
+	//It WON'T work as is, and most likely needs heavy modification. We will keep it in though.
 	PID *pid;
 	IR *ir_sensor;
 	SERVO *servo;
@@ -46,7 +49,7 @@ int ballbeamStart() {
 	int stop = 0;
 
 	// Get UART pointer
-//	uart = commGetUartPtr(); //TODO not how bb will work
+//	uart = commGetUartPtr(); //commented out to get to compile. Again, this code doesn't work as is
 
 	// Initialize PID Controller
 	pid = pid_init(kp, ki, kd, r);

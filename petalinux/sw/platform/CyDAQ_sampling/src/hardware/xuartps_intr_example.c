@@ -144,7 +144,7 @@ int TotalErrorCount;
 *
 **************************************************************************/
 #ifndef TESTAPP_GEN
-int main_(void) //TODO fix or delete
+int main_(void)
 {
 	int Status;
 
