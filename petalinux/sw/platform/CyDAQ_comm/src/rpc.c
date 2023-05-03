@@ -191,9 +191,12 @@ int rpc_setup(){
 	//sending LED init command
 	int rpc_data[1] = {};
 	rpc_data[0] = RPC_MESSAGE_LED_INIT;
+	printf("COMM> Try to turn LED on\r\n");
 	rpc_send_message(MSG_TYPE_COMMAND,rpc_data,1);
-	printf("COMM> LED ON\r\n");
-
+	if(rpc_recieve_ack() != 0){
+		if(DEBUG)
+			printf("COMM> LED ON failed!r\n");
+	}
 
 	return 0;
 }
