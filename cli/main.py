@@ -406,7 +406,8 @@ class CyDAQ_CLI:
             except Exception as e:
                 self._print_to_output("Error opening file!", config.WRAPPER_ERROR)
                 return
-        # TODO move these to a seperate functions to keep it clean
+            
+        # old firmware uses serial to get samples, new firmware can use SCP for faster transfer
         if self.cmd_obj.ctrl_comm_obj.old_firmware:
             self._print_to_output("Fetching samples...", config.WRAPPER_INFO)
             self.cmd_obj.send_fetch()
@@ -525,6 +526,11 @@ class CyDAQ_CLI:
 
             # read from temp data.bin, and write sample file to given file locaiton 
             with open(config.SCP_LOCAL_PATH, "rb") as temp_file:
+                
+                # first sample taken after bootup on new firmware reads as 0 always for some reason.
+                # couldn't fix on firmware, so just dropping it always
+                temp_file.read(2)
+                
                 while True:
                     raw_num = temp_file.read(2)
 
