@@ -15,6 +15,7 @@ from PyQt5.QtGui import QIntValidator
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QTimer
 
 # Stuff From Project - May show as an error but it works
 from generated.BasicOperationWidgetUI import Ui_BasicOpetaionWidget
@@ -532,17 +533,6 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
             self.showInfo(s)
             return
 
-        def resetSendConfigBtn():
-            time.sleep(2)
-            self.send_config_btn.setText("Send Config")
-            self.send_config_btn.setStyleSheet("#send_config_btn"
-                                               "{"
-                                               "color: #033f63;"
-                                               "background-color: #d9d9d9;"
-                                               "border: 1px solid #033f63;"
-                                               "}")
-            self.config_timeout = False
-
         # send config
         self.config_timeout = True
         self.wrapper.set_values(json.dumps(self.getData()))
@@ -566,7 +556,19 @@ class BasicOperationModeWidget(QtWidgets.QWidget, Ui_BasicOpetaionWidget, CyDAQM
                                     "border-color: #DE3C4B;"
                                     "color: #FFF;"
                                     "}")
-        Thread(target=resetSendConfigBtn).start()
+
+        def resetSendConfigBtn():
+            self.send_config_btn.setText("Send Config")
+            self.send_config_btn.setStyleSheet("#send_config_btn"
+                                                "{"
+                                                "color: #033f63;"
+                                                "background-color: #d9d9d9;"
+                                                "border: 1px solid #033f63;"
+                                                "}")
+            self.config_timeout = False
+
+        QTimer.singleShot(config.SEND_CONFIG_DELAY_SEC * 1000, resetSendConfigBtn)
+
 
     def _show_error(self, message):
         """Private method to just show an error message box with a custom message"""

@@ -26,3 +26,5 @@ WRAPPER_FAILED_MSG = "Wrapper failed! Restarting..."
 BB_MAX_POINTS = 150
 BALANCE_BEAM_NOT_CONNECTED_MSG = "Balance Beam Module Not Connected! If you are using the new firmware, Balance Beam " \
                                  "Mode will not work."
+
+SEND_CONFIG_DELAY_SEC = 2 # amount of time before somebody can click send config agian
