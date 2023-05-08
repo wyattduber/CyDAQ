@@ -29,11 +29,13 @@ DEFAULT_WINDOW_HEIGHT = 626
 
 # Check if app was started from command line or executable
 # This will determine if the splash screen will work
-try:
+# try:
+#     import pyi_splash
+#     splash = True
+# except ModuleNotFoundError:
+#     splash = False
+if getattr(sys, 'frozen', False):
     import pyi_splash
-except ModuleNotFoundError:
-    pass
-
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -88,7 +90,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
         # This will update the splash if it exists
         # Otherwise, will log that it's likely being run from cmdline
         try:
-            pyi_splash.update_text("Loading CyDAQ GUI....")
+            if getattr(sys, 'frozen', False):
+                pyi_splash.update_text("Loading CyDAQ GUI....")
         except NameError:
             self.logger.info("pyi_splash not detected, initializing from cmdline/dev environment")
 
@@ -114,7 +117,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.logger.error(str(e))
             self.connected = False
             try: # hacky fix but prevents crashes if the system doesn't have pyi_splash
-                pyi_splash.close()
+                if getattr(sys, 'frozen', False):
+                    pyi_splash.close()
             except NameError:
                 pass
             self._show_wrapper_error(
@@ -126,7 +130,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow, CyDAQModeWidget):
             self.logger.error(str(e))
             self.connected = False
             try: # hacky fix but prevents crashes if the system doesn't have pyi_splash
-                pyi_splash.close()
+                if getattr(sys, 'frozen', False):
+                    pyi_splash.close()
             except NameError:
                 pass
             self._show_wrapper_error(
