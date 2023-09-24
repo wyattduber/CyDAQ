@@ -1,4 +1,5 @@
 # CyDAQ - ISU Senior Design 22-23
+<img src="images/CyDAQ-480.png" alt="Logo" title="Logo" align="right" width="200" height="200" />
 - Blake Fisher
 - Cole Langner
 - Corbin Kems
